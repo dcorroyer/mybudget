@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Get Incomes{% endblock title %}
+
+{% block body %}
+    <h1>Get Incomes</h1>
+
+    {% for income in incomes %}
+        <p>{{ income.name }}</p>
+    {% endfor %}
+{% endblock body %}

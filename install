@@ -1,0 +1,60 @@
+#!/bin/bash
+#Setup mybudget app
+
+path=$(ls -A 'vendor/')
+
+if [ -f .env ]; then
+    echo ".env exists"
+else
+    echo ".env doesn't exists"
+    cp .env.dist .env
+    echo ".env copied from .env.dist"
+fi
+
+if [ -f .env.test ]; then
+    echo ".env.test exists"
+else
+    if [ -f .env.test.dist ]; then
+        echo ".env.test doesn't exists"
+        cp .env.test.dist .env.test
+        echo ".env.test copied from .env.test.dist"
+    else
+        echo ".env.test can't be created, .env.test.dist doesn't exists"
+    fi
+fi
+
+if [ -f docker-compose.yml ]; then
+    echo "docker-compose.yml exists"
+
+    docker compose up -d
+
+    if [[ -n "$path" ]]; then
+        echo "vendor is not empty"
+        docker compose run --rm php rm -r vendor/
+    fi
+
+    docker compose run --rm php composer install
+    #docker-compose run --rm php php bin/console doctrine:migrations:migrate
+    #docker-compose run --rm php php bin/console --env=test doctrine:migrations:migrate
+else
+    if [ -f docker-compose.yml.dist ]; then
+        echo "docker-compose.yml doesn't exists"
+        cp docker-compose.yml.dist docker-compose.yml
+        echo "docker-compose.yml copied from docker-compose.yml.dist"
+
+        docker compose up -d
+
+        if [[ -n "$path" ]]; then
+            echo "vendor is not empty"
+            docker compose run --rm php rm -r vendor/
+        fi
+
+        docker compose run --rm php composer install
+        #docker-compose run --rm php php bin/console doctrine:migrations:migrate
+        #docker-compose run --rm php php bin/console --env=test doctrine:migrations:migrate
+    else
+        echo "docker-compose.yml can't be created, docker-compose.yml.dist doesn't exists"
+    fi
+fi
+
+echo "install finished, remember to check the configuration of .env and .env.test and configure your database"

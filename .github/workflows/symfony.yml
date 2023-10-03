@@ -1,0 +1,41 @@
+name: Symfony 🐘
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  symfony-grumphp:
+    runs-on: ubuntu-latest
+    name: Symfony GrumPHP / Checks 🧪
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+      - name: Copy .env.test.dist
+        run: php -r "file_exists('.env.test.dist') || copy('.env.test', '.env.test.dist');"
+      - name: 💾 Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: 📦 Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: 💽 Create Database
+        run: |
+          mkdir -p data
+          touch data/database.sqlite
+      - name: 🧪🪚 Execute grumphp tasks
+        env:
+          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+        run: vendor/bin/grumphp run

@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS mybudget;
+CREATE DATABASE IF NOT EXISTS mybudget_test;
+USE mybudget;

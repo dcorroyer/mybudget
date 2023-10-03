@@ -1,0 +1,75 @@
+grumphp:
+  tasks:
+    composer:
+      metadata:
+        label: 'Check composer.json'
+      file: ./composer.json
+      no_check_all: false
+      no_check_lock: false
+      no_check_publish: false
+      no_local_repository: false
+      with_dependencies: false
+      strict: false
+    composer_normalize:
+      metadata:
+        label: 'Check composer.json normalization format (composer-normalize)'
+      indent_size: ~
+      indent_style: ~
+      no_check_lock: false
+      no_update_lock: true
+      verbose: false
+    phpunit:
+      metadata:
+        label: 'Run unit tests (phpunit)'
+      config_file: ~
+      testsuite: ~
+      group: [ ]
+      exclude_group: [ ]
+      always_execute: false
+      order: null
+    phpversion:
+      metadata:
+        label: 'Check PHP version is 8.2'
+      project: '8.2'
+    ecs:
+      metadata:
+        label: 'Check coding style (ecs)'
+    phpstan:
+      metadata:
+        label: 'Check code quality (phpstan)'
+      triggered_by: [ 'php' ]
+      use_grumphp_paths: false
+    git_blacklist:
+      metadata:
+        label: 'Check for blacklisted patterns in committed files'
+      keywords:
+        - 'dd('
+        - 'die('
+        - 'var_dump('
+        - 'exit;'
+      whitelist_patterns: [ ]
+      triggered_by: [ 'php' ]
+      regexp_type: G
+      match_word: true
+      ignore_patterns: [ ]
+    git_commit_message:
+      metadata:
+        label: 'Check commit message'
+      allow_empty_message: false
+      enforce_capitalized_subject: false
+      enforce_no_subject_punctuations: false
+      enforce_no_subject_trailing_period: true
+      enforce_single_lined_subject: true
+      type_scope_conventions:
+        types: [ 'feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'chore', 'revert' ]
+        scopes: [ 'core', 'cli', 'web', 'api', 'tests', 'docs', 'ci', 'build', 'deps', 'misc' ]
+      max_body_width: 72
+      max_subject_width: 60
+      case_insensitive: true
+      multiline: true
+      additional_modifiers: ''
+    twigcs:
+      path: src/
+    securitychecker_enlightn:
+      lockfile: ./composer.lock
+      run_always: false

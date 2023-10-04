@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Income;
 
-use App\Repository\IncomeRepository;
+use App\Entity\Income;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class GetIncomeController extends AbstractController
 {
-    #[Route('/incomes', name: 'app_incomes')]
-    public function index(IncomeRepository $incomeRepository): Response
+    #[Route('/incomes/{id}', name: 'app_incomes_get')]
+    public function get(Income $income): Response
     {
-        return $this->render('incomes/index.html.twig', [
-            'incomes' => $incomeRepository->findAll(),
+        return $this->render('incomes/get.html.twig', [
+            'income' => $income,
         ]);
     }
 }

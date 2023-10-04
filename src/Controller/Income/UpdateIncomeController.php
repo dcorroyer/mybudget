@@ -12,23 +12,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CreateIncomeController extends AbstractController
+class UpdateIncomeController extends AbstractController
 {
-    #[Route('/incomes/create', name: 'app_incomes_create')]
-    public function create(Request $request, IncomeService $incomeService): Response
+    #[Route('/incomes/{id}/edit', name: 'app_incomes_edit')]
+    public function update(Request $request, Income $income, IncomeService $incomeService): Response
     {
-        $income = new Income();
         $form = $this->createForm(IncomeFormType::class, $income);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $incomeService->create($income);
+            $incomeService->update($income);
 
             return $this->redirectToRoute('app_incomes_list');
         }
 
-        return $this->render('incomes/create.html.twig', [
-            'createIncomeForm' => $form->createView(),
+        return $this->render('incomes/update.html.twig', [
+            'updateIncomeForm' => $form->createView(),
         ]);
     }
 }

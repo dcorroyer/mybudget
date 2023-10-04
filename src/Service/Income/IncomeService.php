@@ -21,4 +21,17 @@ class IncomeService
 
         return $income;
     }
+
+    public function update(Income $income): Income
+    {
+        $this->em->flush();
+
+        return $income;
+    }
+
+    public function delete(Income $income): void
+    {
+        $this->em->remove($income);
+        $this->em->flush();
+    }
 }

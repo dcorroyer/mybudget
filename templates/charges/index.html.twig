@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Get Charges{% endblock title %}
+
+{% block body %}
+    <h1>Get Charges</h1>
+
+    {% for charge in charges %}
+        <p>{{ charge.id }}</p>
+        <p>{{ charge.amount }}</p>
+    {% endfor %}
+{% endblock body %}

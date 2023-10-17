@@ -1,0 +1,11 @@
+{{ form_errors(incomeForm) }}
+
+    {{ form_start(incomeForm) }}
+        {{ form_row(incomeForm.name) }}
+        {{ form_row(incomeForm.amount) }}
+        {{ form_row(incomeForm.date) }}
+        {{ form_row(incomeForm.type) }}
+
+<button type="submit" class="btn">Save</button>
+{{ form_end(incomeForm) }}
+<p><a href="{{ path('app_incomes_list') }}"><button>Retour</button></a></p>

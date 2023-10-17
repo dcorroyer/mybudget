@@ -5,15 +5,5 @@
 {% block body %}
     <h1>Create Income</h1>
 
-    {{ form_errors(createIncomeForm) }}
-
-    {{ form_start(createIncomeForm) }}
-        {{ form_row(createIncomeForm.name) }}
-        {{ form_row(createIncomeForm.amount) }}
-        {{ form_row(createIncomeForm.date) }}
-        {{ form_row(createIncomeForm.type) }}
-
-    <button type="submit" class="btn">Save</button>
-    {{ form_end(createIncomeForm) }}
-    <p><a href="{{ path('app_incomes_list') }}"><button>Retour</button></a></p>
+    {{ include('incomes/_form.html.twig') }}
 {% endblock body %}

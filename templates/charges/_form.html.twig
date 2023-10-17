@@ -1,0 +1,35 @@
+{{ form_errors(chargeForm) }}
+
+    {{ form_start(chargeForm) }}
+        {{ form_row(chargeForm.amount) }}
+        {{ form_row(chargeForm.date) }}
+
+<ul class="charge-lines">
+    {{ form_widget(chargeForm.chargeLines) }}
+    <li class="charge-line" data-prototype="{{ form_row(chargeForm.chargeLines.vars.prototype)|e }}">
+        <a href="#" class="add-line">Add an expense</a>
+    </li>
+</ul>
+
+{{ form_rest(chargeForm) }}
+
+<button type="submit" class="btn">Save</button>
+{{ form_end(chargeForm) }}
+<p><a href="{{ path('app_charges_list') }}"><button>Retour</button></a></p>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var chargeLinesList = document.querySelector('.charge-lines');
+        var addLineButton = document.querySelector('.add-line');
+
+        addLineButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            var commentItem = document.querySelector('.charge-line');
+            var commentCount = chargeLinesList.querySelectorAll('li').length - 1;
+            var newCommentForm = commentItem.getAttribute('data-prototype').replace(/__name__/g, commentCount);
+            var newCommentItem = document.createElement('li');
+            newCommentItem.innerHTML = newCommentForm;
+            chargeLinesList.insertBefore(newCommentItem, commentItem);
+        });
+    });
+</script>

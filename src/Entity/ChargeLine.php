@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\IncomeTypes;
-use App\Repository\IncomeRepository;
-use Doctrine\DBAL\Types\Types;
+use App\Repository\ChargeLineRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: IncomeRepository::class)]
-#[ORM\Table(name: 'incomes')]
-class Income
+#[ORM\Entity(repositoryClass: ChargeLineRepository::class)]
+#[ORM\Table(name: 'charge_lines')]
+class ChargeLine
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,11 +22,11 @@ class Income
     #[ORM\Column]
     private float $amount = 0;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private \DateTimeInterface $date;
+    #[ORM\ManyToOne(inversedBy: 'chargeLines')]
+    private ?Charge $charge = null;
 
-    #[ORM\Column(length: 255)]
-    private IncomeTypes $type;
+    #[ORM\ManyToOne(inversedBy: 'chargeLines')]
+    private ?Category $category = null;
 
     public function getId(): int
     {
@@ -59,26 +57,26 @@ class Income
         return $this;
     }
 
-    public function getDate(): \DateTimeInterface
+    public function getCharge(): ?Charge
     {
-        return $this->date;
+        return $this->charge;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setCharge(?Charge $charge): self
     {
-        $this->date = $date;
+        $this->charge = $charge;
 
         return $this;
     }
 
-    public function getType(): IncomeTypes
+    public function getCategory(): ?Category
     {
-        return $this->type;
+        return $this->category;
     }
 
-    public function setType(IncomeTypes $type): self
+    public function setCategory(?Category $category): self
     {
-        $this->type = $type;
+        $this->category = $category;
 
         return $this;
     }

@@ -2,34 +2,36 @@
 
 declare(strict_types=1);
 
-namespace App\Form\Charge;
+namespace App\Form\Expense;
 
-use App\Entity\Charge;
+use App\Entity\Expense;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ChargeFormType extends AbstractType
+class ExpenseFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('amount')
             ->add('date')
-            ->add('chargeLines', CollectionType::class, [
-                'entry_type' => ChargeLineFormType::class,
-                'entry_options' => ['label' => false, 'mapped' => false],
+            ->add('expenseLines', CollectionType::class, [
+                'entry_type' => ExpenseLineFormType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'mapped' => false,
+                ],
                 'allow_add' => true,
                 'by_reference' => false,
             ]);
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Charge::class,
+            'data_class' => Expense::class,
         ]);
     }
 }

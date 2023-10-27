@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Form\Charge;
+declare(strict_types=1);
 
-use App\Entity\ChargeLine;
+namespace App\Form\Expense;
+
+use App\Entity\ExpenseLine;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ChargeLineFormType extends AbstractType
+class ExpenseLineFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,7 +22,7 @@ class ChargeLineFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ChargeLine::class,
+            'data_class' => ExpenseLine::class,
         ]);
     }
 }

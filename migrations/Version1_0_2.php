@@ -27,28 +27,28 @@ final class Version1_0_2 extends AbstractMigration
                 PRIMARY KEY(id))
                 DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('
-            CREATE TABLE charge_lines (
+            CREATE TABLE expense_lines (
                 id INT AUTO_INCREMENT NOT NULL,
-                charge_id INT DEFAULT NULL,
+                expense_id INT DEFAULT NULL,
                 category_id INT DEFAULT NULL,
                 name VARCHAR(255) NOT NULL,
                 amount DOUBLE PRECISION NOT NULL,
-                INDEX IDX_592580BE55284914 (charge_id),
+                INDEX IDX_592580BE55284914 (expense_id),
                 INDEX IDX_592580BE12469DE2 (category_id),
                 PRIMARY KEY(id))
             DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('
-            CREATE TABLE charges (
+            CREATE TABLE expenses (
                 id INT AUTO_INCREMENT NOT NULL,
                 amount DOUBLE PRECISION NOT NULL,
                 date DATE NOT NULL, PRIMARY KEY(id))
             DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('
-            ALTER TABLE charge_lines
+            ALTER TABLE expense_lines
                 ADD CONSTRAINT FK_592580BE55284914
-                    FOREIGN KEY (charge_id) REFERENCES charges (id)');
+                    FOREIGN KEY (expense_id) REFERENCES expenses (id)');
         $this->addSql('
-            ALTER TABLE charge_lines
+            ALTER TABLE expense_lines
                 ADD CONSTRAINT FK_592580BE12469DE2
                     FOREIGN KEY (category_id) REFERENCES categories (id)');
     }
@@ -56,10 +56,10 @@ final class Version1_0_2 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE charge_lines DROP FOREIGN KEY FK_592580BE55284914');
-        $this->addSql('ALTER TABLE charge_lines DROP FOREIGN KEY FK_592580BE12469DE2');
+        $this->addSql('ALTER TABLE expense_lines DROP FOREIGN KEY FK_592580BE55284914');
+        $this->addSql('ALTER TABLE expense_lines DROP FOREIGN KEY FK_592580BE12469DE2');
         $this->addSql('DROP TABLE categories');
-        $this->addSql('DROP TABLE charge_lines');
-        $this->addSql('DROP TABLE charges');
+        $this->addSql('DROP TABLE expense_lines');
+        $this->addSql('DROP TABLE expenses');
     }
 }

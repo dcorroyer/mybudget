@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Factory\ChargeFactory;
+use App\Factory\ExpenseFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class ChargeFixtures extends Fixture
+class ExpenseFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        ChargeFactory::new()->createMany(10);
+        ExpenseFactory::new()->createMany(10);
     }
 }

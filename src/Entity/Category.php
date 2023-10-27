@@ -22,14 +22,14 @@ class Category
     private string $name;
 
     /**
-     * @var Collection<int, ChargeLine>
+     * @var Collection<int, ExpenseLine>
      */
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: ChargeLine::class)]
-    private Collection $chargeLines;
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: ExpenseLine::class)]
+    private Collection $expenseLines;
 
     public function __construct()
     {
-        $this->chargeLines = new ArrayCollection();
+        $this->expenseLines = new ArrayCollection();
     }
 
     public function getId(): int
@@ -50,29 +50,29 @@ class Category
     }
 
     /**
-     * @return Collection<int, ChargeLine>
+     * @return Collection<int, ExpenseLine>
      */
-    public function getChargeLines(): Collection
+    public function getExpenseLines(): Collection
     {
-        return $this->chargeLines;
+        return $this->expenseLines;
     }
 
-    public function addChargeLine(ChargeLine $chargeLine): static
+    public function addExpenseLine(ExpenseLine $expenseLine): static
     {
-        if (! $this->chargeLines->contains($chargeLine)) {
-            $this->chargeLines->add($chargeLine);
-            $chargeLine->setCategory($this);
+        if (! $this->expenseLines->contains($expenseLine)) {
+            $this->expenseLines->add($expenseLine);
+            $expenseLine->setCategory($this);
         }
 
         return $this;
     }
 
-    public function removeChargeLine(ChargeLine $chargeLine): static
+    public function removeExpenseLine(ExpenseLine $expenseLine): static
     {
-        if ($this->chargeLines->removeElement($chargeLine)) {
+        if ($this->expenseLines->removeElement($expenseLine)) {
             // set the owning side to null (unless already changed)
-            if ($chargeLine->getCategory() === $this) {
-                $chargeLine->setCategory(null);
+            if ($expenseLine->getCategory() === $this) {
+                $expenseLine->setCategory(null);
             }
         }
 

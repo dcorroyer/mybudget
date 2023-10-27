@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ChargeRepository;
+use App\Repository\ExpenseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ChargeRepository::class)]
-#[ORM\Table(name: 'charges')]
-class Charge
+#[ORM\Entity(repositoryClass: ExpenseRepository::class)]
+#[ORM\Table(name: 'expenses')]
+class Expense
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,14 +26,14 @@ class Charge
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<int, ChargeLine>
+     * @var Collection<int, ExpenseLine>
      */
-    #[ORM\OneToMany(mappedBy: 'charge', targetEntity: ChargeLine::class)]
-    private Collection $chargeLines;
+    #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class)]
+    private Collection $expenseLines;
 
     public function __construct()
     {
-        $this->chargeLines = new ArrayCollection();
+        $this->expenseLines = new ArrayCollection();
     }
 
     public function getId(): int
@@ -66,29 +66,29 @@ class Charge
     }
 
     /**
-     * @return Collection<int, ChargeLine>
+     * @return Collection<int, ExpenseLine>
      */
-    public function getChargeLines(): Collection
+    public function getExpenseLines(): Collection
     {
-        return $this->chargeLines;
+        return $this->expenseLines;
     }
 
-    public function addChargeLine(ChargeLine $chargeLine): static
+    public function addExpenseLine(ExpenseLine $expenseLine): static
     {
-        if (! $this->chargeLines->contains($chargeLine)) {
-            $this->chargeLines->add($chargeLine);
-            $chargeLine->setCharge($this);
+        if (! $this->expenseLines->contains($expenseLine)) {
+            $this->expenseLines->add($expenseLine);
+            $expenseLine->setExpense($this);
         }
 
         return $this;
     }
 
-    public function removeChargeLine(ChargeLine $chargeLine): static
+    public function removeExpenseLine(ExpenseLine $expenseLine): static
     {
-        if ($this->chargeLines->removeElement($chargeLine)) {
+        if ($this->expenseLines->removeElement($expenseLine)) {
             // set the owning side to null (unless already changed)
-            if ($chargeLine->getCharge() === $this) {
-                $chargeLine->setCharge(null);
+            if ($expenseLine->getExpense() === $this) {
+                $expenseLine->setExpense(null);
             }
         }
 

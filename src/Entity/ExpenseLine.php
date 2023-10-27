@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ChargeLineRepository;
+use App\Repository\ExpenseLineRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ChargeLineRepository::class)]
-#[ORM\Table(name: 'charge_lines')]
-class ChargeLine
+#[ORM\Entity(repositoryClass: ExpenseLineRepository::class)]
+#[ORM\Table(name: 'expense_lines')]
+class ExpenseLine
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,10 +22,10 @@ class ChargeLine
     #[ORM\Column]
     private float $amount = 0;
 
-    #[ORM\ManyToOne(inversedBy: 'chargeLines')]
-    private ?Charge $charge = null;
+    #[ORM\ManyToOne(inversedBy: 'expenseLines')]
+    private ?Expense $expense = null;
 
-    #[ORM\ManyToOne(inversedBy: 'chargeLines')]
+    #[ORM\ManyToOne(inversedBy: 'expenseLines')]
     private ?Category $category = null;
 
     public function getId(): int
@@ -57,14 +57,14 @@ class ChargeLine
         return $this;
     }
 
-    public function getCharge(): ?Charge
+    public function getExpense(): ?Expense
     {
-        return $this->charge;
+        return $this->expense;
     }
 
-    public function setCharge(?Charge $charge): self
+    public function setExpense(?Expense $expense): self
     {
-        $this->charge = $charge;
+        $this->expense = $expense;
 
         return $this;
     }

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Charge;
+use App\Entity\Expense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Charge>
+ * @extends ServiceEntityRepository<Expense>
  *
- * @method Charge|null find($id, $lockMode = null, $lockVersion = null)
- * @method Charge|null findOneBy(array $criteria, array $orderBy = null)
- * @method Charge[]    findAll()
- * @method Charge[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Expense|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Expense|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Expense[]    findAll()
+ * @method Expense[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ChargeRepository extends ServiceEntityRepository
+class ExpenseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Charge::class);
+        parent::__construct($registry, Expense::class);
     }
 
     //    /**
-    //     * @return Charge[] Returns an array of Charge objects
+    //     * @return Expense[] Returns an array of Expense objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -38,7 +38,7 @@ class ChargeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Charge
+    //    public function findOneBySomeField($value): ?Expense
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

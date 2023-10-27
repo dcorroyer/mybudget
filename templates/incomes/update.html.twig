@@ -5,15 +5,5 @@
 {% block body %}
     <h1>Update Income</h1>
 
-    {{ form_errors(updateIncomeForm) }}
-
-    {{ form_start(updateIncomeForm) }}
-    {{ form_row(updateIncomeForm.name) }}
-    {{ form_row(updateIncomeForm.amount) }}
-    {{ form_row(updateIncomeForm.date) }}
-    {{ form_row(updateIncomeForm.type) }}
-
-    <button type="submit" class="btn">Save</button>
-    {{ form_end(updateIncomeForm) }}
-    <p><a href="{{ path('app_incomes_list') }}"><button>Retour</button></a></p>
+    {{ include('incomes/_form.html.twig') }}
 {% endblock body %}

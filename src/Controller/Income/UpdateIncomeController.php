@@ -27,7 +27,7 @@ class UpdateIncomeController extends AbstractController
         }
 
         return $this->render('incomes/update.html.twig', [
-            'updateIncomeForm' => $form->createView(),
+            'incomeForm' => $form->createView(),
         ]);
     }
 }

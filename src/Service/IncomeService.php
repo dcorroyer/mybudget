@@ -21,6 +21,8 @@ class IncomeService
     public function create(IncomePayload $payload): IncomeResponse
     {
         $income = new Income();
+
+        /** @var Income $income */
         $income = $this->payloadHelper->create($payload, $income);
 
         $this->em->persist($income);

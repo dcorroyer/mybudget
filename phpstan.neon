@@ -41,6 +41,8 @@ parameters:
             enabled: true
         enforceNativeReturnTypehint:
             enabled: true
+        forbidAssignmentNotMatchingVarDoc:
+            allowNarrowing: true
         forbidCast:
             blacklist!: ['(array)', '(object)', '(unset)']
         forbidCheckedExceptionInYieldingMethod:

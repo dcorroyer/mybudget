@@ -7,14 +7,14 @@ namespace App\Service;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
-use App\Helper\PayloadToEntityHelper;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Helper\DtoToEntityHelper;
+use App\Repository\IncomeRepository;
 
 class IncomeService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly PayloadToEntityHelper $payloadHelper,
+        private readonly IncomeRepository $incomeRepository,
+        private readonly DtoToEntityHelper $dtoToEntityHelper,
     ) {
     }
 
@@ -23,10 +23,9 @@ class IncomeService
         $income = new Income();
 
         /** @var Income $income */
-        $income = $this->payloadHelper->create($payload, $income);
+        $income = $this->dtoToEntityHelper->create($payload, $income);
 
-        $this->em->persist($income);
-        $this->em->flush();
+        $this->incomeRepository->save($income, true);
 
         return (new IncomeResponse())
             ->setId($income->getId())

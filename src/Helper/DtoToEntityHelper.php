@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class PayloadToEntityHelper
+class DtoToEntityHelper
 {
     public function __construct(
         private readonly NormalizerInterface $normalizer,

@@ -14,7 +14,7 @@ class BaseRestController extends AbstractController
     /**
      * @param array<string> $groups
      */
-    public function ApiResponse(
+    public function apiResponse(
         mixed $data,
         array $groups = [],
         ObjectNormalizerContextBuilder $context = new ObjectNormalizerContextBuilder(),

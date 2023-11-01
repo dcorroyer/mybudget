@@ -23,4 +23,13 @@ return [
         'dev' => true,
         'test' => true,
     ],
+    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => [
+        'dev' => true,
+    ],
+    Symfony\Bundle\TwigBundle\TwigBundle::class => [
+        'all' => true,
+    ],
+    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => [
+        'all' => true,
+    ],
 ];

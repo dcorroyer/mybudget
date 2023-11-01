@@ -68,8 +68,6 @@ grumphp:
       case_insensitive: true
       multiline: true
       additional_modifiers: ''
-    twigcs:
-      path: src/
     securitychecker_enlightn:
       lockfile: ./composer.lock
       run_always: false

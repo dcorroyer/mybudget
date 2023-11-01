@@ -2,44 +2,32 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Dto\Income\Payload;
 
+use App\Contract\PayloadInterface;
 use App\Enum\IncomeTypes;
-use App\Repository\IncomeRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use App\Serializable\SerializationGroups;
+use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: IncomeRepository::class)]
-#[ORM\Table(name: 'incomes')]
-class Income
+class IncomePayload implements PayloadInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
-
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
     private string $name;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     #[Assert\NotBlank]
-    #[ORM\Column]
     private float $amount = 0;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private \DateTimeInterface $date;
+    private string $date;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
     private IncomeTypes $type;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     public function getName(): string
     {
@@ -65,12 +53,12 @@ class Income
         return $this;
     }
 
-    public function getDate(): \DateTimeInterface
+    public function getDate(): string
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(string $date): self
     {
         $this->date = $date;
 

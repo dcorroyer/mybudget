@@ -4,31 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller\Income;
 
-use App\Entity\Income;
-use App\Form\Income\IncomeFormType;
-use App\Service\Income\IncomeService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use App\Controller\BaseRestController;
+use App\Dto\Income\Payload\IncomePayload;
+use App\Serializable\SerializationGroups;
+use App\Service\IncomeService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CreateIncomeController extends AbstractController
+#[Route('/incomes')]
+class CreateIncomeController extends BaseRestController
 {
-    #[Route('/incomes/create', name: 'app_incomes_create')]
-    public function create(Request $request, IncomeService $incomeService): Response
+    public function __construct(
+        private readonly IncomeService $incomeService,
+    ) {
+    }
+
+    #[Route('', name: 'app_incomes_create', methods: 'POST')]
+    public function create(#[MapRequestPayload] IncomePayload $incomePayload): JsonResponse
     {
-        $income = new Income();
-        $form = $this->createForm(IncomeFormType::class, $income);
-        $form->handleRequest($request);
+        $income = $this->incomeService->create($incomePayload);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $incomeService->create($income);
-
-            return $this->redirectToRoute('app_incomes_list');
-        }
-
-        return $this->render('incomes/create.html.twig', [
-            'incomeForm' => $form->createView(),
-        ]);
+        return $this->ApiResponse(
+            data: $income,
+            groups: [SerializationGroups::INCOME_CREATE],
+            status: Response::HTTP_CREATED,
+        );
     }
 }

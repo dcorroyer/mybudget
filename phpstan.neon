@@ -31,6 +31,8 @@ parameters:
                 \Symfony\Component\Form\AbstractType: Type
                 \Symfony\Component\Validator\Constraint: Constraint
                 \Symfony\Component\Validator\ConstraintValidator: ConstraintValidator
+        allowNamedArgumentOnlyInAttributes:
+            enabled: false
         allowComparingOnlyComparableTypes:
              enabled: true
         enforceEnumMatch:

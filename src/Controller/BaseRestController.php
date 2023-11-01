@@ -11,6 +11,9 @@ use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuild
 
 class BaseRestController extends AbstractController
 {
+    /**
+     * @param array<string> $groups
+     */
     public function ApiResponse(
         mixed $data,
         array $groups = [],

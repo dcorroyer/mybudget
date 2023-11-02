@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/api/incomes')]
+#[Route('/incomes')]
 class CreateIncomeController extends BaseRestController
 {
     #[MyOpenApi(

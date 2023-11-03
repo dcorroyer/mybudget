@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7d1ee4ae61b9608bd0ed810e44371974",
+    "content-hash": "fbaf70512eb13ee449e2354da2611399",
     "packages": [
         {
             "name": "dcorroyer/my-open-api-bundle",
@@ -11110,7 +11110,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*"
     },

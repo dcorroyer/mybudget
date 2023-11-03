@@ -10,11 +10,13 @@ use App\Serializable\SerializationGroups;
 use My\OpenApiBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\OpenApiBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\OpenApiBundle\Attribute\MyOpenApi\Response\SuccessResponse;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/incomes')]
+#[OA\Tag(name: 'Incomes')]
 class GetIncomeController extends BaseRestController
 {
     #[MyOpenApi(

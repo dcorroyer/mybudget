@@ -12,12 +12,14 @@ use App\Serializable\SerializationGroups;
 use App\Service\IncomeService;
 use My\OpenApiBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\OpenApiBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/incomes')]
+#[OA\Tag(name: 'Incomes')]
 class ListIncomeController extends BaseRestController
 {
     #[MyOpenApi(

@@ -14,8 +14,6 @@ class IncomeResponse
         SerializationGroups::INCOME_CREATE,
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
     ])]
     private int $id;
 
@@ -23,8 +21,6 @@ class IncomeResponse
         SerializationGroups::INCOME_CREATE,
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
     ])]
     private string $name;
 
@@ -32,8 +28,6 @@ class IncomeResponse
         SerializationGroups::INCOME_CREATE,
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
     ])]
     private float $amount = 0;
 
@@ -41,8 +35,6 @@ class IncomeResponse
         SerializationGroups::INCOME_CREATE,
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
     ])]
     private \DateTimeInterface $date;
 
@@ -50,8 +42,6 @@ class IncomeResponse
         SerializationGroups::INCOME_CREATE,
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
     ])]
     private IncomeTypes $type;
 

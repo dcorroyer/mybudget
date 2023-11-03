@@ -10,39 +10,19 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 
 class IncomeResponse
 {
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::INCOME_DELETE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::INCOME_DELETE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private string $name;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::INCOME_DELETE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private float $amount = 0;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::INCOME_DELETE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private \DateTimeInterface $date;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::INCOME_DELETE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private IncomeTypes $type;
 
     public function getId(): int

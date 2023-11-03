@@ -16,29 +16,49 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'incomes')]
 class Income
 {
-    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
+    #[Serializer\Groups([
+        SerializationGroups::INCOME_GET,
+        SerializationGroups::INCOME_LIST,
+        SerializationGroups::INCOME_DELETE,
+    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
+    #[Serializer\Groups([
+        SerializationGroups::INCOME_GET,
+        SerializationGroups::INCOME_LIST,
+        SerializationGroups::INCOME_DELETE,
+    ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
+    #[Serializer\Groups([
+        SerializationGroups::INCOME_GET,
+        SerializationGroups::INCOME_LIST,
+        SerializationGroups::INCOME_DELETE,
+    ])]
     #[Assert\NotBlank]
     #[ORM\Column]
     private float $amount = 0;
 
-    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
+    #[Serializer\Groups([
+        SerializationGroups::INCOME_GET,
+        SerializationGroups::INCOME_LIST,
+        SerializationGroups::INCOME_DELETE,
+    ])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
-    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
+    #[Serializer\Groups([
+        SerializationGroups::INCOME_GET,
+        SerializationGroups::INCOME_LIST,
+        SerializationGroups::INCOME_DELETE,
+    ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private IncomeTypes $type;

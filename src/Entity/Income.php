@@ -6,32 +6,39 @@ namespace App\Entity;
 
 use App\Enum\IncomeTypes;
 use App\Repository\IncomeRepository;
+use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
 #[ORM\Table(name: 'incomes')]
 class Income
 {
+    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
     #[Assert\NotBlank]
     #[ORM\Column]
     private float $amount = 0;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
+    #[Serializer\Groups([SerializationGroups::INCOME_GET, SerializationGroups::INCOME_LIST])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private IncomeTypes $type;

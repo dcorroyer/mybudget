@@ -35,4 +35,27 @@ class IncomeService
             ->setType($income->getType())
         ;
     }
+
+    public function update(IncomePayload $payload, Income $income): IncomeResponse
+    {
+        /** @var Income $income */
+        $income = $this->dtoToEntityHelper->update($payload, $income);
+
+        $this->incomeRepository->save($income, true);
+
+        return (new IncomeResponse())
+            ->setId($income->getId())
+            ->setName($income->getName())
+            ->setAmount($income->getAmount())
+            ->setDate($income->getDate())
+            ->setType($income->getType())
+        ;
+    }
+
+    public function delete(Income $income): Income
+    {
+        $this->incomeRepository->delete($income);
+
+        return $income;
+    }
 }

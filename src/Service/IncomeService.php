@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Income\Http\IncomeFilterQuery;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
+use App\Dto\PaginationQueryParams;
 use App\Entity\Income;
 use App\Helper\DtoToEntityHelper;
 use App\Repository\IncomeRepository;
+use Doctrine\Common\Collections\Criteria;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class IncomeService
 {
@@ -57,5 +61,14 @@ class IncomeService
         $this->incomeRepository->delete($income);
 
         return $income;
+    }
+
+    public function paginate(
+        PaginationQueryParams $paginationQueryParams = null,
+        IncomeFilterQuery $filter = null
+    ): SlidingPagination {
+        $criteria = Criteria::create();
+
+        return $this->incomeRepository->paginate($paginationQueryParams, $filter, $criteria);
     }
 }

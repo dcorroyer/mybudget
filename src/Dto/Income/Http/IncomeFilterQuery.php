@@ -12,10 +12,10 @@ use Symfony\Component\Serializer\Annotation\SerializedPath;
 class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
     #[SerializedPath('[criteria][query]')]
-    public ?string $query = null;
+    private ?string $query;
 
     #[SerializedPath('[i][amount]')]
-    public ?float $amount = 0;
+    private ?float $amount = 0;
 
     private int $page = 1;
 
@@ -34,6 +34,30 @@ class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
         }
 
         return $criteria;
+    }
+
+    public function getQuery(): ?string
+    {
+        return $this->query;
+    }
+
+    public function setQuery(?string $query): self
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+
+    public function getAmount(): ?float
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(?float $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
     }
 
     public function getPage(): int

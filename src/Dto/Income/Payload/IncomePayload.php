@@ -8,25 +8,29 @@ use App\Contract\PayloadInterface;
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class IncomePayload implements PayloadInterface
 {
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    #[Assert\NotBlank]
     private string $name;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    #[Assert\NotBlank]
     private float $amount = 0;
 
+    #[Context(
+        normalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+        denormalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+    )]
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    #[Assert\NotBlank]
-    #[Assert\Date]
-    private string $date;
+    private \DateTimeInterface $date;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    #[Assert\NotBlank]
     private IncomeTypes $type;
 
     public function getName(): string
@@ -53,12 +57,12 @@ class IncomePayload implements PayloadInterface
         return $this;
     }
 
-    public function getDate(): string
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(string $date): self
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
 

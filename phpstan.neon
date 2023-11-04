@@ -21,6 +21,7 @@ parameters:
                     - 'debug()'
                     - 'debug_zval_dump()'
                 message: 'use only for debugging'
+    checkGenericClassInNonGenericObjectType: false
     shipmonkRules:
         classSuffixNaming:
             superclassToSuffixMapping!:

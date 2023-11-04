@@ -10,6 +10,8 @@ use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
@@ -44,6 +46,14 @@ class Income
     #[ORM\Column]
     private float $amount = 0;
 
+    #[Context(
+        normalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+        denormalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+    )]
     #[Serializer\Groups([
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
@@ -66,6 +76,13 @@ class Income
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): string

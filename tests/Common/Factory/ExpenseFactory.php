@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Factory;
+namespace App\Tests\Common\Factory;
 
 use App\Entity\Expense;
 use App\Repository\ExpenseRepository;

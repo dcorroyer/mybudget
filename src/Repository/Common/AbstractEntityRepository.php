@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository\Common;
 
-use App\Adapter\PaginationQueryParamsInterface;
 use App\Contract\ORMFilterInterface;
-use App\Service\PaginatorService;
+use App\Dto\PaginationQueryParams;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository as BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @template T of object
@@ -22,7 +22,7 @@ abstract class AbstractEntityRepository extends BaseRepository implements Servic
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        protected PaginatorService $paginatorService,
+        private readonly PaginatorInterface $paginator,
     ) {
         parent::__construct($managerRegistry, $this->getEntityClass());
     }
@@ -72,16 +72,34 @@ abstract class AbstractEntityRepository extends BaseRepository implements Servic
         $this->_em->flush();
     }
 
-    /**
-     * @return SlidingPagination<T>
-     */
     public function paginate(
-        PaginationQueryParamsInterface $paginationQueryParams = null,
+        PaginationQueryParams $paginationQueryParams = null,
         ORMFilterInterface $filter = null,
         Criteria $extraCriteria = null
     ): SlidingPagination {
-        $qb = $this->createQueryBuilder('e');
+        $query = $this->createQueryBuilder('e');
+        $paginationQueryParams ??= new PaginationQueryParams();
 
-        return $this->paginatorService->paginate($qb, $paginationQueryParams, $filter, $extraCriteria);
+        if ($filter) {
+            $query->addCriteria($filter->getCriteria());
+        }
+
+        if ($extraCriteria) {
+            $query->addCriteria($extraCriteria);
+        }
+
+        $pagination = $this->paginator->paginate(
+            $query,
+            $paginationQueryParams->getPage(),
+            $paginationQueryParams->getLimit()
+        );
+
+        if (! $pagination instanceof SlidingPagination) {
+            throw new \Exception(
+                "Paginator must be an instance of Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination"
+            );
+        }
+
+        return $pagination;
     }
 }

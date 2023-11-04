@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Factory;
+namespace App\Tests\Common\Factory;
 
 use App\Entity\Income;
 use App\Enum\IncomeTypes;
@@ -46,8 +46,9 @@ final class IncomeFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'id' => self::faker()->randomNumber(),
             'amount' => self::faker()->randomFloat(),
-            'date' => self::faker()->dateTime(),
+            'date' => new \DateTime(),
             'name' => self::faker()->text(25),
             'type' => self::faker()->randomElement(IncomeTypes::cases()),
         ];

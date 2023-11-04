@@ -67,8 +67,6 @@ class IncomeService
         PaginationQueryParams $paginationQueryParams = null,
         IncomeFilterQuery $filter = null
     ): SlidingPagination {
-        $criteria = Criteria::create();
-
-        return $this->incomeRepository->paginate($paginationQueryParams, $filter, $criteria);
+        return $this->incomeRepository->paginate($paginationQueryParams, $filter, Criteria::create());
     }
 }

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Adapter\PaginationQueryParamsInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class PaginationQueryParams implements PaginationQueryParamsInterface
+readonly class PaginationQueryParams
 {
     public function __construct(
         #[Assert\Positive]

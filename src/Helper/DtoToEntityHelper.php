@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use App\Contract\PayloadInterface;
+use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;

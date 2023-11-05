@@ -6,7 +6,7 @@ namespace App\Tests\Integration\Repository;
 
 use App\Repository\IncomeRepository;
 use App\Tests\Common\Factory\IncomeFactory;
-use App\Tests\Common\Trait\ClearDatabase;
+use My\RestBundle\Test\Common\Trait\ClearDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

@@ -6,14 +6,14 @@ namespace App\Tests\Unit\Service;
 
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
-use App\Dto\PaginationQueryParams;
 use App\Entity\Income;
 use App\Helper\DtoToEntityHelper;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
-use App\Tests\Common\Helper\PaginationTestHelper;
-use App\Tests\Common\Trait\SerializerTrait;
+use My\RestBundle\Dto\PaginationQueryParams;
+use My\RestBundle\Test\Common\Trait\SerializerTrait;
+use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

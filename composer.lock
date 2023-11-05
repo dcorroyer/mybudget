@@ -4,33 +4,39 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85cea77724fb5fc65e0a2805aa2bb90e",
+    "content-hash": "0d118a1570b3bffb48096cc8ec45accc",
     "packages": [
         {
             "name": "dcorroyer/my-rest-bundle",
-            "version": "dev-main",
+            "version": "dev-feature/rest-helpers",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcorroyer/my-rest-bundle.git",
-                "reference": "d9a8c6205260bbd74f8d75d01dbfdedf34131491"
+                "reference": "16f70fff9e2340a8727fafc4cb9d9ab2add97947"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/d9a8c6205260bbd74f8d75d01dbfdedf34131491",
-                "reference": "d9a8c6205260bbd74f8d75d01dbfdedf34131491",
+                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/16f70fff9e2340a8727fafc4cb9d9ab2add97947",
+                "reference": "16f70fff9e2340a8727fafc4cb9d9ab2add97947",
                 "shasum": ""
             },
             "require": {
+                "doctrine/doctrine-bundle": "^2.10",
+                "doctrine/orm": "^2.16",
+                "knplabs/knp-paginator-bundle": "^6.2",
                 "nelmio/api-doc-bundle": "^4.12",
                 "php": ">=8.2",
                 "symfony/http-foundation": "^6.3",
-                "symfony/serializer": "6.3.*"
+                "symfony/serializer": "6.3.*",
+                "symfony/validator": "^6.3"
             },
-            "default-branch": true,
+            "require-dev": {
+                "zenstruck/foundry": "^1.36"
+            },
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "My\\OpenApiBundle\\": "src/"
+                    "My\\RestBundle\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -40,9 +46,9 @@
             "description": "A REST API helper bundle for my symfony apps",
             "support": {
                 "issues": "https://github.com/dcorroyer/my-rest-bundle/issues",
-                "source": "https://github.com/dcorroyer/my-rest-bundle/tree/main"
+                "source": "https://github.com/dcorroyer/my-rest-bundle/tree/feature/rest-helpers"
             },
-            "time": "2023-11-04T22:14:17+00:00"
+            "time": "2023-11-05T15:24:07+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -8837,16 +8843,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.40",
+            "version": "1.10.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d"
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/93c84b5bf7669920d823631e39904d69b9c7dc5d",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
                 "shasum": ""
             },
             "require": {
@@ -8895,7 +8901,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-30T14:48:31+00:00"
+            "time": "2023-11-05T12:57:57+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",

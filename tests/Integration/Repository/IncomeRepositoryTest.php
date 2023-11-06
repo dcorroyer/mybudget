@@ -6,12 +6,12 @@ namespace App\Tests\Integration\Repository;
 
 use App\Repository\IncomeRepository;
 use App\Tests\Common\Factory\IncomeFactory;
-use My\RestBundle\Test\Common\Trait\ClearDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 #[Group('integration')]
 #[Group('repository')]
@@ -20,7 +20,7 @@ use Zenstruck\Foundry\Test\Factories;
 class IncomeRepositoryTest extends KernelTestCase
 {
     use Factories;
-    use ClearDatabase;
+    use ResetDatabase;
 
     private IncomeRepository $incomeRepository;
 

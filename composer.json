@@ -7,7 +7,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "dcorroyer/my-rest-bundle": "dev-feature/rest-helpers",
+        "dcorroyer/my-rest-bundle": "dev-main",
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",

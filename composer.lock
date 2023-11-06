@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcorroyer/my-rest-bundle.git",
-                "reference": "6617c5f8379760e8570ef51c37b2375cd0feda34"
+                "reference": "ae7310a7c5caf7688ef29607dc1cd78cadd165d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/6617c5f8379760e8570ef51c37b2375cd0feda34",
-                "reference": "6617c5f8379760e8570ef51c37b2375cd0feda34",
+                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/ae7310a7c5caf7688ef29607dc1cd78cadd165d8",
+                "reference": "ae7310a7c5caf7688ef29607dc1cd78cadd165d8",
                 "shasum": ""
             },
             "require": {
@@ -49,7 +49,7 @@
                 "issues": "https://github.com/dcorroyer/my-rest-bundle/issues",
                 "source": "https://github.com/dcorroyer/my-rest-bundle/tree/main"
             },
-            "time": "2023-11-06T10:25:41+00:00"
+            "time": "2023-11-06T13:27:16+00:00"
         },
         {
             "name": "doctrine/annotations",

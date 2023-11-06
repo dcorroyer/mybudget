@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Response;
 
-use App\Contract\PayloadInterface;
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
+use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;

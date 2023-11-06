@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Http;
 
-use App\Contract\ORMFilterInterface;
-use App\Contract\QueryFilterInterface;
 use Doctrine\Common\Collections\Criteria;
+use My\RestBundle\Contract\ORMFilterInterface;
+use My\RestBundle\Contract\QueryFilterInterface;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
 
 class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface

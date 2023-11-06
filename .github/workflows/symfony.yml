@@ -19,8 +19,6 @@ jobs:
           php-version: '8.2'
       - name: 🚚 Get latest code
         uses: actions/checkout@v3
-      - name: Copy .env.test.dist
-        run: php -r "file_exists('.env.test.dist') || copy('.env.test', '.env.test.dist');"
       - name: 💾 Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3

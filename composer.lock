@@ -12,25 +12,32 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcorroyer/my-rest-bundle.git",
-                "reference": "d9a8c6205260bbd74f8d75d01dbfdedf34131491"
+                "reference": "ae7310a7c5caf7688ef29607dc1cd78cadd165d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/d9a8c6205260bbd74f8d75d01dbfdedf34131491",
-                "reference": "d9a8c6205260bbd74f8d75d01dbfdedf34131491",
+                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/ae7310a7c5caf7688ef29607dc1cd78cadd165d8",
+                "reference": "ae7310a7c5caf7688ef29607dc1cd78cadd165d8",
                 "shasum": ""
             },
             "require": {
+                "doctrine/doctrine-bundle": "^2.10",
+                "doctrine/orm": "^2.16",
+                "knplabs/knp-paginator-bundle": "^6.2",
                 "nelmio/api-doc-bundle": "^4.12",
                 "php": ">=8.2",
                 "symfony/http-foundation": "^6.3",
-                "symfony/serializer": "6.3.*"
+                "symfony/serializer": "6.3.*",
+                "symfony/validator": "^6.3"
+            },
+            "require-dev": {
+                "zenstruck/foundry": "^1.36"
             },
             "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "My\\OpenApiBundle\\": "src/"
+                    "My\\RestBundle\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -42,7 +49,7 @@
                 "issues": "https://github.com/dcorroyer/my-rest-bundle/issues",
                 "source": "https://github.com/dcorroyer/my-rest-bundle/tree/main"
             },
-            "time": "2023-11-04T22:14:17+00:00"
+            "time": "2023-11-06T13:27:16+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -8837,16 +8844,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.40",
+            "version": "1.10.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d"
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/93c84b5bf7669920d823631e39904d69b9c7dc5d",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
                 "shasum": ""
             },
             "require": {
@@ -8895,7 +8902,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-30T14:48:31+00:00"
+            "time": "2023-11-05T12:57:57+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",

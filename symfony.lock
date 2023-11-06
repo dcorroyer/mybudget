@@ -1,4 +1,7 @@
 {
+    "dcorroyer/my-rest-bundle": {
+        "version": "dev-feature/rest-helpers"
+    },
     "doctrine/annotations": {
         "version": "2.0",
         "recipe": {

@@ -36,4 +36,7 @@ return [
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => [
         'all' => true,
     ],
+    My\RestBundle\MyRestBundle::class => [
+        'all' => true,
+    ],
 ];

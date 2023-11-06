@@ -7,7 +7,7 @@ namespace App\Tests\Integration\Controller\Income;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
-use App\Tests\Common\Helper\PaginationTestHelper;
+use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

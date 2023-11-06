@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d118a1570b3bffb48096cc8ec45accc",
+    "content-hash": "85cea77724fb5fc65e0a2805aa2bb90e",
     "packages": [
         {
             "name": "dcorroyer/my-rest-bundle",
-            "version": "dev-feature/rest-helpers",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcorroyer/my-rest-bundle.git",
-                "reference": "16f70fff9e2340a8727fafc4cb9d9ab2add97947"
+                "reference": "6617c5f8379760e8570ef51c37b2375cd0feda34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/16f70fff9e2340a8727fafc4cb9d9ab2add97947",
-                "reference": "16f70fff9e2340a8727fafc4cb9d9ab2add97947",
+                "url": "https://api.github.com/repos/dcorroyer/my-rest-bundle/zipball/6617c5f8379760e8570ef51c37b2375cd0feda34",
+                "reference": "6617c5f8379760e8570ef51c37b2375cd0feda34",
                 "shasum": ""
             },
             "require": {
@@ -33,6 +33,7 @@
             "require-dev": {
                 "zenstruck/foundry": "^1.36"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
@@ -46,9 +47,9 @@
             "description": "A REST API helper bundle for my symfony apps",
             "support": {
                 "issues": "https://github.com/dcorroyer/my-rest-bundle/issues",
-                "source": "https://github.com/dcorroyer/my-rest-bundle/tree/feature/rest-helpers"
+                "source": "https://github.com/dcorroyer/my-rest-bundle/tree/main"
             },
-            "time": "2023-11-05T15:24:07+00:00"
+            "time": "2023-11-06T10:25:41+00:00"
         },
         {
             "name": "doctrine/annotations",

@@ -8,11 +8,11 @@ use App\Dto\Income\Http\IncomeFilterQuery;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
-use App\Helper\DtoToEntityHelper;
 use App\Repository\IncomeRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
+use My\RestBundle\Helper\DtoToEntityHelper;
 
 class IncomeService
 {

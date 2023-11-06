@@ -12,7 +12,6 @@ use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
 use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,14 +34,10 @@ class DeleteIncomeController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'app_incomes_delete', methods: Request::METHOD_DELETE)]
-    public function delete(IncomeService $incomeService, Income $income): JsonResponse
+    public function delete(IncomeService $incomeService, Income $income): Response
     {
-        $incomeDeleted = $incomeService->delete($income);
+        $incomeService->delete($income);
 
-        return $this->apiResponse(
-            data: $incomeDeleted,
-            groups: [SerializationGroups::INCOME_DELETE],
-            status: Response::HTTP_NO_CONTENT,
-        );
+        return $this->createNoContentResponse();
     }
 }

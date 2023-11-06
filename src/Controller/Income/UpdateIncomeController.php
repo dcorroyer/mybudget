@@ -42,6 +42,6 @@ class UpdateIncomeController extends BaseRestController
     ): JsonResponse {
         $incomeUpdated = $incomeService->update($incomePayload, $income);
 
-        return $this->apiResponse(data: $incomeUpdated, groups: [SerializationGroups::INCOME_UPDATE]);
+        return $this->successResponse(data: $incomeUpdated, groups: [SerializationGroups::INCOME_UPDATE]);
     }
 }

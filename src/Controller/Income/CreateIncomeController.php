@@ -41,10 +41,8 @@ class CreateIncomeController extends BaseRestController
         IncomeService $incomeService,
         #[MapRequestPayload] IncomePayload $incomePayload
     ): JsonResponse {
-        $income = $incomeService->create($incomePayload);
-
         return $this->successResponse(
-            data: $income,
+            data: $incomeService->create($incomePayload),
             groups: [SerializationGroups::INCOME_CREATE],
             status: Response::HTTP_CREATED,
         );

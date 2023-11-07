@@ -15,4 +15,6 @@ final class SerializationGroups
     public const INCOME_GET = 'INCOME_GET';
 
     public const INCOME_LIST = 'INCOME_LIST';
+
+    public const USER_CREATE = 'USER_CREATE';
 }

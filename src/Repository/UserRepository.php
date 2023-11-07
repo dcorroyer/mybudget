@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\User;
@@ -25,17 +27,16 @@ class UserRepository extends AbstractEntityRepository implements PasswordUpgrade
         return User::class;
     }
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+        if (! $user instanceof User) {
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', User::class));
         }
 
         $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()
+            ->persist($user);
+        $this->getEntityManager()
+            ->flush();
     }
 }

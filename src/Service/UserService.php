@@ -9,12 +9,14 @@ use App\Dto\User\Response\RegisterResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use My\RestBundle\Helper\DtoToEntityHelper;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserService
 {
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly DtoToEntityHelper $dtoToEntityHelper,
+        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -25,6 +27,12 @@ class UserService
         /** @var User $user */
         $user = $this->dtoToEntityHelper->create($payload, $user);
 
+        $password = $this->passwordHasher->hashPassword(
+            $user,
+            $payload->getPassword(),
+        );
+
+        $user->setPassword($password);
         $this->userRepository->save($user, true);
 
         return (new RegisterResponse())

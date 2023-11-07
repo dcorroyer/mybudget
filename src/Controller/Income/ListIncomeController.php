@@ -41,8 +41,9 @@ class ListIncomeController extends BaseRestController
         #[MapQueryString] PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] IncomeFilterQuery $filter = null,
     ): JsonResponse {
-        $incomes = $incomeService->paginate($paginationQueryParams, $filter);
-
-        return $this->paginateResponse($incomes, [SerializationGroups::INCOME_LIST]);
+        return $this->paginateResponse(
+            $incomeService->paginate($paginationQueryParams, $filter),
+            [SerializationGroups::INCOME_LIST],
+        );
     }
 }

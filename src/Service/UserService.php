@@ -27,10 +27,7 @@ class UserService
         /** @var User $user */
         $user = $this->dtoToEntityHelper->create($payload, $user);
 
-        $password = $this->passwordHasher->hashPassword(
-            $user,
-            $payload->getPassword(),
-        );
+        $password = $this->passwordHasher->hashPassword($user, $payload->getPassword());
 
         $user->setPassword($password);
         $this->userRepository->save($user, true);

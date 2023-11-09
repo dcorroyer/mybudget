@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\Income;
 
+use App\Entity\User;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
@@ -34,6 +35,8 @@ class DeleteIncomeControllerTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
+
+        $this->client->loginUser(new User());
 
         $this->incomeService = $this->createMock(IncomeService::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);

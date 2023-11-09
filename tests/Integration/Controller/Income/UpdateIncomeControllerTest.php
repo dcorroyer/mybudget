@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Controller\Income;
 
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
+use App\Entity\User;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
@@ -36,6 +37,8 @@ class UpdateIncomeControllerTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
+
+        $this->client->loginUser(new User());
 
         $this->incomeService = $this->createMock(IncomeService::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);

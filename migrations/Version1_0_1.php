@@ -14,7 +14,7 @@ final class Version1_0_1 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'create expenses, expenses_lines and categories tables';
     }
 
     public function up(Schema $schema): void

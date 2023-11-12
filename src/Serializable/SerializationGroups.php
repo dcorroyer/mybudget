@@ -17,4 +17,14 @@ final class SerializationGroups
     public const INCOME_LIST = 'INCOME_LIST';
 
     public const USER_CREATE = 'USER_CREATE';
+
+    public const EXPENSE_CREATE = 'EXPENSE_CREATE';
+
+    public const EXPENSE_UPDATE = 'EXPENSE_UPDATE';
+
+    public const EXPENSE_DELETE = 'EXPENSE_DELETE';
+
+    public const EXPENSE_GET = 'EXPENSE_GET';
+
+    public const EXPENSE_LIST = 'EXPENSE_LIST';
 }

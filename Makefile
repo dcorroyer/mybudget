@@ -48,7 +48,8 @@ dbfixtures:
 dbrebuild:
 	docker compose run --rm php php bin/console d:d:d --force
 	docker compose run --rm php php bin/console d:d:c
-	docker compose run --rm php php bin/console d:s:u --force
+	docker compose run --rm php php bin/console d:m:m
+	docker compose run --rm php php bin/console doctrine:fixtures:load
 
 dbcreate-test:
 	docker compose run --rm php php bin/console --env=test doctrine:database:create

@@ -20,13 +20,15 @@ class ExpenseLine
     private string $name;
 
     #[ORM\Column]
-    private float $amount = 0;
+    private float $amount;
 
-    #[ORM\ManyToOne(inversedBy: 'expenseLines')]
-    private ?Expense $expense = null;
+//    #[ORM\ManyToOne(targetEntity: Category::class)]
+//    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
+//    private Category $category;
 
-    #[ORM\ManyToOne(inversedBy: 'expenseLines')]
-    private ?Category $category = null;
+    #[ORM\ManyToOne(targetEntity: Expense::class, inversedBy: 'expenseLines')]
+    #[ORM\JoinColumn(name: 'expense_id', referencedColumnName: 'id', nullable: false)]
+    private Expense $expense;
 
     public function getId(): int
     {
@@ -57,26 +59,26 @@ class ExpenseLine
         return $this;
     }
 
-    public function getExpense(): ?Expense
+//    public function getCategory(): Category
+//    {
+//        return $this->category;
+//    }
+//
+//    public function setCategory(Category $category): self
+//    {
+//        $this->category = $category;
+//
+//        return $this;
+//    }
+
+    public function getExpense(): Expense
     {
         return $this->expense;
     }
 
-    public function setExpense(?Expense $expense): self
+    public function setExpense(Expense $expense): self
     {
         $this->expense = $expense;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
 
         return $this;
     }

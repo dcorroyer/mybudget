@@ -9,6 +9,7 @@ use App\Repository\IncomeRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -18,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'incomes')]
 class Income
 {
+    use TimestampableTrait;
+
     #[Serializer\Groups([
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
@@ -43,6 +46,7 @@ class Income
         SerializationGroups::INCOME_DELETE,
     ])]
     #[Assert\NotBlank]
+    #[Assert\type('float')]
     #[ORM\Column]
     private float $amount = 0;
 

@@ -9,18 +9,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use My\RestBundle\Trait\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
 class Expense
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
     #[ORM\Column]
-    private float $amount;
+    private ?float $amount = 0;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
@@ -28,7 +31,7 @@ class Expense
     /**
      * @var Collection<int, ExpenseLine>
      */
-    #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class)]
+    #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class, cascade: ['persist'])]
     private Collection $expenseLines;
 
     public function __construct()
@@ -41,12 +44,12 @@ class Expense
         return $this->id;
     }
 
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
 
@@ -73,17 +76,17 @@ class Expense
         return $this->expenseLines;
     }
 
-    public function addExpenseLine(ExpenseLine $expenseLine): static
+    public function addExpenseLine(ExpenseLine $expenseLine): self
     {
-        if (! $this->expenseLines->contains($expenseLine)) {
-            $this->expenseLines->add($expenseLine);
+        if (!$this->expenseLines->contains($expenseLine)) {
+            $this->expenseLines[] = $expenseLine;
             $expenseLine->setExpense($this);
         }
 
         return $this;
     }
 
-    public function removeExpenseLine(ExpenseLine $expenseLine): static
+    public function removeExpenseLine(ExpenseLine $expenseLine): self
     {
         if ($this->expenseLines->removeElement($expenseLine)) {
             // set the owning side to null (unless already changed)
@@ -93,5 +96,18 @@ class Expense
         }
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    private function updateAmount(): void
+    {
+        $amount = 0;
+
+        foreach ($this->expenseLines as $expenseLine) {
+            $amount += $expenseLine->getAmount();
+        }
+
+        $this->setAmount($amount);
     }
 }

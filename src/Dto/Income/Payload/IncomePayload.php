@@ -17,7 +17,7 @@ class IncomePayload implements PayloadInterface
     private string $name;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private float $amount = 0;
+    private float $amount;
 
     #[Context(
         normalizationContext: [

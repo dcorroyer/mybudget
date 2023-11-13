@@ -76,38 +76,10 @@ class Expense
         return $this->expenseLines;
     }
 
-    public function addExpenseLine(ExpenseLine $expenseLine): self
+    public function setExpenseLines(Collection $expenseLines): self
     {
-        if (!$this->expenseLines->contains($expenseLine)) {
-            $this->expenseLines[] = $expenseLine;
-            $expenseLine->setExpense($this);
-        }
+        $this->expenseLines = $expenseLines;
 
         return $this;
-    }
-
-    public function removeExpenseLine(ExpenseLine $expenseLine): self
-    {
-        if ($this->expenseLines->removeElement($expenseLine)) {
-            // set the owning side to null (unless already changed)
-            if ($expenseLine->getExpense() === $this) {
-                $expenseLine->setExpense(null);
-            }
-        }
-
-        return $this;
-    }
-
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    private function updateAmount(): void
-    {
-        $amount = 0;
-
-        foreach ($this->expenseLines as $expenseLine) {
-            $amount += $expenseLine->getAmount();
-        }
-
-        $this->setAmount($amount);
     }
 }

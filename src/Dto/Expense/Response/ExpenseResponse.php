@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Dto\Expense\Response;
 
 use App\Serializable\SerializationGroups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
@@ -32,12 +30,7 @@ class ExpenseResponse implements PayloadInterface
     private \DateTimeInterface $date;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private Collection $expenseLines;
-
-    public function __construct()
-    {
-        $this->expenseLines = new ArrayCollection();
-    }
+    private array $expenseLines;
 
     public function getId(): int
     {
@@ -75,12 +68,12 @@ class ExpenseResponse implements PayloadInterface
         return $this;
     }
 
-    public function getExpenseLines(): Collection
+    public function getExpenseLines(): array
     {
         return $this->expenseLines;
     }
 
-    public function setExpenseLines(Collection $expenseLines): self
+    public function setExpenseLines(array $expenseLines): self
     {
         $this->expenseLines = $expenseLines;
 

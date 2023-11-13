@@ -43,8 +43,6 @@ class CreateExpenseController extends BaseRestController
     ): JsonResponse {
         $expense = $expenseService->create($expensePayload);
 
-        dd($expense);
-
         return $this->successResponse(
             data: $expense,
             groups: [SerializationGroups::EXPENSE_CREATE],

@@ -18,6 +18,7 @@ class Category
     #[ORM\Column]
     private int $id;
 
+    //TODO: ajouter assert unique
     #[ORM\Column(length: 255)]
     private string $name;
 

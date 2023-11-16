@@ -13,6 +13,7 @@ use My\RestBundle\Trait\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
+#[ORM\HasLifecycleCallbacks]
 class Expense
 {
     use TimestampableTrait;
@@ -54,6 +55,15 @@ class Expense
         $this->amount = $amount;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateAmount()
+    {
+        foreach ($this->expenseLines as $expenseLine) {
+            $this->amount += $expenseLine->getAmount();
+        }
     }
 
     public function getDate(): \DateTimeInterface

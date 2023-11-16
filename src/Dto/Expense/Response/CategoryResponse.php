@@ -8,19 +8,13 @@ use App\Serializable\SerializationGroups;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class ExpenseLineResponse implements ResponseInterface
+class CategoryResponse implements ResponseInterface
 {
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private int $id;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private string $name;
-
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private float $amount;
-
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private CategoryResponse $category;
 
     public function getId(): int
     {
@@ -42,30 +36,6 @@ class ExpenseLineResponse implements ResponseInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(float $amount): self
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getCategory(): CategoryResponse
-    {
-        return $this->category;
-    }
-
-    public function setCategory(CategoryResponse $category): self
-    {
-        $this->category = $category;
 
         return $this;
     }

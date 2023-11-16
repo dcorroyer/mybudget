@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto\Expense\Payload;
 
 use App\Serializable\SerializationGroups;
@@ -21,6 +23,9 @@ class ExpensePayload implements PayloadInterface
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private \DateTimeInterface $date;
 
+    /**
+     * @var array<int, ExpenseLinePayload>
+     */
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private array $expenseLines = [];
 

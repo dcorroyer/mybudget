@@ -29,7 +29,7 @@ class Expense
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<int, ExpenseLine>
+     * @var Collection<ExpenseLine>
      */
     #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class, cascade: ['persist'])]
     private Collection $expenseLines;
@@ -76,8 +76,11 @@ class Expense
         return $this->expenseLines;
     }
 
-    public function setExpenseLines(Collection $expenseLines): self
+    public function setExpenseLines(array|Collection $expenseLines): self
     {
+        if (is_array($expenseLines)) {
+            $expenseLines = new ArrayCollection($expenseLines);
+        }
         $this->expenseLines = $expenseLines;
 
         return $this;

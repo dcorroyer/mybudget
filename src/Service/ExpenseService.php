@@ -42,6 +42,6 @@ class ExpenseService
             ->setDate($expense->getDate())
             ->setAmount($expense->getAmount())
             ->setExpenseLines($expenseLinesResponse)
-            ;
+        ;
     }
 }

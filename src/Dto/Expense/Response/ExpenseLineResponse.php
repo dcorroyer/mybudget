@@ -6,10 +6,10 @@ namespace App\Dto\Expense\Response;
 
 use App\Dto\Expense\Payload\CategoryPayload;
 use App\Serializable\SerializationGroups;
-use My\RestBundle\Contract\PayloadInterface;
+use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class ExpenseLineResponse implements PayloadInterface
+class ExpenseLineResponse implements ResponseInterface
 {
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private int $id;
@@ -20,8 +20,8 @@ class ExpenseLineResponse implements PayloadInterface
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private float $amount;
 
-//    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-//    private CategoryPayload $category;
+    //    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
+    //    private CategoryPayload $category;
 
     public function getId(): int
     {
@@ -59,15 +59,15 @@ class ExpenseLineResponse implements PayloadInterface
         return $this;
     }
 
-//    public function getCategory(): CategoryPayload
-//    {
-//        return $this->category;
-//    }
-//
-//    public function setCategory(CategoryPayload $category): self
-//    {
-//        $this->category = $category;
-//
-//        return $this;
-//    }
+    //    public function getCategory(): CategoryPayload
+    //    {
+    //        return $this->category;
+    //    }
+    //
+    //    public function setCategory(CategoryPayload $category): self
+    //    {
+    //        $this->category = $category;
+    //
+    //        return $this;
+    //    }
 }

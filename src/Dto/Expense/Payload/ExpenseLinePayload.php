@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto\Expense\Payload;
 
 use App\Serializable\SerializationGroups;
@@ -14,8 +16,8 @@ class ExpenseLinePayload implements PayloadInterface
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private float $amount;
 
-//    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-//    private CategoryPayload $category;
+    //    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
+    //    private CategoryPayload $category;
 
     public function getName(): string
     {
@@ -41,15 +43,15 @@ class ExpenseLinePayload implements PayloadInterface
         return $this;
     }
 
-//    public function getCategory(): CategoryPayload
-//    {
-//        return $this->category;
-//    }
-//
-//    public function setCategory(CategoryPayload $category): self
-//    {
-//        $this->category = $category;
-//
-//        return $this;
-//    }
+    //    public function getCategory(): CategoryPayload
+    //    {
+    //        return $this->category;
+    //    }
+    //
+    //    public function setCategory(CategoryPayload $category): self
+    //    {
+    //        $this->category = $category;
+    //
+    //        return $this;
+    //    }
 }

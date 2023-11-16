@@ -6,12 +6,12 @@ namespace App\Dto\Income\Response;
 
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
-use My\RestBundle\Contract\PayloadInterface;
+use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-class IncomeResponse implements PayloadInterface
+class IncomeResponse implements ResponseInterface
 {
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private int $id;

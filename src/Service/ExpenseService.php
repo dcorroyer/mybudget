@@ -35,7 +35,7 @@ class ExpenseService
             ]);
 
             $category = ($existingCategory === null)
-                ? $this->categoryService->create($expenseLinePayload->getCategory(), true)
+                ? $this->categoryService->create($expenseLinePayload->getCategory())
                 : $existingCategory;
 
             $expenseLine = new ExpenseLine();

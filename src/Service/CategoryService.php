@@ -15,12 +15,12 @@ class CategoryService
     ) {
     }
 
-    public function create(CategoryPayload $payload, bool $flush): Category
+    public function create(CategoryPayload $payload): Category
     {
         $category = new Category();
         $category->setName($payload->getName());
 
-        $this->categoryRepository->save($category, $flush);
+        $this->categoryRepository->save($category, true);
 
         return $category;
     }

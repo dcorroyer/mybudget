@@ -45,6 +45,13 @@ class Expense
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getAmount(): ?float
     {
         return $this->amount;
@@ -59,7 +66,7 @@ class Expense
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function updateAmount()
+    public function updateAmount(): void
     {
         foreach ($this->expenseLines as $expenseLine) {
             $this->amount += $expenseLine->getAmount();
@@ -88,9 +95,10 @@ class Expense
 
     public function setExpenseLines(array|Collection $expenseLines): self
     {
-        if (is_array($expenseLines)) {
+        if (! $expenseLines instanceof Collection) {
             $expenseLines = new ArrayCollection($expenseLines);
         }
+
         $this->expenseLines = $expenseLines;
 
         return $this;

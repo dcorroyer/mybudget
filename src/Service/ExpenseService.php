@@ -47,8 +47,11 @@ class ExpenseService
         }
 
         $expense = new Expense();
-        $expense->setDate($payload->getDate())
-            ->setExpenseLines($expenseLines);
+        $expense->setDate($payload->getDate());
+
+        foreach ($expenseLines as $expenseLine) {
+            $expense->addExpenseLine($expenseLine);
+        }
 
         $this->expenseRepository->save($expense, true);
 

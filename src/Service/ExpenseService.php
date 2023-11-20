@@ -5,27 +5,50 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Expense\Payload\ExpensePayload;
+use App\Dto\Expense\Response\CategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
 use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\Expense;
+use App\Entity\ExpenseLine;
+use App\Repository\CategoryRepository;
 use App\Repository\ExpenseRepository;
-use My\RestBundle\Helper\DtoToEntityHelper;
 
 class ExpenseService
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
-        private readonly DtoToEntityHelper $dtoToEntityHelper,
+        private readonly CategoryRepository $categoryRepository,
+        private readonly CategoryService $categoryService,
     ) {
     }
 
     public function create(ExpensePayload $payload): ExpenseResponse
     {
-        $expense = new Expense();
+        $expenseLines = [];
         $expenseLinesResponse = [];
 
-        /** @var Expense $expense */
-        $expense = $this->dtoToEntityHelper->create($payload, $expense);
+        foreach ($payload->getExpenseLines() as $expenseLinePayload) {
+            $categoryName = $expenseLinePayload->getCategory()
+                ->getName();
+            $existingCategory = $this->categoryRepository->findOneBy([
+                'name' => $categoryName,
+            ]);
+
+            $category = ($existingCategory === null)
+                ? $this->categoryService->create($expenseLinePayload->getCategory())
+                : $existingCategory;
+
+            $expenseLine = new ExpenseLine();
+            $expenseLine->setName($expenseLinePayload->getName())
+                ->setAmount($expenseLinePayload->getAmount())
+                ->setCategory($category);
+
+            $expenseLines[] = $expenseLine;
+        }
+
+        $expense = new Expense();
+        $expense->setDate($payload->getDate())
+            ->setExpenseLines($expenseLines);
 
         $this->expenseRepository->save($expense, true);
 
@@ -34,6 +57,9 @@ class ExpenseService
                 ->setId($expenseLine->getId())
                 ->setName($expenseLine->getName())
                 ->setAmount($expenseLine->getAmount())
+                ->setCategory((new CategoryResponse())
+                    ->setId($expenseLine->getCategory()->getId())
+                    ->setName($expenseLine->getCategory()->getName()))
             ;
         }
 
@@ -42,6 +68,6 @@ class ExpenseService
             ->setDate($expense->getDate())
             ->setAmount($expense->getAmount())
             ->setExpenseLines($expenseLinesResponse)
-            ;
+        ;
     }
 }

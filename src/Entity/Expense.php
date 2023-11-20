@@ -13,6 +13,7 @@ use My\RestBundle\Trait\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
+#[ORM\HasLifecycleCallbacks]
 class Expense
 {
     use TimestampableTrait;
@@ -29,7 +30,7 @@ class Expense
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<int, ExpenseLine>
+     * @var Collection<ExpenseLine>
      */
     #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class, cascade: ['persist'])]
     private Collection $expenseLines;
@@ -44,6 +45,13 @@ class Expense
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getAmount(): ?float
     {
         return $this->amount;
@@ -54,6 +62,15 @@ class Expense
         $this->amount = $amount;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateAmount(): void
+    {
+        foreach ($this->expenseLines as $expenseLine) {
+            $this->amount += $expenseLine->getAmount();
+        }
     }
 
     public function getDate(): \DateTimeInterface
@@ -76,9 +93,14 @@ class Expense
         return $this->expenseLines;
     }
 
-    public function setExpenseLines(Collection $expenseLines): self
+    /**
+     * @param array<ExpenseLine>|Collection<int, ExpenseLine> $expenseLines
+     */
+    public function setExpenseLines(array|Collection $expenseLines): self
     {
-        $this->expenseLines = $expenseLines;
+        $this->expenseLines = $expenseLines instanceof Collection
+            ? $expenseLines
+            : new ArrayCollection($expenseLines);
 
         return $this;
     }

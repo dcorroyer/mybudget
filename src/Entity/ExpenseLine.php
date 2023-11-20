@@ -22,9 +22,9 @@ class ExpenseLine
     #[ORM\Column]
     private float $amount;
 
-//    #[ORM\ManyToOne(targetEntity: Category::class)]
-//    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
-//    private Category $category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
+    private Category $category;
 
     #[ORM\ManyToOne(targetEntity: Expense::class, inversedBy: 'expenseLines')]
     #[ORM\JoinColumn(name: 'expense_id', referencedColumnName: 'id', nullable: false)]
@@ -59,17 +59,17 @@ class ExpenseLine
         return $this;
     }
 
-//    public function getCategory(): Category
-//    {
-//        return $this->category;
-//    }
-//
-//    public function setCategory(Category $category): self
-//    {
-//        $this->category = $category;
-//
-//        return $this;
-//    }
+    public function getCategory(): Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
 
     public function getExpense(): Expense
     {

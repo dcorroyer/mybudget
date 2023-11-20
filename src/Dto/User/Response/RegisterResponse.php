@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Dto\User\Response;
 
 use App\Serializable\SerializationGroups;
-use My\RestBundle\Contract\PayloadInterface;
+use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class RegisterResponse implements PayloadInterface
+class RegisterResponse implements ResponseInterface
 {
     #[Serializer\Groups([SerializationGroups::USER_CREATE])]
     private int $id;

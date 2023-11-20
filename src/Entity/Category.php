@@ -7,10 +7,11 @@ namespace App\Entity;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'categories')]
-#[UniqueEntity(fields: ['name'], message: 'There is already a category with this name')]
+#[UniqueEntity(fields: 'name', message: 'There is already a category with this name')]
 class Category
 {
     #[ORM\Id]
@@ -18,7 +19,7 @@ class Category
     #[ORM\Column]
     private int $id;
 
-    //TODO: ajouter assert unique
+    #[Assert\Unique]
     #[ORM\Column(length: 255)]
     private string $name;
 

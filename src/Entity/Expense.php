@@ -93,13 +93,14 @@ class Expense
         return $this->expenseLines;
     }
 
+    /**
+     * @param array<ExpenseLine>|Collection<int, ExpenseLine> $expenseLines
+     */
     public function setExpenseLines(array|Collection $expenseLines): self
     {
-        if (! $expenseLines instanceof Collection) {
-            $expenseLines = new ArrayCollection($expenseLines);
-        }
-
-        $this->expenseLines = $expenseLines;
+        $this->expenseLines = $expenseLines instanceof Collection
+            ? $expenseLines
+            : new ArrayCollection($expenseLines);
 
         return $this;
     }

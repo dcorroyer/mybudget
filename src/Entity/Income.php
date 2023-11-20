@@ -46,7 +46,7 @@ class Income
         SerializationGroups::INCOME_DELETE,
     ])]
     #[Assert\NotBlank]
-    #[Assert\type('float')]
+    #[Assert\Type('float')]
     #[ORM\Column]
     private float $amount = 0;
 

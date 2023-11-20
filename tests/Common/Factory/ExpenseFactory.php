@@ -45,9 +45,15 @@ final class ExpenseFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'id' => self::faker()->randomNumber(),
             'amount' => self::faker()->randomFloat(),
             'date' => self::faker()->dateTime(),
-            'expenseLines' => ExpenseLineFactory::new()->many(1, 5)->create(),
+            'expenseLines' => ExpenseLineFactory::new([
+                'expense' => $this,
+                'category' => CategoryFactory::new()->withoutPersisting(),
+            ])->withoutPersisting()
+                ->many(1, 5)
+                ->create(),
         ];
     }
 

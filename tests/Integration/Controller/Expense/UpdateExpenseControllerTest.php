@@ -50,7 +50,7 @@ class UpdateExpenseControllerTest extends WebTestCase
 
     #[TestDox('When you call PUT /api/expenses/{id}, it should update and return the expense')]
     #[Test]
-    public function update_WhenDataOk_ReturnsExpense(): void
+    public function updateExpenseController_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();

@@ -18,14 +18,14 @@ class ExpenseLinePayload implements PayloadInterface
     use AmountPayloadTrait;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private ?CategoryPayload $category;
+    private ?ExpenseLineCategoryPayload $category;
 
-    public function getCategory(): ?CategoryPayload
+    public function getCategory(): ?ExpenseLineCategoryPayload
     {
         return $this->category;
     }
 
-    public function setCategory(?CategoryPayload $category): self
+    public function setCategory(?ExpenseLineCategoryPayload $category): self
     {
         $this->category = $category;
 

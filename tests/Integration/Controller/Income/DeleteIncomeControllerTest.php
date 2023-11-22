@@ -36,7 +36,7 @@ class DeleteIncomeControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $this->client->loginUser(new User());
+        // $this->client->loginUser(new User());
 
         $this->incomeService = $this->createMock(IncomeService::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);

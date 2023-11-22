@@ -47,7 +47,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When calling create income, it should create and return a new income')]
     #[Test]
-    public function create_WhenDataOk_ReturnsIncome()
+    public function createIncomeService_WhenDataOk_ReturnsIncome()
     {
         // ARRANGE
         $incomePayload = new IncomePayload();
@@ -72,7 +72,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When calling update income, it should update and return the income updated')]
     #[Test]
-    public function update_WhenDataOk_ReturnsIncomeUpdated()
+    public function updateIncomeService_WhenDataOk_ReturnsIncomeUpdated()
     {
         // ARRANGE
         $incomePayload = new IncomePayload();
@@ -97,7 +97,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When calling delete income, it should delete the income')]
     #[Test]
-    public function delete_WhenDataOk_ReturnsNoContent()
+    public function deleteIncomeService_WhenDataOk_ReturnsNoContent()
     {
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();
@@ -112,7 +112,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When you call paginate, it should return the incomes list')]
     #[Test]
-    public function paginate_WhenDataOk_ReturnsIncomesList()
+    public function paginateIncomeService_WhenDataOk_ReturnsIncomesList()
     {
         // ARRANGE
         $incomes = IncomeFactory::new()->withoutPersisting()->createMany(20);

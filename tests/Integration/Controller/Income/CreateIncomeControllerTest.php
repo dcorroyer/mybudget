@@ -48,7 +48,7 @@ class CreateIncomeControllerTest extends WebTestCase
 
     #[TestDox('When you call POST /api/incomes, it should create and return the income')]
     #[Test]
-    public function create_WhenDataOk_ReturnsIncome(): void
+    public function createIncomeController_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();

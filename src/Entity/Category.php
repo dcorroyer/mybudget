@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -14,11 +16,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: 'name', message: 'There is already a category with this name')]
 class Category
 {
+    #[Serializer\Groups([
+        SerializationGroups::EXPENSE_GET,
+        SerializationGroups::EXPENSE_LIST,
+        SerializationGroups::EXPENSE_DELETE,
+    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
+    #[Serializer\Groups([
+        SerializationGroups::EXPENSE_GET,
+        SerializationGroups::EXPENSE_LIST,
+        SerializationGroups::EXPENSE_DELETE,
+    ])]
+    #[Assert\NotBlank]
     #[Assert\Unique]
     #[ORM\Column(length: 255)]
     private string $name;

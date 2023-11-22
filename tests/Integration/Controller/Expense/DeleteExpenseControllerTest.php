@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\Income;
+namespace App\Tests\Integration\Controller\Expense;
 
 use App\Entity\User;
-use App\Repository\IncomeRepository;
-use App\Service\IncomeService;
-use App\Tests\Common\Factory\IncomeFactory;
+use App\Repository\ExpenseRepository;
+use App\Service\ExpenseService;
+use App\Tests\Common\Factory\ExpenseFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -17,19 +17,19 @@ use Zenstruck\Foundry\Test\Factories;
 
 #[Group('integration')]
 #[Group('controller')]
-#[Group('income')]
-#[Group('income-controller')]
-class DeleteIncomeControllerTest extends WebTestCase
+#[Group('expense')]
+#[Group('expense-controller')]
+class DeleteExpenseControllerTest extends WebTestCase
 {
     use Factories;
 
-    private const API_ENDPOINT = '/api/incomes';
+    private const API_ENDPOINT = '/api/expenses';
 
     private KernelBrowser $client;
 
-    private IncomeService $incomeService;
+    private ExpenseService $expenseService;
 
-    private IncomeRepository $incomeRepository;
+    private ExpenseRepository $expenseRepository;
 
     protected function setUp(): void
     {
@@ -38,33 +38,33 @@ class DeleteIncomeControllerTest extends WebTestCase
 
         $this->client->loginUser(new User());
 
-        $this->incomeService = $this->createMock(IncomeService::class);
-        $this->incomeRepository = $this->createMock(IncomeRepository::class);
+        $this->expenseService = $this->createMock(ExpenseService::class);
+        $this->expenseRepository = $this->createMock(ExpenseRepository::class);
 
         $container = self::getContainer();
-        $container->set(IncomeService::class, $this->incomeService);
-        $container->set(IncomeRepository::class, $this->incomeRepository);
+        $container->set(ExpenseService::class, $this->expenseService);
+        $container->set(ExpenseRepository::class, $this->expenseRepository);
     }
 
-    #[TestDox('When you call DELETE /api/incomes/{id}, it should update and return NoContent')]
+    #[TestDox('When you call DELETE /api/expenses/{id}, it should update and return NoContent')]
     #[Test]
-    public function deleteIncomeController_WhenDataOk_ReturnsNoContent(): void
+    public function deleteExpenseController_WhenDataOk_ReturnsNoContent(): void
     {
         // ARRANGE
-        $income = IncomeFactory::new()->withoutPersisting()->create()->object();
+        $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
 
-        $this->incomeService
+        $this->expenseService
             ->expects($this->once())
             ->method('delete')
-            ->willReturn($income);
+            ->willReturn($expense);
 
-        $this->incomeRepository
+        $this->expenseRepository
             ->expects($this->once())
             ->method('find')
-            ->willReturn($income);
+            ->willReturn($expense);
 
         // ACT
-        $endpoint = self::API_ENDPOINT . '/' . $income->getId();
+        $endpoint = self::API_ENDPOINT . '/' . $expense->getId();
         $this->client->request(
             method: 'DELETE',
             uri: $endpoint,

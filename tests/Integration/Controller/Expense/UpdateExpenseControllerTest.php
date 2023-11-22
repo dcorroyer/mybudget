@@ -21,7 +21,7 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense')]
 #[Group('expense-controller')]
-class CreateExpenseControllerTest extends WebTestCase
+class UpdateExpenseControllerTest extends WebTestCase
 {
     use Factories;
 
@@ -31,6 +31,8 @@ class CreateExpenseControllerTest extends WebTestCase
 
     private ExpenseService $expenseService;
 
+    private ExpenseRepository $expenseRepository;
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -39,37 +41,43 @@ class CreateExpenseControllerTest extends WebTestCase
         $this->client->loginUser(new User());
 
         $this->expenseService = $this->createMock(ExpenseService::class);
-        $expenseRepository = $this->createMock(ExpenseRepository::class);
+        $this->expenseRepository = $this->createMock(ExpenseRepository::class);
 
         $container = self::getContainer();
         $container->set(ExpenseService::class, $this->expenseService);
-        $container->set(ExpenseRepository::class, $expenseRepository);
+        $container->set(ExpenseRepository::class, $this->expenseRepository);
     }
 
-    #[TestDox('When you call POST /api/expenses, it should create and return the expense')]
+    #[TestDox('When you call PUT /api/expenses/{id}, it should update and return the expense')]
     #[Test]
-    public function createExpenseController_WhenDataOk_ReturnsExpense(): void
+    public function updateExpenseController_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
 
         $payload = (new ExpensePayload())
-            ->setDate($expense->getDate())
+            ->setDate(new \DateTime('now'))
             ->setExpenseLines($expense->getExpenseLines()->toArray());
 
         $expenseResponse = (new ExpenseResponse())
-            ->setId($expense->getId());
+            ->setId($expense->getId())
+            ->setDate($payload->getDate());
 
         $this->expenseService
             ->expects($this->once())
-            ->method('create')
+            ->method('update')
             ->willReturn($expenseResponse);
+
+        $this->expenseRepository
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn($expense);
 
         // ACT
         $endpoint = self::API_ENDPOINT;
         $this->client->request(
-            method: 'POST',
-            uri: $endpoint,
+            method: 'PUT',
+            uri: $endpoint . '/' . $expense->getId(),
             server: [
                 'CONTENT_TYPE' => 'application/json',
             ],
@@ -82,5 +90,6 @@ class CreateExpenseControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
         $this->assertEquals($expenseResponse->getId(), $data['id']);
+        $this->assertEquals($payload->getDate()->format('Y-m-d'), $data['date']);
     }
 }

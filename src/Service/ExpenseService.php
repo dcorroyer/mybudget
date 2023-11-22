@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Expense\Http\ExpenseFilterQuery;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\CategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
@@ -11,12 +12,17 @@ use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\Expense;
 use App\Entity\ExpenseLine;
 use App\Repository\CategoryRepository;
+use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
+use Doctrine\Common\Collections\Criteria;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use My\RestBundle\Dto\PaginationQueryParams;
 
 class ExpenseService
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
+        private readonly ExpenseLineRepository $expenseLineRepository,
         private readonly CategoryRepository $categoryRepository,
         private readonly CategoryService $categoryService,
     ) {
@@ -24,21 +30,49 @@ class ExpenseService
 
     public function create(ExpensePayload $payload): ExpenseResponse
     {
+        $expense = new Expense();
+
+        return $this->updateOrCreateExpense($payload, $expense);
+    }
+
+    public function update(ExpensePayload $payload, Expense $expense): ExpenseResponse
+    {
+        return $this->updateOrCreateExpense($payload, $expense);
+    }
+
+    public function delete(Expense $expense): Expense
+    {
+        $this->expenseRepository->delete($expense);
+
+        return $expense;
+    }
+
+    public function paginate(
+        PaginationQueryParams $paginationQueryParams = null,
+        ExpenseFilterQuery $filter = null
+    ): SlidingPagination {
+        return $this->expenseRepository->paginate($paginationQueryParams, $filter, Criteria::create());
+    }
+
+    private function updateOrCreateExpense(ExpensePayload $payload, Expense $expense): ExpenseResponse
+    {
         $expenseLines = [];
         $expenseLinesResponse = [];
 
         foreach ($payload->getExpenseLines() as $expenseLinePayload) {
-            $categoryName = $expenseLinePayload->getCategory()
-                ->getName();
-            $existingCategory = $this->categoryRepository->findOneBy([
-                'name' => $categoryName,
-            ]);
+            $category = $expenseLinePayload->getCategory()
+                ->getId() !== null
+                ? $this->categoryRepository->find($expenseLinePayload->getCategory()->getId())
+                : $this->categoryService->create($expenseLinePayload->getCategory());
 
-            $category = ($existingCategory === null)
-                ? $this->categoryService->create($expenseLinePayload->getCategory())
-                : $existingCategory;
+            if ($category === null) {
+                throw new \InvalidArgumentException('Category not found');
+            }
 
-            $expenseLine = new ExpenseLine();
+            $expenseLine = $expenseLinePayload->getId() !== null
+                ? $this->expenseLineRepository->find($expenseLinePayload->getId())
+                : new ExpenseLine();
+
             $expenseLine->setName($expenseLinePayload->getName())
                 ->setAmount($expenseLinePayload->getAmount())
                 ->setCategory($category);
@@ -46,9 +80,11 @@ class ExpenseService
             $expenseLines[] = $expenseLine;
         }
 
-        $expense = new Expense();
-        $expense->setDate($payload->getDate())
-            ->setExpenseLines($expenseLines);
+        $expense->setDate($payload->getDate());
+
+        foreach ($expenseLines as $expenseLine) {
+            $expense->addExpenseLine($expenseLine);
+        }
 
         $this->expenseRepository->save($expense, true);
 

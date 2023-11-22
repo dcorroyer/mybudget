@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\Expense;
 
-use App\Dto\Expense\Payload\ExpensePayload;
-use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\User;
 use App\Repository\ExpenseRepository;
 use App\Service\ExpenseService;
 use App\Tests\Common\Factory\ExpenseFactory;
+use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -21,7 +20,7 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense')]
 #[Group('expense-controller')]
-class CreateExpenseControllerTest extends WebTestCase
+class ListExpenseControllerTest extends WebTestCase
 {
     use Factories;
 
@@ -46,41 +45,30 @@ class CreateExpenseControllerTest extends WebTestCase
         $container->set(ExpenseRepository::class, $expenseRepository);
     }
 
-    #[TestDox('When you call POST /api/expenses, it should create and return the expense')]
+    #[TestDox('When you call GET /api/expenses, it should return the expenses list')]
     #[Test]
-    public function createExpenseController_WhenDataOk_ReturnsExpense(): void
+    public function listExpenseController_WhenDataOk_ReturnsExpenses(): void
     {
         // ARRANGE
-        $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
-
-        $payload = (new ExpensePayload())
-            ->setDate($expense->getDate())
-            ->setExpenseLines($expense->getExpenseLines()->toArray());
-
-        $expenseResponse = (new ExpenseResponse())
-            ->setId($expense->getId());
+        $expenses = ExpenseFactory::new()->withoutPersisting()->createMany(20);
+        $pagination = PaginationTestHelper::getPagination($expenses);
 
         $this->expenseService
             ->expects($this->once())
-            ->method('create')
-            ->willReturn($expenseResponse);
+            ->method('paginate')
+            ->willReturn($pagination);
+
+        $endpoint = self::API_ENDPOINT;
 
         // ACT
-        $endpoint = self::API_ENDPOINT;
-        $this->client->request(
-            method: 'POST',
-            uri: $endpoint,
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode($payload)
-        );
+        $this->client->request(method: 'GET', uri: $endpoint, server: [
+            'CONTENT_TYPE' => 'application/json',
+        ]);
         $content = json_decode($this->client->getResponse()->getContent(), true);
-        $data = $content['data'] ?? [];
 
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($expenseResponse->getId(), $data['id']);
+        $this->assertCount(20, $content['data']);
     }
 }

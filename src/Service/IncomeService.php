@@ -31,13 +31,7 @@ class IncomeService
 
         $this->incomeRepository->save($income, true);
 
-        return (new IncomeResponse())
-            ->setId($income->getId())
-            ->setName($income->getName())
-            ->setAmount($income->getAmount())
-            ->setDate($income->getDate())
-            ->setType($income->getType())
-        ;
+        return $this->createIncomeResponse($income);
     }
 
     public function update(IncomePayload $payload, Income $income): IncomeResponse
@@ -47,13 +41,7 @@ class IncomeService
 
         $this->incomeRepository->save($income, true);
 
-        return (new IncomeResponse())
-            ->setId($income->getId())
-            ->setName($income->getName())
-            ->setAmount($income->getAmount())
-            ->setDate($income->getDate())
-            ->setType($income->getType())
-        ;
+        return $this->createIncomeResponse($income);
     }
 
     public function delete(Income $income): Income
@@ -68,5 +56,15 @@ class IncomeService
         IncomeFilterQuery $filter = null
     ): SlidingPagination {
         return $this->incomeRepository->paginate($paginationQueryParams, $filter, Criteria::create());
+    }
+
+    private function createIncomeResponse(Income $income): IncomeResponse
+    {
+        return (new IncomeResponse())
+            ->setId($income->getId())
+            ->setName($income->getName())
+            ->setAmount($income->getAmount())
+            ->setDate($income->getDate())
+            ->setType($income->getType());
     }
 }

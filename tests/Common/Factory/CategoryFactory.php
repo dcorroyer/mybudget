@@ -45,6 +45,7 @@ final class CategoryFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'id' => self::faker()->randomDigit(),
             'name' => self::faker()->text(25),
         ];
     }

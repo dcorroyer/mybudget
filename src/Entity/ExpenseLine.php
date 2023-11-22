@@ -48,9 +48,9 @@ class ExpenseLine
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
     ])]
-    #[ORM\ManyToOne(targetEntity: Category::class, fetch: 'EAGER')]
-    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
-    private Category $category;
+    #[ORM\ManyToOne(targetEntity: ExpenseLineCategory::class, fetch: 'EAGER')]
+    #[ORM\JoinColumn(name: 'expense_line_category_id', referencedColumnName: 'id', nullable: false)]
+    private ExpenseLineCategory $category;
 
     #[ORM\ManyToOne(targetEntity: Expense::class, inversedBy: 'expenseLines')]
     #[ORM\JoinColumn(name: 'expense_id', referencedColumnName: 'id', nullable: false)]
@@ -92,12 +92,12 @@ class ExpenseLine
         return $this;
     }
 
-    public function getCategory(): Category
+    public function getCategory(): ExpenseLineCategory
     {
         return $this->category;
     }
 
-    public function setCategory(Category $category): self
+    public function setCategory(ExpenseLineCategory $category): self
     {
         $this->category = $category;
 

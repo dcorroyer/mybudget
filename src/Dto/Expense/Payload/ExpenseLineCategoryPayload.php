@@ -8,7 +8,7 @@ use App\Trait\Payload\IdPayloadTrait;
 use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 
-class CategoryPayload implements PayloadInterface
+class ExpenseLineCategoryPayload implements PayloadInterface
 {
     use IdPayloadTrait;
     use NamePayloadTrait;

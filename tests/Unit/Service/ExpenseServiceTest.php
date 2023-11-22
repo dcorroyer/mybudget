@@ -7,10 +7,10 @@ namespace App\Tests\Unit\Service;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\Expense;
-use App\Repository\ExpenseLineCategoryRepository;
+use App\Repository\ExpenseCategoryRepository;
 use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
-use App\Service\ExpenseLineCategoryService;
+use App\Service\ExpenseCategoryService;
 use App\Service\ExpenseService;
 use App\Tests\Common\Factory\ExpenseFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -41,14 +41,14 @@ class ExpenseServiceTest extends TestCase
 
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
         $expenseLineRepository = $this->createMock(ExpenseLineRepository::class);
-        $expenseLineCategoryRepository = $this->createMock(ExpenseLineCategoryRepository::class);
-        $expenseLineCategoryService = $this->createMock(ExpenseLineCategoryService::class);
+        $expenseCategoryRepository = $this->createMock(ExpenseCategoryRepository::class);
+        $expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
 
         $this->expenseService = new ExpenseService(
             $this->expenseRepository,
             $expenseLineRepository,
-            $expenseLineCategoryRepository,
-            $expenseLineCategoryService
+            $expenseCategoryRepository,
+            $expenseCategoryService
         );
     }
 

@@ -8,7 +8,7 @@ use App\Trait\Response\IdResponseTrait;
 use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 
-class ExpenseLineCategoryResponse implements ResponseInterface
+class ExpenseCategoryResponse implements ResponseInterface
 {
     use IdResponseTrait;
     use NameResponseTrait;

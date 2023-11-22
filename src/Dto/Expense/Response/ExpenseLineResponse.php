@@ -18,14 +18,14 @@ class ExpenseLineResponse implements ResponseInterface
     use AmountResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private ExpenseLineCategoryResponse $category;
+    private ExpenseCategoryResponse $category;
 
-    public function getCategory(): ExpenseLineCategoryResponse
+    public function getCategory(): ExpenseCategoryResponse
     {
         return $this->category;
     }
 
-    public function setCategory(ExpenseLineCategoryResponse $category): self
+    public function setCategory(ExpenseCategoryResponse $category): self
     {
         $this->category = $category;
 

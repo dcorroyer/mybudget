@@ -45,6 +45,7 @@ final class ExpenseLineFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'id' => self::faker()->randomDigit(),
             'amount' => self::faker()->randomFloat(),
             'name' => self::faker()->text(25),
         ];

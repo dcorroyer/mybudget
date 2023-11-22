@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\Expense;
 
+use App\Dto\Expense\Payload\ExpensePayload;
+use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\User;
 use App\Repository\ExpenseRepository;
+use App\Service\ExpenseService;
 use App\Tests\Common\Factory\ExpenseFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,13 +21,15 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense')]
 #[Group('expense-controller')]
-class GetExpenseControllerTest extends WebTestCase
+class UpdateExpenseControllerTest extends WebTestCase
 {
     use Factories;
 
     private const API_ENDPOINT = '/api/expenses';
 
     private KernelBrowser $client;
+
+    private ExpenseService $expenseService;
 
     private ExpenseRepository $expenseRepository;
 
@@ -35,38 +40,56 @@ class GetExpenseControllerTest extends WebTestCase
 
         $this->client->loginUser(new User());
 
+        $this->expenseService = $this->createMock(ExpenseService::class);
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
 
         $container = self::getContainer();
+        $container->set(ExpenseService::class, $this->expenseService);
         $container->set(ExpenseRepository::class, $this->expenseRepository);
     }
 
-    #[TestDox('When you call GET /api/expenses/{id}, it should return the expense')]
+    #[TestDox('When you call PUT /api/expenses/{id}, it should update and return the expense')]
     #[Test]
-    public function get_WhenDataOk_ReturnsExpense(): void
+    public function update_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
+
+        $payload = (new ExpensePayload())
+            ->setDate(new \DateTime('now'))
+            ->setExpenseLines($expense->getExpenseLines()->toArray());
+
+        $expenseResponse = (new ExpenseResponse())
+            ->setId($expense->getId())
+            ->setDate($payload->getDate());
+
+        $this->expenseService
+            ->expects($this->once())
+            ->method('update')
+            ->willReturn($expenseResponse);
 
         $this->expenseRepository
             ->expects($this->once())
             ->method('find')
             ->willReturn($expense);
 
-        $endpoint = self::API_ENDPOINT . '/' . $expense->getId();
-
         // ACT
-        $this->client->request(method: 'GET', uri: $endpoint, server: [
-            'CONTENT_TYPE' => 'application/json',
-        ]);
+        $endpoint = self::API_ENDPOINT;
+        $this->client->request(
+            method: 'PUT',
+            uri: $endpoint . '/' . $expense->getId(),
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($payload)
+        );
         $content = json_decode($this->client->getResponse()->getContent(), true);
         $data = $content['data'] ?? [];
 
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($expense->getId(), $data['id']);
-        $this->assertEquals($expense->getAmount(), $data['amount']);
-        $this->assertEquals($expense->getDate()->format('Y-m-d'), $data['date']);
+        $this->assertEquals($expenseResponse->getId(), $data['id']);
+        $this->assertEquals($payload->getDate()->format('Y-m-d'), $data['date']);
     }
 }

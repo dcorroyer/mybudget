@@ -36,6 +36,13 @@ class ExpenseService
         return $this->updateOrCreateExpense($payload, $expense);
     }
 
+    public function delete(Expense $expense): Expense
+    {
+        $this->expenseRepository->delete($expense);
+
+        return $expense;
+    }
+
     private function updateOrCreateExpense(ExpensePayload $payload, Expense $expense): ExpenseResponse
     {
         $expenseLines = [];

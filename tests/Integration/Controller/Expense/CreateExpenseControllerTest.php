@@ -48,7 +48,7 @@ class CreateExpenseControllerTest extends WebTestCase
 
     #[TestDox('When you call POST /api/expenses, it should create and return the expense')]
     #[Test]
-    public function create_WhenDataOk_ReturnsExpense(): void
+    public function createExpenseController_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();

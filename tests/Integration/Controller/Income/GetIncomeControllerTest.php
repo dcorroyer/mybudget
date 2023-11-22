@@ -46,7 +46,7 @@ class GetIncomeControllerTest extends WebTestCase
 
     #[TestDox('When you call GET /api/incomes/{id}, it should return the income')]
     #[Test]
-    public function get_WhenDataOk_ReturnsIncome(): void
+    public function getIncomeController_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();

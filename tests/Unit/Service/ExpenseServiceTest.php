@@ -52,7 +52,7 @@ class ExpenseServiceTest extends TestCase
 
     #[TestDox('When calling create income, it should create and return a new expense')]
     #[Test]
-    public function create_WhenDataOk_ReturnsExpense()
+    public function createExpenseService_WhenDataOk_ReturnsExpense()
     {
         // ARRANGE
         $expense = ExpenseFactory::new([
@@ -82,7 +82,7 @@ class ExpenseServiceTest extends TestCase
 
     #[TestDox('When calling update income, it should update and return the expense')]
     #[Test]
-    public function update_WhenDataOk_ReturnsExpense()
+    public function updateExpenseService_WhenDataOk_ReturnsExpense()
     {
         // ARRANGE
         $expense = ExpenseFactory::new([
@@ -108,5 +108,20 @@ class ExpenseServiceTest extends TestCase
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
         $this->assertEquals($expensePayload->getDate(), $expenseResponse->getDate());
+    }
+
+    #[TestDox('When calling delete income, it should delete the income')]
+    #[Test]
+    public function deleteExpenseService_WhenDataOk_ReturnsNoContent()
+    {
+        // ARRANGE
+        $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
+
+        // ACT
+        $expenseResponse = $this->expenseService->delete($expense);
+
+        // ASSERT
+        $this->assertInstanceOf(Expense::class, $expense);
+        $this->assertEquals($expense->getId(), $expenseResponse->getId());
     }
 }

@@ -50,7 +50,7 @@ class UpdateIncomeControllerTest extends WebTestCase
 
     #[TestDox('When you call PUT /api/incomes/{id}, it should update and return the income')]
     #[Test]
-    public function update_WhenDataOk_ReturnsIncome(): void
+    public function updateIncomeController_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();

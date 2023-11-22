@@ -43,7 +43,7 @@ class GetExpenseControllerTest extends WebTestCase
 
     #[TestDox('When you call GET /api/expenses/{id}, it should return the expense')]
     #[Test]
-    public function get_WhenDataOk_ReturnsExpense(): void
+    public function getExpenseController_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();

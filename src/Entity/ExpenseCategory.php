@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ExpenseLineCategoryRepository;
+use App\Repository\ExpenseCategoryRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ExpenseLineCategoryRepository::class)]
+#[ORM\Entity(repositoryClass: ExpenseCategoryRepository::class)]
 #[ORM\Table(name: 'expense_line_categories')]
 #[UniqueEntity(fields: 'name', message: 'There is already an expense line category with this name')]
-class ExpenseLineCategory
+class ExpenseCategory
 {
     #[Serializer\Groups([
         SerializationGroups::EXPENSE_GET,

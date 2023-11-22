@@ -6,12 +6,12 @@ namespace App\Service;
 
 use App\Dto\Expense\Http\ExpenseFilterQuery;
 use App\Dto\Expense\Payload\ExpensePayload;
-use App\Dto\Expense\Response\ExpenseLineCategoryResponse;
+use App\Dto\Expense\Response\ExpenseCategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
 use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\Expense;
 use App\Entity\ExpenseLine;
-use App\Repository\ExpenseLineCategoryRepository;
+use App\Repository\ExpenseCategoryRepository;
 use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -23,8 +23,8 @@ class ExpenseService
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
         private readonly ExpenseLineRepository $expenseLineRepository,
-        private readonly ExpenseLineCategoryRepository $expenseLineCategoryRepository,
-        private readonly ExpenseLineCategoryService $expenseLineCategoryService,
+        private readonly ExpenseCategoryRepository $expenseCategoryRepository,
+        private readonly ExpenseCategoryService $expenseCategoryService,
     ) {
     }
 
@@ -62,11 +62,11 @@ class ExpenseService
         foreach ($payload->getExpenseLines() as $expenseLinePayload) {
             $category = $expenseLinePayload->getCategory()
                 ->getId() !== null
-                ? $this->expenseLineCategoryRepository->find($expenseLinePayload->getCategory()->getId())
-                : $this->expenseLineCategoryService->create($expenseLinePayload->getCategory());
+                ? $this->expenseCategoryRepository->find($expenseLinePayload->getCategory()->getId())
+                : $this->expenseCategoryService->create($expenseLinePayload->getCategory());
 
             if ($category === null) {
-                throw new \InvalidArgumentException('ExpenseLineCategory not found');
+                throw new \InvalidArgumentException('ExpenseCategory not found');
             }
 
             $expenseLine = $expenseLinePayload->getId() !== null
@@ -93,7 +93,7 @@ class ExpenseService
                 ->setId($expenseLine->getId())
                 ->setName($expenseLine->getName())
                 ->setAmount($expenseLine->getAmount())
-                ->setCategory((new ExpenseLineCategoryResponse())
+                ->setCategory((new ExpenseCategoryResponse())
                     ->setId($expenseLine->getCategory()->getId())
                     ->setName($expenseLine->getCategory()->getName()))
             ;

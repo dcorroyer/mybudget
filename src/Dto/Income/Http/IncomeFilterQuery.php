@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Http;
 
-use App\Trait\Http\PaginationFilterQueryTrait;
 use Doctrine\Common\Collections\Criteria;
 use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
@@ -12,8 +11,6 @@ use Symfony\Component\Serializer\Annotation\SerializedPath;
 
 class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
-    use PaginationFilterQueryTrait;
-
     #[SerializedPath('[criteria][query]')]
     private ?string $query;
 

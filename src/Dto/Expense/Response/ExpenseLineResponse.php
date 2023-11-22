@@ -5,58 +5,20 @@ declare(strict_types=1);
 namespace App\Dto\Expense\Response;
 
 use App\Serializable\SerializationGroups;
+use App\Trait\Response\AmountResponseTrait;
+use App\Trait\Response\IdResponseTrait;
+use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
 class ExpenseLineResponse implements ResponseInterface
 {
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private int $id;
-
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private string $name;
-
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private float $amount;
+    use IdResponseTrait;
+    use NameResponseTrait;
+    use AmountResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private CategoryResponse $category;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(float $amount): self
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
 
     public function getCategory(): CategoryResponse
     {

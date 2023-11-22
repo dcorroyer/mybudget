@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Http;
 
+use App\Trait\Http\PaginationFilterQueryTrait;
 use Doctrine\Common\Collections\Criteria;
 use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
@@ -11,15 +12,13 @@ use Symfony\Component\Serializer\Annotation\SerializedPath;
 
 class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
+    use PaginationFilterQueryTrait;
+
     #[SerializedPath('[criteria][query]')]
     private ?string $query;
 
     #[SerializedPath('[i][amount]')]
     private ?float $amount = 0;
-
-    private int $page = 1;
-
-    private int $limit = 20;
 
     public function getCriteria(): Criteria
     {
@@ -56,30 +55,6 @@ class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
     public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getPage(): int
-    {
-        return $this->page;
-    }
-
-    public function setPage(int $page): self
-    {
-        $this->page = $page;
-
-        return $this;
-    }
-
-    public function getLimit(): int
-    {
-        return $this->limit;
-    }
-
-    public function setLimit(int $limit): self
-    {
-        $this->limit = $limit;
 
         return $this;
     }

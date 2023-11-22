@@ -48,7 +48,7 @@ class Income
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
-    private float $amount = 0;
+    private float $amount;
 
     #[Context(
         normalizationContext: [

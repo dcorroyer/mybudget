@@ -12,6 +12,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
@@ -43,6 +46,16 @@ class Expense
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
     ])]
+    #[Context(
+        normalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+        denormalizationContext: [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+        ],
+    )]
+    #[Assert\NotBlank]
+    #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 

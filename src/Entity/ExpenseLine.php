@@ -8,6 +8,7 @@ use App\Repository\ExpenseLineRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseLineRepository::class)]
 #[ORM\Table(name: 'expense_lines')]
@@ -28,6 +29,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
     ])]
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -36,6 +38,8 @@ class ExpenseLine
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
     ])]
+    #[Assert\NotBlank]
+    #[Assert\Type('float')]
     #[ORM\Column]
     private float $amount;
 

@@ -31,6 +31,7 @@ class Category
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
     ])]
+    #[Assert\NotBlank]
     #[Assert\Unique]
     #[ORM\Column(length: 255)]
     private string $name;

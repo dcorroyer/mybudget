@@ -13,7 +13,9 @@ use App\Repository\ExpenseRepository;
 use App\Service\CategoryService;
 use App\Service\ExpenseService;
 use App\Tests\Common\Factory\ExpenseFactory;
+use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
+use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -123,5 +125,23 @@ class ExpenseServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
+    }
+
+    #[TestDox('When you call paginate, it should return the expenses list')]
+    #[Test]
+    public function paginateExpenseService_WhenDataOk_ReturnsExpensesList()
+    {
+        // ARRANGE
+        $incomes = ExpenseFactory::new()->withoutPersisting()->createMany(20);
+        $pagination = PaginationTestHelper::getPagination($incomes);
+
+        $this->expenseRepository->method('paginate')
+            ->willReturn($pagination);
+
+        // ACT
+        $incomesResponse = $this->expenseService->paginate(new PaginationQueryParams());
+
+        // ASSERT
+        $this->assertCount(20, $incomesResponse);
     }
 }

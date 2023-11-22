@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Expense\Http\ExpenseFilterQuery;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\CategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
@@ -13,6 +14,9 @@ use App\Entity\ExpenseLine;
 use App\Repository\CategoryRepository;
 use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
+use Doctrine\Common\Collections\Criteria;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use My\RestBundle\Dto\PaginationQueryParams;
 
 class ExpenseService
 {
@@ -41,6 +45,13 @@ class ExpenseService
         $this->expenseRepository->delete($expense);
 
         return $expense;
+    }
+
+    public function paginate(
+        PaginationQueryParams $paginationQueryParams = null,
+        ExpenseFilterQuery $filter = null
+    ): SlidingPagination {
+        return $this->expenseRepository->paginate($paginationQueryParams, $filter, Criteria::create());
     }
 
     private function updateOrCreateExpense(ExpensePayload $payload, Expense $expense): ExpenseResponse

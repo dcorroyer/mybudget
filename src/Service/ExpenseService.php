@@ -62,7 +62,7 @@ class ExpenseService
         $expenseLinesResponse = [];
 
         foreach ($payload->getExpenseLines() as $expenseLinePayload) {
-            $category = $this->manageCategory($expenseLinePayload->getCategory());
+            $category = $this->manageExpenseCategory($expenseLinePayload->getCategory());
 
             $expenseLine = $expenseLinePayload->getId() !== null
                 ? $this->expenseLineRepository->find($expenseLinePayload->getId())
@@ -102,7 +102,7 @@ class ExpenseService
         ;
     }
 
-    private function manageCategory(ExpenseCategoryPayload $categoryPayload = null): ExpenseCategory
+    private function manageExpenseCategory(ExpenseCategoryPayload $categoryPayload = null): ExpenseCategory
     {
         $category = null;
         $categoryId = $categoryPayload->getId();

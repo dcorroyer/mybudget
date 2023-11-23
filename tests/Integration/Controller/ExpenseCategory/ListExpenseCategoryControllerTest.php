@@ -37,9 +37,7 @@ class ListExpenseCategoryControllerTest extends WebTestCase
 
         // $this->client->loginUser(new User());
 
-        $this->expenseCategoryService = $this->createMock(
-            ExpenseCategoryService::class
-        );
+        $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
         $expenseCategoryRepository = $this->createMock(ExpenseCategoryRepository::class);
 
         $container = self::getContainer();

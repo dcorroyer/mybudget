@@ -14,14 +14,14 @@ final class Version1_0_1 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'create expenses, expenses_lines and categories tables';
+        return 'create expenses, expenses_lines and expense_line_categories tables';
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('
-            CREATE TABLE categories (
+            CREATE TABLE expense_line_categories (
                 id INT AUTO_INCREMENT NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 PRIMARY KEY(id))
@@ -50,7 +50,7 @@ final class Version1_0_1 extends AbstractMigration
         $this->addSql('
             ALTER TABLE expense_lines
                 ADD CONSTRAINT FK_592580BE12469DE2
-                    FOREIGN KEY (category_id) REFERENCES categories (id)');
+                    FOREIGN KEY (category_id) REFERENCES expense_line_categories (id)');
     }
 
     public function down(Schema $schema): void
@@ -58,7 +58,7 @@ final class Version1_0_1 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE expense_lines DROP FOREIGN KEY FK_592580BE55284914');
         $this->addSql('ALTER TABLE expense_lines DROP FOREIGN KEY FK_592580BE12469DE2');
-        $this->addSql('DROP TABLE categories');
+        $this->addSql('DROP TABLE expense_line_categories');
         $this->addSql('DROP TABLE expense_lines');
         $this->addSql('DROP TABLE expenses');
     }

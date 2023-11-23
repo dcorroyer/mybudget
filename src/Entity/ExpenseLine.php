@@ -49,7 +49,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_DELETE,
     ])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER')]
-    #[ORM\JoinColumn(name: 'expense_line_category_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
     private ExpenseCategory $category;
 
     #[ORM\ManyToOne(targetEntity: Expense::class, inversedBy: 'expenseLines')]

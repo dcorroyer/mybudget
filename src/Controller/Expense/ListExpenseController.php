@@ -36,7 +36,7 @@ class ListExpenseController extends BaseRestController
         queryParamsClassFqcn: [ExpenseFilterQuery::class, PaginationQueryParams::class],
     )]
     #[Route('', name: 'app_expenses_list', methods: Request::METHOD_GET)]
-    public function list(
+    public function __invoke(
         ExpenseService $expenseService,
         #[MapQueryString] PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ExpenseFilterQuery $filter = null,

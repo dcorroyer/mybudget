@@ -37,7 +37,7 @@ class CreateExpenseController extends BaseRestController
         requestBodyClassFqcn: ExpensePayload::class
     )]
     #[Route('', name: 'app_expenses_create', methods: Request::METHOD_POST)]
-    public function create(
+    public function __invoke(
         ExpenseService $expenseService,
         #[MapRequestPayload] ExpensePayload $expensePayload
     ): JsonResponse {

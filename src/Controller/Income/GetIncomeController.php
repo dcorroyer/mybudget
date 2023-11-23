@@ -33,7 +33,7 @@ class GetIncomeController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'app_incomes_get', methods: Request::METHOD_GET)]
-    public function get(Income $income): JsonResponse
+    public function __invoke(Income $income): JsonResponse
     {
         return $this->successResponse(data: $income, groups: [SerializationGroups::INCOME_GET]);
     }

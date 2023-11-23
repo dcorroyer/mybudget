@@ -36,7 +36,7 @@ class ListIncomeController extends BaseRestController
         queryParamsClassFqcn: [IncomeFilterQuery::class, PaginationQueryParams::class],
     )]
     #[Route('', name: 'app_incomes_list', methods: Request::METHOD_GET)]
-    public function list(
+    public function __invoke(
         IncomeService $incomeService,
         #[MapQueryString] PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] IncomeFilterQuery $filter = null,

@@ -34,7 +34,7 @@ class DeleteExpenseController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'app_expenses_delete', methods: Request::METHOD_DELETE)]
-    public function delete(ExpenseService $expenseService, Expense $expense): Response
+    public function __invoke(ExpenseService $expenseService, Expense $expense): Response
     {
         $expenseService->delete($expense);
 

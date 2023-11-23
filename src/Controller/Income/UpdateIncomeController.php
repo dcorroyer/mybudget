@@ -35,7 +35,7 @@ class UpdateIncomeController extends BaseRestController
         requestBodyClassFqcn: IncomePayload::class
     )]
     #[Route('/{id}', name: 'app_incomes_update', methods: Request::METHOD_PUT)]
-    public function update(
+    public function __invoke(
         IncomeService $incomeService,
         #[MapRequestPayload] IncomePayload $incomePayload,
         Income $income,

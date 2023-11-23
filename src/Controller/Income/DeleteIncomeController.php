@@ -34,7 +34,7 @@ class DeleteIncomeController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'app_incomes_delete', methods: Request::METHOD_DELETE)]
-    public function delete(IncomeService $incomeService, Income $income): Response
+    public function __invoke(IncomeService $incomeService, Income $income): Response
     {
         $incomeService->delete($income);
 

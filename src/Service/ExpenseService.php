@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Expense\Http\ExpenseFilterQuery;
+use App\Dto\Expense\Payload\ExpenseCategoryPayload;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\ExpenseCategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
 use App\Dto\Expense\Response\ExpenseResponse;
 use App\Entity\Expense;
+use App\Entity\ExpenseCategory;
 use App\Entity\ExpenseLine;
 use App\Repository\ExpenseCategoryRepository;
 use App\Repository\ExpenseLineRepository;
@@ -60,14 +62,7 @@ class ExpenseService
         $expenseLinesResponse = [];
 
         foreach ($payload->getExpenseLines() as $expenseLinePayload) {
-            $category = $expenseLinePayload->getCategory()
-                ->getId() !== null
-                ? $this->expenseCategoryRepository->find($expenseLinePayload->getCategory()->getId())
-                : $this->expenseCategoryService->create($expenseLinePayload->getCategory());
-
-            if ($category === null) {
-                throw new \InvalidArgumentException('ExpenseCategory not found');
-            }
+            $category = $this->manageCategory($expenseLinePayload->getCategory());
 
             $expenseLine = $expenseLinePayload->getId() !== null
                 ? $this->expenseLineRepository->find($expenseLinePayload->getId())
@@ -105,5 +100,28 @@ class ExpenseService
             ->setAmount($expense->getAmount())
             ->setExpenseLines($expenseLinesResponse)
         ;
+    }
+
+    private function manageCategory(ExpenseCategoryPayload $categoryPayload = null): ExpenseCategory
+    {
+        $category = null;
+        $categoryId = $categoryPayload->getId();
+        $categoryName = $categoryPayload->getName();
+
+        if ($categoryId !== null) {
+            $category = $this->expenseCategoryRepository->find($categoryId);
+        }
+
+        if ($category === null) {
+            $category = $this->expenseCategoryRepository->findOneBy([
+                'name' => $categoryName,
+            ]);
+        }
+
+        if ($category === null) {
+            $category = $this->expenseCategoryService->create($categoryPayload);
+        }
+
+        return $category;
     }
 }

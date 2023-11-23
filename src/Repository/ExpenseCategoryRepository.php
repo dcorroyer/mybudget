@@ -21,13 +21,4 @@ class ExpenseCategoryRepository extends AbstractEntityRepository
     {
         return ExpenseCategory::class;
     }
-
-    public function findOrFail(int $id): ?ExpenseCategory
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.id = :categoryId')
-            ->setParameter('categoryId', $id)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 }

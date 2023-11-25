@@ -14,6 +14,7 @@ trait IdResponseTrait
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::EXPENSE_CREATE,
         SerializationGroups::EXPENSE_UPDATE,
+        SerializationGroups::EXPENSE_CATEGORY_UPDATE,
         SerializationGroups::USER_CREATE,
     ])]
     private int $id;

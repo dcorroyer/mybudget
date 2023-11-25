@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Expense\Http\ExpenseFilterQuery;
-use App\Dto\Expense\Payload\ExpenseCategoryPayload;
 use App\Dto\Expense\Payload\ExpensePayload;
-use App\Dto\Expense\Response\ExpenseCategoryResponse;
 use App\Dto\Expense\Response\ExpenseLineResponse;
 use App\Dto\Expense\Response\ExpenseResponse;
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
+use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Entity\Expense;
 use App\Entity\ExpenseCategory;
 use App\Entity\ExpenseLine;

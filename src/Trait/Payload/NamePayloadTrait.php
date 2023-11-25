@@ -14,6 +14,7 @@ trait NamePayloadTrait
         SerializationGroups::INCOME_UPDATE,
         SerializationGroups::EXPENSE_CREATE,
         SerializationGroups::EXPENSE_UPDATE,
+        SerializationGroups::EXPENSE_CATEGORY_UPDATE,
     ])]
     private string $name;
 

@@ -103,7 +103,9 @@ class ExpenseCategoryServiceTest extends TestCase
         $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    #[TestDox('When calling update expense category, it should NOT update but should only returns the expense category updated')]
+    #[TestDox(
+        'When calling update expense category, it should NOT update but should only returns the expense category updated'
+    )]
     #[Test]
     public function updateExpenseCategoryService_WhenNoNewData_ReturnsExpenseCategory()
     {

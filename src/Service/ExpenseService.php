@@ -102,7 +102,7 @@ class ExpenseService
         ;
     }
 
-    private function manageExpenseCategory(ExpenseCategoryPayload $categoryPayload = null): ExpenseCategory
+    private function manageExpenseCategory(ExpenseCategoryPayload $categoryPayload): ExpenseCategory
     {
         $category = null;
         $categoryId = $categoryPayload->getId();

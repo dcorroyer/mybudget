@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Expense\Payload;
+namespace App\Dto\ExpenseCategory\Payload;
 
 use App\Trait\Payload\IdPayloadTrait;
 use App\Trait\Payload\NamePayloadTrait;

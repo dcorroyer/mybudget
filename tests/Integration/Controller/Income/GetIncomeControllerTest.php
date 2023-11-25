@@ -6,7 +6,6 @@ namespace App\Tests\Integration\Controller\Income;
 
 use App\Entity\User;
 use App\Repository\IncomeRepository;
-use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -36,11 +35,9 @@ class GetIncomeControllerTest extends WebTestCase
 
         // $this->client->loginUser(new User());
 
-        $incomeService = $this->createMock(IncomeService::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);
 
         $container = self::getContainer();
-        $container->set(IncomeService::class, $incomeService);
         $container->set(IncomeRepository::class, $this->incomeRepository);
     }
 

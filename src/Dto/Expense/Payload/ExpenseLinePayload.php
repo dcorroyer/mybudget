@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Expense\Payload;
 
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use App\Serializable\SerializationGroups;
 use App\Trait\Payload\AmountPayloadTrait;
 use App\Trait\Payload\IdPayloadTrait;

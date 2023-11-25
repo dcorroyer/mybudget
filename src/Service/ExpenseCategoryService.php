@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\Expense\Payload\ExpenseCategoryPayload;
 use App\Dto\ExpenseCategory\Http\ExpenseCategoryFilterQuery;
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
+use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Entity\ExpenseCategory;
 use App\Repository\ExpenseCategoryRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -27,6 +28,19 @@ class ExpenseCategoryService
         $this->expenseCategoryRepository->save($category, true);
 
         return $category;
+    }
+
+    public function update(ExpenseCategoryPayload $payload, ExpenseCategory $category): ExpenseCategoryResponse
+    {
+        if ($category->getName() !== $payload->getName()) {
+            $category->setName($payload->getName());
+
+            $this->expenseCategoryRepository->save($category, true);
+        }
+
+        return (new ExpenseCategoryResponse())
+            ->setId($category->getId())
+            ->setName($category->getName());
     }
 
     public function paginate(

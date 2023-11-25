@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Expense\Payload\ExpenseCategoryPayload;
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use App\Entity\ExpenseCategory;
 use App\Repository\ExpenseCategoryRepository;
 use App\Service\ExpenseCategoryService;

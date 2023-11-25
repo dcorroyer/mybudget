@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Expense\Response;
 
+use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\AmountResponseTrait;
 use App\Trait\Response\IdResponseTrait;

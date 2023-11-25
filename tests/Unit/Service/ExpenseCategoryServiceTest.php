@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
+use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Entity\ExpenseCategory;
 use App\Repository\ExpenseCategoryRepository;
 use App\Service\ExpenseCategoryService;
@@ -50,8 +51,9 @@ class ExpenseCategoryServiceTest extends TestCase
         ])->withoutPersisting()
             ->create()
             ->object();
-        $expenseCategoryPayload = new ExpenseCategoryPayload();
-        $expenseCategoryPayload->setName($expenseCategory->getName());
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName($expenseCategory->getName());
 
         $this->expenseCategoryRepository
             ->expects($this->once())
@@ -70,7 +72,63 @@ class ExpenseCategoryServiceTest extends TestCase
         $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    #[TestDox('When you call paginate, it should return the expense categories list')]
+    #[TestDox('When calling update expense category, it should update and returns the expense category updated')]
+    #[Test]
+    public function updateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoryUpdated()
+    {
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName('category name updated');
+
+        $this->expenseCategoryRepository
+            ->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (ExpenseCategory $expenseCategory) {
+                $expenseCategory->setId(1);
+            });
+
+        // ACT
+        $expenseCategoryResponse = $this->expenseCategoryService->update($expenseCategoryPayload, $expenseCategory);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
+        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    #[TestDox('When calling update expense category, it should NOT update but should only returns the expense category updated')]
+    #[Test]
+    public function updateExpenseCategoryService_WhenNoNewData_ReturnsExpenseCategory()
+    {
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+            'name' => 'category name',
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName('category name');
+
+        // ACT
+        $expenseCategoryResponse = $this->expenseCategoryService->update($expenseCategoryPayload, $expenseCategory);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
+        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    #[TestDox('When you call paginate, it should returns the expense categories list')]
     #[Test]
     public function paginateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoriesList()
     {

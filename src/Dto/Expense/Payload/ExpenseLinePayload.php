@@ -4,66 +4,29 @@ declare(strict_types=1);
 
 namespace App\Dto\Expense\Payload;
 
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use App\Serializable\SerializationGroups;
+use App\Trait\Payload\AmountPayloadTrait;
+use App\Trait\Payload\IdPayloadTrait;
+use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
 class ExpenseLinePayload implements PayloadInterface
 {
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private ?int $id = null;
+    use IdPayloadTrait;
+    use NamePayloadTrait;
+    use AmountPayloadTrait;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private string $name;
+    private ?ExpenseCategoryPayload $category;
 
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private float $amount;
-
-    #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
-    private ?CategoryPayload $category;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(float $amount): self
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getCategory(): ?CategoryPayload
+    public function getCategory(): ?ExpenseCategoryPayload
     {
         return $this->category;
     }
 
-    public function setCategory(?CategoryPayload $category): self
+    public function setCategory(?ExpenseCategoryPayload $category): self
     {
         $this->category = $category;
 

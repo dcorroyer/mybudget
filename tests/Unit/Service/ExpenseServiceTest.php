@@ -6,12 +6,15 @@ namespace App\Tests\Unit\Service;
 
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\ExpenseResponse;
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use App\Entity\Expense;
-use App\Repository\CategoryRepository;
+use App\Entity\ExpenseCategory;
+use App\Repository\ExpenseCategoryRepository;
 use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
-use App\Service\CategoryService;
+use App\Service\ExpenseCategoryService;
 use App\Service\ExpenseService;
+use App\Tests\Common\Factory\ExpenseCategoryFactory;
 use App\Tests\Common\Factory\ExpenseFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
@@ -33,6 +36,12 @@ class ExpenseServiceTest extends TestCase
 
     private ExpenseRepository $expenseRepository;
 
+    private ExpenseLineRepository $expenseLineRepository;
+
+    private ExpenseCategoryRepository $expenseCategoryRepository;
+
+    private ExpenseCategoryService $expenseCategoryService;
+
     private ExpenseService $expenseService;
 
     protected function setUp(): void
@@ -40,19 +49,19 @@ class ExpenseServiceTest extends TestCase
         parent::setUp();
 
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
-        $expenseLineRepository = $this->createMock(ExpenseLineRepository::class);
-        $categoryRepository = $this->createMock(CategoryRepository::class);
-        $categoryService = $this->createMock(CategoryService::class);
+        $this->expenseLineRepository = $this->createMock(ExpenseLineRepository::class);
+        $this->expenseCategoryRepository = $this->createMock(ExpenseCategoryRepository::class);
+        $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
 
         $this->expenseService = new ExpenseService(
             $this->expenseRepository,
-            $expenseLineRepository,
-            $categoryRepository,
-            $categoryService
+            $this->expenseLineRepository,
+            $this->expenseCategoryRepository,
+            $this->expenseCategoryService
         );
     }
 
-    #[TestDox('When calling create income, it should create and return a new expense')]
+    #[TestDox('When calling create expense, it should create and return a new expense')]
     #[Test]
     public function createExpenseService_WhenDataOk_ReturnsExpense()
     {
@@ -82,7 +91,7 @@ class ExpenseServiceTest extends TestCase
         $this->assertEquals($expense->getDate(), $expenseResponse->getDate());
     }
 
-    #[TestDox('When calling update income, it should update and return the expense')]
+    #[TestDox('When calling update expense, it should update and return the expense')]
     #[Test]
     public function updateExpenseService_WhenDataOk_ReturnsExpense()
     {
@@ -112,7 +121,7 @@ class ExpenseServiceTest extends TestCase
         $this->assertEquals($expensePayload->getDate(), $expenseResponse->getDate());
     }
 
-    #[TestDox('When calling delete income, it should delete the income')]
+    #[TestDox('When calling delete expense, it should delete the expense')]
     #[Test]
     public function deleteExpenseService_WhenDataOk_ReturnsNoContent()
     {
@@ -143,5 +152,133 @@ class ExpenseServiceTest extends TestCase
 
         // ASSERT
         $this->assertCount(20, $incomesResponse);
+    }
+
+    #[TestDox(
+        'When calling manage expense category with the Id of an existing category, it should returns the expense category'
+    )]
+    #[Test]
+    public function manageExpenseCategoryExpenseService_WhenDataContainsId_ReturnsExpenseCategory()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new ExpenseService(
+            $this->expenseRepository,
+            $this->expenseLineRepository,
+            $this->expenseCategoryRepository,
+            $this->expenseCategoryService
+        );
+        $method = $this->getPrivateMethod(ExpenseService::class, 'manageExpenseCategory');
+
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setId($expenseCategory->getId())
+            ->setName($expenseCategory->getName());
+
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($expenseCategory);
+
+        // ACT
+        $expenseCategoryResponse = $method->invoke($object, $expenseCategoryPayload);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
+        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    #[TestDox(
+        'When calling manage expense category with the Name of an existing category, it should returns the expense category'
+    )]
+    #[Test]
+    public function manageExpenseCategoryExpenseService_WhenDataContainsName_ReturnsExpenseCategory()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new ExpenseService(
+            $this->expenseRepository,
+            $this->expenseLineRepository,
+            $this->expenseCategoryRepository,
+            $this->expenseCategoryService
+        );
+        $method = $this->getPrivateMethod(ExpenseService::class, 'manageExpenseCategory');
+
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+            'name' => 'test',
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName($expenseCategory->getName());
+
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($expenseCategory);
+
+        // ACT
+        $expenseCategoryResponse = $method->invoke($object, $expenseCategoryPayload);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
+        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    #[TestDox(
+        'When calling manage expense category with the Name of an existing category, it should returns the expense category'
+    )]
+    #[Test]
+    public function manageExpenseCategoryExpenseService_WhenDataContainsNewName_ReturnsExpenseCategory()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new ExpenseService(
+            $this->expenseRepository,
+            $this->expenseLineRepository,
+            $this->expenseCategoryRepository,
+            $this->expenseCategoryService
+        );
+        $method = $this->getPrivateMethod(ExpenseService::class, 'manageExpenseCategory');
+
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+            'name' => 'test',
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName('test2');
+
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $this->expenseCategoryService->expects($this->once())
+            ->method('create')
+            ->willReturn($expenseCategory);
+
+        // ACT
+        $expenseCategoryResponse = $method->invoke($object, $expenseCategoryPayload);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
+        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    private function getPrivateMethod($className, $methodName): \ReflectionMethod
+    {
+        $reflector = new \ReflectionClass($className);
+
+        return $reflector->getMethod($methodName);
     }
 }

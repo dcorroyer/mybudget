@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
+use App\Repository\ExpenseCategoryRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[ORM\Table(name: 'categories')]
-#[UniqueEntity(fields: 'name', message: 'There is already a category with this name')]
-class Category
+#[ORM\Entity(repositoryClass: ExpenseCategoryRepository::class)]
+#[ORM\Table(name: 'expense_line_categories')]
+#[UniqueEntity(fields: 'name', message: 'There is already an expense line category with this name')]
+class ExpenseCategory
 {
     #[Serializer\Groups([
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::EXPENSE_CATEGORY_GET,
+        SerializationGroups::EXPENSE_CATEGORY_LIST,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,6 +32,8 @@ class Category
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::EXPENSE_CATEGORY_GET,
+        SerializationGroups::EXPENSE_CATEGORY_LIST,
     ])]
     #[Assert\NotBlank]
     #[Assert\Unique]

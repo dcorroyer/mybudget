@@ -17,10 +17,10 @@ security:
         register:
             pattern: ^/api/register
             stateless: true
-        api:
-            pattern: ^/api
-            stateless: true
-            jwt: ~
+#        api:
+#            pattern: ^/api
+#            stateless: true
+#            jwt: ~
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -31,7 +31,8 @@ security:
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+#        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

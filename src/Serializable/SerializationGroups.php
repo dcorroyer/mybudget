@@ -45,4 +45,14 @@ final class SerializationGroups
     public const EXPENSE_CATEGORY_DELETE = 'EXPENSE_CATEGORY_DELETE';
 
     public const EXPENSE_CATEGORY_GET = 'EXPENSE_CATEGORY_GET';
+
+    public const TRACKING_CREATE = 'TRACKING_CREATE';
+
+    public const TRACKING_UPDATE = 'TRACKING_UPDATE';
+
+    public const TRACKING_DELETE = 'TRACKING_DELETE';
+
+    public const TRACKING_GET = 'TRACKING_GET';
+
+    public const TRACKING_LIST = 'TRACKING_LIST';
 }

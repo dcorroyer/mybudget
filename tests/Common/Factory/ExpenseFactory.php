@@ -50,7 +50,7 @@ final class ExpenseFactory extends ModelFactory
             'date' => self::faker()->dateTime(),
             'expenseLines' => ExpenseLineFactory::new([
                 'expense' => $this,
-                'category' => CategoryFactory::new()->withoutPersisting(),
+                'category' => ExpenseCategoryFactory::new()->withoutPersisting()->create(),
             ])->withoutPersisting()
                 ->many(1, 5)
                 ->create(),

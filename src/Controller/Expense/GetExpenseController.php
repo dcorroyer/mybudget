@@ -33,7 +33,7 @@ class GetExpenseController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'app_expenses_get', methods: Request::METHOD_GET)]
-    public function get(Expense $expense): JsonResponse
+    public function __invoke(Expense $expense): JsonResponse
     {
         return $this->successResponse(data: $expense, groups: [SerializationGroups::EXPENSE_GET]);
     }

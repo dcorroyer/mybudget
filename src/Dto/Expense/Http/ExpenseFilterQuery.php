@@ -17,10 +17,6 @@ class ExpenseFilterQuery implements QueryFilterInterface, ORMFilterInterface
     #[SerializedPath('[i][amount]')]
     private ?float $amount = 0;
 
-    private int $page = 1;
-
-    private int $limit = 20;
-
     public function getCriteria(): Criteria
     {
         $criteria = Criteria::create();
@@ -56,30 +52,6 @@ class ExpenseFilterQuery implements QueryFilterInterface, ORMFilterInterface
     public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getPage(): int
-    {
-        return $this->page;
-    }
-
-    public function setPage(int $page): self
-    {
-        $this->page = $page;
-
-        return $this;
-    }
-
-    public function getLimit(): int
-    {
-        return $this->limit;
-    }
-
-    public function setLimit(int $limit): self
-    {
-        $this->limit = $limit;
 
         return $this;
     }

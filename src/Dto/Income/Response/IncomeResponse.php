@@ -6,6 +6,8 @@ namespace App\Dto\Income\Response;
 
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
+use App\Trait\Response\IdResponseTrait;
+use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
@@ -13,11 +15,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class IncomeResponse implements ResponseInterface
 {
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private int $id;
-
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private string $name;
+    use IdResponseTrait;
+    use NameResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private float $amount = 0;
@@ -35,30 +34,6 @@ class IncomeResponse implements ResponseInterface
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private IncomeTypes $type;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 
     public function getAmount(): float
     {

@@ -6,68 +6,20 @@ namespace App\Dto\Income\Payload;
 
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
+use App\Trait\Payload\AmountPayloadTrait;
+use App\Trait\Payload\DatePayloadTrait;
+use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class IncomePayload implements PayloadInterface
 {
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private string $name;
-
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private float $amount;
-
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private \DateTimeInterface $date;
+    use NamePayloadTrait;
+    use AmountPayloadTrait;
+    use DatePayloadTrait;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private IncomeTypes $type;
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(float $amount): self
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getDate(): \DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
 
     public function getType(): IncomeTypes
     {

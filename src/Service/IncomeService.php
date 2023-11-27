@@ -59,7 +59,8 @@ class IncomeService
                 ? $this->incomeLineRepository->find($incomeLinePayload->getId())
                 : new IncomeLine();
 
-            $incomeLine->setAmount($incomeLinePayload->getAmount())
+            $incomeLine->setName($incomeLinePayload->getName())
+                ->setAmount($incomeLinePayload->getAmount())
                 ->setType($incomeLinePayload->getType());
 
             $income->addIncomeLine($incomeLine);

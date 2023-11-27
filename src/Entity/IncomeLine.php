@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeLineRepository::class)]
+#[ORM\Table(name: 'income_lines')]
 class IncomeLine
 {
     use TimestampableTrait;

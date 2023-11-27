@@ -64,7 +64,6 @@ class IncomeService
             ->setId($income->getId())
             ->setName($income->getName())
             ->setAmount($income->getAmount())
-            ->setDate($income->getDate())
             ->setType($income->getType());
     }
 }

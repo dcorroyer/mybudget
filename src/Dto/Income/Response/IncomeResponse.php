@@ -10,8 +10,6 @@ use App\Trait\Response\IdResponseTrait;
 use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class IncomeResponse implements ResponseInterface
 {
@@ -20,17 +18,6 @@ class IncomeResponse implements ResponseInterface
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private float $amount = 0;
-
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private \DateTimeInterface $date;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private IncomeTypes $type;
@@ -43,18 +30,6 @@ class IncomeResponse implements ResponseInterface
     public function setAmount(float $amount): self
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getDate(): \DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
 
         return $this;
     }

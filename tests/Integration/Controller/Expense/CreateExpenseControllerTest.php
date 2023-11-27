@@ -54,7 +54,6 @@ class CreateExpenseControllerTest extends WebTestCase
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
 
         $payload = (new ExpensePayload())
-            ->setDate($expense->getDate())
             ->setExpenseLines($expense->getExpenseLines()->toArray());
 
         $expenseResponse = (new ExpenseResponse())

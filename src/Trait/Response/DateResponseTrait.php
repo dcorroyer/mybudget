@@ -11,12 +11,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 trait DateResponseTrait
 {
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::EXPENSE_CREATE,
-        SerializationGroups::EXPENSE_UPDATE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     #[Context(
         normalizationContext: [
             DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',

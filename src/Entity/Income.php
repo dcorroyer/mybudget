@@ -7,12 +7,9 @@ namespace App\Entity;
 use App\Enum\IncomeTypes;
 use App\Repository\IncomeRepository;
 use App\Serializable\SerializationGroups;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
@@ -49,24 +46,6 @@ class Income
     #[Assert\Type('float')]
     #[ORM\Column]
     private float $amount;
-
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-    ])]
-    #[Assert\NotBlank]
-    #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private \DateTimeInterface $date;
 
     #[Serializer\Groups([
         SerializationGroups::INCOME_GET,
@@ -109,18 +88,6 @@ class Income
     public function setAmount(float $amount): self
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getDate(): \DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
 
         return $this;
     }

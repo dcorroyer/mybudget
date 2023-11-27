@@ -66,7 +66,6 @@ class IncomeServiceTest extends TestCase
         $this->assertEquals($income->getId(), $incomeResponse->getId());
         $this->assertEquals($income->getName(), $incomeResponse->getName());
         $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getDate(), $incomeResponse->getDate());
         $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 
@@ -91,7 +90,6 @@ class IncomeServiceTest extends TestCase
         $this->assertEquals($income->getId(), $incomeResponse->getId());
         $this->assertEquals($income->getName(), $incomeResponse->getName());
         $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getDate(), $incomeResponse->getDate());
         $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 

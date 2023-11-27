@@ -4,37 +4,31 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Response;
 
+use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\AmountResponseTrait;
 use App\Trait\Response\IdResponseTrait;
+use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class IncomeResponse implements ResponseInterface
+class IncomeLineResponse implements ResponseInterface
 {
     use IdResponseTrait;
+    use NameResponseTrait;
     use AmountResponseTrait;
 
-    /**
-     * @var array<IncomeLineResponse>
-     */
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private array $incomeLines;
+    private IncomeTypes $type;
 
-    /**
-     * @return IncomeLineResponse[]
-     */
-    public function getIncomeLines(): array
+    public function getType(): IncomeTypes
     {
-        return $this->incomeLines;
+        return $this->type;
     }
 
-    /**
-     * @param IncomeLineResponse[] $incomeLines
-     */
-    public function setIncomeLines(array $incomeLines): self
+    public function setType(IncomeTypes $type): self
     {
-        $this->incomeLines = $incomeLines;
+        $this->type = $type;
 
         return $this;
     }

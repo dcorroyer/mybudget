@@ -6,19 +6,21 @@ namespace App\Service;
 
 use App\Dto\Income\Http\IncomeFilterQuery;
 use App\Dto\Income\Payload\IncomePayload;
+use App\Dto\Income\Response\IncomeLineResponse;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
+use App\Entity\IncomeLine;
+use App\Repository\IncomeLineRepository;
 use App\Repository\IncomeRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
-use My\RestBundle\Helper\DtoToEntityHelper;
 
 class IncomeService
 {
     public function __construct(
         private readonly IncomeRepository $incomeRepository,
-        private readonly DtoToEntityHelper $dtoToEntityHelper,
+        private readonly IncomeLineRepository $incomeLineRepository
     ) {
     }
 
@@ -26,22 +28,12 @@ class IncomeService
     {
         $income = new Income();
 
-        /** @var Income $income */
-        $income = $this->dtoToEntityHelper->create($payload, $income);
-
-        $this->incomeRepository->save($income, true);
-
-        return $this->createIncomeResponse($income);
+        return $this->updateOrCreateIncome($payload, $income);
     }
 
     public function update(IncomePayload $payload, Income $income): IncomeResponse
     {
-        /** @var Income $income */
-        $income = $this->dtoToEntityHelper->update($payload, $income);
-
-        $this->incomeRepository->save($income, true);
-
-        return $this->createIncomeResponse($income);
+        return $this->updateOrCreateIncome($payload, $income);
     }
 
     public function delete(Income $income): Income
@@ -58,10 +50,36 @@ class IncomeService
         return $this->incomeRepository->paginate($paginationQueryParams, $filter, Criteria::create());
     }
 
-    private function createIncomeResponse(Income $income): IncomeResponse
+    private function updateOrCreateIncome(IncomePayload $payload, Income $income): IncomeResponse
     {
+        $incomeLinesResponse = [];
+
+        foreach ($payload->getIncomeLines() as $incomeLinePayload) {
+            $incomeLine = $incomeLinePayload->getId() !== null
+                ? $this->incomeLineRepository->find($incomeLinePayload->getId())
+                : new IncomeLine();
+
+            $incomeLine->setAmount($incomeLinePayload->getAmount())
+                ->setType($incomeLinePayload->getType());
+
+            $income->addIncomeLine($incomeLine);
+        }
+
+        $this->incomeRepository->save($income, true);
+
+        foreach ($income->getIncomeLines() as $incomeLine) {
+            $incomeLinesResponse[] = (new IncomeLineResponse())
+                ->setId($incomeLine->getId())
+                ->setName($incomeLine->getName())
+                ->setAmount($incomeLine->getAmount())
+                ->setType($incomeLine->getType())
+            ;
+        }
+
         return (new IncomeResponse())
             ->setId($income->getId())
-            ->setAmount($income->getAmount());
+            ->setAmount($income->getAmount())
+            ->setIncomeLines($incomeLinesResponse)
+        ;
     }
 }

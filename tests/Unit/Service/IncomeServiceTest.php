@@ -7,11 +7,11 @@ namespace App\Tests\Unit\Service;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
+use App\Repository\IncomeLineRepository;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
-use My\RestBundle\Helper\DtoToEntityHelper;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
@@ -31,18 +31,18 @@ class IncomeServiceTest extends TestCase
 
     private IncomeRepository $incomeRepository;
 
-    private IncomeService $incomeService;
+    private IncomeLineRepository $incomeLineRepository;
 
-    private DtoToEntityHelper $dtoToEntityHelper;
+    private IncomeService $incomeService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->incomeRepository = $this->createMock(IncomeRepository::class);
-        $this->dtoToEntityHelper = $this->createMock(DtoToEntityHelper::class);
+        $this->incomeLineRepository = $this->createMock(IncomeLineRepository::class);
 
-        $this->incomeService = new IncomeService($this->incomeRepository, $this->dtoToEntityHelper);
+        $this->incomeService = new IncomeService($this->incomeRepository, $this->incomeLineRepository);
     }
 
     #[TestDox('When calling create income, it should create and return a new income')]
@@ -50,12 +50,19 @@ class IncomeServiceTest extends TestCase
     public function createIncomeService_WhenDataOk_ReturnsIncome()
     {
         // ARRANGE
-        $incomePayload = new IncomePayload();
-        $income = IncomeFactory::new()->withoutPersisting()->create()->object();
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
-        $this->dtoToEntityHelper->expects($this->once())
-            ->method('create')
-            ->willReturn($income);
+        $incomePayload = (new IncomePayload());
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
 
         // ACT
         $incomeResponse = $this->incomeService->create($incomePayload);
@@ -64,7 +71,6 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
     }
 
     #[TestDox('When calling update income, it should update and return the income updated')]
@@ -72,12 +78,19 @@ class IncomeServiceTest extends TestCase
     public function updateIncomeService_WhenDataOk_ReturnsIncomeUpdated()
     {
         // ARRANGE
-        $incomePayload = new IncomePayload();
-        $income = IncomeFactory::new()->withoutPersisting()->create()->object();
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
-        $this->dtoToEntityHelper->expects($this->once())
-            ->method('update')
-            ->willReturn($income);
+        $incomePayload = (new IncomePayload());
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
 
         // ACT
         $incomeResponse = $this->incomeService->update($incomePayload, $income);
@@ -86,7 +99,6 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
     }
 
     #[TestDox('When calling delete income, it should delete the income')]

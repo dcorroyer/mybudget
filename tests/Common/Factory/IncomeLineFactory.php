@@ -46,6 +46,7 @@ final class IncomeLineFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'id' => self::faker()->randomDigit(),
             'amount' => self::faker()->randomFloat(),
             'name' => self::faker()->text(255),
             'type' => self::faker()->randomElement(IncomeTypes::cases()),

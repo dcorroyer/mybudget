@@ -41,7 +41,7 @@ class Tracking
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
-    private ?float $savings = 0;
+    private ?float $savingCapacity = 0;
 
     #[Context(
         normalizationContext: [
@@ -93,14 +93,14 @@ class Tracking
         return $this;
     }
 
-    public function getSavings(): ?float
+    public function getSavingCapacity(): ?float
     {
-        return $this->savings;
+        return $this->savingCapacity;
     }
 
-    public function setSavings(?float $savings): self
+    public function setSavingCapacity(?float $savingCapacity): self
     {
-        $this->savings = $savings;
+        $this->savingCapacity = $savingCapacity;
 
         return $this;
     }

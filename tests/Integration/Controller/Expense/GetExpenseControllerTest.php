@@ -67,6 +67,5 @@ class GetExpenseControllerTest extends WebTestCase
         $this->assertResponseFormatSame('json');
         $this->assertEquals($expense->getId(), $data['id']);
         $this->assertEquals($expense->getAmount(), $data['amount']);
-        $this->assertEquals($expense->getDate()->format('Y-m-d'), $data['date']);
     }
 }

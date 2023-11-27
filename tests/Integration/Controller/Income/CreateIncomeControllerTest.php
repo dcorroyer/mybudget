@@ -56,14 +56,12 @@ class CreateIncomeControllerTest extends WebTestCase
         $payload = (new IncomePayload())
             ->setName($income->getName())
             ->setAmount($income->getAmount())
-            ->setDate($income->getDate())
             ->setType($income->getType());
 
         $incomeResponse = (new IncomeResponse())
             ->setId($income->getId())
             ->setName($payload->getName())
             ->setAmount($payload->getAmount())
-            ->setDate($payload->getDate())
             ->setType($payload->getType());
 
         $this->incomeService

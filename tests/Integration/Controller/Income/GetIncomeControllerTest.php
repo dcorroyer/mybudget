@@ -68,7 +68,6 @@ class GetIncomeControllerTest extends WebTestCase
         $this->assertEquals($income->getId(), $data['id']);
         $this->assertEquals($income->getName(), $data['name']);
         $this->assertEquals($income->getAmount(), $data['amount']);
-        $this->assertEquals($income->getDate()->format('Y-m-d'), $data['date']);
         $this->assertEquals($income->getType()->value, $data['type']);
     }
 }

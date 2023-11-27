@@ -6,7 +6,6 @@ namespace App\Dto\Expense\Response;
 
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\AmountResponseTrait;
-use App\Trait\Response\DateResponseTrait;
 use App\Trait\Response\IdResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
@@ -15,7 +14,6 @@ class ExpenseResponse implements ResponseInterface
 {
     use IdResponseTrait;
     use AmountResponseTrait;
-    use DateResponseTrait;
 
     /**
      * @var array<ExpenseLineResponse>

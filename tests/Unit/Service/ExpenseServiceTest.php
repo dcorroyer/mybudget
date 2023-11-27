@@ -72,8 +72,7 @@ class ExpenseServiceTest extends TestCase
             ->create()
             ->object();
 
-        $expensePayload = (new ExpensePayload())
-            ->setDate($expense->getDate());
+        $expensePayload = (new ExpensePayload());
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
@@ -88,7 +87,6 @@ class ExpenseServiceTest extends TestCase
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
-        $this->assertEquals($expense->getDate(), $expenseResponse->getDate());
     }
 
     #[TestDox('When calling update expense, it should update and return the expense')]
@@ -102,8 +100,7 @@ class ExpenseServiceTest extends TestCase
             ->create()
             ->object();
 
-        $expensePayload = (new ExpensePayload())
-            ->setDate(new \DateTime('now'));
+        $expensePayload = (new ExpensePayload());
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
@@ -118,7 +115,6 @@ class ExpenseServiceTest extends TestCase
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
-        $this->assertEquals($expensePayload->getDate(), $expenseResponse->getDate());
     }
 
     #[TestDox('When calling delete expense, it should delete the expense')]

@@ -48,7 +48,6 @@ final class IncomeFactory extends ModelFactory
         return [
             'id' => self::faker()->randomNumber(),
             'amount' => self::faker()->randomFloat(),
-            'date' => new \DateTime(),
             'name' => self::faker()->text(25),
             'type' => self::faker()->randomElement(IncomeTypes::cases()),
         ];

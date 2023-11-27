@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Dto\Income\Payload\IncomeLinePayload;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
+use App\Enum\IncomeTypes;
 use App\Repository\IncomeLineRepository;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
@@ -132,5 +134,62 @@ class IncomeServiceTest extends TestCase
 
         // ASSERT
         $this->assertCount(20, $incomesResponse);
+    }
+
+    #[TestDox('When calling updateOrCreateIncome, it should returns the income response')]
+    #[Test]
+    public function updateOrCreateIncomeIncomeService_WhenDataOk_ReturnsIncomeResponse()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new IncomeService($this->incomeRepository, $this->incomeLineRepository);
+        $method = $this->getPrivateMethod(IncomeService::class, 'updateOrCreateIncome');
+
+        // ARRANGE
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $incomeLinePayload = (new IncomeLinePayload())
+            ->setId($income->getIncomeLines()[0]->getId())
+            ->setAmount(100)
+            ->setName('test')
+            ->setType(IncomeTypes::SALARY);
+
+        $incomeLinePayload2 = (new IncomeLinePayload())
+            ->setId($income->getIncomeLines()[1]->getId())
+            ->setAmount(200)
+            ->setName('test2')
+            ->setType(IncomeTypes::DIVIDENDS);
+
+        $expenseLinesPayload = [$incomeLinePayload, $incomeLinePayload2];
+
+        $incomePayload = (new IncomePayload())
+            ->setIncomeLines($expenseLinesPayload);
+
+        $this->incomeLineRepository->expects($this->exactly(2))
+            ->method('find')
+            ->willReturn($income->getIncomeLines()[0]);
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
+
+        // ACT
+        $incomeResponse = $method->invoke($object, $incomePayload, $income);
+
+        // ASSERT
+        $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
+        $this->assertEquals($income->getId(), $incomeResponse->getId());
+    }
+
+    private function getPrivateMethod($className, $methodName): \ReflectionMethod
+    {
+        $reflector = new \ReflectionClass($className);
+
+        return $reflector->getMethod($methodName);
     }
 }

@@ -151,9 +151,9 @@ class ExpenseServiceTest extends TestCase
         $this->assertCount(20, $incomesResponse);
     }
 
-    #[TestDox('When calling updateOrCreateExpense, it should returns the expense')]
+    #[TestDox('When calling updateOrCreateExpense, it should returns the expense response')]
     #[Test]
-    public function updateOrCreateExpenseExpenseService_WhenDataContainsId_ReturnsExpenseResponse()
+    public function updateOrCreateExpenseExpenseService_WhenDataOk_ReturnsExpenseResponse()
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new ExpenseService(

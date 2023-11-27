@@ -7,14 +7,12 @@ namespace App\Dto\Income\Response;
 use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\IdResponseTrait;
-use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
 class IncomeResponse implements ResponseInterface
 {
     use IdResponseTrait;
-    use NameResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private float $amount = 0;

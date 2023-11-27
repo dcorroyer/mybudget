@@ -66,8 +66,6 @@ class GetIncomeControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
         $this->assertEquals($income->getId(), $data['id']);
-        $this->assertEquals($income->getName(), $data['name']);
         $this->assertEquals($income->getAmount(), $data['amount']);
-        $this->assertEquals($income->getType()->value, $data['type']);
     }
 }

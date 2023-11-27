@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\IncomeTypes;
 use App\Repository\IncomeRepository;
 use App\Serializable\SerializationGroups;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
 #[ORM\Table(name: 'incomes')]
@@ -33,28 +33,24 @@ class Income
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
     ])]
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private string $name;
-
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-    ])]
-    #[Assert\NotBlank]
-    #[Assert\Type('float')]
     #[ORM\Column]
-    private float $amount;
+    private ?float $amount = 0;
 
+    /**
+     * @var Collection<IncomeLine>
+     */
     #[Serializer\Groups([
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
     ])]
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private IncomeTypes $type;
+    #[ORM\OneToMany(mappedBy: 'income', targetEntity: IncomeLine::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $incomeLines;
+
+    public function __construct()
+    {
+        $this->incomeLines = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -68,38 +64,55 @@ class Income
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getType(): IncomeTypes
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateAmount(): void
     {
-        return $this->type;
+        $this->amount = 0;
+
+        foreach ($this->incomeLines as $incomeLine) {
+            $this->amount += $incomeLine->getAmount();
+        }
     }
 
-    public function setType(IncomeTypes $type): self
+    /**
+     * @return Collection<int, IncomeLine>
+     */
+    public function getIncomeLines(): Collection
     {
-        $this->type = $type;
+        return $this->incomeLines;
+    }
+
+    public function addIncomeLine(IncomeLine $incomeLine): self
+    {
+        if (! $this->incomeLines->contains($incomeLine)) {
+            $this->incomeLines[] = $incomeLine;
+            $incomeLine->setIncome($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIncomeLine(IncomeLine $incomeLine): self
+    {
+        if ($this->incomeLines->removeElement($incomeLine)) {
+            // set the owning side to null (unless already changed)
+            if ($incomeLine->getIncome() === $this) {
+                $incomeLine->setIncome(null);
+            }
+        }
 
         return $this;
     }

@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
 #[ORM\Table(name: 'incomes')]
+#[ORM\HasLifecycleCallbacks]
 class Income
 {
     use TimestampableTrait;

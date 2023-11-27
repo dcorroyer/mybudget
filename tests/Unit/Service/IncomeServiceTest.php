@@ -64,9 +64,7 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getName(), $incomeResponse->getName());
         $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 
     #[TestDox('When calling update income, it should update and return the income updated')]
@@ -88,9 +86,7 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getName(), $incomeResponse->getName());
         $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 
     #[TestDox('When calling delete income, it should delete the income')]

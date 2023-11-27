@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\ExpenseLineRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
+use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'expense_lines')]
 class ExpenseLine
 {
+    use TimestampableTrait;
+
     #[Serializer\Groups([
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,

@@ -53,16 +53,10 @@ class CreateIncomeControllerTest extends WebTestCase
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();
 
-        $payload = (new IncomePayload())
-            ->setName($income->getName())
-            ->setAmount($income->getAmount())
-            ->setType($income->getType());
+        $payload = (new IncomePayload());
 
         $incomeResponse = (new IncomeResponse())
-            ->setId($income->getId())
-            ->setName($payload->getName())
-            ->setAmount($payload->getAmount())
-            ->setType($payload->getType());
+            ->setId($income->getId());
 
         $this->incomeService
             ->expects($this->once())

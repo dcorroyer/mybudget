@@ -51,7 +51,7 @@ final class ExpenseFactory extends ModelFactory
                 'expense' => $this,
                 'category' => ExpenseCategoryFactory::new()->withoutPersisting()->create(),
             ])->withoutPersisting()
-                ->many(1, 5)
+                ->many(2)
                 ->create(),
         ];
     }

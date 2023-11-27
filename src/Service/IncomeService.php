@@ -62,8 +62,6 @@ class IncomeService
     {
         return (new IncomeResponse())
             ->setId($income->getId())
-            ->setName($income->getName())
-            ->setAmount($income->getAmount())
-            ->setType($income->getType());
+            ->setAmount($income->getAmount());
     }
 }

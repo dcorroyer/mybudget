@@ -55,16 +55,10 @@ class UpdateIncomeControllerTest extends WebTestCase
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();
 
-        $payload = (new IncomePayload())
-            ->setName('New name')
-            ->setAmount($income->getAmount())
-            ->setType($income->getType());
+        $payload = (new IncomePayload());
 
         $incomeResponse = (new IncomeResponse())
-            ->setId($income->getId())
-            ->setName($payload->getName())
-            ->setAmount($payload->getAmount())
-            ->setType($payload->getType());
+            ->setId($income->getId());
 
         $this->incomeService
             ->expects($this->once())
@@ -93,6 +87,5 @@ class UpdateIncomeControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
         $this->assertEquals($income->getId(), $data['id']);
-        $this->assertEquals($incomeResponse->getName(), $data['name']);
     }
 }

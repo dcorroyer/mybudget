@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Common\Factory;
 
 use App\Entity\Income;
-use App\Enum\IncomeTypes;
 use App\Repository\IncomeRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -48,8 +47,11 @@ final class IncomeFactory extends ModelFactory
         return [
             'id' => self::faker()->randomNumber(),
             'amount' => self::faker()->randomFloat(),
-            'name' => self::faker()->text(25),
-            'type' => self::faker()->randomElement(IncomeTypes::cases()),
+            'incomeLines' => IncomeLineFactory::new([
+                'income' => $this,
+            ])->withoutPersisting()
+                ->many(2)
+                ->create(),
         ];
     }
 

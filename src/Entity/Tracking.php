@@ -61,11 +61,21 @@ class Tracking
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Serializer\Groups([
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_DELETE,
+    ])]
+    #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Income $income = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Serializer\Groups([
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_DELETE,
+    ])]
+    #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Expense $expense = null;
 

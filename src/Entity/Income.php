@@ -23,6 +23,9 @@ class Income
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_DELETE,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,6 +36,7 @@ class Income
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\Column]
     private ?float $amount = 0;
@@ -44,6 +48,7 @@ class Income
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\OneToMany(mappedBy: 'income', targetEntity: IncomeLine::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomeLines;

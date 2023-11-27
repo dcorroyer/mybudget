@@ -21,6 +21,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,6 +32,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -40,6 +42,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
@@ -50,6 +53,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]

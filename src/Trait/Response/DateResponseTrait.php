@@ -11,13 +11,13 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 trait DateResponseTrait
 {
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE])]
     #[Context(
         normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
         denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
     private \DateTimeInterface $date;

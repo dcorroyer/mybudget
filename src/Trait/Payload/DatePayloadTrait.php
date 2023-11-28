@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 trait DatePayloadTrait
 {
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     #[Context(
         normalizationContext: [
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',

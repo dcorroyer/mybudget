@@ -26,6 +26,7 @@ class Expense
         SerializationGroups::TRACKING_LIST,
         SerializationGroups::TRACKING_GET,
         SerializationGroups::TRACKING_DELETE,
+        SerializationGroups::TRACKING_CREATE,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -15,6 +15,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrackingRepository::class)]
+#[ORM\Table(name: 'trackings')]
+#[ORM\HasLifecycleCallbacks]
 class Tracking
 {
     use TimestampableTrait;
@@ -31,7 +33,7 @@ class Tracking
     ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
-    private string $name;
+    private ?string $name = null;
 
     #[Serializer\Groups([
         SerializationGroups::TRACKING_GET,
@@ -91,16 +93,23 @@ class Tracking
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateName(): void
+    {
+        $this->name = 'Tracking ' . $this->date->format('Y-m');
     }
 
     public function getSavingCapacity(): ?float
@@ -113,6 +122,13 @@ class Tracking
         $this->savingCapacity = $savingCapacity;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateSavingCapacity(): void
+    {
+        $this->savingCapacity = $this->calculateTotalIncomes() - $this->calculateTotalExpenses();
     }
 
     public function getDate(): \DateTimeInterface
@@ -149,5 +165,27 @@ class Tracking
         $this->expense = $expense;
 
         return $this;
+    }
+
+    private function calculateTotalIncomes(): float
+    {
+        $totalIncomes = 0;
+
+        foreach ($this->income->getIncomeLines() as $incomeLine) {
+            $totalIncomes += $incomeLine->getAmount();
+        }
+
+        return $totalIncomes;
+    }
+
+    private function calculateTotalExpenses(): float
+    {
+        $totalExpenses = 0;
+
+        foreach ($this->expense->getExpenseLines() as $expenseLine) {
+            $totalExpenses += $expenseLine->getAmount();
+        }
+
+        return $totalExpenses;
     }
 }

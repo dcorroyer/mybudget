@@ -48,8 +48,6 @@ final class SerializationGroups
 
     public const TRACKING_CREATE = 'TRACKING_CREATE';
 
-    public const TRACKING_UPDATE = 'TRACKING_UPDATE';
-
     public const TRACKING_DELETE = 'TRACKING_DELETE';
 
     public const TRACKING_GET = 'TRACKING_GET';

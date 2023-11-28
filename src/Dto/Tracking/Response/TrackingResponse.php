@@ -19,13 +19,13 @@ class TrackingResponse implements ResponseInterface
     use NameResponseTrait;
     use DateResponseTrait;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     private float $savingCapacity;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     private Income $income;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE])]
+    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     private Expense $expense;
 
     public function getSavingCapacity(): float

@@ -16,6 +16,7 @@ trait NameResponseTrait
         SerializationGroups::EXPENSE_UPDATE,
         SerializationGroups::EXPENSE_CATEGORY_UPDATE,
         SerializationGroups::TRACKING_CREATE,
+        SerializationGroups::TRACKING_UPDATE,
     ])]
     private string $name;
 

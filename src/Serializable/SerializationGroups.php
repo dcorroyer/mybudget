@@ -18,14 +18,6 @@ final class SerializationGroups
 
     public const USER_CREATE = 'USER_CREATE';
 
-    public const USER_UPDATE = 'USER_UPDATE';
-
-    public const USER_DELETE = 'USER_DELETE';
-
-    public const USER_GET = 'USER_GET';
-
-    public const USER_LIST = 'USER_LIST';
-
     public const EXPENSE_CREATE = 'EXPENSE_CREATE';
 
     public const EXPENSE_UPDATE = 'EXPENSE_UPDATE';
@@ -38,17 +30,15 @@ final class SerializationGroups
 
     public const EXPENSE_CATEGORY_LIST = 'EXPENSE_CATEGORY_LIST';
 
-    public const EXPENSE_CATEGORY_CREATE = 'EXPENSE_CATEGORY_CREATE';
-
     public const EXPENSE_CATEGORY_UPDATE = 'EXPENSE_CATEGORY_UPDATE';
-
-    public const EXPENSE_CATEGORY_DELETE = 'EXPENSE_CATEGORY_DELETE';
 
     public const EXPENSE_CATEGORY_GET = 'EXPENSE_CATEGORY_GET';
 
     public const TRACKING_CREATE = 'TRACKING_CREATE';
 
     public const TRACKING_DELETE = 'TRACKING_DELETE';
+
+    public const TRACKING_UPDATE = 'TRACKING_UPDATE';
 
     public const TRACKING_GET = 'TRACKING_GET';
 

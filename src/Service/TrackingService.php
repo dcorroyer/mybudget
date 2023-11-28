@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\Tracking\Http\TrackingFilterQuery;
 use App\Dto\Tracking\Payload\TrackingPayload;
+use App\Dto\Tracking\Payload\UpdateTrackingPayload;
 use App\Dto\Tracking\Response\TrackingResponse;
 use App\Entity\Tracking;
 use App\Repository\ExpenseRepository;
@@ -41,14 +42,16 @@ class TrackingService
 
         $this->trackingRepository->save($tracking, true);
 
-        return (new TrackingResponse())
-            ->setId($tracking->getId())
-            ->setName($tracking->getName())
-            ->setDate($tracking->getDate())
-            ->setSavingCapacity($tracking->getSavingCapacity())
-            ->setIncome($tracking->getIncome())
-            ->setExpense($tracking->getExpense())
-        ;
+        return $this->trackingResponse($tracking);
+    }
+
+    public function update(UpdateTrackingPayload $payload, Tracking $tracking): TrackingResponse
+    {
+        $tracking->setDate($payload->getDate());
+
+        $this->trackingRepository->save($tracking, true);
+
+        return $this->trackingResponse($tracking);
     }
 
     public function delete(Tracking $tracking): Tracking
@@ -63,5 +66,17 @@ class TrackingService
         TrackingFilterQuery $filter = null
     ): SlidingPagination {
         return $this->trackingRepository->paginate($paginationQueryParams, $filter, Criteria::create());
+    }
+
+    private function trackingResponse(Tracking $tracking): TrackingResponse
+    {
+        return (new TrackingResponse())
+            ->setId($tracking->getId())
+            ->setName($tracking->getName())
+            ->setDate($tracking->getDate())
+            ->setSavingCapacity($tracking->getSavingCapacity())
+            ->setIncome($tracking->getIncome())
+            ->setExpense($tracking->getExpense())
+        ;
     }
 }

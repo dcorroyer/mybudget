@@ -35,7 +35,7 @@ class ListExpenseCategoryControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        // $this->client->loginUser(new User());
+        $this->client->loginUser(new User());
 
         $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
         $expenseCategoryRepository = $this->createMock(ExpenseCategoryRepository::class);

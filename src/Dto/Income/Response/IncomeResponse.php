@@ -4,69 +4,37 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Response;
 
-use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
+use App\Trait\Response\AmountResponseTrait;
 use App\Trait\Response\IdResponseTrait;
-use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class IncomeResponse implements ResponseInterface
 {
     use IdResponseTrait;
-    use NameResponseTrait;
+    use AmountResponseTrait;
 
+    /**
+     * @var array<IncomeLineResponse>
+     */
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private float $amount = 0;
+    private array $incomeLines;
 
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private \DateTimeInterface $date;
-
-    #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private IncomeTypes $type;
-
-    public function getAmount(): float
+    /**
+     * @return IncomeLineResponse[]
+     */
+    public function getIncomeLines(): array
     {
-        return $this->amount;
+        return $this->incomeLines;
     }
 
-    public function setAmount(float $amount): self
+    /**
+     * @param IncomeLineResponse[] $incomeLines
+     */
+    public function setIncomeLines(array $incomeLines): self
     {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getDate(): \DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    public function getType(): IncomeTypes
-    {
-        return $this->type;
-    }
-
-    public function setType(IncomeTypes $type): self
-    {
-        $this->type = $type;
+        $this->incomeLines = $incomeLines;
 
         return $this;
     }

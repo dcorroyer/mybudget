@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\IncomeTypes;
 use App\Repository\IncomeRepository;
 use App\Serializable\SerializationGroups;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
-use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
 #[ORM\Table(name: 'incomes')]
+#[ORM\HasLifecycleCallbacks]
 class Income
 {
     use TimestampableTrait;
@@ -25,6 +23,11 @@ class Income
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_DELETE,
+        SerializationGroups::TRACKING_CREATE,
+        SerializationGroups::TRACKING_UPDATE,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,47 +38,27 @@ class Income
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private string $name;
-
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-    ])]
-    #[Assert\NotBlank]
-    #[Assert\Type('float')]
     #[ORM\Column]
-    private float $amount;
+    private ?float $amount = 0;
 
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
+    /**
+     * @var Collection<IncomeLine>
+     */
     #[Serializer\Groups([
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
-    #[Assert\NotBlank]
-    #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private \DateTimeInterface $date;
+    #[ORM\OneToMany(mappedBy: 'income', targetEntity: IncomeLine::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $incomeLines;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-    ])]
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private IncomeTypes $type;
+    public function __construct()
+    {
+        $this->incomeLines = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -89,50 +72,55 @@ class Income
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getDate(): \DateTimeInterface
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateAmount(): void
     {
-        return $this->date;
+        $this->amount = 0;
+
+        foreach ($this->incomeLines as $incomeLine) {
+            $this->amount += $incomeLine->getAmount();
+        }
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    /**
+     * @return Collection<int, IncomeLine>
+     */
+    public function getIncomeLines(): Collection
     {
-        $this->date = $date;
+        return $this->incomeLines;
+    }
+
+    public function addIncomeLine(IncomeLine $incomeLine): self
+    {
+        if (! $this->incomeLines->contains($incomeLine)) {
+            $this->incomeLines[] = $incomeLine;
+            $incomeLine->setIncome($this);
+        }
 
         return $this;
     }
 
-    public function getType(): IncomeTypes
+    public function removeIncomeLine(IncomeLine $incomeLine): self
     {
-        return $this->type;
-    }
-
-    public function setType(IncomeTypes $type): self
-    {
-        $this->type = $type;
+        if ($this->incomeLines->removeElement($incomeLine)) {
+            // set the owning side to null (unless already changed)
+            if ($incomeLine->getIncome() === $this) {
+                $incomeLine->setIncome(null);
+            }
+        }
 
         return $this;
     }

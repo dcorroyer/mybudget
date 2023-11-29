@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Tracking;
+
+use App\Entity\Tracking;
+use App\Serializable\SerializationGroups;
+use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
+use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
+use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
+use My\RestBundle\Controller\BaseRestController;
+use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/trackings')]
+#[OA\Tag(name: 'Trackings')]
+class GetTrackingController extends BaseRestController
+{
+    #[MyOpenApi(
+        httpMethod: Request::METHOD_GET,
+        operationId: 'get_tracking',
+        summary: 'get tracking',
+        responses: [
+            new successResponse(
+                responseClassFqcn: Tracking::class,
+                groups: [SerializationGroups::TRACKING_GET],
+                description: 'Tracking get',
+            ),
+            new notfoundResponse(description: 'Tracking not found'),
+        ],
+    )]
+    #[Route('/{id}', name: 'app_trackings_get', methods: Request::METHOD_GET)]
+    public function __invoke(Tracking $tracking): JsonResponse
+    {
+        return $this->successResponse(data: $tracking, groups: [SerializationGroups::TRACKING_GET]);
+    }
+}

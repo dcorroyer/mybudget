@@ -47,12 +47,11 @@ final class ExpenseFactory extends ModelFactory
         return [
             'id' => self::faker()->randomDigit(),
             'amount' => self::faker()->randomFloat(),
-            'date' => self::faker()->dateTime(),
             'expenseLines' => ExpenseLineFactory::new([
                 'expense' => $this,
                 'category' => ExpenseCategoryFactory::new()->withoutPersisting()->create(),
             ])->withoutPersisting()
-                ->many(1, 5)
+                ->many(2)
                 ->create(),
         ];
     }

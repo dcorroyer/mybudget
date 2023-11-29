@@ -30,7 +30,7 @@ class RegisterController extends BaseRestController
                 responseClassFqcn: User::class,
                 groups: [SerializationGroups::USER_CREATE],
                 responseCode: Response::HTTP_CREATED,
-                description: 'Income creation',
+                description: 'register user',
             ),
         ],
         requestBodyClassFqcn: RegisterPayload::class

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Dto\Expense\Payload\ExpenseLinePayload;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Expense\Response\ExpenseResponse;
 use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
@@ -72,8 +73,7 @@ class ExpenseServiceTest extends TestCase
             ->create()
             ->object();
 
-        $expensePayload = (new ExpensePayload())
-            ->setDate($expense->getDate());
+        $expensePayload = (new ExpensePayload());
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
@@ -88,7 +88,6 @@ class ExpenseServiceTest extends TestCase
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
-        $this->assertEquals($expense->getDate(), $expenseResponse->getDate());
     }
 
     #[TestDox('When calling update expense, it should update and return the expense')]
@@ -102,8 +101,7 @@ class ExpenseServiceTest extends TestCase
             ->create()
             ->object();
 
-        $expensePayload = (new ExpensePayload())
-            ->setDate(new \DateTime('now'));
+        $expensePayload = (new ExpensePayload());
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
@@ -118,7 +116,6 @@ class ExpenseServiceTest extends TestCase
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertEquals($expense->getId(), $expenseResponse->getId());
-        $this->assertEquals($expensePayload->getDate(), $expenseResponse->getDate());
     }
 
     #[TestDox('When calling delete expense, it should delete the expense')]
@@ -152,6 +149,61 @@ class ExpenseServiceTest extends TestCase
 
         // ASSERT
         $this->assertCount(20, $incomesResponse);
+    }
+
+    #[TestDox('When calling updateOrCreateExpense, it should returns the expense response')]
+    #[Test]
+    public function updateOrCreateExpenseExpenseService_WhenDataOk_ReturnsExpenseResponse()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new ExpenseService(
+            $this->expenseRepository,
+            $this->expenseLineRepository,
+            $this->expenseCategoryRepository,
+            $this->expenseCategoryService
+        );
+        $method = $this->getPrivateMethod(ExpenseService::class, 'updateOrCreateExpense');
+
+        // ARRANGE
+        $expense = ExpenseFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $expenseLinePayload = (new ExpenseLinePayload())
+            ->setId($expense->getExpenseLines()[0]->getId())
+            ->setAmount(100)
+            ->setName('test')
+            ->setCategory((new ExpenseCategoryPayload())->setName('test'));
+
+        $expenseLinePayload2 = (new ExpenseLinePayload())
+            ->setId($expense->getExpenseLines()[1]->getId())
+            ->setAmount(200)
+            ->setName('test2')
+            ->setCategory((new ExpenseCategoryPayload())->setName('test2'));
+
+        $expenseLinesPayload = [$expenseLinePayload, $expenseLinePayload2];
+
+        $expensePayload = (new ExpensePayload())
+            ->setExpenseLines($expenseLinesPayload);
+
+        $this->expenseLineRepository->expects($this->exactly(2))
+            ->method('find')
+            ->willReturn($expense->getExpenseLines()[0]);
+
+        $this->expenseRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Expense $expense) {
+                $expense->setId(1);
+            });
+
+        // ACT
+        $expenseResponse = $method->invoke($object, $expensePayload, $expense);
+
+        // ASSERT
+        $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
+        $this->assertEquals($expense->getId(), $expenseResponse->getId());
     }
 
     #[TestDox(

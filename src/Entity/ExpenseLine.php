@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\ExpenseLineRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\ORM\Mapping as ORM;
+use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,10 +15,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'expense_lines')]
 class ExpenseLine
 {
+    use TimestampableTrait;
+
     #[Serializer\Groups([
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,6 +32,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -37,6 +42,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
@@ -47,6 +53,7 @@ class ExpenseLine
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]

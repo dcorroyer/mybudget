@@ -58,7 +58,6 @@ class ExpenseService
 
     private function updateOrCreateExpense(ExpensePayload $payload, Expense $expense): ExpenseResponse
     {
-        $expenseLines = [];
         $expenseLinesResponse = [];
 
         foreach ($payload->getExpenseLines() as $expenseLinePayload) {
@@ -72,12 +71,6 @@ class ExpenseService
                 ->setAmount($expenseLinePayload->getAmount())
                 ->setCategory($category);
 
-            $expenseLines[] = $expenseLine;
-        }
-
-        $expense->setDate($payload->getDate());
-
-        foreach ($expenseLines as $expenseLine) {
             $expense->addExpenseLine($expenseLine);
         }
 
@@ -96,7 +89,6 @@ class ExpenseService
 
         return (new ExpenseResponse())
             ->setId($expense->getId())
-            ->setDate($expense->getDate())
             ->setAmount($expense->getAmount())
             ->setExpenseLines($expenseLinesResponse)
         ;

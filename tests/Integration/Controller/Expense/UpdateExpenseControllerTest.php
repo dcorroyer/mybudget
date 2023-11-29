@@ -56,12 +56,10 @@ class UpdateExpenseControllerTest extends WebTestCase
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
 
         $payload = (new ExpensePayload())
-            ->setDate(new \DateTime('now'))
             ->setExpenseLines($expense->getExpenseLines()->toArray());
 
         $expenseResponse = (new ExpenseResponse())
-            ->setId($expense->getId())
-            ->setDate($payload->getDate());
+            ->setId($expense->getId());
 
         $this->expenseService
             ->expects($this->once())
@@ -90,6 +88,5 @@ class UpdateExpenseControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
         $this->assertEquals($expenseResponse->getId(), $data['id']);
-        $this->assertEquals($payload->getDate()->format('Y-m-d'), $data['date']);
     }
 }

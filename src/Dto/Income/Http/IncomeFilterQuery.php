@@ -11,9 +11,6 @@ use Symfony\Component\Serializer\Annotation\SerializedPath;
 
 class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
-    #[SerializedPath('[criteria][query]')]
-    private ?string $query;
-
     #[SerializedPath('[i][amount]')]
     private ?float $amount = 0;
 
@@ -25,23 +22,7 @@ class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
             $criteria->andWhere(Criteria::expr()->eq('amount', $this->amount));
         }
 
-        if ($this->query) {
-            $criteria->andWhere(Criteria::expr()->contains('name', ucfirst($this->query)));
-        }
-
         return $criteria;
-    }
-
-    public function getQuery(): ?string
-    {
-        return $this->query;
-    }
-
-    public function setQuery(?string $query): self
-    {
-        $this->query = $query;
-
-        return $this;
     }
 
     public function getAmount(): ?float

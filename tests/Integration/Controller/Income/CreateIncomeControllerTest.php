@@ -36,7 +36,7 @@ class CreateIncomeControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        // $this->client->loginUser(new User());
+        $this->client->loginUser(new User());
 
         $this->incomeService = $this->createMock(IncomeService::class);
         $incomeRepository = $this->createMock(IncomeRepository::class);

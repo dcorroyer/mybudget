@@ -35,7 +35,7 @@ class ListTrackingControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        // $this->client->loginUser(new User());
+        $this->client->loginUser(new User());
 
         $this->trackingService = $this->createMock(TrackingService::class);
         $trackingRepository = $this->createMock(TrackingRepository::class);

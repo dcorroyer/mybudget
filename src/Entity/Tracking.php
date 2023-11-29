@@ -21,6 +21,11 @@ class Tracking
 {
     use TimestampableTrait;
 
+    #[Serializer\Groups([
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_DELETE,
+    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

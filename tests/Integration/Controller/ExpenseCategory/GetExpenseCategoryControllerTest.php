@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\ExpenseCategory;
 
+use App\Entity\User;
 use App\Repository\ExpenseCategoryRepository;
 use App\Tests\Common\Factory\ExpenseCategoryFactory;
 use PHPUnit\Framework\Attributes\Group;
@@ -32,7 +33,7 @@ class GetExpenseCategoryControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        // $this->client->loginUser(new User());
+        $this->client->loginUser(new User());
 
         $this->expenseCategoryRepository = $this->createMock(ExpenseCategoryRepository::class);
 

@@ -22,6 +22,7 @@ class ExpenseCategory
         SerializationGroups::EXPENSE_DELETE,
         SerializationGroups::EXPENSE_CATEGORY_GET,
         SerializationGroups::EXPENSE_CATEGORY_LIST,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,6 +35,7 @@ class ExpenseCategory
         SerializationGroups::EXPENSE_DELETE,
         SerializationGroups::EXPENSE_CATEGORY_GET,
         SerializationGroups::EXPENSE_CATEGORY_LIST,
+        SerializationGroups::TRACKING_GET,
     ])]
     #[Assert\NotBlank]
     #[Assert\Unique]

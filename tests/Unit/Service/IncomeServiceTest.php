@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Dto\Income\Payload\IncomeLinePayload;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Dto\Income\Response\IncomeResponse;
 use App\Entity\Income;
+use App\Enum\IncomeTypes;
+use App\Repository\IncomeLineRepository;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\IncomeFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
-use My\RestBundle\Helper\DtoToEntityHelper;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
@@ -31,18 +33,18 @@ class IncomeServiceTest extends TestCase
 
     private IncomeRepository $incomeRepository;
 
-    private IncomeService $incomeService;
+    private IncomeLineRepository $incomeLineRepository;
 
-    private DtoToEntityHelper $dtoToEntityHelper;
+    private IncomeService $incomeService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->incomeRepository = $this->createMock(IncomeRepository::class);
-        $this->dtoToEntityHelper = $this->createMock(DtoToEntityHelper::class);
+        $this->incomeLineRepository = $this->createMock(IncomeLineRepository::class);
 
-        $this->incomeService = new IncomeService($this->incomeRepository, $this->dtoToEntityHelper);
+        $this->incomeService = new IncomeService($this->incomeRepository, $this->incomeLineRepository);
     }
 
     #[TestDox('When calling create income, it should create and return a new income')]
@@ -50,12 +52,19 @@ class IncomeServiceTest extends TestCase
     public function createIncomeService_WhenDataOk_ReturnsIncome()
     {
         // ARRANGE
-        $incomePayload = new IncomePayload();
-        $income = IncomeFactory::new()->withoutPersisting()->create()->object();
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
-        $this->dtoToEntityHelper->expects($this->once())
-            ->method('create')
-            ->willReturn($income);
+        $incomePayload = (new IncomePayload());
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
 
         // ACT
         $incomeResponse = $this->incomeService->create($incomePayload);
@@ -64,10 +73,6 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getName(), $incomeResponse->getName());
-        $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getDate(), $incomeResponse->getDate());
-        $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 
     #[TestDox('When calling update income, it should update and return the income updated')]
@@ -75,12 +80,19 @@ class IncomeServiceTest extends TestCase
     public function updateIncomeService_WhenDataOk_ReturnsIncomeUpdated()
     {
         // ARRANGE
-        $incomePayload = new IncomePayload();
-        $income = IncomeFactory::new()->withoutPersisting()->create()->object();
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
-        $this->dtoToEntityHelper->expects($this->once())
-            ->method('update')
-            ->willReturn($income);
+        $incomePayload = (new IncomePayload());
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
 
         // ACT
         $incomeResponse = $this->incomeService->update($incomePayload, $income);
@@ -89,10 +101,6 @@ class IncomeServiceTest extends TestCase
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
         $this->assertEquals($income->getId(), $incomeResponse->getId());
-        $this->assertEquals($income->getName(), $incomeResponse->getName());
-        $this->assertEquals($income->getAmount(), $incomeResponse->getAmount());
-        $this->assertEquals($income->getDate(), $incomeResponse->getDate());
-        $this->assertEquals($income->getType(), $incomeResponse->getType());
     }
 
     #[TestDox('When calling delete income, it should delete the income')]
@@ -126,5 +134,62 @@ class IncomeServiceTest extends TestCase
 
         // ASSERT
         $this->assertCount(20, $incomesResponse);
+    }
+
+    #[TestDox('When calling updateOrCreateIncome, it should returns the income response')]
+    #[Test]
+    public function updateOrCreateIncomeIncomeService_WhenDataOk_ReturnsIncomeResponse()
+    {
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new IncomeService($this->incomeRepository, $this->incomeLineRepository);
+        $method = $this->getPrivateMethod(IncomeService::class, 'updateOrCreateIncome');
+
+        // ARRANGE
+        $income = IncomeFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $incomeLinePayload = (new IncomeLinePayload())
+            ->setId($income->getIncomeLines()[0]->getId())
+            ->setAmount(100)
+            ->setName('test')
+            ->setType(IncomeTypes::SALARY);
+
+        $incomeLinePayload2 = (new IncomeLinePayload())
+            ->setId($income->getIncomeLines()[1]->getId())
+            ->setAmount(200)
+            ->setName('test2')
+            ->setType(IncomeTypes::DIVIDENDS);
+
+        $expenseLinesPayload = [$incomeLinePayload, $incomeLinePayload2];
+
+        $incomePayload = (new IncomePayload())
+            ->setIncomeLines($expenseLinesPayload);
+
+        $this->incomeLineRepository->expects($this->exactly(2))
+            ->method('find')
+            ->willReturn($income->getIncomeLines()[0]);
+
+        $this->incomeRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (Income $income) {
+                $income->setId(1);
+            });
+
+        // ACT
+        $incomeResponse = $method->invoke($object, $incomePayload, $income);
+
+        // ASSERT
+        $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
+        $this->assertEquals($income->getId(), $incomeResponse->getId());
+    }
+
+    private function getPrivateMethod($className, $methodName): \ReflectionMethod
+    {
+        $reflector = new \ReflectionClass($className);
+
+        return $reflector->getMethod($methodName);
     }
 }

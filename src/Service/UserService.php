@@ -30,6 +30,7 @@ class UserService
         $password = $this->passwordHasher->hashPassword($user, $payload->getPassword());
 
         $user->setPassword($password);
+
         $this->userRepository->save($user, true);
 
         return (new RegisterResponse())

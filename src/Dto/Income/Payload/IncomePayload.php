@@ -4,31 +4,32 @@ declare(strict_types=1);
 
 namespace App\Dto\Income\Payload;
 
-use App\Enum\IncomeTypes;
 use App\Serializable\SerializationGroups;
-use App\Trait\Payload\AmountPayloadTrait;
-use App\Trait\Payload\DatePayloadTrait;
-use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
 class IncomePayload implements PayloadInterface
 {
-    use NamePayloadTrait;
-    use AmountPayloadTrait;
-    use DatePayloadTrait;
-
+    /**
+     * @var array<int, IncomeLinePayload>
+     */
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
-    private IncomeTypes $type;
+    private array $incomeLines = [];
 
-    public function getType(): IncomeTypes
+    /**
+     * @return IncomeLinePayload[]
+     */
+    public function getIncomeLines(): array
     {
-        return $this->type;
+        return $this->incomeLines;
     }
 
-    public function setType(IncomeTypes $type): self
+    /**
+     * @param IncomeLinePayload[] $incomeLines
+     */
+    public function setIncomeLines(array $incomeLines): self
     {
-        $this->type = $type;
+        $this->incomeLines = $incomeLines;
 
         return $this;
     }

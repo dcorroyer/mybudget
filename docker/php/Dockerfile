@@ -17,4 +17,9 @@ RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 RUN echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
-RUN chown root:root -R .
+ENV NVM_DIR /usr/local/nvm
+
+# Install NodeJS / NPM
+RUN mkdir /usr/local/nvm && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install 19

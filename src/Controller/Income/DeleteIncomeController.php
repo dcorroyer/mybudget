@@ -33,7 +33,7 @@ class DeleteIncomeController extends BaseRestController
             new NotFoundResponse(description: 'Income not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_incomes_delete', methods: Request::METHOD_DELETE)]
+    #[Route('/{id}', name: 'api_incomes_delete', methods: Request::METHOD_DELETE)]
     public function __invoke(IncomeService $incomeService, Income $income): Response
     {
         $incomeService->delete($income);

@@ -32,7 +32,7 @@ class GetTrackingController extends BaseRestController
             new notfoundResponse(description: 'Tracking not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_trackings_get', methods: Request::METHOD_GET)]
+    #[Route('/{id}', name: 'api_trackings_get', methods: Request::METHOD_GET)]
     public function __invoke(Tracking $tracking): JsonResponse
     {
         return $this->successResponse(data: $tracking, groups: [SerializationGroups::TRACKING_GET]);

@@ -5,10 +5,18 @@ controllers:
     type: attribute
     prefix: /api
 
-app.swagger_ui:
+api.swagger_ui:
     path: /api/doc
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
 
 api_login_check:
     path: /api/login_check
+
+app_default:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        template: base.html.twig
+    requirements:
+        path: ".+"

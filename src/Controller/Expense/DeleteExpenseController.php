@@ -33,7 +33,7 @@ class DeleteExpenseController extends BaseRestController
             new NotFoundResponse(description: 'Expense not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_expenses_delete', methods: Request::METHOD_DELETE)]
+    #[Route('/{id}', name: 'api_expenses_delete', methods: Request::METHOD_DELETE)]
     public function __invoke(ExpenseService $expenseService, Expense $expense): Response
     {
         $expenseService->delete($expense);

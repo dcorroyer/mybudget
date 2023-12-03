@@ -33,7 +33,7 @@ class DeleteTrackingController extends BaseRestController
             new NotFoundResponse(description: 'Tracking not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_trackings_delete', methods: Request::METHOD_DELETE)]
+    #[Route('/{id}', name: 'api_trackings_delete', methods: Request::METHOD_DELETE)]
     public function __invoke(TrackingService $trackingService, Tracking $tracking): Response
     {
         $trackingService->delete($tracking);

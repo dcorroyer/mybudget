@@ -34,7 +34,7 @@ class UpdateExpenseCategoryController extends BaseRestController
         ],
         requestBodyClassFqcn: ExpenseCategoryPayload::class
     )]
-    #[Route('/{id}', name: 'app_expenses_categories_update', methods: Request::METHOD_PUT)]
+    #[Route('/{id}', name: 'api_expenses_categories_update', methods: Request::METHOD_PUT)]
     public function __invoke(
         ExpenseCategoryService $expenseCategoryService,
         #[MapRequestPayload] ExpenseCategoryPayload $expenseCategoryPayload,

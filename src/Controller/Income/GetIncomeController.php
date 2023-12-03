@@ -32,7 +32,7 @@ class GetIncomeController extends BaseRestController
             new notfoundResponse(description: 'Income not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_incomes_get', methods: Request::METHOD_GET)]
+    #[Route('/{id}', name: 'api_incomes_get', methods: Request::METHOD_GET)]
     public function __invoke(Income $income): JsonResponse
     {
         return $this->successResponse(data: $income, groups: [SerializationGroups::INCOME_GET]);

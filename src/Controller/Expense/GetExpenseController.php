@@ -32,7 +32,7 @@ class GetExpenseController extends BaseRestController
             new notfoundResponse(description: 'Expense not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_expenses_get', methods: Request::METHOD_GET)]
+    #[Route('/{id}', name: 'api_expenses_get', methods: Request::METHOD_GET)]
     public function __invoke(Expense $expense): JsonResponse
     {
         return $this->successResponse(data: $expense, groups: [SerializationGroups::EXPENSE_GET]);

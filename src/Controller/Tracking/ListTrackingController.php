@@ -35,7 +35,7 @@ class ListTrackingController extends BaseRestController
         ],
         queryParamsClassFqcn: [TrackingFilterQuery::class, PaginationQueryParams::class],
     )]
-    #[Route('', name: 'app_trackings_list', methods: Request::METHOD_GET)]
+    #[Route('', name: 'api_trackings_list', methods: Request::METHOD_GET)]
     public function __invoke(
         TrackingService $trackingService,
         #[MapQueryString] PaginationQueryParams $paginationQueryParams = null,

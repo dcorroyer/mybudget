@@ -36,7 +36,7 @@ class CreateTrackingController extends BaseRestController
         ],
         requestBodyClassFqcn: TrackingPayload::class
     )]
-    #[Route('', name: 'app_trackings_create', methods: Request::METHOD_POST)]
+    #[Route('', name: 'api_trackings_create', methods: Request::METHOD_POST)]
     public function __invoke(
         TrackingService $trackingService,
         #[MapRequestPayload] TrackingPayload $trackingPayload

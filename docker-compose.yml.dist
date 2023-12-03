@@ -55,21 +55,6 @@ services:
     networks:
       - app
 
-  npm:
-    container_name: mybudget_npm
-    image: node:18-alpine
-    volumes:
-      - .:/var/www/app
-      - .env:/var/www/app/.env
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-    working_dir: /var/www/app
-    profiles: [ "npm" ]
-    entrypoint: [ "npm" ]
-    networks:
-      - app
-
   mailhog:
     container_name: mybudget_mailhog
     image: mailhog/mailhog

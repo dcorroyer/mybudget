@@ -35,7 +35,7 @@ class RegisterController extends BaseRestController
         ],
         requestBodyClassFqcn: RegisterPayload::class
     )]
-    #[Route('/register', name: 'app_register', methods: Request::METHOD_POST)]
+    #[Route('/register', name: 'api_register', methods: Request::METHOD_POST)]
     public function __invoke(
         UserService $userService,
         #[MapRequestPayload] RegisterPayload $payload

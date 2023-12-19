@@ -36,7 +36,7 @@ class CreateExpenseController extends BaseRestController
         ],
         requestBodyClassFqcn: ExpensePayload::class
     )]
-    #[Route('', name: 'app_expenses_create', methods: Request::METHOD_POST)]
+    #[Route('', name: 'api_expenses_create', methods: Request::METHOD_POST)]
     public function __invoke(
         ExpenseService $expenseService,
         #[MapRequestPayload] ExpensePayload $expensePayload

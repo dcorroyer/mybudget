@@ -27,12 +27,6 @@ return [
         'dev' => true,
         'test' => true,
     ],
-    Symfony\Bundle\TwigBundle\TwigBundle::class => [
-        'all' => true,
-    ],
-    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => [
-        'all' => true,
-    ],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => [
         'all' => true,
     ],
@@ -46,6 +40,15 @@ return [
         'all' => true,
     ],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => [
+        'all' => true,
+    ],
+    Symfony\Bundle\TwigBundle\TwigBundle::class => [
+        'all' => true,
+    ],
+    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => [
+        'all' => true,
+    ],
+    Pentatrion\ViteBundle\PentatrionViteBundle::class => [
         'all' => true,
     ],
 ];

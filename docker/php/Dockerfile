@@ -16,5 +16,3 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 RUN echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
-
-RUN chown root:root -R .

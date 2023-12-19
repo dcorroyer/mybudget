@@ -36,7 +36,7 @@ class CreateIncomeController extends BaseRestController
         ],
         requestBodyClassFqcn: IncomePayload::class
     )]
-    #[Route('', name: 'app_incomes_create', methods: Request::METHOD_POST)]
+    #[Route('', name: 'api_incomes_create', methods: Request::METHOD_POST)]
     public function __invoke(
         IncomeService $incomeService,
         #[MapRequestPayload] IncomePayload $incomePayload

@@ -32,7 +32,7 @@ class GetExpenseCategoryController extends BaseRestController
             new notfoundResponse(description: 'Expense category not found'),
         ],
     )]
-    #[Route('/{id}', name: 'app_expenses_categories_get', methods: Request::METHOD_GET)]
+    #[Route('/{id}', name: 'api_expenses_categories_get', methods: Request::METHOD_GET)]
     public function __invoke(ExpenseCategory $expenseCategory): JsonResponse
     {
         return $this->successResponse(data: $expenseCategory, groups: [SerializationGroups::EXPENSE_CATEGORY_GET]);

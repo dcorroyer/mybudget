@@ -37,7 +37,7 @@ class UpdateTrackingController extends BaseRestController
         ],
         requestBodyClassFqcn: TrackingPayload::class
     )]
-    #[Route('/{id}', name: 'app_trackings_update', methods: Request::METHOD_PUT)]
+    #[Route('/{id}', name: 'api_trackings_update', methods: Request::METHOD_PUT)]
     public function __invoke(
         TrackingService $trackingService,
         Tracking $tracking,

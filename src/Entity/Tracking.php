@@ -176,6 +176,18 @@ class Tracking
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     private function calculateTotalIncomes(): float
     {
         $totalIncomes = 0;
@@ -196,17 +208,5 @@ class Tracking
         }
 
         return $totalExpenses;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
     }
 }

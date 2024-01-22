@@ -3,23 +3,23 @@
 declare(strict_types=1);
 
 namespace App\Dto\User\Response;
-
+    
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\IdResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class RegisterResponse implements ResponseInterface
+class UserResponse implements ResponseInterface
 {
     use IdResponseTrait;
 
-    #[Serializer\Groups([SerializationGroups::USER_CREATE])]
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $email;
 
-    #[Serializer\Groups([SerializationGroups::USER_CREATE])]
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $firstName;
 
-    #[Serializer\Groups([SerializationGroups::USER_CREATE])]
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $lastName;
 
     public function getEmail(): string

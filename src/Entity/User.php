@@ -170,7 +170,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTracking(Tracking $tracking): static
     {
-        if (!$this->trackings->contains($tracking)) {
+        if (! $this->trackings->contains($tracking)) {
             $this->trackings->add($tracking);
             $tracking->setUser($this);
         }

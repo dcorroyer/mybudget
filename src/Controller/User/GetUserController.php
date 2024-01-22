@@ -38,6 +38,9 @@ class GetUserController extends BaseRestController
     #[Route('/me', name: 'api_users_get', methods: Request::METHOD_GET)]
     public function __invoke(UserService $userService, #[CurrentUser] UserInterface $tokenUser): JsonResponse
     {
-        return $this->successResponse(data: $userService->get($tokenUser->getUserIdentifier()), groups: [SerializationGroups::USER_GET]);
+        return $this->successResponse(
+            data: $userService->get($tokenUser->getUserIdentifier()),
+            groups: [SerializationGroups::USER_GET]
+        );
     }
 }

@@ -47,11 +47,16 @@ class RegisterControllerTest extends WebTestCase
         // ARRANGE
         $user = UserFactory::new()->withoutPersisting()->create()->object();
 
-        $payload = (new RegisterPayload())
-            ->setEmail($user->getEmail())
-            ->setPassword('password');
+        $payload = [
+            'firstName' => $user->getFirstName(),
+            'lastName' => $user->getLastName(),
+            'email' => $user->getEmail(),
+            'password' => 'password',
+        ];
 
         $userResponse = (new RegisterResponse())
+            ->setFirstName($user->getFirstName())
+            ->setLastName($user->getLastName())
             ->setId($user->getId())
             ->setEmail($user->getEmail());
 

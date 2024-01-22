@@ -16,6 +16,12 @@ class RegisterResponse implements ResponseInterface
     #[Serializer\Groups([SerializationGroups::USER_CREATE])]
     private string $email;
 
+    #[Serializer\Groups([SerializationGroups::USER_CREATE])]
+    private string $firstName;
+
+    #[Serializer\Groups([SerializationGroups::USER_CREATE])]
+    private string $lastName;
+
     public function getEmail(): string
     {
         return $this->email;
@@ -24,6 +30,30 @@ class RegisterResponse implements ResponseInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
 
         return $this;
     }

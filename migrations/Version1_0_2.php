@@ -24,6 +24,8 @@ final class Version1_0_2 extends AbstractMigration
             CREATE TABLE users (
                 id INT AUTO_INCREMENT NOT NULL,
                 email VARCHAR(180) NOT NULL,
+                first_name VARCHAR(180) NOT NULL,
+                last_name VARCHAR(180) NOT NULL,
                 roles JSON NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 UNIQUE INDEX UNIQ_1483A5E9E7927C74 (email),

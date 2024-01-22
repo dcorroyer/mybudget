@@ -57,9 +57,11 @@ class UserServiceTest extends TestCase
         ])->withoutPersisting()
             ->create()
             ->object();
-        $userPayload = new RegisterPayload();
 
-        $userPayload->setEmail($user->getEmail())
+        $userPayload = (new RegisterPayload())
+            ->setFirstName($user->getFirstName())
+            ->setLastName($user->getLastName())
+            ->setEmail($user->getEmail())
             ->setPassword('password');
 
         $this->dtoToEntityHelper

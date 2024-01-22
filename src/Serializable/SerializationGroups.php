@@ -6,18 +6,6 @@ namespace App\Serializable;
 
 final class SerializationGroups
 {
-    public const INCOME_CREATE = 'INCOME_CREATE';
-
-    public const INCOME_UPDATE = 'INCOME_UPDATE';
-
-    public const INCOME_DELETE = 'INCOME_DELETE';
-
-    public const INCOME_GET = 'INCOME_GET';
-
-    public const INCOME_LIST = 'INCOME_LIST';
-
-    public const USER_CREATE = 'USER_CREATE';
-
     public const EXPENSE_CREATE = 'EXPENSE_CREATE';
 
     public const EXPENSE_UPDATE = 'EXPENSE_UPDATE';
@@ -34,6 +22,16 @@ final class SerializationGroups
 
     public const EXPENSE_CATEGORY_GET = 'EXPENSE_CATEGORY_GET';
 
+    public const INCOME_CREATE = 'INCOME_CREATE';
+
+    public const INCOME_UPDATE = 'INCOME_UPDATE';
+
+    public const INCOME_DELETE = 'INCOME_DELETE';
+
+    public const INCOME_GET = 'INCOME_GET';
+
+    public const INCOME_LIST = 'INCOME_LIST';
+
     public const TRACKING_CREATE = 'TRACKING_CREATE';
 
     public const TRACKING_DELETE = 'TRACKING_DELETE';
@@ -43,4 +41,6 @@ final class SerializationGroups
     public const TRACKING_GET = 'TRACKING_GET';
 
     public const TRACKING_LIST = 'TRACKING_LIST';
+
+    public const USER_CREATE = 'USER_CREATE';
 }

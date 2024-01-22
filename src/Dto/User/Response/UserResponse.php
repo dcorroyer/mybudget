@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Dto\User\Response;
-    
+
 use App\Serializable\SerializationGroups;
 use App\Trait\Response\IdResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;

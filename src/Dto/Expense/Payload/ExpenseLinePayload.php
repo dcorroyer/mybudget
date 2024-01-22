@@ -9,6 +9,7 @@ use App\Trait\Payload\AmountPayloadTrait;
 use App\Trait\Payload\IdPayloadTrait;
 use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ExpenseLinePayload implements PayloadInterface
 {
@@ -16,6 +17,7 @@ class ExpenseLinePayload implements PayloadInterface
     use NamePayloadTrait;
     use AmountPayloadTrait;
 
+    #[Assert\NotBlank]
     private ExpenseCategoryPayload $category;
 
     public function getCategory(): ExpenseCategoryPayload

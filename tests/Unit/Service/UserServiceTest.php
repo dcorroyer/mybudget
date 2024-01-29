@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\User\Payload\RegisterPayload;
-use App\Dto\User\Response\RegisterResponse;
+use App\Dto\User\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserService;
@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -57,9 +58,11 @@ class UserServiceTest extends TestCase
         ])->withoutPersisting()
             ->create()
             ->object();
-        $userPayload = new RegisterPayload();
 
-        $userPayload->setEmail($user->getEmail())
+        $userPayload = (new RegisterPayload())
+            ->setFirstName($user->getFirstName())
+            ->setLastName($user->getLastName())
+            ->setEmail($user->getEmail())
             ->setPassword('password');
 
         $this->dtoToEntityHelper
@@ -83,9 +86,52 @@ class UserServiceTest extends TestCase
         $userResponse = $this->userService->create($userPayload);
 
         // ASSERT
-        $this->assertInstanceOf(RegisterResponse::class, $userResponse);
+        $this->assertInstanceOf(UserResponse::class, $userResponse);
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($user->getId(), $userResponse->getId());
         $this->assertEquals($user->getEmail(), $userResponse->getEmail());
+    }
+
+    #[TestDox('When calling get user, it should returns the connected user')]
+    #[Test]
+    public function getUserService_WhenDataOk_ReturnsUser()
+    {
+        // ARRANGE
+        $user = UserFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $this->userRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($user);
+
+        // ACT
+        $userResponse = $this->userService->get($user->getEmail());
+
+        // ASSERT
+        $this->assertInstanceOf(UserResponse::class, $userResponse);
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals($user->getId(), $userResponse->getId());
+        $this->assertEquals($user->getEmail(), $userResponse->getEmail());
+    }
+
+    #[TestDox('When calling get user with a bad email, it should returns NotFoundHttpException')]
+    #[Test]
+    public function getUserService_WhenDataKO_ReturnsNotFoundHttpException()
+    {
+        // ASSERT
+        $this->expectException(NotFoundHttpException::class);
+
+        // ARRANGE
+        $this->userRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        // ACT
+        $this->userService->get('bad-email');
     }
 }

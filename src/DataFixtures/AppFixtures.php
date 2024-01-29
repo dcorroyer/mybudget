@@ -23,7 +23,9 @@ class AppFixtures extends Fixture
         $hashedPassword = $this->passwordEncoder->hashPassword($user, 'password');
 
         UserFactory::new([
-            'email' => 'dylan@admin.local',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'email' => 'john.doe@admin.local',
             'password' => $hashedPassword,
         ])->create();
     }

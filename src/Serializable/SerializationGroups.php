@@ -43,4 +43,6 @@ final class SerializationGroups
     public const TRACKING_LIST = 'TRACKING_LIST';
 
     public const USER_CREATE = 'USER_CREATE';
+
+    public const USER_GET = 'USER_GET';
 }

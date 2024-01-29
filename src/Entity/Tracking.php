@@ -86,6 +86,10 @@ class Tracking
     #[ORM\JoinColumn(nullable: false)]
     private ?Expense $expense = null;
 
+    #[ORM\ManyToOne(inversedBy: 'trackings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -168,6 +172,18 @@ class Tracking
     public function setExpense(Expense $expense): self
     {
         $this->expense = $expense;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\User\Payload;
+namespace App\Dto\User\Response;
 
-use My\RestBundle\Contract\PayloadInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Serializable\SerializationGroups;
+use App\Trait\Response\IdResponseTrait;
+use My\RestBundle\Contract\ResponseInterface;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
-class RegisterPayload implements PayloadInterface
+class UserResponse implements ResponseInterface
 {
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    use IdResponseTrait;
+
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $email;
 
-    #[Assert\NotBlank]
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $firstName;
 
-    #[Assert\NotBlank]
+    #[Serializer\Groups([SerializationGroups::USER_CREATE, SerializationGroups::USER_GET])]
     private string $lastName;
-
-    #[Assert\NotBlank]
-    private string $password;
 
     public function getEmail(): string
     {
@@ -54,18 +54,6 @@ class RegisterPayload implements PayloadInterface
     public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
 
         return $this;
     }

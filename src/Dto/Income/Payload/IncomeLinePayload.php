@@ -8,7 +8,9 @@ use App\Enum\IncomeTypes;
 use App\Trait\Payload\AmountPayloadTrait;
 use App\Trait\Payload\IdPayloadTrait;
 use App\Trait\Payload\NamePayloadTrait;
+use Doctrine\DBAL\Types\Types;
 use My\RestBundle\Contract\PayloadInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class IncomeLinePayload implements PayloadInterface
 {
@@ -16,6 +18,8 @@ class IncomeLinePayload implements PayloadInterface
     use NamePayloadTrait;
     use AmountPayloadTrait;
 
+    #[Assert\NotBlank]
+    #[Assert\Type(Types::STRING)]
     private IncomeTypes $type;
 
     public function getType(): IncomeTypes

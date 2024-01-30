@@ -12,6 +12,7 @@ use App\Entity\Tracking;
 use App\Repository\ExpenseRepository;
 use App\Repository\IncomeRepository;
 use App\Repository\TrackingRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -21,7 +22,8 @@ class TrackingService
     public function __construct(
         private readonly TrackingRepository $trackingRepository,
         private readonly IncomeRepository $incomeRepository,
-        private readonly ExpenseRepository $expenseRepository
+        private readonly ExpenseRepository $expenseRepository,
+        private readonly UserRepository $userRepository
     ) {
     }
 
@@ -31,6 +33,7 @@ class TrackingService
 
         $income = $this->incomeRepository->find($payload->getIncomeId());
         $expense = $this->expenseRepository->find($payload->getExpenseId());
+        $user = $this->userRepository->find($payload->getUserId());
 
         if ($income === null || $expense === null) {
             throw new \InvalidArgumentException('Income or Expense not found');
@@ -38,7 +41,8 @@ class TrackingService
 
         $tracking->setDate($payload->getDate())
             ->setIncome($income)
-            ->setExpense($expense);
+            ->setExpense($expense)
+            ->setUser($user);
 
         $this->trackingRepository->save($tracking, true);
 

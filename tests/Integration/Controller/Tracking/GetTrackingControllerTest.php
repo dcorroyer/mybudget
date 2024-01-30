@@ -33,7 +33,8 @@ class GetTrackingControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $this->client->loginUser(new User());
+        $this->user = new User();
+        $this->client->loginUser($this->user);
 
         $this->trackingRepository = $this->createMock(TrackingRepository::class);
 
@@ -46,7 +47,11 @@ class GetTrackingControllerTest extends WebTestCase
     public function getTrackingController_WhenDataOk_ReturnsTracking(): void
     {
         // ARRANGE
-        $tracking = TrackingFactory::new()->withoutPersisting()->create()->object();
+        $tracking = TrackingFactory::new([
+            'user' => $this->user,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
         $this->trackingRepository
             ->expects($this->once())

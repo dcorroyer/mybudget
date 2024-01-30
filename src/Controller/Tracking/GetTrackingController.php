@@ -6,6 +6,7 @@ namespace App\Controller\Tracking;
 
 use App\Entity\Tracking;
 use App\Serializable\SerializationGroups;
+use App\Service\TrackingService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -33,8 +34,8 @@ class GetTrackingController extends BaseRestController
         ],
     )]
     #[Route('/{id}', name: 'api_trackings_get', methods: Request::METHOD_GET)]
-    public function __invoke(Tracking $tracking): JsonResponse
+    public function __invoke(int $id, TrackingService $trackingService): JsonResponse
     {
-        return $this->successResponse(data: $tracking, groups: [SerializationGroups::TRACKING_GET]);
+        return $this->successResponse(data: $trackingService->get($id), groups: [SerializationGroups::TRACKING_GET]);
     }
 }

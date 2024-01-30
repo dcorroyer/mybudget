@@ -16,6 +16,9 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TrackingService
 {
@@ -23,8 +26,24 @@ class TrackingService
         private readonly TrackingRepository $trackingRepository,
         private readonly IncomeRepository $incomeRepository,
         private readonly ExpenseRepository $expenseRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly Security $security,
     ) {
+    }
+
+    public function get(int $id): Tracking
+    {
+        $tracking = $this->trackingRepository->find($id);
+
+        if ($tracking === null) {
+            throw new NotFoundHttpException('Tracking not found');
+        }
+
+        if ($this->security->getUser() !== $tracking->getUser()) {
+            throw new AccessDeniedHttpException('Access denied');
+        }
+
+        return $tracking;
     }
 
     public function create(TrackingPayload $payload): TrackingResponse

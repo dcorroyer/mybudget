@@ -7,36 +7,144 @@ namespace App\Tests\Integration\Controller\Authentication;
 use App\Dto\User\Response\UserResponse;
 use App\Service\UserService;
 use App\Tests\Common\Factory\UserFactory;
-use PHPUnit\Framework\Attributes\Group;
+use App\Tests\Common\Helper\MockHelperTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Zenstruck\Foundry\Test\Factories;
 
-#[Group('integration')]
-#[Group('controller')]
-#[Group('user')]
-#[Group('user-controller')]
 class RegisterControllerTest extends WebTestCase
 {
-    use Factories;
+    use MockHelperTrait;
 
-    private const API_ENDPOINT = '/api/register';
-
-    private KernelBrowser $client;
+    private const URI = '/api/register';
+    private const METHOD = 'POST';
 
     private UserService $userService;
+    private KernelBrowser $client;
 
-    protected function setUp(): void
+    protected function setup(): void
     {
-        self::ensureKernelShutdown();
-        $this->client = static::createClient();
+        $this->client = $this->createClient();
 
-        $this->userService = $this->createMock(UserService::class);
+        $this->userService = $this->createMockAndSetToContainer(UserService::class);
+    }
 
-        $container = self::getContainer();
-        $container->set(UserService::class, $this->userService);
+    #[Test]
+    #[TestDox('When call /api/register  without Email, it should return error')]
+    public function RegisterControllerTestWithoutEmail(): void
+    {
+        //ARRANGE
+        $payload = [
+            'firstName' => 'Cordia Hirthe V',
+            'lastName' => 'Rebecca Marks',
+            'password' => 'Isidro Kutch I',
+        ];
+
+        //ACT
+        $this->client->request(
+            method: self::METHOD,
+            uri: self::URI,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($payload)
+        );
+
+        //ASSERT
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    #[Test]
+    #[TestDox('When call /api/register  without FirstName, it should return error')]
+    public function RegisterControllerTestWithoutFirstName(): void
+    {
+        //ARRANGE
+        $payload = [
+            'email' => 'Miss Laurianne Hermann',
+            'lastName' => 'Evan Fadel',
+            'password' => 'Prof. Shyann Pagac',
+        ];
+
+        //ACT
+        $this->client->request(
+            method: self::METHOD,
+            uri: self::URI,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($payload)
+        );
+
+        //ASSERT
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    #[Test]
+    #[TestDox('When call /api/register  without LastName, it should return error')]
+    public function RegisterControllerTestWithoutLastName(): void
+    {
+        //ARRANGE
+        $payload = [
+            'email' => 'Emmitt Roob',
+            'firstName' => 'Miss Marquise Dickinson II',
+            'password' => 'Arianna Muller',
+        ];
+
+        //ACT
+        $this->client->request(
+            method: self::METHOD,
+            uri: self::URI,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($payload)
+        );
+
+        //ASSERT
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    #[Test]
+    #[TestDox('When call /api/register  without Password, it should return error')]
+    public function RegisterControllerTestWithoutPassword(): void
+    {
+        //ARRANGE
+        $payload = [
+            'email' => 'Josianne Brekke',
+            'firstName' => 'Queen Spencer',
+            'lastName' => 'Nicola Sporer',
+        ];
+
+        //ACT
+        $this->client->request(
+            method: self::METHOD,
+            uri: self::URI,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($payload)
+        );
+
+        //ASSERT
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    #[Test]
+    #[TestDox('When call /api/register  without Parameters, it should return error')]
+    public function RegisterControllerTestWithoutParameters(): void
+    {
+        //ACT
+        $this->client->request(
+            method: self::METHOD,
+            uri: self::URI,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+        );
+
+        //ASSERT
+        $this->assertResponseStatusCodeSame(422);
     }
 
     #[TestDox('When you call POST /api/register, it should create and return the user')]
@@ -65,7 +173,7 @@ class RegisterControllerTest extends WebTestCase
             ->willReturn($userResponse);
 
         // ACT
-        $endpoint = self::API_ENDPOINT;
+        $endpoint = self::URI;
         $this->client->request(
             method: 'POST',
             uri: $endpoint,

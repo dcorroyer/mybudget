@@ -6,7 +6,7 @@ cache:
 
 .before_script: &before_script
   before_script:
-    - composer install
+    - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
 ecs:
   <<: *before_script

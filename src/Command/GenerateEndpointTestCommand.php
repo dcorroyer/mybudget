@@ -11,10 +11,6 @@ use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\PsrPrinter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use ReflectionException;
-use ReflectionMethod;
-use ReflectionParameter;
-use ReflectionProperty;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -29,6 +25,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
+
 use function Symfony\Component\String\u;
 use function Zenstruck\Foundry\faker;
 
@@ -45,10 +42,7 @@ class GenerateEndpointTestCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public function generateAssertTests(?ReflectionParameter $mapRequestPayload, ClassType $class): void
+    public function generateAssertTests(?\ReflectionParameter $mapRequestPayload, ClassType $class): void
     {
         $parameterAsserts = [];
 
@@ -84,7 +78,7 @@ class GenerateEndpointTestCommand extends Command
 
     public function generateUse(PhpNamespace $namespace): void
     {
-        //$namespace->addUse($currentClass);
+        // $namespace->addUse($currentClass);
         $namespace->addUse(WebTestCase::class);
         $namespace->addUse(MockHelperTrait::class);
         $namespace->addUse(KernelBrowser::class);
@@ -108,12 +102,10 @@ class GenerateEndpointTestCommand extends Command
                 $choices[] = $choice;
             }
         }
+
         return $choices;
     }
 
-    /**
-     * @throws ReflectionException
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -123,8 +115,11 @@ class GenerateEndpointTestCommand extends Command
         $routes = $this->getCompatibleRouteCollection();
 
         $actions = array_map(
-            fn (Route $route) => u($route->getDefault('_controller'))->afterLast('\\')->toString(),
-            $routes->getIterator()->getArrayCopy()
+            fn (Route $route) => u($route->getDefault('_controller'))
+                ->afterLast('\\')
+                ->toString(),
+            $routes->getIterator()
+                ->getArrayCopy()
         );
 
         $actions = array_flip($actions);
@@ -133,11 +128,16 @@ class GenerateEndpointTestCommand extends Command
 
         [$controller, $method] = $this->resolveControllerAndMethod($routes->get($actions[$chosenRoute]));
 
-        $methodReflection = new ReflectionMethod($controller, $method);
+        $methodReflection = new \ReflectionMethod($controller, $method);
 
-        $additionnalNamespace = u($controller)->replace('App\\Controller\\', '')->beforeLast('\\')->toString();
+        $additionnalNamespace = u($controller)
+            ->replace('App\\Controller\\', '')
+            ->beforeLast('\\')
+            ->toString();
 
-        $fileTestName = u($controller)->afterLast('\\')->toString() . 'Test';
+        $fileTestName = u($controller)
+            ->afterLast('\\')
+            ->toString() . 'Test';
 
         $baseActionTestController = 'App\\Tests\\Integration\\Controller';
 
@@ -166,7 +166,9 @@ class GenerateEndpointTestCommand extends Command
 
         echo $printer->printFile($file);
 
-        $dirTestName = u($additionnalNamespace)->replace('\\', '/')->toString();
+        $dirTestName = u($additionnalNamespace)
+            ->replace('\\', '/')
+            ->toString();
 
         $fileSystem = new Filesystem();
 
@@ -183,15 +185,17 @@ class GenerateEndpointTestCommand extends Command
 
     private function generatePayloadTests(ClassType $class, string $parameterName, array $parameters = []): void
     {
-        $nameParam = u($parameterName)->title()->toString();
+        $nameParam = u($parameterName)
+            ->title()
+            ->toString();
 
         $method = $class->addMethod($class->getName() . 'Without' . $nameParam)
             ->addAttribute(Test::class)
             ->addAttribute(
                 TestDox::class,
                 ['When call ' . $class->getConstant(
-                        'URI'
-                    )->getValue() . '  without ' . $nameParam . ', it should return error']
+                    'URI'
+                )->getValue() . '  without ' . $nameParam . ', it should return error']
             )
             ->setPublic()
             ->setReturnType('void')
@@ -225,27 +229,26 @@ class GenerateEndpointTestCommand extends Command
         $method->addBody('$this->assertResponseStatusCodeSame(422);');
     }
 
-    private function generateFakeDataFromType(ReflectionProperty $parameter): mixed
+    private function generateFakeDataFromType(\ReflectionProperty $parameter): mixed
     {
         if ($parameter->getType()->isBuiltin()) {
             if ($parameter->getType()->getName() === 'string') {
                 return '\'' . faker()->name() . '\'';
             }
         }
+
         return null;
     }
 
     /**
-     * @param array<ReflectionParameter> $parameters
-     *
-     * @throws ReflectionException
+     * @param array<\ReflectionParameter> $parameters
      */
     private function generateClass(
         PhpNamespace $namespace,
-        string       $fileTestName,
-        string       $uri,
-        string       $method,
-        array        $parameters
+        string $fileTestName,
+        string $uri,
+        string $method,
+        array $parameters
     ): ClassType {
         $class = new ClassType($fileTestName);
 
@@ -293,7 +296,7 @@ class GenerateEndpointTestCommand extends Command
     }
 
     /**
-     * @param array<ReflectionParameter> $parameters
+     * @param array<\ReflectionParameter> $parameters
      */
     private function getParameters(array $parameters): array
     {
@@ -301,8 +304,8 @@ class GenerateEndpointTestCommand extends Command
 
         foreach ($parameters as $parameter) {
             if ($parameter->getAttributes(MapRequestPayload::class) === [] && $parameter->getAttributes(
-                    MapQueryString::class
-                ) === []) {
+                MapQueryString::class
+            ) === []) {
                 $results[] = $parameter;
             }
         }
@@ -311,7 +314,7 @@ class GenerateEndpointTestCommand extends Command
     }
 
     /**
-     * @param array<ReflectionParameter> $parameters
+     * @param array<\ReflectionParameter> $parameters
      */
     private function generateSetupMethod(ClassType $class, array $parameters): void
     {
@@ -325,8 +328,10 @@ class GenerateEndpointTestCommand extends Command
         foreach ($parameters as $parameter) {
             $method->addBody(
                 '$this->' . $parameter->getName() . ' = $this->createMockAndSetToContainer(' . u(
-                    $parameter->getType()->getName()
-                )->afterLast('\\')->toString() . '::class);'
+                    $parameter->getType()
+                        ->getName()
+                )->afterLast('\\')
+                    ->toString() . '::class);'
             );
         }
     }
@@ -393,7 +398,7 @@ class GenerateEndpointTestCommand extends Command
             if ($route->getDefault('_controller') === null) {
                 continue;
             }
-            if (!u($route->getPath())->startsWith(['/api/doc', '/_', '/ping', '/test', '/{path}'])) {
+            if (! u($route->getPath())->startsWith(['/api/doc', '/_', '/ping', '/test', '/{path}'])) {
                 $routeCollection->add(implode(':', $route->getMethods()) . $route->getPath(), $route);
             }
         }

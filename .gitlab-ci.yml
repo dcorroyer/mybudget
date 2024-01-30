@@ -18,7 +18,7 @@ phpstan:
   <<: *before_script
   stage: code-quality
   script:
-    - phpstan analyse src/ -c docker/analysis/phpstan.neon
+    - phpstan analyse src/ -c phpstan.neon
 
 phpunit:
   <<: *before_script

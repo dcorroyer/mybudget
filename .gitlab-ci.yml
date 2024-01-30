@@ -1,0 +1,57 @@
+image: jakzal/phpqa:php8.2-alpine
+
+cache:
+  paths:
+    - vendor/
+
+.before_script: &before_script
+  before_script:
+    - composer install
+
+ecs:
+  <<: *before_script
+  stage: code-quality
+  script:
+    - ecs check src/ --config=/config/ecs.php
+
+phpstan:
+  <<: *before_script
+  stage: code-quality
+  script:
+    - phpstan analyse src/ -c docker/analysis/phpstan.neon
+
+phpunit:
+  <<: *before_script
+  image: php:8.2-apache
+  stage: code-quality
+  services:
+    - name: mysql:5.7
+  variables:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: mybudget_test
+    MYSQL_HOST: mysql
+    MYSQL_USER: root
+    MYSQL_PASSWORD: secret
+    DATABASE_URL: "mysql://root:secret@mysql:3306/mybudget"
+  before_script:
+    - apt-get update && apt-get install -y git libzip-dev mariadb-client
+    - curl -sSk https://getcomposer.org/installer | php -- --disable-tls && mv composer.phar /usr/local/bin/composer
+    - docker-php-ext-install mysqli pdo pdo_mysql zip
+    - pecl install xdebug && docker-php-ext-enable xdebug
+  script:
+    - mysql -uroot -ppass_test -h mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
+    - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
+  allow_failure: false
+  rules:
+    - changes:
+        - src/*
+        - tests/*
+
+stages:
+  - code-quality

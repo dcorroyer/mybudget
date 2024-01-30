@@ -11,6 +11,7 @@ use App\Entity\Tracking;
 use App\Repository\ExpenseRepository;
 use App\Repository\IncomeRepository;
 use App\Repository\TrackingRepository;
+use App\Repository\UserRepository;
 use App\Service\TrackingService;
 use App\Tests\Common\Factory\TrackingFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -39,6 +40,8 @@ class TrackingServiceTest extends TestCase
 
     private TrackingService $trackingService;
 
+    private UserRepository $userRepository;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,11 +49,13 @@ class TrackingServiceTest extends TestCase
         $this->trackingRepository = $this->createMock(TrackingRepository::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
+        $this->userRepository = $this->createMock(UserRepository::class);
 
         $this->trackingService = new TrackingService(
-            $this->trackingRepository,
-            $this->incomeRepository,
-            $this->expenseRepository
+            trackingRepository: $this->trackingRepository,
+            incomeRepository: $this->incomeRepository,
+            expenseRepository: $this->expenseRepository,
+            userRepository: $this->userRepository
         );
     }
 
@@ -68,7 +73,8 @@ class TrackingServiceTest extends TestCase
         $trackingPayload = (new TrackingPayload())
             ->setDate($tracking->getDate())
             ->setIncomeId($tracking->getIncome()->getId())
-            ->setExpenseId($tracking->getExpense()->getId());
+            ->setExpenseId($tracking->getExpense()->getId())
+            ->setUserId($tracking->getUser()->getId());
 
         $this->incomeRepository->expects($this->once())
             ->method('find')
@@ -77,6 +83,10 @@ class TrackingServiceTest extends TestCase
         $this->expenseRepository->expects($this->once())
             ->method('find')
             ->willReturn($tracking->getExpense());
+
+        $this->userRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($tracking->getUser());
 
         $this->trackingRepository->expects($this->once())
             ->method('save')
@@ -162,7 +172,12 @@ class TrackingServiceTest extends TestCase
     public function trackingResponseTrackingService_WhenDataContainsNewName_ReturnsTrackingResponse()
     {
         // ARRANGE PRIVATE METHOD TEST
-        $object = new TrackingService($this->trackingRepository, $this->incomeRepository, $this->expenseRepository);
+        $object = new TrackingService(
+            $this->trackingRepository,
+            $this->incomeRepository,
+            $this->expenseRepository,
+            $this->userRepository
+        );
         $method = $this->getPrivateMethod(TrackingService::class, 'trackingResponse');
 
         // ARRANGE

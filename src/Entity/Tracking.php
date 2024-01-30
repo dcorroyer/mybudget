@@ -86,6 +86,11 @@ class Tracking
     #[ORM\JoinColumn(nullable: false)]
     private ?Expense $expense = null;
 
+    #[Serializer\Groups([
+        SerializationGroups::TRACKING_GET,
+        SerializationGroups::TRACKING_LIST,
+        SerializationGroups::TRACKING_DELETE,
+    ])]
     #[ORM\ManyToOne(inversedBy: 'trackings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;

@@ -49,6 +49,7 @@ final class TrackingFactory extends ModelFactory
             'date' => self::faker()->dateTime(),
             'expense' => ExpenseFactory::new()->withoutPersisting()->create(),
             'income' => IncomeFactory::new()->withoutPersisting()->create(),
+            'user' => UserFactory::new()->withoutPersisting()->create(),
         ];
     }
 

@@ -9,10 +9,10 @@ use App\Dto\Tracking\Payload\TrackingPayload;
 use App\Dto\Tracking\Payload\UpdateTrackingPayload;
 use App\Dto\Tracking\Response\TrackingResponse;
 use App\Entity\Tracking;
+use App\Entity\User;
 use App\Repository\ExpenseRepository;
 use App\Repository\IncomeRepository;
 use App\Repository\TrackingRepository;
-use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -26,7 +26,6 @@ class TrackingService
         private readonly TrackingRepository $trackingRepository,
         private readonly IncomeRepository $incomeRepository,
         private readonly ExpenseRepository $expenseRepository,
-        private readonly UserRepository $userRepository,
         private readonly Security $security,
     ) {
     }
@@ -39,9 +38,7 @@ class TrackingService
             throw new NotFoundHttpException('Tracking not found');
         }
 
-        if ($this->security->getUser() !== $tracking->getUser()) {
-            throw new AccessDeniedHttpException('Access denied');
-        }
+        $this->checkAccess($tracking);
 
         return $tracking;
     }
@@ -52,7 +49,9 @@ class TrackingService
 
         $income = $this->incomeRepository->find($payload->getIncomeId());
         $expense = $this->expenseRepository->find($payload->getExpenseId());
-        $user = $this->userRepository->find($payload->getUserId());
+
+        /** @var User $user */
+        $user = $this->security->getUser();
 
         if ($income === null || $expense === null) {
             throw new \InvalidArgumentException('Income or Expense not found');
@@ -70,6 +69,8 @@ class TrackingService
 
     public function update(UpdateTrackingPayload $payload, Tracking $tracking): TrackingResponse
     {
+        $this->checkAccess($tracking);
+
         $tracking->setDate($payload->getDate());
 
         $this->trackingRepository->save($tracking, true);
@@ -79,6 +80,8 @@ class TrackingService
 
     public function delete(Tracking $tracking): Tracking
     {
+        $this->checkAccess($tracking);
+
         $this->trackingRepository->delete($tracking);
 
         return $tracking;
@@ -88,7 +91,10 @@ class TrackingService
         PaginationQueryParams $paginationQueryParams = null,
         TrackingFilterQuery $filter = null
     ): SlidingPagination {
-        return $this->trackingRepository->paginate($paginationQueryParams, $filter, Criteria::create());
+        $criteria = Criteria::create();
+        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()));
+
+        return $this->trackingRepository->paginate($paginationQueryParams, $filter, $criteria);
     }
 
     private function trackingResponse(Tracking $tracking): TrackingResponse
@@ -101,5 +107,12 @@ class TrackingService
             ->setIncome($tracking->getIncome())
             ->setExpense($tracking->getExpense())
         ;
+    }
+
+    private function checkAccess(Tracking $tracking): void
+    {
+        if ($this->security->getUser() !== $tracking->getUser()) {
+            throw new AccessDeniedHttpException('Access denied');
+        }
     }
 }

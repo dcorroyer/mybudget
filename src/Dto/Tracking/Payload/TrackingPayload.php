@@ -15,12 +15,14 @@ class TrackingPayload implements PayloadInterface
 
     private int $expenseId;
 
+    private int $userId;
+
     public function getIncomeId(): int
     {
         return $this->incomeId;
     }
 
-    public function setIncomeId(int $incomeId): self
+    public function setIncomeId(int $incomeId): static
     {
         $this->incomeId = $incomeId;
 
@@ -32,9 +34,21 @@ class TrackingPayload implements PayloadInterface
         return $this->expenseId;
     }
 
-    public function setExpenseId(int $expenseId): self
+    public function setExpenseId(int $expenseId): static
     {
         $this->expenseId = $expenseId;
+
+        return $this;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): static
+    {
+        $this->userId = $userId;
 
         return $this;
     }

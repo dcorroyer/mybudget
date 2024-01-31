@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Helper;
 
-use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 
 trait MockHelperTrait
@@ -13,12 +14,12 @@ trait MockHelperTrait
      * @param class-string<T> $class
      *
      * @return MockObject&T
-     * @throws Exception
      */
     public function createMockAndSetToContainer(string $class): MockObject
     {
         $mock = $this->createMock($class);
-        $this->getContainer()->set($class, $mock);
+        $this->getContainer()
+            ->set($class, $mock);
 
         return $mock;
     }

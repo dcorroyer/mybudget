@@ -18,9 +18,11 @@ class RegisterControllerTest extends WebTestCase
     use MockHelperTrait;
 
     private const URI = '/api/register';
+
     private const METHOD = 'POST';
 
     private UserService $userService;
+
     private KernelBrowser $client;
 
     protected function setup(): void
@@ -34,14 +36,14 @@ class RegisterControllerTest extends WebTestCase
     #[TestDox('When call /api/register  without Email, it should return error')]
     public function RegisterControllerTestWithoutEmail(): void
     {
-        //ARRANGE
+        // ARRANGE
         $payload = [
             'firstName' => 'Cordia Hirthe V',
             'lastName' => 'Rebecca Marks',
             'password' => 'Isidro Kutch I',
         ];
 
-        //ACT
+        // ACT
         $this->client->request(
             method: self::METHOD,
             uri: self::URI,
@@ -51,7 +53,7 @@ class RegisterControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
-        //ASSERT
+        // ASSERT
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -59,14 +61,14 @@ class RegisterControllerTest extends WebTestCase
     #[TestDox('When call /api/register  without FirstName, it should return error')]
     public function RegisterControllerTestWithoutFirstName(): void
     {
-        //ARRANGE
+        // ARRANGE
         $payload = [
             'email' => 'Miss Laurianne Hermann',
             'lastName' => 'Evan Fadel',
             'password' => 'Prof. Shyann Pagac',
         ];
 
-        //ACT
+        // ACT
         $this->client->request(
             method: self::METHOD,
             uri: self::URI,
@@ -76,7 +78,7 @@ class RegisterControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
-        //ASSERT
+        // ASSERT
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -84,14 +86,14 @@ class RegisterControllerTest extends WebTestCase
     #[TestDox('When call /api/register  without LastName, it should return error')]
     public function RegisterControllerTestWithoutLastName(): void
     {
-        //ARRANGE
+        // ARRANGE
         $payload = [
             'email' => 'Emmitt Roob',
             'firstName' => 'Miss Marquise Dickinson II',
             'password' => 'Arianna Muller',
         ];
 
-        //ACT
+        // ACT
         $this->client->request(
             method: self::METHOD,
             uri: self::URI,
@@ -101,7 +103,7 @@ class RegisterControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
-        //ASSERT
+        // ASSERT
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -109,14 +111,14 @@ class RegisterControllerTest extends WebTestCase
     #[TestDox('When call /api/register  without Password, it should return error')]
     public function RegisterControllerTestWithoutPassword(): void
     {
-        //ARRANGE
+        // ARRANGE
         $payload = [
             'email' => 'Josianne Brekke',
             'firstName' => 'Queen Spencer',
             'lastName' => 'Nicola Sporer',
         ];
 
-        //ACT
+        // ACT
         $this->client->request(
             method: self::METHOD,
             uri: self::URI,
@@ -126,7 +128,7 @@ class RegisterControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
-        //ASSERT
+        // ASSERT
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -134,7 +136,7 @@ class RegisterControllerTest extends WebTestCase
     #[TestDox('When call /api/register  without Parameters, it should return error')]
     public function RegisterControllerTestWithoutParameters(): void
     {
-        //ACT
+        // ACT
         $this->client->request(
             method: self::METHOD,
             uri: self::URI,
@@ -143,7 +145,7 @@ class RegisterControllerTest extends WebTestCase
             ],
         );
 
-        //ASSERT
+        // ASSERT
         $this->assertResponseStatusCodeSame(422);
     }
 

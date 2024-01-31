@@ -20,6 +20,9 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Zenstruck\Foundry\Test\Factories;
 
 #[Group('unit')]
@@ -39,6 +42,8 @@ class TrackingServiceTest extends TestCase
 
     private TrackingService $trackingService;
 
+    private Security $security;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,11 +51,13 @@ class TrackingServiceTest extends TestCase
         $this->trackingRepository = $this->createMock(TrackingRepository::class);
         $this->incomeRepository = $this->createMock(IncomeRepository::class);
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
+        $this->security = $this->createMock(Security::class);
 
         $this->trackingService = new TrackingService(
-            $this->trackingRepository,
-            $this->incomeRepository,
-            $this->expenseRepository
+            trackingRepository: $this->trackingRepository,
+            incomeRepository: $this->incomeRepository,
+            expenseRepository: $this->expenseRepository,
+            security: $this->security,
         );
     }
 
@@ -94,6 +101,37 @@ class TrackingServiceTest extends TestCase
         $this->assertEquals($tracking->getId(), $trackingResponse->getId());
     }
 
+    #[TestDox('When calling create tracking without income or expense, it should throw an InvalidArgumentException')]
+    #[Test]
+    public function createTrackingService_WhenBadData_ReturnsInvalidArgumentException()
+    {
+        // ASSERT
+        $this->expectException(\InvalidArgumentException::class);
+
+        // ARRANGE
+        $tracking = TrackingFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $trackingPayload = (new TrackingPayload())
+            ->setDate($tracking->getDate())
+            ->setIncomeId($tracking->getIncome()->getId())
+            ->setExpenseId($tracking->getExpense()->getId());
+
+        $this->incomeRepository->expects($this->once())
+            ->method('find')
+            ->willReturn(null);
+
+        $this->expenseRepository->expects($this->once())
+            ->method('find')
+            ->willReturn(null);
+
+        // ACT
+        $this->trackingService->create($trackingPayload);
+    }
+
     #[TestDox('When calling update tracking, it should update and return the tracking updated')]
     #[Test]
     public function updateTrackingService_WhenDataOk_ReturnsTrackingUpdated()
@@ -101,6 +139,7 @@ class TrackingServiceTest extends TestCase
         // ARRANGE
         $tracking = TrackingFactory::new([
             'id' => 1,
+            'user' => $this->security->getUser(),
         ])->withoutPersisting()
             ->create()
             ->object();
@@ -124,12 +163,89 @@ class TrackingServiceTest extends TestCase
         $this->assertEquals($tracking->getId(), $trackingResponse->getId());
     }
 
+    #[TestDox('When calling update tracking with bad user, it should returns access denied exception')]
+    #[Test]
+    public function updateTrackingService_WithBadUser_ReturnsAccessDeniedException()
+    {
+        // ASSERT
+        $this->expectException(AccessDeniedHttpException::class);
+
+        // ARRANGE
+        $tracking = TrackingFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $trackingPayload = (new UpdateTrackingPayload())
+            ->setDate(new \DateTime('2022-01'));
+
+        // ACT
+        $this->trackingService->update($trackingPayload, $tracking);
+    }
+
+    #[TestDox('When calling get tracking, it should get the tracking')]
+    #[Test]
+    public function getTrackingService_WhenDataOk_ReturnsTracking()
+    {
+        // ARRANGE
+        $tracking = TrackingFactory::new([
+            'user' => $this->security->getUser(),
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        $this->trackingRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($tracking);
+
+        // ACT
+        $trackingResponse = $this->trackingService->get($tracking->getId());
+
+        // ASSERT
+        $this->assertInstanceOf(Tracking::class, $tracking);
+        $this->assertEquals($tracking->getId(), $trackingResponse->getId());
+    }
+
+    #[TestDox('When calling get tracking with bad id, it should throw not found exception')]
+    #[Test]
+    public function getTrackingService_WithBadId_ReturnsNotFoundException()
+    {
+        // ASSERT
+        $this->expectException(NotFoundHttpException::class);
+
+        // ACT
+        $this->trackingService->get(999);
+    }
+
+    #[TestDox('When calling get tracking for another user, it should throw access denied exception')]
+    #[Test]
+    public function getTrackingService_WithBadUser_ReturnsAccessDeniedException()
+    {
+        // ASSERT
+        $this->expectException(AccessDeniedHttpException::class);
+
+        // ARRANGE
+        $tracking = TrackingFactory::new()->withoutPersisting()->create()->object();
+
+        $this->trackingRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($tracking);
+
+        // ACT
+        $this->trackingService->get($tracking->getId());
+    }
+
     #[TestDox('When calling delete tracking, it should delete the tracking')]
     #[Test]
     public function deleteTrackingService_WhenDataOk_ReturnsNoContent()
     {
         // ARRANGE
-        $tracking = TrackingFactory::new()->withoutPersisting()->create()->object();
+        $tracking = TrackingFactory::new([
+            'user' => $this->security->getUser(),
+        ])->withoutPersisting()
+            ->create()
+            ->object();
 
         // ACT
         $trackingResponse = $this->trackingService->delete($tracking);
@@ -137,6 +253,20 @@ class TrackingServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(Tracking::class, $tracking);
         $this->assertEquals($tracking->getId(), $trackingResponse->getId());
+    }
+
+    #[TestDox('When calling delete tracking with bad user, it should returns access denied exception')]
+    #[Test]
+    public function deleteTrackingService_WithBadUser_ReturnsAccessDeniedException()
+    {
+        // ASSERT
+        $this->expectException(AccessDeniedHttpException::class);
+
+        // ARRANGE
+        $tracking = TrackingFactory::new()->withoutPersisting()->create()->object();
+
+        // ACT
+        $this->trackingService->delete($tracking);
     }
 
     #[TestDox('When you call paginate, it should return the trackings list')]
@@ -162,7 +292,12 @@ class TrackingServiceTest extends TestCase
     public function trackingResponseTrackingService_WhenDataContainsNewName_ReturnsTrackingResponse()
     {
         // ARRANGE PRIVATE METHOD TEST
-        $object = new TrackingService($this->trackingRepository, $this->incomeRepository, $this->expenseRepository);
+        $object = new TrackingService(
+            $this->trackingRepository,
+            $this->incomeRepository,
+            $this->expenseRepository,
+            $this->security,
+        );
         $method = $this->getPrivateMethod(TrackingService::class, 'trackingResponse');
 
         // ARRANGE
@@ -180,6 +315,33 @@ class TrackingServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(TrackingResponse::class, $trackingResponse);
         $this->assertEquals($tracking->getId(), $trackingResponse->getId());
+    }
+
+    #[TestDox('When calling checkAccess, it should returns an AccessDeniedException')]
+    #[Test]
+    public function checkAccessTrackingService_WhenBadData_ReturnsAccessDeniedException()
+    {
+        // ASSERT
+        $this->expectException(AccessDeniedHttpException::class);
+
+        // ARRANGE PRIVATE METHOD TEST
+        $object = new TrackingService(
+            $this->trackingRepository,
+            $this->incomeRepository,
+            $this->expenseRepository,
+            $this->security,
+        );
+        $method = $this->getPrivateMethod(TrackingService::class, 'checkAccess');
+
+        // ARRANGE
+        $tracking = TrackingFactory::new([
+            'id' => 1,
+        ])->withoutPersisting()
+            ->create()
+            ->object();
+
+        // ACT
+        $method->invoke($object, $tracking);
     }
 
     private function getPrivateMethod($className, $methodName): \ReflectionMethod

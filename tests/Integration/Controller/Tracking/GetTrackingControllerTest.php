@@ -28,6 +28,8 @@ class GetTrackingControllerTest extends WebTestCase
 
     private TrackingRepository $trackingRepository;
 
+    private User $user;
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();

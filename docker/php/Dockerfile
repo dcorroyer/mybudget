@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y zlib1g-dev g++ git libicu-dev libzip-de
     && docker-php-ext-enable apcu \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip \
-    && docker-php-ext-install gd
+    && docker-php-ext-install gd \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
 WORKDIR /var/www/app
 

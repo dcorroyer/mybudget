@@ -8,4 +8,5 @@ enum IncomeTypes: string
 {
     case SALARY = 'Salary';
     case DIVIDENDS = 'Dividends';
+    case BONUS = 'Bonus';
 }

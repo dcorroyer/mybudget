@@ -25,8 +25,9 @@ phpunit:
   image: php:8.2-apache
   stage: code-quality
   services:
-    - name: mysql:5.7
+    - name: mysql:8
   variables:
+    XDEBUG_MODE: coverage
     MYSQL_ROOT_PASSWORD: secret
     MYSQL_DATABASE: mybudget_test
     MYSQL_HOST: mysql

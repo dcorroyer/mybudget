@@ -5,49 +5,41 @@ declare(strict_types=1);
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use PhpCsFixer\Fixer\Phpdoc\AlignMultilineCommentFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
-use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
-return function (ECSConfig $ecsConfig): void {
-    $ecsConfig->paths([
-        __DIR__ . '/config',
+return ECSConfig::configure()
+    ->withPaths([
         __DIR__ . '/public',
         __DIR__ . '/src',
-        __DIR__ . '/tests',
-    ]);
-
-    // this way you add a single rule
-    $ecsConfig->rules([
-        NoUnusedImportsFixer::class,
-    ]);
-    $ecsConfig->ruleWithConfiguration(AlignMultilineCommentFixer::class, [
+        __DIR__ . '/tests'
+    ])
+    ->withConfiguredRule(AlignMultilineCommentFixer::class, [
         'comment_type' => 'all_multiline',
-    ]);
-
-    $ecsConfig->cacheDirectory(__DIR__ . '/var/cache/ecs');
-    $ecsConfig->lineEnding("\n");
-
-
-    $ecsConfig->dynamicSets([
-        '@Symfony',
-        '@PHP80Migration',
-        '@PHP81Migration',
-        '@PHP82Migration',
-    ]);
-
-    // this way you can add sets - group of rules
-    $ecsConfig->sets([
-        SetList::PSR_12,
-        SetList::CLEAN_CODE,
-        SetList::SYMPLIFY,
-        SetList::ARRAY,
-        SetList::COMMON,
-        SetList::COMMENTS,
-        SetList::CONTROL_STRUCTURES,
-        SetList::DOCBLOCK,
-        SetList::NAMESPACES,
-        SetList::PHPUNIT,
-        SetList::SPACES,
-        SetList::STRICT,
-        SetList::DOCTRINE_ANNOTATIONS,
-    ]);
-};
+    ])
+    // add a single rule
+    ->withRules([
+        NoUnusedImportsFixer::class,
+    ])
+    // add sets - group of rules
+    ->withPreparedSets(
+        psr12: true,
+        common: true,
+        symplify: true,
+        // arrays: true, # Already included in common
+        // comments: true, # Already included in common
+        // docblocks: true, # Already included in common
+        // spaces: true, # Already included in common
+        // namespaces: true, # Already included in common
+        // controlStructures: true, # Already included in common
+        // phpunit: true, # Already included in common
+        strict: true,
+        cleanCode: true,
+    )
+    ->withPhpCsFixerSets(
+        doctrineAnnotation: true,
+        php82Migration: true,
+        phpunit100MigrationRisky: true,
+        psr12: true,
+        psr12Risky: true,
+        symfony: true,
+        symfonyRisky: true,
+    );

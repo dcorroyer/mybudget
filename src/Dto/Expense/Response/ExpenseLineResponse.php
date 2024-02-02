@@ -12,11 +12,11 @@ use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class ExpenseLineResponse implements ResponseInterface
+final class ExpenseLineResponse implements ResponseInterface
 {
+    use AmountResponseTrait;
     use IdResponseTrait;
     use NameResponseTrait;
-    use AmountResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private ExpenseCategoryResponse $category;

@@ -17,11 +17,10 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 #[Group('repository')]
 #[Group('income')]
 #[Group('income-repository')]
-class IncomeRepositoryTest extends KernelTestCase
+final class IncomeRepositoryTest extends KernelTestCase
 {
     use Factories;
     use ResetDatabase;
-
     private IncomeRepository $incomeRepository;
 
     protected function setUp(): void
@@ -34,7 +33,7 @@ class IncomeRepositoryTest extends KernelTestCase
 
     #[TestDox('When you send a bad income into find method, it should returns null')]
     #[Test]
-    public function find_WhenBadData_ReturnsNull()
+    public function find_WhenBadData_ReturnsNull(): void
     {
         // ARRANGE
         $income = '1';
@@ -48,7 +47,7 @@ class IncomeRepositoryTest extends KernelTestCase
 
     #[TestDox('When you send an income into find method, it should returns the income')]
     #[Test]
-    public function find_WhenDataOk_ReturnsIncome()
+    public function find_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->create()->object();
@@ -62,7 +61,7 @@ class IncomeRepositoryTest extends KernelTestCase
 
     #[TestDox('When you send an income into save method with flush, it should returns the income')]
     #[Test]
-    public function save_WhenDataOk_ReturnsIncome()
+    public function save_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->create()->object();
@@ -76,7 +75,7 @@ class IncomeRepositoryTest extends KernelTestCase
 
     #[TestDox('When you send an income into save method without flush, it should returns null')]
     #[Test]
-    public function save_WhenBadData_ReturnsNull()
+    public function save_WhenBadData_ReturnsNull(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->create()->object();

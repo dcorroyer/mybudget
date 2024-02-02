@@ -18,10 +18,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('user')]
 #[Group('user-controller')]
-class GetUserControllerTest extends WebTestCase
+final class GetUserControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/users';
 
     private KernelBrowser $client;

@@ -14,18 +14,18 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/trackings')]
 #[OA\Tag(name: 'Trackings')]
-class DeleteTrackingController extends BaseRestController
+final class DeleteTrackingController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_DELETE,
         operationId: 'delete_tracking',
         summary: 'delete tracking',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Tracking::class,
                 groups: [SerializationGroups::TRACKING_DELETE],
                 description: 'Tracking delete',

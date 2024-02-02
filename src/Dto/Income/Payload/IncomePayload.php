@@ -6,7 +6,7 @@ namespace App\Dto\Income\Payload;
 
 use My\RestBundle\Contract\PayloadInterface;
 
-class IncomePayload implements PayloadInterface
+final class IncomePayload implements PayloadInterface
 {
     /**
      * @var array<int, IncomeLinePayload>

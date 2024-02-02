@@ -11,11 +11,11 @@ use App\Trait\Payload\NamePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ExpenseLinePayload implements PayloadInterface
+final class ExpenseLinePayload implements PayloadInterface
 {
+    use AmountPayloadTrait;
     use IdPayloadTrait;
     use NamePayloadTrait;
-    use AmountPayloadTrait;
 
     #[Assert\NotBlank]
     private ExpenseCategoryPayload $category;

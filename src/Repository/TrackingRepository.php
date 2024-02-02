@@ -15,7 +15,7 @@ use My\RestBundle\Repository\Common\AbstractEntityRepository;
  * @method Tracking[]    findAll()
  * @method Tracking[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TrackingRepository extends AbstractEntityRepository
+final class TrackingRepository extends AbstractEntityRepository
 {
     public function getEntityClass(): string
     {

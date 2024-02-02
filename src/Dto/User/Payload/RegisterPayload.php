@@ -7,7 +7,7 @@ namespace App\Dto\User\Payload;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class RegisterPayload implements PayloadInterface
+final class RegisterPayload implements PayloadInterface
 {
     #[Assert\NotBlank]
     #[Assert\Email]

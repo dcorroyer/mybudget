@@ -10,10 +10,10 @@ use App\Trait\Response\IdResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class IncomeResponse implements ResponseInterface
+final class IncomeResponse implements ResponseInterface
 {
-    use IdResponseTrait;
     use AmountResponseTrait;
+    use IdResponseTrait;
 
     /**
      * @var array<IncomeLineResponse>

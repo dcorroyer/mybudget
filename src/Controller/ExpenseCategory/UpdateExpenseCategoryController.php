@@ -15,18 +15,18 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses-categories')]
 #[OA\Tag(name: 'Expenses Categories')]
-class UpdateExpenseCategoryController extends BaseRestController
+final class UpdateExpenseCategoryController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_PUT,
         operationId: 'put_expenses_category',
         summary: 'put expenses category',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: ExpenseCategory::class,
                 groups: [SerializationGroups::EXPENSE_CATEGORY_UPDATE],
                 description: 'Expenses category update',

@@ -7,7 +7,7 @@ namespace App\Dto\Tracking\Payload;
 use App\Trait\Payload\DatePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 
-class TrackingPayload implements PayloadInterface
+final class TrackingPayload implements PayloadInterface
 {
     use DatePayloadTrait;
 

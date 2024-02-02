@@ -21,10 +21,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('income')]
 #[Group('income-controller')]
-class CreateIncomeControllerTest extends WebTestCase
+final class CreateIncomeControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/incomes';
 
     private KernelBrowser $client;
@@ -79,6 +78,6 @@ class CreateIncomeControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($incomeResponse->getId(), $data['id']);
+        $this->assertSame($incomeResponse->getId(), $data['id']);
     }
 }

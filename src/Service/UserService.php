@@ -12,7 +12,7 @@ use My\RestBundle\Helper\DtoToEntityHelper;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService
+final class UserService
 {
     public function __construct(
         private readonly UserRepository $userRepository,

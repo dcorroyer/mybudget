@@ -6,7 +6,7 @@ namespace App\Dto\Expense\Payload;
 
 use My\RestBundle\Contract\PayloadInterface;
 
-class ExpensePayload implements PayloadInterface
+final class ExpensePayload implements PayloadInterface
 {
     /**
      * @var array<int, ExpenseLinePayload>

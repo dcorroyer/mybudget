@@ -9,7 +9,7 @@ use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
 
-class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
+final class IncomeFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
     #[SerializedPath('[i][amount]')]
     private ?float $amount = 0;

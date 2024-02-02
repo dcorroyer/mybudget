@@ -26,11 +26,10 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('income')]
 #[Group('income-service')]
-class IncomeServiceTest extends TestCase
+final class IncomeServiceTest extends TestCase
 {
-    use SerializerTrait;
     use Factories;
-
+    use SerializerTrait;
     private IncomeRepository $incomeRepository;
 
     private IncomeLineRepository $incomeLineRepository;
@@ -49,7 +48,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When calling create income, it should create and return a new income')]
     #[Test]
-    public function createIncomeService_WhenDataOk_ReturnsIncome()
+    public function createIncomeService_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
         $income = IncomeFactory::new([
@@ -62,7 +61,7 @@ class IncomeServiceTest extends TestCase
 
         $this->incomeRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Income $income) {
+            ->willReturnCallback(static function (Income $income): void {
                 $income->setId(1);
             });
 
@@ -72,12 +71,12 @@ class IncomeServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
-        $this->assertEquals($income->getId(), $incomeResponse->getId());
+        $this->assertSame($income->getId(), $incomeResponse->getId());
     }
 
     #[TestDox('When calling update income, it should update and return the income updated')]
     #[Test]
-    public function updateIncomeService_WhenDataOk_ReturnsIncomeUpdated()
+    public function updateIncomeService_WhenDataOk_ReturnsIncomeUpdated(): void
     {
         // ARRANGE
         $income = IncomeFactory::new([
@@ -90,7 +89,7 @@ class IncomeServiceTest extends TestCase
 
         $this->incomeRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Income $income) {
+            ->willReturnCallback(static function (Income $income): void {
                 $income->setId(1);
             });
 
@@ -100,12 +99,12 @@ class IncomeServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(IncomeResponse::class, $incomeResponse);
         $this->assertInstanceOf(Income::class, $income);
-        $this->assertEquals($income->getId(), $incomeResponse->getId());
+        $this->assertSame($income->getId(), $incomeResponse->getId());
     }
 
     #[TestDox('When calling delete income, it should delete the income')]
     #[Test]
-    public function deleteIncomeService_WhenDataOk_ReturnsNoContent()
+    public function deleteIncomeService_WhenDataOk_ReturnsNoContent(): void
     {
         // ARRANGE
         $income = IncomeFactory::new()->withoutPersisting()->create()->object();
@@ -115,12 +114,12 @@ class IncomeServiceTest extends TestCase
 
         // ASSERT
         $this->assertInstanceOf(Income::class, $income);
-        $this->assertEquals($income->getId(), $incomeResponse->getId());
+        $this->assertSame($income->getId(), $incomeResponse->getId());
     }
 
     #[TestDox('When you call paginate, it should return the incomes list')]
     #[Test]
-    public function paginateIncomeService_WhenDataOk_ReturnsIncomesList()
+    public function paginateIncomeService_WhenDataOk_ReturnsIncomesList(): void
     {
         // ARRANGE
         $incomes = IncomeFactory::new()->withoutPersisting()->createMany(20);
@@ -138,7 +137,7 @@ class IncomeServiceTest extends TestCase
 
     #[TestDox('When calling updateOrCreateIncome, it should returns the income response')]
     #[Test]
-    public function updateOrCreateIncomeIncomeService_WhenDataOk_ReturnsIncomeResponse()
+    public function updateOrCreateIncomeIncomeService_WhenDataOk_ReturnsIncomeResponse(): void
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new IncomeService($this->incomeRepository, $this->incomeLineRepository);
@@ -174,7 +173,7 @@ class IncomeServiceTest extends TestCase
 
         $this->incomeRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Income $income) {
+            ->willReturnCallback(static function (Income $income): void {
                 $income->setId(1);
             });
 
@@ -186,7 +185,7 @@ class IncomeServiceTest extends TestCase
         $this->assertEquals($income->getId(), $incomeResponse->getId());
     }
 
-    private function getPrivateMethod($className, $methodName): \ReflectionMethod
+    private function getPrivateMethod(string $className, string $methodName): \ReflectionMethod
     {
         $reflector = new \ReflectionClass($className);
 

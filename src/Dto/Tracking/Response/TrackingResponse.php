@@ -13,11 +13,11 @@ use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class TrackingResponse implements ResponseInterface
+final class TrackingResponse implements ResponseInterface
 {
+    use DateResponseTrait;
     use IdResponseTrait;
     use NameResponseTrait;
-    use DateResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
     private float $savingCapacity;

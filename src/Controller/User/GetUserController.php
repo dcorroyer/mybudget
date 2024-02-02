@@ -14,25 +14,25 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/users')]
 #[OA\Tag(name: 'Users')]
-class GetUserController extends BaseRestController
+final class GetUserController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'get_user',
         summary: 'get user',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: User::class,
                 groups: [SerializationGroups::USER_GET],
                 description: 'User get',
             ),
-            new notfoundResponse(description: 'User not found'),
+            new NotFoundResponse(description: 'User not found'),
         ],
     )]
     #[Route('/me', name: 'api_users_get', methods: Request::METHOD_GET)]

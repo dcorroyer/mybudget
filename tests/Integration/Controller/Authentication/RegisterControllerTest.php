@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class RegisterControllerTest extends WebTestCase
+final class RegisterControllerTest extends WebTestCase
 {
     use MockHelperTrait;
 
@@ -190,6 +190,6 @@ class RegisterControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($userResponse->getId(), $data['id']);
+        $this->assertSame($userResponse->getId(), $data['id']);
     }
 }

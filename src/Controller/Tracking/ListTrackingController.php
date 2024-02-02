@@ -16,18 +16,18 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/trackings')]
 #[OA\Tag(name: 'Trackings')]
-class ListTrackingController extends BaseRestController
+final class ListTrackingController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'list_tracking',
         summary: 'list tracking',
         responses: [
-            new paginatedSuccessResponse(
+            new PaginatedSuccessResponse(
                 responseClassFqcn: Tracking::class,
                 groups: [SerializationGroups::TRACKING_LIST],
                 description: 'Return the paginated list of trackings'

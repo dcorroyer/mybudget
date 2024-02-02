@@ -20,7 +20,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class TrackingService
+final class TrackingService
 {
     public function __construct(
         private readonly TrackingRepository $trackingRepository,

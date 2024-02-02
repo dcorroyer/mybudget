@@ -115,11 +115,9 @@ class Expense
 
     public function removeExpenseLine(ExpenseLine $expenseLine): self
     {
-        if ($this->expenseLines->removeElement($expenseLine)) {
-            // set the owning side to null (unless already changed)
-            if ($expenseLine->getExpense() === $this) {
-                $expenseLine->setExpense(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->expenseLines->removeElement($expenseLine) && $expenseLine->getExpense() === $this) {
+            $expenseLine->setExpense(null);
         }
 
         return $this;

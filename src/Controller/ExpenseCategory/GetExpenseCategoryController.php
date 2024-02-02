@@ -13,23 +13,23 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses-categories')]
 #[OA\Tag(name: 'Expenses Categories')]
-class GetExpenseCategoryController extends BaseRestController
+final class GetExpenseCategoryController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'get_expenses_category',
         summary: 'get expenses category',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: ExpenseCategory::class,
                 groups: [SerializationGroups::EXPENSE_CATEGORY_GET],
                 description: 'Return the expenses category'
             ),
-            new notfoundResponse(description: 'Expense category not found'),
+            new NotFoundResponse(description: 'Expense category not found'),
         ],
     )]
     #[Route('/{id}', name: 'api_expenses_categories_get', methods: Request::METHOD_GET)]

@@ -14,23 +14,23 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/trackings')]
 #[OA\Tag(name: 'Trackings')]
-class GetTrackingController extends BaseRestController
+final class GetTrackingController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'get_tracking',
         summary: 'get tracking',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Tracking::class,
                 groups: [SerializationGroups::TRACKING_GET],
                 description: 'Tracking get',
             ),
-            new notfoundResponse(description: 'Tracking not found'),
+            new NotFoundResponse(description: 'Tracking not found'),
         ],
     )]
     #[Route('/{id}', name: 'api_trackings_get', methods: Request::METHOD_GET)]

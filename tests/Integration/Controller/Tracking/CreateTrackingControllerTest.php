@@ -21,10 +21,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('tracking')]
 #[Group('tracking-controller')]
-class CreateTrackingControllerTest extends WebTestCase
+final class CreateTrackingControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/trackings';
 
     private KernelBrowser $client;
@@ -82,6 +81,6 @@ class CreateTrackingControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($trackingResponse->getId(), $data['id']);
+        $this->assertSame($trackingResponse->getId(), $data['id']);
     }
 }

@@ -9,7 +9,7 @@ use App\Trait\Response\IdResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class UserResponse implements ResponseInterface
+final class UserResponse implements ResponseInterface
 {
     use IdResponseTrait;
 

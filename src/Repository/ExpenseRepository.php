@@ -15,7 +15,7 @@ use My\RestBundle\Repository\Common\AbstractEntityRepository;
  * @method Expense[]    findAll()
  * @method Expense[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ExpenseRepository extends AbstractEntityRepository
+final class ExpenseRepository extends AbstractEntityRepository
 {
     public function getEntityClass(): string
     {

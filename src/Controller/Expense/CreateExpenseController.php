@@ -16,18 +16,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses')]
 #[OA\Tag(name: 'Expenses')]
-class CreateExpenseController extends BaseRestController
+final class CreateExpenseController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_POST,
         operationId: 'post_expense',
         summary: 'post expense',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Expense::class,
                 groups: [SerializationGroups::EXPENSE_CREATE],
                 responseCode: Response::HTTP_CREATED,

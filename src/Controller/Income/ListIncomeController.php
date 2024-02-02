@@ -16,18 +16,18 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/incomes')]
 #[OA\Tag(name: 'Incomes')]
-class ListIncomeController extends BaseRestController
+final class ListIncomeController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'list_income',
         summary: 'list income',
         responses: [
-            new paginatedSuccessResponse(
+            new PaginatedSuccessResponse(
                 responseClassFqcn: Income::class,
                 groups: [SerializationGroups::INCOME_LIST],
                 description: 'Return the paginated list of incomes'

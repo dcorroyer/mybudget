@@ -13,23 +13,23 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/incomes')]
 #[OA\Tag(name: 'Incomes')]
-class GetIncomeController extends BaseRestController
+final class GetIncomeController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'get_income',
         summary: 'get income',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Income::class,
                 groups: [SerializationGroups::INCOME_GET],
                 description: 'Income get',
             ),
-            new notfoundResponse(description: 'Income not found'),
+            new NotFoundResponse(description: 'Income not found'),
         ],
     )]
     #[Route('/{id}', name: 'api_incomes_get', methods: Request::METHOD_GET)]

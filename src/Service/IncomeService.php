@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 
-class IncomeService
+final class IncomeService
 {
     public function __construct(
         private readonly IncomeRepository $incomeRepository,

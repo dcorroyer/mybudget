@@ -16,18 +16,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/incomes')]
 #[OA\Tag(name: 'Incomes')]
-class CreateIncomeController extends BaseRestController
+final class CreateIncomeController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_POST,
         operationId: 'post_income',
         summary: 'post income',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Income::class,
                 groups: [SerializationGroups::INCOME_CREATE],
                 responseCode: Response::HTTP_CREATED,

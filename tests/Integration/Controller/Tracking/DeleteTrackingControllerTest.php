@@ -19,10 +19,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('tracking')]
 #[Group('tracking-controller')]
-class DeleteTrackingControllerTest extends WebTestCase
+final class DeleteTrackingControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/trackings';
 
     private KernelBrowser $client;

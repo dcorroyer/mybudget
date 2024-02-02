@@ -24,11 +24,10 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('user')]
 #[Group('user-service')]
-class UserServiceTest extends TestCase
+final class UserServiceTest extends TestCase
 {
-    use SerializerTrait;
     use Factories;
-
+    use SerializerTrait;
     private UserService $userService;
 
     private UserRepository $userRepository;
@@ -50,7 +49,7 @@ class UserServiceTest extends TestCase
 
     #[TestDox('When calling create expense category, it should create and return a new expense category')]
     #[Test]
-    public function createUserService_WhenDataOk_ReturnsUser()
+    public function createUserService_WhenDataOk_ReturnsUser(): void
     {
         // ARRANGE
         $user = UserFactory::new([
@@ -78,7 +77,7 @@ class UserServiceTest extends TestCase
         $this->userRepository
             ->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (User $user) {
+            ->willReturnCallback(static function (User $user): void {
                 $user->setId(1);
             });
 
@@ -88,13 +87,13 @@ class UserServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(UserResponse::class, $userResponse);
         $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($user->getId(), $userResponse->getId());
-        $this->assertEquals($user->getEmail(), $userResponse->getEmail());
+        $this->assertSame($user->getId(), $userResponse->getId());
+        $this->assertSame($user->getEmail(), $userResponse->getEmail());
     }
 
     #[TestDox('When calling get user, it should returns the connected user')]
     #[Test]
-    public function getUserService_WhenDataOk_ReturnsUser()
+    public function getUserService_WhenDataOk_ReturnsUser(): void
     {
         // ARRANGE
         $user = UserFactory::new([
@@ -114,13 +113,13 @@ class UserServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(UserResponse::class, $userResponse);
         $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($user->getId(), $userResponse->getId());
-        $this->assertEquals($user->getEmail(), $userResponse->getEmail());
+        $this->assertSame($user->getId(), $userResponse->getId());
+        $this->assertSame($user->getEmail(), $userResponse->getEmail());
     }
 
     #[TestDox('When calling get user with a bad email, it should returns NotFoundHttpException')]
     #[Test]
-    public function getUserService_WhenDataKO_ReturnsNotFoundHttpException()
+    public function getUserService_WhenDataKO_ReturnsNotFoundHttpException(): void
     {
         // ASSERT
         $this->expectException(NotFoundHttpException::class);

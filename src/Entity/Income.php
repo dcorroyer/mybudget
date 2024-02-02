@@ -115,11 +115,9 @@ class Income
 
     public function removeIncomeLine(IncomeLine $incomeLine): self
     {
-        if ($this->incomeLines->removeElement($incomeLine)) {
-            // set the owning side to null (unless already changed)
-            if ($incomeLine->getIncome() === $this) {
-                $incomeLine->setIncome(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->incomeLines->removeElement($incomeLine) && $incomeLine->getIncome() === $this) {
+            $incomeLine->setIncome(null);
         }
 
         return $this;

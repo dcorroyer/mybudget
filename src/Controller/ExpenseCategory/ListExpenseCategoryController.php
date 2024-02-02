@@ -16,18 +16,18 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses-categories')]
 #[OA\Tag(name: 'Expenses Categories')]
-class ListExpenseCategoryController extends BaseRestController
+final class ListExpenseCategoryController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'list_expenses_categories',
         summary: 'list expenses categories',
         responses: [
-            new paginatedSuccessResponse(
+            new PaginatedSuccessResponse(
                 responseClassFqcn: ExpenseCategory::class,
                 groups: [SerializationGroups::EXPENSE_CATEGORY_LIST],
                 description: 'Return the paginated list of expenses categories'

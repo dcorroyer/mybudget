@@ -21,10 +21,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense-category')]
 #[Group('expense-category-controller')]
-class UpdateExpenseCategoryControllerTest extends WebTestCase
+final class UpdateExpenseCategoryControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/expenses-categories';
 
     private KernelBrowser $client;
@@ -88,7 +87,7 @@ class UpdateExpenseCategoryControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($expenseResponse->getId(), $data['id']);
-        $this->assertEquals($payload->getName(), $data['name']);
+        $this->assertSame($expenseResponse->getId(), $data['id']);
+        $this->assertSame($payload->getName(), $data['name']);
     }
 }

@@ -18,10 +18,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense')]
 #[Group('expense-controller')]
-class GetExpenseControllerTest extends WebTestCase
+final class GetExpenseControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/expenses';
 
     private KernelBrowser $client;

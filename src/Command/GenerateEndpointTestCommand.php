@@ -30,7 +30,7 @@ use function Symfony\Component\String\u;
 use function Zenstruck\Foundry\faker;
 
 #[AsCommand(name: 'make:endpoint:test', description: 'Generate a endpoint test', aliases: ['met'])]
-class GenerateEndpointTestCommand extends Command
+final class GenerateEndpointTestCommand extends Command
 {
     private SymfonyStyle $io;
 
@@ -46,7 +46,7 @@ class GenerateEndpointTestCommand extends Command
     {
         $parameterAsserts = [];
 
-        if ($mapRequestPayload !== null) {
+        if ($mapRequestPayload instanceof \ReflectionParameter) {
             $mapRequestPayloadClass = new \ReflectionClass($mapRequestPayload->getType()->getName());
 
             foreach ($mapRequestPayloadClass->getProperties() as $property) {
@@ -71,7 +71,7 @@ class GenerateEndpointTestCommand extends Command
             $this->generatePayloadTests($class, $parameter->getName(), $parametersToGive);
         }
 
-        if (count($parameterAsserts) > 1) {
+        if (\count($parameterAsserts) > 1) {
             $this->generatePayloadTests($class, 'parameters');
         }
     }
@@ -115,7 +115,7 @@ class GenerateEndpointTestCommand extends Command
         $routes = $this->getCompatibleRouteCollection();
 
         $actions = array_map(
-            fn (Route $route) => u($route->getDefault('_controller'))
+            static fn (Route $route): string => u($route->getDefault('_controller'))
                 ->afterLast('\\')
                 ->toString(),
             $routes->getIterator()
@@ -193,9 +193,11 @@ class GenerateEndpointTestCommand extends Command
             ->addAttribute(Test::class)
             ->addAttribute(
                 TestDox::class,
-                ['When call ' . $class->getConstant(
-                    'URI'
-                )->getValue() . '  without ' . $nameParam . ', it should return error']
+                [
+                    'When call ' . $class->getConstant(
+                        'URI'
+                    )->getValue() . '  without ' . $nameParam . ', it should return error',
+                ]
             )
             ->setPublic()
             ->setReturnType('void')
@@ -207,10 +209,10 @@ class GenerateEndpointTestCommand extends Command
             $method->addBody('$payload = [');
 
             foreach ($parameters as $param) {
-                $method->addBody('    \'' . $param['name'] . '\' => ' . $param['value'] . ',');
+                $method->addBody("    '" . $param['name'] . "' => " . $param['value'] . ',');
             }
 
-            $method->addBody('];' . PHP_EOL);
+            $method->addBody('];' . \PHP_EOL);
         }
 
         $method->addBody('//ACT');
@@ -218,12 +220,13 @@ class GenerateEndpointTestCommand extends Command
         $method->addBody('    method: self::METHOD,');
         $method->addBody('    uri: self::URI,');
         $method->addBody('    server: [');
-        $method->addBody('        \'CONTENT_TYPE\' => \'application/json\',');
+        $method->addBody("        'CONTENT_TYPE' => 'application/json',");
         $method->addBody('    ],');
         if ($parameters !== []) {
             $method->addBody('    content: json_encode($payload)');
         }
-        $method->addBody(');' . PHP_EOL);
+
+        $method->addBody(');' . \PHP_EOL);
 
         $method->addBody('//ASSERT');
         $method->addBody('$this->assertResponseStatusCodeSame(422);');
@@ -231,10 +234,12 @@ class GenerateEndpointTestCommand extends Command
 
     private function generateFakeDataFromType(\ReflectionProperty $parameter): mixed
     {
-        if ($parameter->getType()->isBuiltin()) {
-            if ($parameter->getType()->getName() === 'string') {
-                return '\'' . faker()->name() . '\'';
-            }
+        if (! $parameter->getType()->isBuiltin()) {
+            return null;
+        }
+
+        if ($parameter->getType()->getName() === 'string') {
+            return "'" . faker()->name() . "'";
         }
 
         return null;
@@ -303,11 +308,15 @@ class GenerateEndpointTestCommand extends Command
         $results = [];
 
         foreach ($parameters as $parameter) {
-            if ($parameter->getAttributes(MapRequestPayload::class) === [] && $parameter->getAttributes(
-                MapQueryString::class
-            ) === []) {
-                $results[] = $parameter;
+            if ($parameter->getAttributes(MapRequestPayload::class) !== []) {
+                continue;
             }
+
+            if ($parameter->getAttributes(MapQueryString::class) !== []) {
+                continue;
+            }
+
+            $results[] = $parameter;
         }
 
         return $results;
@@ -323,7 +332,7 @@ class GenerateEndpointTestCommand extends Command
             ->setReturnType('void')
             ->setBody('');
 
-        $method->addBody('$this->client = $this->createClient();' . PHP_EOL);
+        $method->addBody('$this->client = $this->createClient();' . \PHP_EOL);
 
         foreach ($parameters as $parameter) {
             $method->addBody(
@@ -336,21 +345,6 @@ class GenerateEndpointTestCommand extends Command
         }
     }
 
-    private function getClassFromFileName(string $type, string $fileName, $isTest = false): string
-    {
-        $baseNameSpace = 'App';
-
-        if ($isTest) {
-            return $baseNameSpace . '\\Tests\\Unit\\' . $type;
-        }
-
-        $namespace = $baseNameSpace . '\\' . $type . '\\';
-
-        $this->io->writeln($namespace . $fileName);
-
-        return $namespace . $fileName;
-    }
-
     private function processChoice(array $actions): string
     {
         $question = new Question('Please choice your class to tests');
@@ -358,35 +352,6 @@ class GenerateEndpointTestCommand extends Command
         $question->setAutocompleterValues($actions);
 
         return $this->io->askQuestion($question);
-    }
-
-    private function getServiceName(): array
-    {
-        $choices = $this->getChoices();
-
-        $question = new Question('Please choice your class to tests');
-
-        $question->setAutocompleterValues($choices);
-
-        $choice = $this->io->askQuestion($question);
-
-        $typeSelected = null;
-
-        foreach ($this->classes as $toto => $type) {
-            foreach ($type as $value) {
-                if ($value === $choice) {
-                    $typeSelected = $toto;
-                    break;
-                }
-            }
-        }
-
-        $this->io->writeln('You have just selected: ' . $choice);
-
-        return [
-            'type' => $typeSelected,
-            'className' => $choice,
-        ];
     }
 
     private function getCompatibleRouteCollection(): RouteCollection
@@ -398,6 +363,7 @@ class GenerateEndpointTestCommand extends Command
             if ($route->getDefault('_controller') === null) {
                 continue;
             }
+
             if (! u($route->getPath())->startsWith(['/api/doc', '/_', '/ping', '/test', '/{path}'])) {
                 $routeCollection->add(implode(':', $route->getMethods()) . $route->getPath(), $route);
             }
@@ -412,7 +378,7 @@ class GenerateEndpointTestCommand extends Command
     private function resolveControllerAndMethod(Route $route): array
     {
         if (u($route->getDefault('_controller'))->containsAny('::')) {
-            [$controller, $method] = explode('::', $route->getDefault('_controller'));
+            [$controller, $method] = explode('::', (string) $route->getDefault('_controller'));
         } else {
             $controller = $route->getDefault('_controller');
             $method = '__invoke';

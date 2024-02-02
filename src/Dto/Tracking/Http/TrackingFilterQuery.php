@@ -9,23 +9,23 @@ use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
 
-class TrackingFilterQuery implements QueryFilterInterface, ORMFilterInterface
+final class TrackingFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
     #[SerializedPath('[criteria][query]')]
-    private ?string $query;
+    private ?string $query = null;
 
     #[SerializedPath('[i][name]')]
-    private ?string $name;
+    private ?string $name = null;
 
     public function getCriteria(): Criteria
     {
         $criteria = Criteria::create();
 
-        if ($this->name) {
+        if ($this->name !== null && $this->name !== '' && $this->name !== '0') {
             $criteria->andWhere(Criteria::expr()->contains('name', $this->name));
         }
 
-        if ($this->query) {
+        if ($this->query !== null && $this->query !== '' && $this->query !== '0') {
             $criteria->andWhere(Criteria::expr()->contains('date', ucfirst($this->query)));
         }
 

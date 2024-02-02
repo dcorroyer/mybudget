@@ -12,11 +12,11 @@ use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class IncomeLineResponse implements ResponseInterface
+final class IncomeLineResponse implements ResponseInterface
 {
+    use AmountResponseTrait;
     use IdResponseTrait;
     use NameResponseTrait;
-    use AmountResponseTrait;
 
     #[Serializer\Groups([SerializationGroups::INCOME_CREATE, SerializationGroups::INCOME_UPDATE])]
     private IncomeTypes $type;

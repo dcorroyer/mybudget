@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\User;
 use My\RestBundle\Repository\Common\AbstractEntityRepository;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
@@ -20,7 +19,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends AbstractEntityRepository implements PasswordUpgraderInterface
+final class UserRepository extends AbstractEntityRepository implements PasswordUpgraderInterface
 {
     public function getEntityClass(): string
     {
@@ -29,10 +28,6 @@ class UserRepository extends AbstractEntityRepository implements PasswordUpgrade
 
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (! $user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', User::class));
-        }
-
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()
             ->persist($user);

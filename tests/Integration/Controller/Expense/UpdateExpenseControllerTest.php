@@ -21,10 +21,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('expense')]
 #[Group('expense-controller')]
-class UpdateExpenseControllerTest extends WebTestCase
+final class UpdateExpenseControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/expenses';
 
     private KernelBrowser $client;
@@ -87,6 +86,6 @@ class UpdateExpenseControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertEquals($expenseResponse->getId(), $data['id']);
+        $this->assertSame($expenseResponse->getId(), $data['id']);
     }
 }

@@ -17,18 +17,18 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/trackings')]
 #[OA\Tag(name: 'Trackings')]
-class UpdateTrackingController extends BaseRestController
+final class UpdateTrackingController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_PUT,
         operationId: 'put_tracking',
         summary: 'put tracking',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Tracking::class,
                 groups: [SerializationGroups::TRACKING_UPDATE],
                 description: 'Tracking update',

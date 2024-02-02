@@ -52,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 6)]
     private string $password;
 
+    /**
+     * @var Collection<int, Tracking>
+     */
     #[Serializer\Groups([SerializationGroups::USER_GET])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tracking::class, orphanRemoval: true)]
     private Collection $trackings;
@@ -180,11 +183,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeTracking(Tracking $tracking): static
     {
-        if ($this->trackings->removeElement($tracking)) {
-            // set the owning side to null (unless already changed)
-            if ($tracking->getUser() === $this) {
-                $tracking->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->trackings->removeElement($tracking) && $tracking->getUser() === $this) {
+            $tracking->setUser(null);
         }
 
         return $this;

@@ -20,7 +20,7 @@ use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 
-class ExpenseService
+final class ExpenseService
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
@@ -111,7 +111,7 @@ class ExpenseService
         }
 
         if ($category === null) {
-            $category = $this->expenseCategoryService->create($categoryPayload);
+            return $this->expenseCategoryService->create($categoryPayload);
         }
 
         return $category;

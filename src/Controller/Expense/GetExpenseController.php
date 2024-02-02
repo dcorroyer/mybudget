@@ -13,23 +13,23 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses')]
 #[OA\Tag(name: 'Expenses')]
-class GetExpenseController extends BaseRestController
+final class GetExpenseController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'get_expense',
         summary: 'get expense',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Expense::class,
                 groups: [SerializationGroups::EXPENSE_GET],
                 description: 'Expense get',
             ),
-            new notfoundResponse(description: 'Expense not found'),
+            new NotFoundResponse(description: 'Expense not found'),
         ],
     )]
     #[Route('/{id}', name: 'api_expenses_get', methods: Request::METHOD_GET)]

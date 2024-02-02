@@ -23,11 +23,10 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('expense-category')]
 #[Group('expense-category-service')]
-class ExpenseCategoryServiceTest extends TestCase
+final class ExpenseCategoryServiceTest extends TestCase
 {
-    use SerializerTrait;
     use Factories;
-
+    use SerializerTrait;
     private ExpenseCategoryService $expenseCategoryService;
 
     private ExpenseCategoryRepository $expenseCategoryRepository;
@@ -43,7 +42,7 @@ class ExpenseCategoryServiceTest extends TestCase
 
     #[TestDox('When calling create expense category, it should create and return a new expense category')]
     #[Test]
-    public function createExpenseCategoryService_WhenDataOk_ReturnsExpenseCategory()
+    public function createExpenseCategoryService_WhenDataOk_ReturnsExpenseCategory(): void
     {
         // ARRANGE
         $expenseCategory = ExpenseCategoryFactory::new([
@@ -58,7 +57,7 @@ class ExpenseCategoryServiceTest extends TestCase
         $this->expenseCategoryRepository
             ->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (ExpenseCategory $expenseCategory) {
+            ->willReturnCallback(static function (ExpenseCategory $expenseCategory): void {
                 $expenseCategory->setId(1);
             });
 
@@ -68,13 +67,13 @@ class ExpenseCategoryServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
-        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
-        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+        $this->assertSame($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
     #[TestDox('When calling update expense category, it should update and returns the expense category updated')]
     #[Test]
-    public function updateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoryUpdated()
+    public function updateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoryUpdated(): void
     {
         // ARRANGE
         $expenseCategory = ExpenseCategoryFactory::new([
@@ -89,7 +88,7 @@ class ExpenseCategoryServiceTest extends TestCase
         $this->expenseCategoryRepository
             ->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (ExpenseCategory $expenseCategory) {
+            ->willReturnCallback(static function (ExpenseCategory $expenseCategory): void {
                 $expenseCategory->setId(1);
             });
 
@@ -99,15 +98,15 @@ class ExpenseCategoryServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
-        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
-        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+        $this->assertSame($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
     #[TestDox(
         'When calling update expense category, it should NOT update but should only returns the expense category updated'
     )]
     #[Test]
-    public function updateExpenseCategoryService_WhenNoNewData_ReturnsExpenseCategory()
+    public function updateExpenseCategoryService_WhenNoNewData_ReturnsExpenseCategory(): void
     {
         // ARRANGE
         $expenseCategory = ExpenseCategoryFactory::new([
@@ -126,13 +125,13 @@ class ExpenseCategoryServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
-        $this->assertEquals($expenseCategory->getId(), $expenseCategoryResponse->getId());
-        $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
+        $this->assertSame($expenseCategory->getId(), $expenseCategoryResponse->getId());
+        $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
     #[TestDox('When you call paginate, it should returns the expense categories list')]
     #[Test]
-    public function paginateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoriesList()
+    public function paginateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoriesList(): void
     {
         // ARRANGE
         $expenseCategories = ExpenseCategoryFactory::new()->withoutPersisting()->createMany(20);

@@ -12,11 +12,11 @@ use Doctrine\DBAL\Types\Types;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class IncomeLinePayload implements PayloadInterface
+final class IncomeLinePayload implements PayloadInterface
 {
+    use AmountPayloadTrait;
     use IdPayloadTrait;
     use NamePayloadTrait;
-    use AmountPayloadTrait;
 
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]

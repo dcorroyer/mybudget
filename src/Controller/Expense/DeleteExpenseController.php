@@ -14,18 +14,18 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses')]
 #[OA\Tag(name: 'Expenses')]
-class DeleteExpenseController extends BaseRestController
+final class DeleteExpenseController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_DELETE,
         operationId: 'delete_expense',
         summary: 'delete expense',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Expense::class,
                 groups: [SerializationGroups::EXPENSE_DELETE],
                 description: 'Expense delete',

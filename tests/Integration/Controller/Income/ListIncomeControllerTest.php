@@ -20,10 +20,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('income')]
 #[Group('income-controller')]
-class ListIncomeControllerTest extends WebTestCase
+final class ListIncomeControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/incomes';
 
     private KernelBrowser $client;

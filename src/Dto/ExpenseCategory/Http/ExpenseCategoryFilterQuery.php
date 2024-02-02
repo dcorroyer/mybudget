@@ -9,16 +9,16 @@ use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
 
-class ExpenseCategoryFilterQuery implements QueryFilterInterface, ORMFilterInterface
+final class ExpenseCategoryFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
     #[SerializedPath('[criteria][query]')]
-    private ?string $query;
+    private ?string $query = null;
 
     public function getCriteria(): Criteria
     {
         $criteria = Criteria::create();
 
-        if ($this->query) {
+        if ($this->query !== null && $this->query !== '' && $this->query !== '0') {
             $criteria->andWhere(Criteria::expr()->contains('name', ucfirst($this->query)));
         }
 

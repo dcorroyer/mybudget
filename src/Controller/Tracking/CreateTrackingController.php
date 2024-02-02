@@ -16,18 +16,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/trackings')]
 #[OA\Tag(name: 'Trackings')]
-class CreateTrackingController extends BaseRestController
+final class CreateTrackingController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_POST,
         operationId: 'post_tracking',
         summary: 'post tracking',
         responses: [
-            new successResponse(
+            new SuccessResponse(
                 responseClassFqcn: Tracking::class,
                 groups: [SerializationGroups::TRACKING_CREATE],
                 responseCode: Response::HTTP_CREATED,

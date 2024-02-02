@@ -19,10 +19,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('controller')]
 #[Group('income')]
 #[Group('income-controller')]
-class DeleteIncomeControllerTest extends WebTestCase
+final class DeleteIncomeControllerTest extends WebTestCase
 {
     use Factories;
-
     private const API_ENDPOINT = '/api/incomes';
 
     private KernelBrowser $client;

@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 
-class ExpenseCategoryService
+final class ExpenseCategoryService
 {
     public function __construct(
         private readonly ExpenseCategoryRepository $expenseCategoryRepository,

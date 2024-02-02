@@ -30,11 +30,10 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('expense')]
 #[Group('expense-service')]
-class ExpenseServiceTest extends TestCase
+final class ExpenseServiceTest extends TestCase
 {
-    use SerializerTrait;
     use Factories;
-
+    use SerializerTrait;
     private ExpenseRepository $expenseRepository;
 
     private ExpenseLineRepository $expenseLineRepository;
@@ -64,7 +63,7 @@ class ExpenseServiceTest extends TestCase
 
     #[TestDox('When calling create expense, it should create and return a new expense')]
     #[Test]
-    public function createExpenseService_WhenDataOk_ReturnsExpense()
+    public function createExpenseService_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new([
@@ -77,7 +76,7 @@ class ExpenseServiceTest extends TestCase
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Expense $expense) {
+            ->willReturnCallback(static function (Expense $expense): void {
                 $expense->setId(1);
             });
 
@@ -87,12 +86,12 @@ class ExpenseServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
-        $this->assertEquals($expense->getId(), $expenseResponse->getId());
+        $this->assertSame($expense->getId(), $expenseResponse->getId());
     }
 
     #[TestDox('When calling update expense, it should update and return the expense')]
     #[Test]
-    public function updateExpenseService_WhenDataOk_ReturnsExpense()
+    public function updateExpenseService_WhenDataOk_ReturnsExpense(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new([
@@ -105,7 +104,7 @@ class ExpenseServiceTest extends TestCase
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Expense $expense) {
+            ->willReturnCallback(static function (Expense $expense): void {
                 $expense->setId(1);
             });
 
@@ -115,12 +114,12 @@ class ExpenseServiceTest extends TestCase
         // ASSERT
         $this->assertInstanceOf(ExpenseResponse::class, $expenseResponse);
         $this->assertInstanceOf(Expense::class, $expense);
-        $this->assertEquals($expense->getId(), $expenseResponse->getId());
+        $this->assertSame($expense->getId(), $expenseResponse->getId());
     }
 
     #[TestDox('When calling delete expense, it should delete the expense')]
     #[Test]
-    public function deleteExpenseService_WhenDataOk_ReturnsNoContent()
+    public function deleteExpenseService_WhenDataOk_ReturnsNoContent(): void
     {
         // ARRANGE
         $expense = ExpenseFactory::new()->withoutPersisting()->create()->object();
@@ -130,12 +129,12 @@ class ExpenseServiceTest extends TestCase
 
         // ASSERT
         $this->assertInstanceOf(Expense::class, $expense);
-        $this->assertEquals($expense->getId(), $expenseResponse->getId());
+        $this->assertSame($expense->getId(), $expenseResponse->getId());
     }
 
     #[TestDox('When you call paginate, it should return the expenses list')]
     #[Test]
-    public function paginateExpenseService_WhenDataOk_ReturnsExpensesList()
+    public function paginateExpenseService_WhenDataOk_ReturnsExpensesList(): void
     {
         // ARRANGE
         $incomes = ExpenseFactory::new()->withoutPersisting()->createMany(20);
@@ -153,7 +152,7 @@ class ExpenseServiceTest extends TestCase
 
     #[TestDox('When calling updateOrCreateExpense, it should returns the expense response')]
     #[Test]
-    public function updateOrCreateExpenseExpenseService_WhenDataOk_ReturnsExpenseResponse()
+    public function updateOrCreateExpenseExpenseService_WhenDataOk_ReturnsExpenseResponse(): void
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new ExpenseService(
@@ -194,7 +193,7 @@ class ExpenseServiceTest extends TestCase
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (Expense $expense) {
+            ->willReturnCallback(static function (Expense $expense): void {
                 $expense->setId(1);
             });
 
@@ -210,7 +209,7 @@ class ExpenseServiceTest extends TestCase
         'When calling manage expense category with the Id of an existing category, it should returns the expense category'
     )]
     #[Test]
-    public function manageExpenseCategoryExpenseService_WhenDataContainsId_ReturnsExpenseCategory()
+    public function manageExpenseCategoryExpenseService_WhenDataContainsId_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new ExpenseService(
@@ -249,7 +248,7 @@ class ExpenseServiceTest extends TestCase
         'When calling manage expense category with the Name of an existing category, it should returns the expense category'
     )]
     #[Test]
-    public function manageExpenseCategoryExpenseService_WhenDataContainsName_ReturnsExpenseCategory()
+    public function manageExpenseCategoryExpenseService_WhenDataContainsName_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new ExpenseService(
@@ -288,7 +287,7 @@ class ExpenseServiceTest extends TestCase
         'When calling manage expense category with the Name of an existing category, it should returns the expense category'
     )]
     #[Test]
-    public function manageExpenseCategoryExpenseService_WhenDataContainsNewName_ReturnsExpenseCategory()
+    public function manageExpenseCategoryExpenseService_WhenDataContainsNewName_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
         $object = new ExpenseService(
@@ -327,7 +326,7 @@ class ExpenseServiceTest extends TestCase
         $this->assertEquals($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    private function getPrivateMethod($className, $methodName): \ReflectionMethod
+    private function getPrivateMethod(string $className, string $methodName): \ReflectionMethod
     {
         $reflector = new \ReflectionClass($className);
 

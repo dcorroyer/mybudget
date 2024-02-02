@@ -11,7 +11,7 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                app: "./assets/index.jsx"
+                app: "./assets/index.tsx"
             },
         }
     },

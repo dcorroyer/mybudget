@@ -51,11 +51,11 @@
         "shipmonk/phpstan-rules": "^2.6",
         "slam/phpstan-extensions": "^6.0",
         "spaze/phpstan-disallowed-calls": "^2.15",
-        "symfony/debug-bundle": "6.3.*",
+        "symfony/debug-bundle": "~6.3.0",
         "symfony/maker-bundle": "^1.50",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/stopwatch": "~6.3.0",
-        "symfony/web-profiler-bundle": "6.3.*",
+        "symfony/web-profiler-bundle": "~6.3.0",
         "symplify/easy-coding-standard": "^11.5",
         "zenstruck/foundry": "^1.34"
     },

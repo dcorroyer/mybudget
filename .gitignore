@@ -11,8 +11,6 @@
 .idea/
 .vscode/
 
-docker-compose.yml
-
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache

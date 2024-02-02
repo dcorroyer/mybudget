@@ -19,22 +19,22 @@ function run_in_php_container(string $cmd = ''): void
 }
 
 #[AsTask(description: 'Start the docker-compose stack')]
-function up(): void
+function start(): void
 {
     docker_compose('up -d');
 }
 
 #[AsTask(description: 'Stop the docker-compose stack')]
-function down(): void
+function stop(): void
 {
     docker_compose('down');
 }
 
-#[AsTask(name: 'reup', description: 'Restart the docker-compose stack')]
+#[AsTask(name: 'restart', description: 'Restart the docker-compose stack')]
 function restart(): void
 {
-    down();
-    up();
+    stop();
+    start();
 }
 
 #[AsTask(description: 'Run the docker build command')]
@@ -50,18 +50,18 @@ function build(
 }
 
 #[AsTask(description: 'Run the docker compose bash shell')]
-function back(): void
+function bash(): void
 {
     docker_compose('exec -it php bash');
 }
 
-#[AsTask(description: 'Run the composer install command')]
+#[AsTask(name: 'composer:install', description: 'Run the composer install command')]
 function composer_install(): void
 {
     run_in_php_container('composer install');
 }
 
-#[AsTask(description: 'Run the composer update command')]
+#[AsTask(name: 'composer:update', description: 'Run the composer update command')]
 function composer_update(): void
 {
     run_in_php_container('composer update');
@@ -69,7 +69,7 @@ function composer_update(): void
 
 #[AsTask(description: 'Run the tests')]
 function test(
-    #[AsOption(description: 'Generate HTML coverage report')]
+    #[AsOption(name: 'coverage', description: 'Generate HTML coverage report')]
     bool $htmlReport = false,
 ): void
 {
@@ -86,13 +86,13 @@ function qa(): void
     run_in_php_container('vendor/bin/grumphp run');
 }
 
-#[AsTask(description: 'Run the Clear Cache command')]
+#[AsTask(name: 'cc', description: 'Run the Clear Cache command')]
 function cache_clear(): void
 {
     run_in_php_container('bin/console cache:clear');
 }
 
-#[AsTask(description: 'Create the database')]
+#[AsTask(name: 'db:create', description: 'Create the database')]
 function db_create(
     #[AsOption(description: 'For create test database')]
     bool $test = false,
@@ -104,7 +104,7 @@ function db_create(
     docker_compose($cmd);
 }
 
-#[AsTask(description: 'Run the migrations')]
+#[AsTask(name: 'db:update', description: 'Run the migrations')]
 function db_migrate(
     #[AsOption(description: 'For create test database')]
     bool $test = false,
@@ -116,13 +116,13 @@ function db_migrate(
     docker_compose($cmd);
 }
 
-#[AsTask(description: 'Run the fixtures')]
+#[AsTask(name: 'db:fixtures', description: 'Run the fixtures')]
 function db_fixtures(): void
 {
     run_in_php_container('bin/console doctrine:fixtures:load');
 }
 
-#[AsTask(description: 'Run the migrations and fixtures')]
+#[AsTask(name: 'db:init', description: 'Run the migrations and fixtures')]
 function db_init(): void
 {
     run_in_php_container('bin/console doctrine:database:drop --force');
@@ -131,20 +131,20 @@ function db_init(): void
     db_fixtures();
 }
 
-#[AsTask(description: 'Run NPM install')]
-function npm_install(): void
-{
-    docker_compose('run --rm node npm install');
-}
-
-#[AsTask(description: 'Run NPM build')]
-function npm_build(): void
-{
-    docker_compose('run --rm node npm run build');
-}
-
-#[AsTask(description: 'Run NPM watch')]
-function npm_watch(): void
-{
-    docker_compose('run --rm node npm run watch');
-}
+//#[AsTask(name: 'ui:install', description: 'Run NPM install')]
+//function npm_install(): void
+//{
+//    docker_compose('run --rm node npm install');
+//}
+//
+//#[AsTask(name: 'ui:build', description: 'Run NPM build')]
+//function npm_build(): void
+//{
+//    docker_compose('run --rm node npm run build');
+//}
+//
+//#[AsTask(name: 'ui:dev', description: 'Run NPM watch')]
+//function npm_watch(): void
+//{
+//    docker_compose('run --rm node npm run watch');
+//}

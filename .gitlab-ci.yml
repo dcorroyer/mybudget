@@ -40,7 +40,6 @@ phpunit:
     - docker-php-ext-install mysqli pdo pdo_mysql zip
     - pecl install xdebug && docker-php-ext-enable xdebug
   script:
-    - mysql -uroot -ppass_test -h mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
     - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:

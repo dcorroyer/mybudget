@@ -16,6 +16,9 @@ export default defineConfig({
         }
     },
     resolve: {
-        alias: [{ find: "~/app", replacement: resolve(__dirname, "./assets") }]
+        alias: [
+            { find: "~/app", replacement: resolve(__dirname, "./assets") },
+            { find: "@", replacement: resolve(__dirname, "./assets") },
+        ],
     }
 });

@@ -48,10 +48,6 @@ phpunit:
         coverage_format: cobertura
         path: coverage.cobertura.xml
   allow_failure: false
-  rules:
-    - changes:
-        - src/*
-        - tests/*
 
 stages:
   - code-quality

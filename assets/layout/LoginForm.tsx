@@ -1,5 +1,4 @@
 import React from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -44,9 +43,27 @@ export function LoginForm() {
       password: "",
     },
   });
+   async function onSubmit(values: z.infer<typeof formSchema>) {
+      try {
+          const response = await fetch("api/login_check", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                  username: values.email,
+                  password: values.password,
+              }),
+          });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+          if (!response.ok) {
+              throw new Error("Failed to login");
+          }
+
+          console.log(await response.json());
+      } catch (error) {
+          console.log("Error logging in:", error);
+      }
   }
 
   return (

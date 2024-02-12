@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MailIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 
 import {
   Form,
@@ -26,6 +24,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
 const formSchema = z.object({
   email: z.string().min(2, {
     message: "Email must be at least 2 characters.",
@@ -35,7 +36,7 @@ const formSchema = z.object({
   }),
 });
 
-export function LoginForm() {
+function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,27 +44,31 @@ export function LoginForm() {
       password: "",
     },
   });
-   async function onSubmit(values: z.infer<typeof formSchema>) {
-      try {
-          const response = await fetch("api/login_check", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                  username: values.email,
-                  password: values.password,
-              }),
-          });
 
-          if (!response.ok) {
-              throw new Error("Failed to login");
-          }
+  const navigate = useNavigate();
 
-          console.log(await response.json());
-      } catch (error) {
-          console.log("Error logging in:", error);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("api/login_check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.email,
+          password: values.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to login");
       }
+
+      console.log(await response.json());
+      navigate("/");
+    } catch (error) {
+      console.log("Error logging in:", error);
+    }
   }
 
   return (

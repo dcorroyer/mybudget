@@ -37,7 +37,7 @@ const formSchema = z.object({
     }),
 })
 
-function LoginForm(): React.ReactElement {
+function LoginForm(): React.JSX.Element {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

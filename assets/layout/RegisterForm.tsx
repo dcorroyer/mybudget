@@ -41,7 +41,7 @@ const formSchema = z
         path: ['repeatPassword'],
     })
 
-function RegisterForm(): React.ReactElement {
+function RegisterForm(): React.JSX.Element {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

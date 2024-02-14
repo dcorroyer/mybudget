@@ -17,7 +17,6 @@ function HomePage(): React.JSX.Element {
             <div className='mt-2'>
                 <ModeToggle />
             </div>
-
         </div>
     )
 }

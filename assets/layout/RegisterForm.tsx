@@ -11,10 +11,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form'
+} from '@/components/ui/forms/form'
 
-import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/ui/password-input'
+import { Input } from '@/components/ui/forms/input'
+import { PasswordInput } from '@/components/ui/forms/password-input'
 
 import {
     Card,
@@ -27,6 +27,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '@/components/ui/toasts/use-toast'
 
 const formSchema = z
     .object({
@@ -54,6 +55,7 @@ function RegisterForm(): React.JSX.Element {
     })
 
     const navigate = useNavigate()
+    const { toast } = useToast()
 
     async function onSubmit(values: z.infer<typeof formSchema>): Promise<void> {
         try {
@@ -76,8 +78,18 @@ function RegisterForm(): React.JSX.Element {
 
             console.log(await response.json())
             navigate('/login')
+            toast({
+                title: 'Registered successfully',
+                description: 'You have successfully registered in.',
+                variant: 'default',
+            })
         } catch (error) {
             console.log('Error logging in:', error)
+
+            toast({
+                title: 'Something went wrong ...',
+                variant: 'destructive',
+            })
         }
     }
 

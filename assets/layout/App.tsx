@@ -6,6 +6,7 @@ import LoginForm from '@/layout/LoginForm'
 import RegisterForm from '@/layout/RegisterForm'
 
 import { ThemeProvider } from '@/components/ui/theme-provider'
+import { Toaster } from '@/components/ui/toasts/toaster'
 
 function App(): React.JSX.Element {
     return (
@@ -17,6 +18,7 @@ function App(): React.JSX.Element {
                     <Route path='/register' element={<RegisterForm />} />
                 </Routes>
             </Router>
+            <Toaster />
         </ThemeProvider>
     )
 }

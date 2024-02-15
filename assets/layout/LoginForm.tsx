@@ -67,8 +67,12 @@ function LoginForm(): React.JSX.Element {
                 throw new Error('Failed to login')
             }
 
-            console.log(await response.json())
-            navigate('/')
+            const token = await response.text()
+            console.log(token)
+
+            document.cookie = `token=${token}; Secure; SameSite=None; Path=/`
+
+            navigate('/dashboard')
             toast({
                 title: 'Logged in',
                 description: 'You have successfully logged in.',

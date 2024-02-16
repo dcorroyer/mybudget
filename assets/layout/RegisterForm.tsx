@@ -76,7 +76,6 @@ function RegisterForm(): React.JSX.Element {
                 throw new Error('Failed to register')
             }
 
-            console.log(await response.json())
             navigate('/login')
             toast({
                 title: 'Registered successfully',

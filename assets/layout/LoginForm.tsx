@@ -28,6 +28,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
+import { useAuth } from '@/hooks/AuthProvider';
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -48,6 +49,7 @@ function LoginForm(): React.JSX.Element {
     })
 
     const navigate = useNavigate()
+    const { setToken } = useAuth()
     const { toast } = useToast()
 
     async function onSubmit(values: z.infer<typeof formSchema>): Promise<void> {
@@ -68,9 +70,7 @@ function LoginForm(): React.JSX.Element {
             }
 
             const token = await response.text()
-            console.log(token)
-
-            document.cookie = `token=${token}; Secure; SameSite=None; Path=/`
+            setToken(token)
 
             navigate('/dashboard')
             toast({

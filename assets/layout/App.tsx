@@ -3,8 +3,8 @@ import React from 'react'
 import { ThemeProvider } from '@/components/ui/theme-provider'
 import { Toaster } from '@/components/ui/toasts/toaster'
 
-import AuthProvider from '@/hooks/AuthProvider';
-import Routes from '@/hooks/Routes';
+import AuthProvider from '@/hooks/AuthProvider'
+import Routes from '@/hooks/Routes'
 
 function App(): React.JSX.Element {
     return (

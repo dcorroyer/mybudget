@@ -3,12 +3,14 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 
 interface AuthContextType {
     token: string | null
+    getToken: () => string | null
     setToken: (newToken: React.SetStateAction<string | null>) => void
     clearToken: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
     token: null,
+    getToken: () => '',
     setToken: () => {},
     clearToken: () => {},
 })
@@ -16,12 +18,16 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [token, setToken_] = useState<string | null>(localStorage.getItem('token'))
 
+    const getToken = () => {
+        const tokenValue = JSON.parse(token as string)
+        return tokenValue.token
+    }
     const setToken = (newToken: React.SetStateAction<string | null>) => {
         setToken_(newToken)
     }
 
     const clearToken = () => {
-        setToken_(null);
+        setToken_(null)
     }
 
     useEffect(() => {
@@ -37,6 +43,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const contextValue = useMemo(
         () => ({
             token,
+            getToken,
             setToken,
             clearToken,
         }),

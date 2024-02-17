@@ -1,17 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
-import { useAuth } from '@/hooks/AuthProvider';
-import {useEffect} from 'react';
+import { useAuth } from '@/hooks/AuthProvider'
+import { useEffect } from 'react'
 
 const RedirectPage = () => {
-    const { token } = useAuth();
-    const navigate = useNavigate();
+    const { token } = useAuth()
+    const navigate = useNavigate()
 
     useEffect(() => {
-        token ? navigate('/dashboard') : navigate('/');
-    }, []);
+        token ? navigate('/dashboard') : navigate('/')
+    }, [])
 
-    return null;
-};
+    return null
+}
 
-export default RedirectPage;
+export default RedirectPage

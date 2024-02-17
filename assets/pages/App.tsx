@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider'
 import { Toaster } from '@/components/ui/toasts/toaster'
 
 import AuthProvider from '@/hooks/AuthProvider'
-import Routes from '@/hooks/Routes'
+import Routes from '@/routes/Routes'
 
 function App(): React.JSX.Element {
     return (

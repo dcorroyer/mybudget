@@ -1,5 +1,4 @@
 import React from 'react'
-import { z } from 'zod'
 import { MailIcon, UserIcon } from 'lucide-react'
 
 import {
@@ -27,7 +26,7 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
 
-import { registerFormSchema } from '@/schemas/register'
+import { registerFormSchema, registerFormType } from '@/schemas/register'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -35,7 +34,7 @@ function RegisterPage(): React.JSX.Element {
     const navigate = useNavigate()
     const { toast } = useToast()
 
-    const registerForm = useForm<z.infer<typeof registerFormSchema>>({
+    const registerForm = useForm<registerFormType>({
         resolver: zodResolver(registerFormSchema),
         defaultValues: {
             firstName: '',
@@ -46,7 +45,7 @@ function RegisterPage(): React.JSX.Element {
         },
     })
 
-    async function onSubmit(values: z.infer<typeof registerFormSchema>): Promise<void> {
+    async function onSubmit(values: registerFormType): Promise<void> {
         try {
             const response = await fetch('api/register', {
                 method: 'POST',

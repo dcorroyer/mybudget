@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { MailIcon } from 'lucide-react'
 
 import {
@@ -30,14 +29,14 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toasts/use-toast'
 
 import { useAuth } from '@/hooks/AuthProvider'
-import { loginFormSchema } from '@/schemas/login'
+import { loginFormSchema, loginFormType } from '@/schemas/login'
 
 function LoginPage(): React.JSX.Element {
     const navigate = useNavigate()
     const { setToken } = useAuth()
     const { toast } = useToast()
 
-    const loginForm = useForm<z.infer<typeof loginFormSchema>>({
+    const loginForm = useForm<loginFormType>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: '',
@@ -45,7 +44,7 @@ function LoginPage(): React.JSX.Element {
         },
     })
 
-    async function onSubmit(values: z.infer<typeof loginFormSchema>): Promise<void> {
+    async function onSubmit(values: loginFormType): Promise<void> {
         try {
             const response = await fetch('api/login_check', {
                 method: 'POST',

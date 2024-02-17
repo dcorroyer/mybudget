@@ -1,33 +1,33 @@
 import React from 'react'
-import {RouterProvider, createBrowserRouter} from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import {useAuth} from '@/hooks/AuthProvider'
-import {PrivateRoute} from '@/hooks/PrivateRoute'
+import { useAuth } from '@/hooks/AuthProvider'
+import { PrivateRoute } from '@/hooks/PrivateRoute'
 
-import HomePage from '@/layout/HomePage';
-import DashboardPage from '@/layout/DashboardPage';
-import RegisterForm from '@/layout/RegisterForm';
-import LoginForm from '@/layout/LoginForm';
-import RedirectPage from '@/layout/RedirectPage';
+import HomePage from '@/layout/HomePage'
+import DashboardPage from '@/layout/DashboardPage'
+import RegisterForm from '@/layout/RegisterForm'
+import LoginForm from '@/layout/LoginForm'
+import RedirectPage from '@/layout/RedirectPage'
 
 const Routes = () => {
-    const {token} = useAuth()
+    const { token } = useAuth()
 
     const publicRoutes = [
         {
             path: '/',
-            element: <HomePage/>,
+            element: <HomePage />,
         },
     ]
 
     const privateRoutes = [
         {
             path: '/',
-            element: <PrivateRoute/>,
+            element: <PrivateRoute />,
             children: [
                 {
                     path: '/dashboard',
-                    element: <DashboardPage/>,
+                    element: <DashboardPage />,
                 },
             ],
         },
@@ -36,21 +36,21 @@ const Routes = () => {
     const authRoutes = [
         {
             path: '/register',
-            element: <RegisterForm/>,
+            element: <RegisterForm />,
         },
         {
             path: '/login',
-            element: <LoginForm/>,
+            element: <LoginForm />,
         },
     ]
 
     const router = createBrowserRouter([
         ...publicRoutes,
-        ...(!token ? authRoutes : [{path: '*', element: <RedirectPage />}]),
+        ...(!token ? authRoutes : [{ path: '*', element: <RedirectPage /> }]),
         ...privateRoutes,
     ])
 
-    return <RouterProvider router={router}/>
+    return <RouterProvider router={router} />
 }
 
 export default Routes

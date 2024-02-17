@@ -28,7 +28,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
-import { useAuth } from '@/hooks/AuthProvider';
+import { useAuth } from '@/hooks/AuthProvider'
 
 const formSchema = z.object({
     email: z.string().min(2, {

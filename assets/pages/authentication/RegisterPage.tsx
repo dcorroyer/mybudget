@@ -1,6 +1,4 @@
 import React from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { MailIcon, UserIcon } from 'lucide-react'
 
@@ -29,22 +27,16 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
 
-const formSchema = z
-    .object({
-        firstName: z.string().min(3),
-        lastName: z.string().min(2),
-        email: z.string().email(),
-        password: z.string().min(2),
-        repeatPassword: z.string().min(2),
-    })
-    .refine((data) => data.password === data.repeatPassword, {
-        message: 'Passwords do not match',
-        path: ['repeatPassword'],
-    })
+import { registerFormSchema } from '@/schemas/register'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-function RegisterForm(): React.JSX.Element {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+function RegisterPage(): React.JSX.Element {
+    const navigate = useNavigate()
+    const { toast } = useToast()
+
+    const registerForm = useForm<z.infer<typeof registerFormSchema>>({
+        resolver: zodResolver(registerFormSchema),
         defaultValues: {
             firstName: '',
             lastName: '',
@@ -54,10 +46,7 @@ function RegisterForm(): React.JSX.Element {
         },
     })
 
-    const navigate = useNavigate()
-    const { toast } = useToast()
-
-    async function onSubmit(values: z.infer<typeof formSchema>): Promise<void> {
+    async function onSubmit(values: z.infer<typeof registerFormSchema>): Promise<void> {
         try {
             const response = await fetch('api/register', {
                 method: 'POST',
@@ -102,10 +91,10 @@ function RegisterForm(): React.JSX.Element {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+                    <Form {...registerForm}>
+                        <form onSubmit={registerForm.handleSubmit(onSubmit)} className='space-y-2'>
                             <FormField
-                                control={form.control}
+                                control={registerForm.control}
                                 name='firstName'
                                 render={({ field }) => (
                                     <FormItem>
@@ -123,7 +112,7 @@ function RegisterForm(): React.JSX.Element {
                                 )}
                             />
                             <FormField
-                                control={form.control}
+                                control={registerForm.control}
                                 name='lastName'
                                 render={({ field }) => (
                                     <FormItem>
@@ -141,7 +130,7 @@ function RegisterForm(): React.JSX.Element {
                                 )}
                             />
                             <FormField
-                                control={form.control}
+                                control={registerForm.control}
                                 name='email'
                                 render={({ field }) => (
                                     <FormItem>
@@ -159,7 +148,7 @@ function RegisterForm(): React.JSX.Element {
                                 )}
                             />
                             <FormField
-                                control={form.control}
+                                control={registerForm.control}
                                 name='password'
                                 render={({ field }) => (
                                     <FormItem>
@@ -172,7 +161,7 @@ function RegisterForm(): React.JSX.Element {
                                 )}
                             />
                             <FormField
-                                control={form.control}
+                                control={registerForm.control}
                                 name='repeatPassword'
                                 render={({ field }) => (
                                     <FormItem>
@@ -200,4 +189,4 @@ function RegisterForm(): React.JSX.Element {
     )
 }
 
-export default RegisterForm
+export default RegisterPage

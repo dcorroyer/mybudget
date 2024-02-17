@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '@/hooks/AuthProvider'
 import { useToast } from '@/components/ui/toasts/use-toast'
 
-export const PrivateRoute = (): React.JSX.Element => {
+export const PrivateRoutes = (): React.JSX.Element => {
     const { token } = useAuth()
     const { toast } = useToast()
 

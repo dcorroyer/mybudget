@@ -2,13 +2,13 @@ import React from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/AuthProvider'
-import { PrivateRoute } from '@/hooks/PrivateRoute'
+import { PrivateRoutes } from '@/routes/PrivateRoutes'
 
-import HomePage from '@/layout/HomePage'
-import DashboardPage from '@/layout/DashboardPage'
-import RegisterForm from '@/layout/RegisterForm'
-import LoginForm from '@/layout/LoginForm'
-import RedirectPage from '@/layout/RedirectPage'
+import HomePage from '@/pages/HomePage'
+import DashboardPage from '@/pages/dashboard/DashboardPage'
+import RegisterPage from '@/pages/authentication/RegisterPage'
+import LoginPage from '@/pages/authentication/LoginPage'
+import RedirectPage from '@/pages/authentication/RedirectPage'
 
 const Routes = () => {
     const { token } = useAuth()
@@ -23,7 +23,7 @@ const Routes = () => {
     const privateRoutes = [
         {
             path: '/',
-            element: <PrivateRoute />,
+            element: <PrivateRoutes />,
             children: [
                 {
                     path: '/dashboard',
@@ -36,11 +36,11 @@ const Routes = () => {
     const authRoutes = [
         {
             path: '/register',
-            element: <RegisterForm />,
+            element: <RegisterPage />,
         },
         {
             path: '/login',
-            element: <LoginForm />,
+            element: <LoginPage />,
         },
     ]
 

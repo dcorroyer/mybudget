@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -26,33 +27,25 @@ import {
 } from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
+
 import { useAuth } from '@/hooks/AuthProvider'
+import { loginFormSchema } from '@/schemas/login'
 
-const formSchema = z.object({
-    email: z.string().min(2, {
-        message: 'Email must be at least 2 characters.',
-    }),
-    password: z.string().min(2, {
-        message: 'Password must be at least 2 characters.',
-    }),
-})
+function LoginPage(): React.JSX.Element {
+    const navigate = useNavigate()
+    const { setToken } = useAuth()
+    const { toast } = useToast()
 
-function LoginForm(): React.JSX.Element {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const loginForm = useForm<z.infer<typeof loginFormSchema>>({
+        resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: '',
             password: '',
         },
     })
 
-    const navigate = useNavigate()
-    const { setToken } = useAuth()
-    const { toast } = useToast()
-
-    async function onSubmit(values: z.infer<typeof formSchema>): Promise<void> {
+    async function onSubmit(values: z.infer<typeof loginFormSchema>): Promise<void> {
         try {
             const response = await fetch('api/login_check', {
                 method: 'POST',
@@ -98,10 +91,10 @@ function LoginForm(): React.JSX.Element {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+                    <Form {...loginForm}>
+                        <form onSubmit={loginForm.handleSubmit(onSubmit)} className='space-y-2'>
                             <FormField
-                                control={form.control}
+                                control={loginForm.control}
                                 name='email'
                                 render={({ field }) => (
                                     <FormItem>
@@ -119,7 +112,7 @@ function LoginForm(): React.JSX.Element {
                                 )}
                             />
                             <FormField
-                                control={form.control}
+                                control={loginForm.control}
                                 name='password'
                                 render={({ field }) => (
                                     <FormItem>
@@ -149,4 +142,4 @@ function LoginForm(): React.JSX.Element {
     )
 }
 
-export default LoginForm
+export default LoginPage

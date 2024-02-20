@@ -47,5 +47,5 @@ nelmio_api_doc:
                             description: Invalid JSON.
                     security: [ ]
     areas:
-        path_patterns: # an array of regexps (document only routes under /api, except /api/doc)
+        path_patterns: # an array of regexps (document only utils under /api, except /api/doc)
             - ^/api(?!/doc$)

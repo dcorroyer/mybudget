@@ -31,7 +31,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
             {items.map((item) => (
                 <Link
                     key={item.title}
-                    to='/'
+                    to={item.href}
                     className={cn(
                         buttonVariants({ variant: 'ghost' }),
                         'group relative flex h-12 justify-between px-4 py-2 text-base duration-200 hover:bg-muted hover:no-underline',

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useToast } from '@/components/ui/toasts/use-toast'
 import { Button } from '@/components/ui/button'
@@ -56,6 +56,12 @@ function DashboardPage(): React.JSX.Element {
                 <Button className='mx-auto mt-2' variant='ghost' onClick={isConnected}>
                     Verify if you are connected
                 </Button>
+
+                <Link to='/'>
+                    <Button className='mx-auto mt-2' variant='ghost'>
+                        Accueil
+                    </Button>
+                </Link>
             </div>
         </>
     )

@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import { ThemeProvider } from '@/components/ui/theme-provider'
+import { ThemeProvider } from '@/hooks/ThemeProvider'
 import { Toaster } from '@/components/ui/toasts/toaster'
 import { Layout } from '@/components/layout'
 

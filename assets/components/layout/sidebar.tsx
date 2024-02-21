@@ -19,6 +19,8 @@ export default function Sidebar({ className }: SidebarProps) {
         toggle()
         setTimeout(() => setStatus(false), 500)
     }
+
+    console.log({isOpen}, 'sidebar')
     return (
         <nav
             className={cn(
@@ -39,6 +41,7 @@ export default function Sidebar({ className }: SidebarProps) {
                 <div className='px-3 py-2'>
                     <div className='mt-3 space-y-1'>
                         <SideNav
+                            isOpen={isOpen}
                             className='text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100'
                             items={NavItems}
                         />

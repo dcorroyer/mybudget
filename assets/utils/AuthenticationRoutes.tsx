@@ -19,7 +19,7 @@ const AuthenticationRoutes = (): React.JSX.Element => {
     }, [token, toast])
 
     if (token) {
-        return <Navigate to='/dashboard' />
+        return <Navigate to='/' />
     }
 
     return <Outlet />

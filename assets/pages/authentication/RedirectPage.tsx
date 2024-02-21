@@ -8,7 +8,7 @@ const RedirectPage = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        token ? navigate('/dashboard') : navigate('/')
+        token ? navigate('/') : navigate('/login', { replace: true })
     }, [])
 
     return null

@@ -15,7 +15,6 @@ use App\Entity\ExpenseCategory;
 use App\Entity\ExpenseLine;
 use App\Repository\ExpenseCategoryRepository;
 use App\Repository\ExpenseLineRepository;
-use App\Repository\ExpenseRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -23,18 +22,30 @@ use My\RestBundle\Dto\PaginationQueryParams;
 class ExpenseService
 {
     public function __construct(
-        private readonly ExpenseRepository $expenseRepository,
-        private readonly ExpenseLineRepository $expenseLineRepository,
+        private readonly ExpenseLineRepository     $expenseLineRepository,
         private readonly ExpenseCategoryRepository $expenseCategoryRepository,
-        private readonly ExpenseCategoryService $expenseCategoryService,
-    ) {
+        private readonly ExpenseCategoryService    $expenseCategoryService,
+    )
+    {
     }
 
-    public function create(ExpensePayload $payload): ExpenseResponse
+    public function create(ExpensePayload $payload): Collection
     {
-        $expense = new Expense();
+        $expenseLines = [];
 
-        return $this->updateOrCreateExpense($payload, $expense);
+        foreach ($payload->getExpenseLines() as $expenseLinePayload) {
+            $category = $this->manageExpenseCategory($expenseLinePayload->getCategory());
+
+            $expenseLine = new ExpenseLine();
+
+            $expenseLine->setName($expenseLinePayload->getName())
+                ->setAmount($expenseLinePayload->getAmount())
+                ->setCategory($category);
+
+            $this->expenseLineRepository->save($expenseLine);
+        }
+
+        return $expenseLines;
     }
 
     public function update(ExpensePayload $payload, Expense $expense): ExpenseResponse
@@ -51,8 +62,9 @@ class ExpenseService
 
     public function paginate(
         PaginationQueryParams $paginationQueryParams = null,
-        ExpenseFilterQuery $filter = null
-    ): SlidingPagination {
+        ExpenseFilterQuery    $filter = null
+    ): SlidingPagination
+    {
         return $this->expenseRepository->paginate($paginationQueryParams, $filter, Criteria::create());
     }
 
@@ -83,15 +95,13 @@ class ExpenseService
                 ->setAmount($expenseLine->getAmount())
                 ->setCategory((new ExpenseCategoryResponse())
                     ->setId($expenseLine->getCategory()->getId())
-                    ->setName($expenseLine->getCategory()->getName()))
-            ;
+                    ->setName($expenseLine->getCategory()->getName()));
         }
 
         return (new ExpenseResponse())
             ->setId($expense->getId())
             ->setAmount($expense->getAmount())
-            ->setExpenseLines($expenseLinesResponse)
-        ;
+            ->setExpenseLines($expenseLinesResponse);
     }
 
     private function manageExpenseCategory(ExpenseCategoryPayload $categoryPayload): ExpenseCategory

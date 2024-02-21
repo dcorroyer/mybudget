@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Expense;
+namespace App\Controller\ExpenseLines;
 
 use App\Entity\Expense;
 use App\Serializable\SerializationGroups;

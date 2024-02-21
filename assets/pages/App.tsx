@@ -10,7 +10,6 @@ import SidebarStateProvider from '@/hooks/SidebarStateProvider'
 import PrivateRoutes from '@/utils/PrivateRoutes'
 import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
 
-import HomePage from '@/pages/HomePage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
@@ -23,9 +22,8 @@ function App(): React.JSX.Element {
                     <BrowserRouter>
                         <Layout>
                             <Routes>
-                                <Route path={'/'} element={<HomePage />} />
                                 <Route element={<PrivateRoutes />}>
-                                    <Route path={'/dashboard'} element={<DashboardPage />} />
+                                    <Route path={'/'} element={<DashboardPage />} />
                                 </Route>
                                 <Route element={<AuthenticationRoutes />}>
                                     <Route path={'/login'} element={<LoginPage />} />

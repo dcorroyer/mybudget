@@ -12,7 +12,7 @@ import HomePage from '@/pages/HomePage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
-import SidebarStateProvider from '@/hooks/SidebarStateProvider';
+import SidebarStateProvider from '@/hooks/SidebarStateProvider'
 
 function App(): React.JSX.Element {
     return (

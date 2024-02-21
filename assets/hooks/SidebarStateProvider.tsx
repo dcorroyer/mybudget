@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
+import React, {createContext, useContext, useEffect, useMemo, useState} from 'react'
 
 interface SidebarContextType {
     isOpen: boolean
@@ -11,11 +11,18 @@ const SidebarContext = createContext<SidebarContextType>({
 })
 
 const SidebarStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState<boolean>(() => {
+        const storedValue = localStorage.getItem('isSidebarOpen');
+        return storedValue ? JSON.parse(storedValue) : true;
+    });
 
     const toggle = () => {
-        setIsOpen((prevIsOpen) => !prevIsOpen)
-    }
+        setIsOpen((prevIsOpen) => !prevIsOpen);
+    };
+
+    useEffect(() => {
+        localStorage.setItem('isSidebarOpen', JSON.stringify(isOpen));
+    }, [isOpen]);
 
     const contextValue = useMemo(() => {
         return {

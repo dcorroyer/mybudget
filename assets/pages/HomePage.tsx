@@ -1,7 +1,8 @@
 import React from 'react'
-import { Button } from '@/components/ui/button'
 import { Link, useNavigate } from 'react-router-dom'
-import ModeToggle from '@/components/ui/mode-toggle'
+
+import { Button } from '@/components/ui/button'
+import ThemeToggle from '@/components/ui/theme-toggle';
 
 function HomePage(): React.JSX.Element {
     const navigate = useNavigate()
@@ -15,7 +16,7 @@ function HomePage(): React.JSX.Element {
                 Login
             </Button>
             <div className='mt-2'>
-                <ModeToggle />
+                <ThemeToggle />
             </div>
             <div className='mt-2'>
                 <Link to='/dashboard'>

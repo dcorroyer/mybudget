@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ModeToggle from '@/components/ui/mode-toggle'
 
 function HomePage(): React.JSX.Element {
@@ -16,6 +16,13 @@ function HomePage(): React.JSX.Element {
             </Button>
             <div className='mt-2'>
                 <ModeToggle />
+            </div>
+            <div className='mt-2'>
+                <Link to='/dashboard'>
+                    <Button className='mx-auto mt-2' variant='ghost'>
+                        Dashboard
+                    </Button>
+                </Link>
             </div>
         </div>
     )

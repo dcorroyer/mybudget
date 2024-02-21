@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import {
@@ -12,9 +12,9 @@ import { buttonVariants } from '@/components/ui/button'
 
 import { NavItem } from '@/types'
 import { cn } from '@/lib/utils'
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react'
 
-import { useSidebar } from '@/hooks/SidebarStateProvider';
+import { useSidebar } from '@/hooks/SidebarStateProvider'
 
 interface SideNavProps {
     items: NavItem[]
@@ -68,7 +68,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                                 </div>
 
                                 {isOpen && (
-                                    <ChevronDownIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+                                    <ChevronDownIcon className='h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200' />
                                 )}
                             </AccordionTrigger>
                             <AccordionContent className='mt-2 space-y-4 pb-1 ml-2'>

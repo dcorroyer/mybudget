@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 
-// import { useSidebar } from '@/hooks/useSidebar'
 import {
     Accordion,
     AccordionContent,
@@ -15,27 +14,27 @@ import { NavItem } from '@/types'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react';
 
+import { useSidebar } from '@/hooks/SidebarStateProvider';
+
 interface SideNavProps {
     items: NavItem[]
     setOpen?: (open: boolean) => void
-    className?: string,
-    isOpen: boolean
+    className?: string
 }
 
-export function SideNav({ items, isOpen, setOpen, className }: SideNavProps) {
+export function SideNav({ items, setOpen, className }: SideNavProps) {
     const [openItem, setOpenItem] = useState('')
-    // const { isOpen } = useSidebar();
-    // const [lastOpenItem, setLastOpenItem] = useState('')
+    const [lastOpenItem, setLastOpenItem] = useState('')
+    const { isOpen } = useSidebar()
 
-/*    useEffect(() => {
-        console.log(isOpen)
+    useEffect(() => {
         if (isOpen) {
             setOpenItem(lastOpenItem)
         } else {
             setLastOpenItem(openItem)
             setOpenItem('')
         }
-    }, [isOpen])*/
+    }, [isOpen])
 
     return (
         <nav className='space-y-2'>

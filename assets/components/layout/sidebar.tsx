@@ -3,7 +3,7 @@ import { SideNav } from '@/components/layout/side-nav'
 import { NavItems } from '@/components/constants/side-nav'
 
 import { cn } from '@/lib/utils'
-import { useSidebar } from '@/hooks/useSidebar'
+import { useSidebar } from '@/hooks/SidebarStateProvider'
 import { ArrowLeftIcon } from 'lucide-react'
 
 interface SidebarProps {
@@ -20,7 +20,6 @@ export default function Sidebar({ className }: SidebarProps) {
         setTimeout(() => setStatus(false), 500)
     }
 
-    console.log({isOpen}, 'sidebar')
     return (
         <nav
             className={cn(
@@ -41,7 +40,6 @@ export default function Sidebar({ className }: SidebarProps) {
                 <div className='px-3 py-2'>
                     <div className='mt-3 space-y-1'>
                         <SideNav
-                            isOpen={isOpen}
                             className='text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100'
                             items={NavItems}
                         />

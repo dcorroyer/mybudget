@@ -12,24 +12,27 @@ import HomePage from '@/pages/HomePage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
+import SidebarStateProvider from '@/hooks/SidebarStateProvider';
 
 function App(): React.JSX.Element {
     return (
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
             <AuthProvider>
-                <BrowserRouter>
-                    <Layout>
-                        <Routes>
-                            <Route path={'/'} element={<HomePage />} />
-                            <Route element={<PrivateRoutes />}>
-                                <Route path={'/dashboard'} element={<DashboardPage />} />
-                            </Route>
-                            <Route path={'/login'} element={<LoginPage />} />
-                            <Route path={'/register'} element={<RegisterPage />} />
-                        </Routes>
-                    </Layout>
-                    <Toaster />
-                </BrowserRouter>
+                <SidebarStateProvider>
+                    <BrowserRouter>
+                        <Layout>
+                            <Routes>
+                                <Route path={'/'} element={<HomePage />} />
+                                <Route element={<PrivateRoutes />}>
+                                    <Route path={'/dashboard'} element={<DashboardPage />} />
+                                </Route>
+                                <Route path={'/login'} element={<LoginPage />} />
+                                <Route path={'/register'} element={<RegisterPage />} />
+                            </Routes>
+                        </Layout>
+                        <Toaster />
+                    </BrowserRouter>
+                </SidebarStateProvider>
             </AuthProvider>
         </ThemeProvider>
     )

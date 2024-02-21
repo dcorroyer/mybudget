@@ -4,25 +4,25 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useToast } from '@/components/ui/toasts/use-toast'
 import { useAuth } from '@/hooks/AuthProvider'
 
-const PrivateRoutes = (): React.JSX.Element => {
+const AuthenticationRoutes = (): React.JSX.Element => {
     const { token } = useAuth()
     const { toast } = useToast()
 
     useEffect(() => {
-        if (!token) {
+        if (token) {
             toast({
-                title: 'You are not logged in',
-                description: 'You need to be logged to access this page',
-                variant: 'destructive',
+                title: 'You are already logged in',
+                description: 'You need to be logged out to access this page',
+                variant: 'default',
             })
         }
     }, [token, toast])
 
-    if (!token) {
-        return <Navigate to='/login' />
+    if (token) {
+        return <Navigate to='/dashboard' />
     }
 
     return <Outlet />
 }
 
-export default PrivateRoutes
+export default AuthenticationRoutes

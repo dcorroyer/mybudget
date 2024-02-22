@@ -24,6 +24,15 @@ function start(): void
     docker_compose('up -d');
 }
 
+#[AsTask(description: 'Install the project stack')]
+function install(): void
+{
+    docker_compose('up -d');
+    composer_install();
+    db_init();
+    npm_init();
+}
+
 #[AsTask(description: 'Stop the docker-compose stack')]
 function stop(): void
 {
@@ -89,7 +98,7 @@ function qa(): void
 #[AsTask(name: 'cc', description: 'Run the Clear Cache command')]
 function cache_clear(): void
 {
-    run_in_php_container('bin/console cache:clear');
+    run_in_php_container('php bin/console cache:clear');
 }
 
 #[AsTask(name: 'db:create', description: 'Create the database')]
@@ -97,11 +106,11 @@ function db_create(
     #[AsOption(description: 'For create test database')]
     bool $test = false,
 ): void {
-    $cmd = 'bin/console doctrine:database:create';
+    $cmd = 'php bin/console doctrine:database:create';
     if ($test) {
         $cmd .= ' --env=test';
     }
-    docker_compose($cmd);
+    run_in_php_container($cmd);
 }
 
 #[AsTask(name: 'db:update', description: 'Run the migrations')]
@@ -109,42 +118,49 @@ function db_migrate(
     #[AsOption(description: 'For create test database')]
     bool $test = false,
 ): void {
-    $cmd = 'bin/console doctrine:migrations:migrate';
+    $cmd = 'php bin/console doctrine:migrations:migrate';
     if ($test) {
         $cmd .= ' --env=test';
     }
-    docker_compose($cmd);
+    run_in_php_container($cmd);
 }
 
 #[AsTask(name: 'db:fixtures', description: 'Run the fixtures')]
 function db_fixtures(): void
 {
-    run_in_php_container('bin/console doctrine:fixtures:load');
+    run_in_php_container('php bin/console doctrine:fixtures:load');
 }
 
 #[AsTask(name: 'db:init', description: 'Run the migrations and fixtures')]
 function db_init(): void
 {
-    run_in_php_container('bin/console doctrine:database:drop --force');
+    run_in_php_container('php bin/console doctrine:database:drop --force');
     db_create();
     db_migrate();
     db_fixtures();
 }
 
-//#[AsTask(name: 'ui:install', description: 'Run NPM install')]
-//function npm_install(): void
-//{
-//    docker_compose('run --rm node npm install');
-//}
-//
-//#[AsTask(name: 'ui:build', description: 'Run NPM build')]
-//function npm_build(): void
-//{
-//    docker_compose('run --rm node npm run build');
-//}
-//
-//#[AsTask(name: 'ui:dev', description: 'Run NPM watch')]
-//function npm_watch(): void
-//{
-//    docker_compose('run --rm node npm run watch');
-//}
+#[AsTask(name: 'ui:init', description: 'Run init')]
+function npm_init(): void
+{
+    npm_install();
+    npm_build();
+}
+
+#[AsTask(name: 'ui:install', description: 'Run NPM install')]
+function npm_install(): void
+{
+    run('npm install');
+}
+
+#[AsTask(name: 'ui:build', description: 'Run NPM build')]
+function npm_build(): void
+{
+    run('npm run build');
+}
+
+#[AsTask(name: 'ui:dev', description: 'Run NPM dev')]
+function npm_dev(): void
+{
+    run('npm run dev');
+}

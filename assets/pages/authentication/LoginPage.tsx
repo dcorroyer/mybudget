@@ -64,7 +64,7 @@ function LoginPage(): React.JSX.Element {
             const token = await response.text()
             setToken(token)
 
-            navigate('/dashboard')
+            navigate('/')
             toast({
                 title: 'Logged in',
                 description: 'You have successfully logged in.',

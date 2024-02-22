@@ -3,7 +3,7 @@ import { SideNav } from '@/components/layout/side-nav'
 import { NavItems } from '@/components/constants/side-nav'
 
 import { cn } from '@/lib/utils'
-import { useSidebar } from '@/hooks/useSidebar'
+import { useSidebar } from '@/hooks/SidebarStateProvider'
 import { ArrowLeftIcon } from 'lucide-react'
 
 interface SidebarProps {
@@ -19,6 +19,7 @@ export default function Sidebar({ className }: SidebarProps) {
         toggle()
         setTimeout(() => setStatus(false), 500)
     }
+
     return (
         <nav
             className={cn(

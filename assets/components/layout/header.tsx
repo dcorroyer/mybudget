@@ -1,10 +1,15 @@
-import ThemeToggle from '@/components/ui/theme-toggle'
-import { Bitcoin } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Link, useNavigate } from 'react-router-dom'
 import React from 'react'
-import { useAuth } from '@/hooks/AuthProvider'
+import { Link, useNavigate } from 'react-router-dom'
+
+import ThemeToggle from '@/components/ui/theme-toggle'
+import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toasts/use-toast'
+import { MobileSidebar } from '@/components/layout/mobile-sidebar'
+
+import { Bitcoin } from 'lucide-react'
+
+import { useAuth } from '@/hooks/AuthProvider'
+import { cn } from '@/lib/utils'
 
 export default function Header(): React.JSX.Element {
     const { token, clearToken } = useAuth()
@@ -28,6 +33,9 @@ export default function Header(): React.JSX.Element {
                     <h1 className='text-lg font-semibold'>MyBudget</h1>
                 </Link>
 
+                <div className={cn('block md:!hidden')}>
+                    <MobileSidebar />
+                </div>
                 <div className='flex items-center gap-2'>
                     <ThemeToggle />
                     {token ? (

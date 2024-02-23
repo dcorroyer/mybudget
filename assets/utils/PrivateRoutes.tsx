@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { useToast } from '@/components/ui/toasts/use-toast'
+import { useToast } from '@/components/hooks/UseToast'
 import { useAuth } from '@/hooks/AuthProvider'
 
 const PrivateRoutes = (): React.JSX.Element => {

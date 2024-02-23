@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import { ThemeProvider } from '@/hooks/ThemeProvider'
-import { Toaster } from '@/components/ui/toasts/toaster'
+import { Toaster } from '@/components/ui/toaster'
 import { Layout } from '@/components/layout'
 
 import AuthProvider from '@/hooks/AuthProvider'
@@ -13,6 +13,7 @@ import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
+import TrackingPage from '@/pages/tracking/TrackingPage'
 
 function App(): React.JSX.Element {
     return (
@@ -24,6 +25,7 @@ function App(): React.JSX.Element {
                             <Routes>
                                 <Route element={<PrivateRoutes />}>
                                     <Route path={'/'} element={<DashboardPage />} />
+                                    <Route path={'/tracking'} element={<TrackingPage />} />
                                 </Route>
                                 <Route element={<AuthenticationRoutes />}>
                                     <Route path={'/login'} element={<LoginPage />} />

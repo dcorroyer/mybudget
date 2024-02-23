@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { MenuIcon } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { SideNav } from '@/components/layout/side-nav';
-import { NavItems } from '@/components/constants/side-nav';
+import React, { useState, useEffect } from 'react'
+import { MenuIcon } from 'lucide-react'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { SideNav } from '@/components/layout/side-nav'
+import { NavItems } from '@/components/constants/side-nav'
 
 export const MobileSidebar = (): React.JSX.Element | null => {
-    const [open, setOpen] = useState(false);
-    const [isMounted, setIsMounted] = useState(false);
+    const [open, setOpen] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        setIsMounted(true)
+    }, [])
 
     if (!isMounted) {
-        return null;
+        return null
     }
 
     return (
         <>
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
-                    <div className="flex items-center justify-center gap-2">
+                    <div className='flex items-center justify-center gap-2'>
                         <MenuIcon />
-                        <h1 className="text-lg font-semibold">MyBudget</h1>
+                        <h1 className='text-lg font-semibold'>MyBudget</h1>
                     </div>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-72">
-                    <div className="px-1 py-6 pt-16">
+                <SheetContent side='left' className='w-72'>
+                    <div className='px-1 py-6 pt-16'>
                         <SideNav items={NavItems} setOpen={setOpen} />
                     </div>
                 </SheetContent>
             </Sheet>
         </>
-    );
-};
+    )
+}

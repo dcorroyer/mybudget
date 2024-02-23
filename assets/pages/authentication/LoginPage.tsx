@@ -11,10 +11,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/forms/form'
+} from '@/components/ui/form'
 
-import { Input } from '@/components/ui/forms/input'
-import { PasswordInput } from '@/components/ui/forms/password-input'
+import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 
 import {
     Card,
@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/toasts/use-toast'
+import { useToast } from '@/components/hooks/UseToast'
 
 import { useAuth } from '@/hooks/AuthProvider'
 import { loginFormSchema, loginFormType } from '@/schemas/login'

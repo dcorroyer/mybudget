@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useToast } from '@/components/ui/toasts/use-toast'
+import { useToast } from '@/components/hooks/UseToast'
 import { Button } from '@/components/ui/button'
 
 import { useAuth } from '@/hooks/AuthProvider'

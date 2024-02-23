@@ -1,100 +1,99 @@
 import React, { useState } from 'react'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { EuroIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { useForm } from 'react-hook-form'
+import { loginFormSchema, loginFormType } from '@/schemas'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { InputSuffixIn } from '@/components/ui/input-suffix-in'
 
-interface Element {
-    name: string
-    amount: string
-}
+function TrackingPage(): React.JSX.Element {
 
-interface Category {
-    categoryName: string
-    elements: Element[]
-}
+    const [expenses, setExpenses] = useState([{ name: '', amount: '' }]);
 
-const TrackingPage: React.FC = () => {
-    const [categories, setCategories] = useState<Category[]>([])
+    const handleAddExpense = () => {
+        setExpenses([...expenses, { name: '', amount: '' }]);
+    };
 
-    const updateCategories = (updatedCategories: Category[]) => {
-        setCategories(updatedCategories)
-    }
+    const handleExpenseChange = (index: number, fieldName: string, value: string) => {
+        const updatedExpenses = [...expenses];
+        updatedExpenses[index][fieldName] = value;
+        setExpenses(updatedExpenses);
+    };
 
-    const addCategory = () => {
-        updateCategories([
-            ...categories,
-            { categoryName: '', elements: [{ name: '', amount: '' }] },
-        ])
-    }
+    const loginForm = useForm<loginFormType>({
+        resolver: zodResolver(loginFormSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    })
 
-    const addElement = (categoryIndex: number) => {
-        const updatedCategories = [...categories]
-        updatedCategories[categoryIndex].elements.push({ name: '', amount: '' })
-        updateCategories(updatedCategories)
-    }
-
-    const handleChange = (
-        categoryIndex: number,
-        elementIndex: number,
-        field: keyof Element,
-        value: string,
-    ) => {
-        const updatedCategories = [...categories]
-        updatedCategories[categoryIndex].elements[elementIndex][field] = value
-        updateCategories(updatedCategories)
-    }
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        console.log(categories)
+    function onSubmit(values: loginFormType): void {
+        console.log(values)
     }
 
     return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
-            <form onSubmit={handleSubmit}>
-                {categories.map((category, categoryIndex) => (
-                    <div key={categoryIndex}>
-                        <Input
-                            value={category.categoryName}
-                            placeholder='Category Name'
-                            onChange={(e) => handleChange(categoryIndex, 0, 'name', e.target.value)}
-                        />
-                        {category.elements.map((element, elementIndex) => (
-                            <Card key={elementIndex}>
-                                <Input
-                                    value={element.name}
-                                    placeholder='Name'
-                                    onChange={(e) =>
-                                        handleChange(
-                                            categoryIndex,
-                                            elementIndex,
-                                            'name',
-                                            e.target.value,
-                                        )
-                                    }
-                                />
-                                <Input
-                                    value={element.amount}
-                                    placeholder='Amount'
-                                    onChange={(e) =>
-                                        handleChange(
-                                            categoryIndex,
-                                            elementIndex,
-                                            'amount',
-                                            e.target.value,
-                                        )
-                                    }
-                                />
-                            </Card>
-                        ))}
-                        <Button onClick={() => addElement(categoryIndex)}>Add Element</Button>
-                    </div>
-                ))}
-                <Button onClick={addCategory}>Add Category</Button>
-                <Button type='submit'>Submit</Button>
-            </form>
+        <div className="flex flex-col items-center py-12 sm:px-6 lg:px-8">
+            <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(onSubmit)} className="space-y-2">
+                    <Card className="w-full max-w-md">
+                        <CardHeader>
+                            <CardTitle>Insurances</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex flex-col space-y-4">
+                            {expenses.map((expense, index) => (
+                                <div key={index} className="flex space-x-1">
+                                    <FormField
+                                        control={loginForm.control}
+                                        name={`email_${index}`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Name"
+                                                        value={expense.name}
+                                                        onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={loginForm.control}
+                                        name={`password_${index}`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Amount</FormLabel>
+                                                <FormControl>
+                                                    <InputSuffixIn
+                                                        placeholder="Amount"
+                                                        value={expense.amount}
+                                                        onChange={(e) => handleExpenseChange(index, 'amount', e.target.value)}
+                                                        suffix={<EuroIcon />}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            ))}
+                        </CardContent>
+                        <CardFooter>
+                            <Button variant="ghost" onClick={handleAddExpense}>
+                                Add an expense
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </form>
+            </Form>
         </div>
-    )
+    );
 }
 
 export default TrackingPage

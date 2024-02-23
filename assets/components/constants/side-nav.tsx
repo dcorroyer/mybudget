@@ -1,4 +1,4 @@
-import { Bitcoin, Home } from 'lucide-react'
+import { Euro, Home } from 'lucide-react'
 import { type NavItem } from '@/types'
 
 export const NavItems: NavItem[] = [
@@ -10,7 +10,7 @@ export const NavItems: NavItem[] = [
     },
     {
         title: 'Budget',
-        icon: Bitcoin,
+        icon: Euro,
         href: '/tracking',
         color: 'text-orange-500',
     },

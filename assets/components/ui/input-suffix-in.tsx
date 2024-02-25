@@ -9,7 +9,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 const InputSuffixIn = React.forwardRef<HTMLInputElement, InputProps>(
     ({ suffix, className, type, ...props }, ref) => {
         return (
-            <div className="relative">
+            <div className='relative'>
                 <input
                     type={type}
                     className={cn(
@@ -19,8 +19,7 @@ const InputSuffixIn = React.forwardRef<HTMLInputElement, InputProps>(
                     ref={ref}
                     {...props}
                 />
-                <span
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-muted-foreground">
+                <span className='absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-muted-foreground'>
                     {suffix}
                 </span>
             </div>

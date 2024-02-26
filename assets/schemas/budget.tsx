@@ -30,6 +30,19 @@ export type FormTypeCreateBudget = z.infer<typeof schemaCreateBudget>
 export const useFormCreateBudget = () =>
     useForm<FormTypeCreateBudget>({
         resolver: zodResolver(schemaCreateBudget),
+        defaultValues: {
+            categories: [
+                {
+                    name: '',
+                    expenseLines: [
+                        {
+                            name: '',
+                            amount: 0,
+                        },
+                    ],
+                },
+            ],
+        },
     })
 
 /**

@@ -1,103 +1,102 @@
 import React from 'react'
-import { useFormContextCreateBudget } from '@/schemas/budget'
+import {
+    FormTypeCreateBudget,
+    useFormContextCreateBudget,
+    useFormCreateBudget,
+} from '@/schemas/budget'
 import { useFieldArray } from 'react-hook-form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { DeleteIcon } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
-export default function TrackingPage(): React.JSX.Element {
+export default function TrackingPage() {
     const {
-        formState: { errors },
-        watch,
-        handleSubmit,
-    } = useFormContextCreateBudget()
-
-    const formData = watch()
-    console.log('formData, errors', formData, errors)
-
-    return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
-            <div className='p-6 bg-gray-300 shadow-sm rounded-lg'>
-                <div className='text-xl mb-2 font-bold'>New Budget</div>
-                <form
-                    onSubmit={handleSubmit((data) => {
-                        console.log('Form submitted', data)
-                    })}
-                    className='space-y-3'
-                >
-                    <ManageCategories />
-                    <button className='px-4 py-2 bg-blue-600 rounded-lg text-white' type='submit'>
-                        Submit
-                    </button>
-                </form>
-            </div>
-        </div>
-    )
-}
-
-const ManageCategories = () => {
-    const {
-        register,
         formState: { errors },
         watch,
         control,
+        handleSubmit,
     } = useFormContextCreateBudget()
+
+    const form = useFormCreateBudget()
 
     const formData = watch()
     console.log('formData, errors', formData, errors)
 
     const { append, remove, fields } = useFieldArray({ name: 'categories', control })
 
+    const onSubmit = (data: FormTypeCreateBudget) => {
+        console.log('data', data)
+    }
+
     return (
-        <div className=' space-y-4 '>
-            {fields.map((category, categoryIndex) => {
-                return (
-                    <div
-                        key={category.id}
-                        className='p-6 bg-gray-200 shadow-lg rounded-lg space-y-3'
-                    >
-                        <div className='flex justify-between'>
-                            <div className='text-lg mb-2 font-semibold'>Categories</div>
-                            <button
-                                type='button'
-                                onClick={() => {
-                                    remove(categoryIndex)
-                                }}
-                                className='text-red-400 text-xs underline underline-offset-4'
-                            >
-                                Remove category
-                            </button>
-                        </div>
-                        <label title={'Name'}>
-                            <div className='mb-1'>Category name</div>
-                            <input
-                                className='border-2 border-gray-600  rounded-lg px-2 py-1 bg-transparent'
-                                placeholder='Enter category name...'
-                                {...register(`categories.${categoryIndex}.name`)}
-                            />
-                            <div className='text-red-600'>
-                                {
-                                    /* Error: Category name */
-                                    errors?.categories?.[categoryIndex]?.name?.message
-                                }
-                            </div>
-                        </label>
-                        <ManageExpenseLines categoryIndex={categoryIndex} />
-                        <div className='text-red-600 text-sm mt-1'>
-                            {
-                                /* Error: Category expenseLines */
-                                errors?.categories?.[categoryIndex]?.expenseLines?.message
-                            }
-                        </div>
+        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
+            <Form {...form}>
+                <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+                    <div className='w-full max-w-md space-y-4'>
+                        {fields.map((category, categoryIndex) => {
+                            return (
+                                <Card key={category.id} className='space-y-4'>
+                                    <CardHeader className='flex items-center justify-between'>
+                                        <div className='flex items-center'>
+                                            <FormField
+                                                control={form.control}
+                                                key={category.id}
+                                                name={`categories.${categoryIndex}.name`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Enter category name...'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage
+                                                            content={
+                                                                errors?.categories?.[categoryIndex]
+                                                                    ?.name?.message
+                                                            }
+                                                        />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <DeleteIcon
+                                                onClick={() => {
+                                                    remove(categoryIndex)
+                                                }}
+                                                className='cursor-pointer hover:text-red-400'
+                                            />
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <ManageExpenseLines categoryIndex={categoryIndex} />
+                                        <div className='text-red-600 text-sm mt-1'>
+                                            {
+                                                /* Error: Category expenseLines */
+                                                errors?.categories?.[categoryIndex]?.expenseLines
+                                                    ?.message
+                                            }
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )
+                        })}
+                        <Button
+                            onClick={() => {
+                                append({ expenseLines: [{ name: '', amount: 0 }], name: '' })
+                            }}
+                            variant='ghost'
+                            className='text-center w-full underline underline-offset-4 py-2'
+                        >
+                            add category
+                        </Button>
                     </div>
-                )
-            })}
-            <button
-                type='button'
-                onClick={() => {
-                    append({ expenseLines: [{ name: '', amount: 0 }], name: '' })
-                }}
-                className='text-gray-600 text-center w-full underline underline-offset-4 py-2'
-            >
-                add category
-            </button>
+                    <Button className='px-4 py-2 rounded-lg' type='submit' variant='ghost'>
+                        Submit
+                    </Button>
+                </form>
+            </Form>
         </div>
     )
 }

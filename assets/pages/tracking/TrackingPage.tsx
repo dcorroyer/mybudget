@@ -5,11 +5,12 @@ import {
     useFormCreateBudget,
 } from '@/schemas/budget'
 import { useFieldArray } from 'react-hook-form'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { DeleteIcon } from 'lucide-react'
+import { DeleteIcon, Euro, EuroIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { InputSuffixIn } from '@/components/ui/input-suffix-in'
 
 export default function TrackingPage() {
     const {
@@ -31,70 +32,72 @@ export default function TrackingPage() {
     }
 
     return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
+        <div className="flex flex-col items-center py-12 sm:px-6 lg:px-8 max-w-screen-lg mx-auto">
             <Form {...form}>
-                <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
-                    <div className='w-full max-w-md space-y-4'>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="space-y-2 py-6 px-4 sm:px-0">
                         {fields.map((category, categoryIndex) => {
                             return (
-                                <Card key={category.id} className='space-y-4'>
-                                    <CardHeader className='flex items-center justify-between'>
-                                        <div className='flex items-center'>
-                                            <FormField
-                                                control={form.control}
-                                                key={category.id}
-                                                name={`categories.${categoryIndex}.name`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <Input
-                                                                placeholder='Enter category name...'
-                                                                {...field}
+                                <div key={category.id}>
+                                    <Card className="space-y-4">
+                                        <CardHeader>
+                                            <div className="flex items-center relative">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`categories.${categoryIndex}.name`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="Enter category name..."
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage
+                                                                content={
+                                                                    errors?.categories?.[
+                                                                        categoryIndex
+                                                                        ]?.name?.message
+                                                                }
                                                             />
-                                                        </FormControl>
-                                                        <FormMessage
-                                                            content={
-                                                                errors?.categories?.[categoryIndex]
-                                                                    ?.name?.message
-                                                            }
-                                                        />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <DeleteIcon
-                                                onClick={() => {
-                                                    remove(categoryIndex)
-                                                }}
-                                                className='cursor-pointer hover:text-red-400'
-                                            />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ManageExpenseLines categoryIndex={categoryIndex} />
-                                        <div className='text-red-600 text-sm mt-1'>
-                                            {
-                                                /* Error: Category expenseLines */
-                                                errors?.categories?.[categoryIndex]?.expenseLines
-                                                    ?.message
-                                            }
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <DeleteIcon
+                                                    onClick={() => {
+                                                        remove(categoryIndex)
+                                                    }}
+                                                    className="cursor-pointer hover:text-red-400 absolute right-0"
+                                                />
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <ManageExpenseLines categoryIndex={categoryIndex} />
+                                            <div className="text-red-600 text-sm mt-1">
+                                                {
+                                                    /* Error: Category expenseLines */
+                                                    errors?.categories?.[categoryIndex]
+                                                        ?.expenseLines?.message
+                                                }
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             )
                         })}
                         <Button
                             onClick={() => {
                                 append({ expenseLines: [{ name: '', amount: 0 }], name: '' })
                             }}
-                            variant='ghost'
-                            className='text-center w-full underline underline-offset-4 py-2'
+                            variant="ghost"
+                            className="text-center w-full underline underline-offset-4 py-2"
                         >
                             add category
                         </Button>
+                        <Button className="px-4 py-2 rounded-lg" type="submit" variant="ghost">
+                            Submit
+                        </Button>
                     </div>
-                    <Button className='px-4 py-2 rounded-lg' type='submit' variant='ghost'>
-                        Submit
-                    </Button>
                 </form>
             </Form>
         </div>
@@ -103,11 +106,12 @@ export default function TrackingPage() {
 
 const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
     const {
-        register,
         formState: { errors },
         watch,
         control,
     } = useFormContextCreateBudget()
+
+    const form = useFormCreateBudget()
 
     const formData = watch()
     console.log('formData, errors', formData, errors)
@@ -118,72 +122,70 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
     })
 
     return (
-        <div className=' space-y-4'>
+        <div className="space-y-4">
             {fields.map((expenseLine, expenseLineIndex) => {
                 return (
-                    <div key={expenseLine.id} className='py-4 bg-white p-6 rounded-lg shadow-xl'>
-                        <div>
-                            <div className='flex justify-between'>
-                                <div className='mb-2 font-semibold'>Note</div>
-                                <button
-                                    type='button'
-                                    onClick={() => {
-                                        remove(expenseLineIndex)
-                                    }}
-                                    className='text-red-400 text-xs underline underline-offset-4'
-                                >
-                                    Remove expense
-                                </button>
-                            </div>
-                            <label title={'Name'} className='inline-block'>
-                                <div className='mb-1'>Name</div>
-                                <input
-                                    placeholder='Enter name'
-                                    className='border-2 border-gray-600 rounded-lg px-2 py-1 bg-transparent'
-                                    {...register(
-                                        `categories.${categoryIndex}.expenseLines.${expenseLineIndex}.name`,
-                                    )}
-                                />
-                                <div className='text-red-600'>
-                                    {
-                                        /* Error: Chapter notes content */
-                                        errors?.categories?.[categoryIndex]?.expenseLines?.[
-                                            expenseLineIndex
-                                        ]?.name?.message
-                                    }
-                                </div>
-                            </label>
-                            <label title={'Amount'} className='inline-block'>
-                                <div className='mb-1'>Amount</div>
-                                <input
-                                    placeholder='Enter amount'
-                                    className='border-2 border-gray-600 rounded-lg px-2 py-1 bg-transparent'
-                                    {...register(
-                                        `categories.${categoryIndex}.expenseLines.${expenseLineIndex}.amount`,
-                                    )}
-                                />
-                                <div className='text-red-600'>
-                                    {
-                                        /* Error: Chapter notes content */
-                                        errors?.categories?.[categoryIndex]?.expenseLines?.[
-                                            expenseLineIndex
-                                        ]?.amount?.message
-                                    }
-                                </div>
-                            </label>
-                        </div>
+                    <div key={expenseLine.id} className="flex items-center space-x-2 relative">
+                        <FormField
+                            control={form.control}
+                            name={`categories.${categoryIndex}.expenseLines.${expenseLineIndex}.name`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage
+                                        content={
+                                            errors?.categories?.[categoryIndex]?.expenseLines?.[
+                                                expenseLineIndex
+                                                ]?.name?.message
+                                        }
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`categories.${categoryIndex}.expenseLines.${expenseLineIndex}.amount`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Amount</FormLabel>
+                                    <FormControl>
+                                        <InputSuffixIn
+                                            placeholder="Amount"
+                                            {...field}
+                                            suffix={<EuroIcon />}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        content={
+                                            errors?.categories?.[categoryIndex]?.expenseLines?.[
+                                                expenseLineIndex
+                                                ]?.amount?.message
+                                        }
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <XIcon
+                            onClick={() => {
+                                remove(expenseLineIndex)
+                            }}
+                            className="cursor-pointer hover:text-red-400 absolute top-2 -translate-y-1 right-0"
+                        />
                     </div>
                 )
             })}
-            <button
-                type='button'
+            <Button
+                variant="ghost"
                 onClick={() => {
                     append({ name: '', amount: 0 })
                 }}
-                className='text-gray-600 text-center w-full underline underline-offset-4 py-2'
+                className="text-gray-600 text-center w-full underline underline-offset-4 py-2"
             >
                 add expense
-            </button>
+            </Button>
         </div>
     )
 }

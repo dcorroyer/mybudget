@@ -16,30 +16,26 @@ import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
 import TrackingPage from '@/pages/tracking/TrackingPage'
 
-import { FormProviderCreateBudget } from '@/schemas/budget'
-
 function App(): React.JSX.Element {
     return (
-        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <AuthProvider>
                 <SidebarStateProvider>
-                    <FormProviderCreateBudget>
-                        <BrowserRouter>
-                            <Layout>
-                                <Routes>
-                                    <Route element={<PrivateRoutes />}>
-                                        <Route path={'/'} element={<DashboardPage />} />
-                                        <Route path={'/tracking'} element={<TrackingPage />} />
-                                    </Route>
-                                    <Route element={<AuthenticationRoutes />}>
-                                        <Route path={'/login'} element={<LoginPage />} />
-                                        <Route path={'/register'} element={<RegisterPage />} />
-                                    </Route>
-                                </Routes>
-                            </Layout>
-                            <Toaster />
-                        </BrowserRouter>
-                    </FormProviderCreateBudget>
+                    <BrowserRouter>
+                        <Layout>
+                            <Routes>
+                                <Route element={<PrivateRoutes />}>
+                                    <Route path={'/'} element={<DashboardPage />} />
+                                    <Route path={'/tracking'} element={<TrackingPage />} />
+                                </Route>
+                                <Route element={<AuthenticationRoutes />}>
+                                    <Route path={'/login'} element={<LoginPage />} />
+                                    <Route path={'/register'} element={<RegisterPage />} />
+                                </Route>
+                            </Routes>
+                        </Layout>
+                        <Toaster />
+                    </BrowserRouter>
                 </SidebarStateProvider>
             </AuthProvider>
         </ThemeProvider>

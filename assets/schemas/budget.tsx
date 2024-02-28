@@ -1,7 +1,4 @@
-import React, { ReactNode } from 'react'
 import { z } from 'zod'
-import { FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 /**
  * Schemas
@@ -26,32 +23,3 @@ export const schemaCreateBudget = z.object({
  */
 
 export type FormTypeCreateBudget = z.infer<typeof schemaCreateBudget>
-
-export const useFormCreateBudget = () =>
-    useForm<FormTypeCreateBudget>({
-        resolver: zodResolver(schemaCreateBudget),
-        defaultValues: {
-            categories: [
-                {
-                    name: '',
-                    expenseLines: [
-                        {
-                            name: '',
-                            amount: 0,
-                        },
-                    ],
-                },
-            ],
-        },
-    })
-
-/**
- * Context
- */
-
-export const FormProviderCreateBudget = ({ children }: { children: ReactNode }) => {
-    const methods = useFormCreateBudget()
-    return <FormProvider {...methods}>{children}</FormProvider>
-}
-
-export const useFormContextCreateBudget = () => useFormContext<FormTypeCreateBudget>()

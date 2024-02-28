@@ -65,6 +65,7 @@ const ManageCategories = () => {
                                     <FormField
                                         control={form.control}
                                         name={`categories.${categoryIndex}.name`}
+                                        defaultValue={''}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
@@ -139,6 +140,7 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                         <FormField
                             control={form.control}
                             name={`categories.${categoryIndex}.expenseLines.${expenseLineIndex}.name`}
+                            defaultValue={''}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
@@ -158,6 +160,7 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                         <FormField
                             control={form.control}
                             name={`categories.${categoryIndex}.expenseLines.${expenseLineIndex}.amount`}
+                            defaultValue={0}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Amount</FormLabel>

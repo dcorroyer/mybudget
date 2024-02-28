@@ -102,6 +102,7 @@ export default function TrackingPage(): React.JSX.Element {
                             )
                         })}
                         <Button
+                            type='button'
                             onClick={() => {
                                 append({ expenseLines: [{ name: '', amount: 0 }], name: '' })
                             }}
@@ -151,7 +152,6 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <InputSuffixIn
-                                            placeholder='Amount'
                                             {...field}
                                             suffix={<EuroIcon />}
                                         />
@@ -170,6 +170,7 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                 )
             })}
             <Button
+                type='button'
                 variant='ghost'
                 onClick={() => {
                     append({ name: '', amount: 0 })

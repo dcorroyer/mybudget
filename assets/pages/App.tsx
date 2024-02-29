@@ -18,7 +18,7 @@ import TrackingPage from '@/pages/tracking/TrackingPage'
 
 function App(): React.JSX.Element {
     return (
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
             <AuthProvider>
                 <SidebarStateProvider>
                     <BrowserRouter>

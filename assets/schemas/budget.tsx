@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 export const schemaExpenseLines = z.object({
     name: z.string().min(2),
-    amount: z.coerce.number()
+    amount: z.coerce.number().gt(0),
 })
 
 export const schemaCategories = z.object({

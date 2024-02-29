@@ -1,9 +1,7 @@
 import React from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 
-import {
-    FormTypeCreateBudget, schemaCreateBudget,
-} from '@/schemas/budget'
+import { FormTypeCreateBudget, schemaCreateBudget } from '@/schemas/budget'
 
 import {
     Form,
@@ -73,19 +71,22 @@ export default function TrackingPage(): React.JSX.Element {
                                                             </FormControl>
                                                             <FormMessage
                                                                 content={
-                                                                    errors?.categories?.[categoryIndex]?.name
-                                                                        ?.message
+                                                                    errors?.categories?.[
+                                                                        categoryIndex
+                                                                    ]?.name?.message
                                                                 }
                                                             />
                                                         </FormItem>
                                                     )}
                                                 />
-                                                { fields.length > 1 && <DeleteIcon
-                                                    onClick={() => {
-                                                        remove(categoryIndex)
-                                                    }}
-                                                    className='cursor-pointer hover:text-red-400 absolute right-0'
-                                                /> }
+                                                {fields.length > 1 && (
+                                                    <DeleteIcon
+                                                        onClick={() => {
+                                                            remove(categoryIndex)
+                                                        }}
+                                                        className='cursor-pointer hover:text-red-400 absolute right-0'
+                                                    />
+                                                )}
                                             </div>
                                         </CardHeader>
                                         <CardContent>
@@ -93,7 +94,8 @@ export default function TrackingPage(): React.JSX.Element {
                                             <div className='text-red-600 text-sm mt-1'>
                                                 {
                                                     /* Error: Category expenseLines */
-                                                    errors?.categories?.[categoryIndex]?.expenseLines?.message
+                                                    errors?.categories?.[categoryIndex]
+                                                        ?.expenseLines?.message
                                                 }
                                             </div>
                                         </CardContent>
@@ -122,9 +124,10 @@ export default function TrackingPage(): React.JSX.Element {
 }
 
 const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
-
     const expenseLines = useWatch({ name: `categories.${categoryIndex}.expenseLines` })
-    const { append, remove, fields } = useFieldArray({ name: `categories.${categoryIndex}.expenseLines` })
+    const { append, remove, fields } = useFieldArray({
+        name: `categories.${categoryIndex}.expenseLines`,
+    })
 
     return (
         <div className='space-y-4'>
@@ -140,7 +143,12 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                                     <FormControl>
                                         <Input placeholder='Name' {...field} />
                                     </FormControl>
-
+                                    <FormMessage
+                                        content={
+                                            expenseLines.errors?.categories?.[categoryIndex]
+                                                ?.expenseLines?.[expenseLineIndex]?.name?.message
+                                        }
+                                    />
                                 </FormItem>
                             )}
                         />
@@ -151,12 +159,14 @@ const ManageExpenseLines = ({ categoryIndex }: { categoryIndex: number }) => {
                                 <FormItem>
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
-                                        <InputSuffixIn
-                                            {...field}
-                                            suffix={<EuroIcon />}
-                                        />
+                                        <InputSuffixIn {...field} suffix={<EuroIcon />} />
                                     </FormControl>
-
+                                    <FormMessage
+                                        content={
+                                            expenseLines.errors?.categories?.[categoryIndex]
+                                                ?.expenseLines?.[expenseLineIndex]?.amount?.message
+                                        }
+                                    />
                                 </FormItem>
                             )}
                         />

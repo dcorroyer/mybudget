@@ -13,7 +13,7 @@ x-worker-template:
 
 services:
   app:
-    container_name: my-budget-app
+    container_name: mybudget-app
     depends_on:
       - mariadb
     ports:
@@ -43,9 +43,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.network=traefik"
-      - "traefik.http.routers.php-my-budget-web.rule=Host(`my-budget.web.localhost`)"
-      - "traefik.http.routers.php-my-budget-web.tls=true"
-      - "traefik.http.services.php-my-budget-web.loadbalancer.server.port=80"
+      - "traefik.http.routers.php-mybudget-web.rule=Host(`mybudget.web.localhost`)"
+      - "traefik.http.routers.php-mybudget-web.tls=true"
+      - "traefik.http.services.php-mybudget-web.loadbalancer.server.port=80"
     networks:
       - database
       - traefik
@@ -59,7 +59,7 @@ services:
   #  command: php /app/bin/console messenger:consume scheduler_default -vv
 
   mariadb:
-    container_name: my-budget-mariadb
+    container_name: mybudget-mariadb
     image: mariadb:11.3
     ports:
       - "4306:3306"
@@ -73,25 +73,25 @@ services:
       - app
 
   phpmyadmin:
-    container_name: my-budget-phpmyadmin
+    container_name: mybudget-phpmyadmin
     depends_on:
       - mariadb
     image: phpmyadmin/phpmyadmin:5.2
     environment:
-      PMA_HOST: my-budget-mariadb
+      PMA_HOST: mybudget-mariadb
       PMA_USER: root
       PMA_PASSWORD: root
       PMA_ARBITRARY: 1
-      PMA_ABSOLUTE_URI: https://my-budget.db.localhost
+      PMA_ABSOLUTE_URI: https://mybudget.db.localhost
     networks:
       - database
       - traefik
     labels:
       - "traefik.enable=true"
       - "traefik.network=traefik"
-      - "traefik.http.routers.my-budget-phpmyadmin.rule=Host(`my-budget.db.localhost`)"
-      - "traefik.http.routers.my-budget-phpmyadmin.tls=true"
-      - "traefik.http.services.my-budget-phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.http.routers.mybudget-phpmyadmin.rule=Host(`mybudget.db.localhost`)"
+      - "traefik.http.routers.mybudget-phpmyadmin.tls=true"
+      - "traefik.http.services.mybudget-phpmyadmin.loadbalancer.server.port=80"
     profiles:
       - app
 #
@@ -101,9 +101,9 @@ services:
 #      - ./:/docs
 #    labels:
 #      - "traefik.enable=true"
-#      - "traefik.http.routers.my-budget-mkdocs.rule=Host(`my-budget.docs.localhost`)"
-#      - "traefik.http.routers.my-budget-mkdocs.tls=true"
-#      - "traefik.http.services.my-budget-mkdocs.loadbalancer.server.port=8000"
+#      - "traefik.http.routers.mybudget-mkdocs.rule=Host(`mybudget.docs.localhost`)"
+#      - "traefik.http.routers.mybudget-mkdocs.tls=true"
+#      - "traefik.http.services.mybudget-mkdocs.loadbalancer.server.port=8000"
 #    networks:
 #      - traefik
 #    profiles:

@@ -8,10 +8,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/forms/form'
+} from '@/components/ui/form'
 
-import { Input } from '@/components/ui/forms/input'
-import { PasswordInput } from '@/components/ui/forms/password-input'
+import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 
 import {
     Card,
@@ -24,7 +24,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { useToast } from '@/components/ui/toasts/use-toast'
+import { useToast } from '@/components/hooks/UseToast'
 
 import { registerFormSchema, registerFormType } from '@/schemas/register'
 import { useForm } from 'react-hook-form'

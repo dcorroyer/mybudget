@@ -6,6 +6,7 @@ interface AuthContextType {
     getToken: () => string | null
     setToken: (newToken: React.SetStateAction<string | null>) => void
     clearToken: () => void
+    expireDateToken: (token: string) => number
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -13,21 +14,37 @@ const AuthContext = createContext<AuthContextType>({
     getToken: () => '',
     setToken: () => {},
     clearToken: () => {},
+    expireDateToken: () => 0,
 })
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [token, setToken_] = useState<string | null>(localStorage.getItem('token'))
 
-    const getToken = () => {
+    const getToken = (): string => {
         const tokenValue = JSON.parse(token as string)
+
         return tokenValue.token
     }
-    const setToken = (newToken: React.SetStateAction<string | null>) => {
+    const setToken = (newToken: React.SetStateAction<string | null>): void => {
         setToken_(newToken)
     }
 
-    const clearToken = () => {
+    const clearToken = (): void => {
         setToken_(null)
+    }
+
+    const expireDateToken = (token: string): number => {
+        const base64Url = token.split('.')[1]
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join(''),
+        )
+        const expireDate = JSON.parse(jsonPayload).exp * 1000
+
+        return expireDate
     }
 
     useEffect(() => {
@@ -46,6 +63,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             getToken,
             setToken,
             clearToken,
+            expireDateToken,
         }),
         [token],
     )

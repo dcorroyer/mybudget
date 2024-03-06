@@ -1,0 +1,127 @@
+version: '3.9'
+
+x-worker-template:
+  worker_template: &worker_template
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker-dev
+    volumes:
+      - ./app:/app
+    profiles:
+      - worker
+
+services:
+  app:
+    container_name: mybudget-app
+    depends_on:
+      - mariadb
+    ports:
+      - "5173:5173"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      SERVER_NAME: ":80"
+      MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      TRUSTED_HOSTS: ^${SERVER_NAME:-example\.com|localhost}|php$$
+      # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
+      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
+      MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
+      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+    volumes:
+      - ./:/app
+#      - ./castor.php:/app/castor.php
+#      - ./.castor:/app/.castor
+#      - ./tools:/tools
+      - ~/.ssh:/home/www-data/.ssh:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.network=traefik"
+      - "traefik.http.routers.php-mybudget-web.rule=Host(`mybudget.web.localhost`)"
+      - "traefik.http.routers.php-mybudget-web.tls=true"
+      - "traefik.http.services.php-mybudget-web.loadbalancer.server.port=80"
+    networks:
+      - database
+      - traefik
+    profiles:
+      - app
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  #scheduler:
+  #  <<: *worker_template
+  #  command: php /app/bin/console messenger:consume scheduler_default -vv
+
+  mariadb:
+    container_name: mybudget-mariadb
+    image: mariadb:11.3
+    ports:
+      - "4306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - database
+    profiles:
+      - app
+
+  phpmyadmin:
+    container_name: mybudget-phpmyadmin
+    depends_on:
+      - mariadb
+    image: phpmyadmin/phpmyadmin:5.2
+    environment:
+      PMA_HOST: mybudget-mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      PMA_ABSOLUTE_URI: https://mybudget.db.localhost
+    networks:
+      - database
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.network=traefik"
+      - "traefik.http.routers.mybudget-phpmyadmin.rule=Host(`mybudget.db.localhost`)"
+      - "traefik.http.routers.mybudget-phpmyadmin.tls=true"
+      - "traefik.http.services.mybudget-phpmyadmin.loadbalancer.server.port=80"
+    profiles:
+      - app
+#
+#  mkdocs:
+#    image: squidfunk/mkdocs-material:9.5.10
+#    volumes:
+#      - ./:/docs
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.mybudget-mkdocs.rule=Host(`mybudget.docs.localhost`)"
+#      - "traefik.http.routers.mybudget-mkdocs.tls=true"
+#      - "traefik.http.services.mybudget-mkdocs.loadbalancer.server.port=8000"
+#    networks:
+#      - traefik
+#    profiles:
+#      - app
+
+networks:
+  database:
+    external: false
+  traefik:
+    external: true
+
+# Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
+###> symfony/mercure-bundle ###
+###< symfony/mercure-bundle ###
+
+volumes:
+  caddy_data:
+  caddy_config:
+  mariadb:
+###> symfony/mercure-bundle ###
+###< symfony/mercure-bundle ###

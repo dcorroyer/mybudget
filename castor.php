@@ -85,7 +85,7 @@ function build(
 #[AsTask(description: 'Run the docker compose bash shell')]
 function bash(): void
 {
-    docker_compose('exec -it php bash');
+    docker_compose('exec -it app bash');
 }
 
 #[AsTask(name: 'composer:install', description: 'Run the composer install command')]

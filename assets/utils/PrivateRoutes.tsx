@@ -5,10 +5,12 @@ import { useToast } from '@/components/hooks/UseToast'
 import { useAuth } from '@/hooks/AuthProvider'
 
 const PrivateRoutes = (): React.JSX.Element => {
-    const { token, expireDateToken, clearToken } = useAuth()
+    const { token, expireDateToken, clearToken, checkTokenValidity } = useAuth()
     const { toast } = useToast()
 
     useEffect(() => {
+        checkTokenValidity()
+
         const interval = setInterval((): void => {
             if (!token) {
                 toast({

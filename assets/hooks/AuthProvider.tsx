@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { toast } from '@/components/hooks/UseToast'
 
 interface AuthContextType {
     token: string | null
@@ -7,6 +8,7 @@ interface AuthContextType {
     setToken: (newToken: React.SetStateAction<string | null>) => void
     clearToken: () => void
     expireDateToken: (token: string) => number
+    checkTokenValidity: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,6 +17,7 @@ const AuthContext = createContext<AuthContextType>({
     setToken: () => {},
     clearToken: () => {},
     expireDateToken: () => 0,
+    checkTokenValidity: () => {},
 })
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -42,9 +45,32 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
                 .join(''),
         )
-        const expireDate = JSON.parse(jsonPayload).exp * 1000
 
-        return expireDate
+        return JSON.parse(jsonPayload).exp * 1000
+    }
+
+    const checkTokenValidity = async (): Promise<Response | void> => {
+        if (token) {
+            try {
+                const response = await fetch('/api/users/me', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                if (!response.ok) {
+                    clearToken()
+                    toast({
+                        title: 'Session expired',
+                        description: 'Your session has expired. Please log in again.',
+                        variant: 'destructive',
+                    })
+                }
+            } catch (error) {
+                console.error('Error checking token validity:', error)
+            }
+        }
     }
 
     useEffect(() => {
@@ -64,6 +90,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             setToken,
             clearToken,
             expireDateToken,
+            checkTokenValidity,
         }),
         [token],
     )

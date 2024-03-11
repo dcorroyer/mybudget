@@ -37,3 +37,14 @@ jobs:
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: vendor/bin/grumphp run
+  eslint:
+    runs-on: ubuntu-latest
+    name: ESLint Check
+    steps:
+      - uses: actions/checkout@v3
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+      - name: 💻 Install npm dependencies
+        run: npm install
+      - name: 🧹 Run ESLint
+        run: npm run lint

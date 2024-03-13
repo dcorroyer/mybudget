@@ -1,59 +1,39 @@
-image: jakzal/phpqa:php8.2-alpine
+name: Symfony 🐘
 
-cache:
-  paths:
-    - vendor/
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-.before_script: &before_script
-  before_script:
-    - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+permissions:
+  contents: read
 
-ecs:
-  <<: *before_script
-  stage: code-quality
-  script:
-    - ecs check src/ --config=/config/ecs.php
-
-phpstan:
-  <<: *before_script
-  stage: code-quality
-  script:
-    - phpstan analyse src/ -c phpstan.neon
-
-phpunit:
-  <<: *before_script
-  image: php:8.2-apache
-  stage: code-quality
-  services:
-    - name: mysql:8
-  variables:
-    XDEBUG_MODE: coverage
-    MYSQL_ROOT_PASSWORD: secret
-    MYSQL_DATABASE: mybudget_test
-    MYSQL_HOST: mysql
-    MYSQL_USER: root
-    MYSQL_PASSWORD: secret
-    DATABASE_URL: "mysql://root:secret@mysql:3306/mybudget"
-  before_script:
-    - apt-get update && apt-get install -y git libzip-dev mariadb-client
-    - curl -sSk https://getcomposer.org/installer | php -- --disable-tls && mv composer.phar /usr/local/bin/composer
-    - docker-php-ext-install mysqli pdo pdo_mysql zip
-    - pecl install xdebug && docker-php-ext-enable xdebug
-    - echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20220829/xdebug.so" >> /usr/local/etc/php/php.ini
-  script:
-    - mysql -uroot -psecret -h mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
-    - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
-  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.cobertura.xml
-  allow_failure: false
-  rules:
-    - changes:
-        - src/*
-        - tests/*
-
-stages:
-  - code-quality
+jobs:
+  symfony-grumphp:
+    runs-on: ubuntu-latest
+    name: Symfony GrumPHP / Checks 🧪
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+      - name: 💾 Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: 📦 Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: 💽 Create Database
+        run: |
+          mkdir -p data
+          touch data/database.sqlite
+      - name: 🧪🪚 Execute grumphp tasks
+        env:
+          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+        run: vendor/bin/grumphp run

@@ -194,3 +194,15 @@ function npm_dev(): void
 {
     run_in_php_container('npm run dev');
 }
+
+#[AsTask(name: 'ui:lint', description: 'Run NPM lint')]
+function npm_lint(): void
+{
+    run_in_php_container('npm run lint');
+}
+
+#[AsTask(name: 'ui:format', description: 'Run NPM format')]
+function npm_format(): void
+{
+    run_in_php_container('npm run format');
+}

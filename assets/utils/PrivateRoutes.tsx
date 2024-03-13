@@ -5,7 +5,7 @@ import { useToast } from '@/components/hooks/UseToast'
 import { useAuth } from '@/hooks/AuthProvider'
 
 const PrivateRoutes = (): React.JSX.Element => {
-    const { token, expireDateToken, clearToken, checkTokenValidity } = useAuth()
+    const { token, getExpireDateToken, clearToken, checkTokenValidity } = useAuth()
     const { toast } = useToast()
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const PrivateRoutes = (): React.JSX.Element => {
                     variant: 'destructive',
                 })
             } else {
-                const decodedToken = expireDateToken(token)
+                const decodedToken = getExpireDateToken(token)
                 if (decodedToken * 1000 < Date.now()) {
                     clearToken()
                     toast({

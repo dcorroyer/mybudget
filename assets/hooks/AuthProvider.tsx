@@ -7,7 +7,7 @@ interface AuthContextType {
     getToken: () => string | null
     setToken: (newToken: React.SetStateAction<string | null>) => void
     clearToken: () => void
-    expireDateToken: (token: string) => number
+    getExpireDateToken: (token: string) => number
     checkTokenValidity: () => void
 }
 
@@ -16,7 +16,7 @@ const AuthContext = createContext<AuthContextType>({
     getToken: () => '',
     setToken: () => {},
     clearToken: () => {},
-    expireDateToken: () => 0,
+    getExpireDateToken: () => 0,
     checkTokenValidity: () => {},
 })
 
@@ -36,17 +36,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         setToken_(null)
     }
 
-    const expireDateToken = (token: string): number => {
-        const base64Url = token.split('.')[1]
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-        const jsonPayload = decodeURIComponent(
-            atob(base64)
-                .split('')
-                .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                .join(''),
-        )
+    const getTokenValue = (token: string): string => {
+        return JSON.parse(token).token
+    }
 
-        return JSON.parse(jsonPayload).exp * 1000
+    const getExpireDateToken = (token: string): number => {
+        const tokenParts = token.split('.')
+        const payload = tokenParts[1]
+        const decodedPayload = atob(payload)
+        const decodedPayloadObject = JSON.parse(decodedPayload)
+
+        return decodedPayloadObject.exp * 1000
     }
 
     const checkTokenValidity = async (): Promise<Response | void> => {
@@ -55,8 +55,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 const response = await fetch('/api/users/me', {
                     method: 'GET',
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${getTokenValue(token)}`,
+                    },
                 })
 
                 if (!response.ok) {
@@ -89,7 +90,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             getToken,
             setToken,
             clearToken,
-            expireDateToken,
+            getExpireDateToken,
             checkTokenValidity,
         }),
         [token],

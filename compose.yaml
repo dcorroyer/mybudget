@@ -13,6 +13,7 @@ x-worker-template:
 
 services:
   app:
+    container_name: mybudget-app
     build:
       context: .
       dockerfile: ./.docker/php/Dockerfile
@@ -56,19 +57,45 @@ services:
   #  command: php /app/bin/console messenger:consume scheduler_default -vv
 
   mariadb:
-    image: mariadb:10.5
+    container_name: mybudget-mariadb
+    image: mariadb:11.3
     ports:
-      - "3350:3306"
+      - "4306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mariadb:/var/lib/mysql
-    profiles:
-      - app
     networks:
       - database
+    profiles:
+      - app
+
+  phpmyadmin:
+    container_name: mybudget-phpmyadmin
+    depends_on:
+      - mariadb
+    image: phpmyadmin/phpmyadmin:5.2
+    environment:
+      PMA_HOST: mybudget-mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      PMA_ABSOLUTE_URI: https://mybudget.db.localhost
+    networks:
+      - database
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.network=traefik"
+      - "traefik.http.routers.mybudget-phpmyadmin.rule=Host(`mybudget.db.localhost`)"
+      - "traefik.http.routers.mybudget-phpmyadmin.tls=true"
+      - "traefik.http.services.mybudget-phpmyadmin.loadbalancer.server.port=80"
+    profiles:
+      - app
+
 
   mkdocs:
+    container_name: mybudget-mkdocs
     build:
       dockerfile: ./.docker/mkdocs/Dockerfile
       context: .

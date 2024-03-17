@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  php:
+    container_name: myrestbundle_php
+    build:
+      context: .
+    ports:
+      - "9002:9000"
+    volumes:
+      - .:/var/www/app

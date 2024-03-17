@@ -1,0 +1,207 @@
+#Prepare PHPSTAN CONFIG for :
+#
+#        "phpstan/phpstan-phpunit": "^1.3",
+#        "phpstan/phpstan-symfony": "^1.3",
+#        "phpstan/phpstan-webmozart-assert": "^1.2",
+#        "thecodingmachine/phpstan-strict-rules": "^1.0",
+#        "spaze/phpstan-disallowed-calls": "^3.1",
+#        "slam/phpstan-extensions": "^6.3",
+#        "voku/phpstan-rules": "^3.2",
+#        "shipmonk/phpstan-rules": "^2.11",
+#        "ergebnis/phpstan-rules": "^2.2",
+
+
+includes:
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+    - %rootDir%/../../slam/phpstan-extensions/conf/not-now-rules.neon
+    - %rootDir%/../../slam/phpstan-extensions/conf/symfony-rules.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+#        - tests
+    excludePaths:
+    ignoreErrors:
+        - '#^Class .*[Payload] has an uninitialized property.*$#'
+    symfony:
+        containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.xml
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    checkDynamicProperties: true
+    checkImplicitMixed: false
+    reportAlwaysTrueInLastCondition: true
+    reportAnyTypeWideningInVarTag: true
+#    checkMissingOverrideMethodAttribute: true
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    checkMissingCallableSignature: true
+    type_coverage:
+        return_type: 95
+        param_type: 95
+        property_type: 95
+    todo_by:
+        nonIgnorable: false
+        referenceTime: "now"
+    shipmonkRules:
+        classSuffixNaming:
+            superclassToSuffixMapping!:
+                \Exception: Exception
+                \PHPUnit\Framework\TestCase: Test
+                \Symfony\Component\Console\Command\Command: Command
+                \Symfony\Bundle\FrameworkBundle\Controller\AbstractController: Controller
+                \Symfony\Component\Form\AbstractType: Type
+                \Symfony\Component\Validator\Constraint: Constraint
+                \Symfony\Component\Validator\ConstraintValidator: ConstraintValidator
+        allowComparingOnlyComparableTypes:
+            enabled: true
+        allowNamedArgumentOnlyInAttributes:
+            enabled: false
+        backedEnumGenerics:
+            enabled: false
+        enforceClosureParamNativeTypehint:
+            enabled: true
+            allowMissingTypeWhenInferred: false
+        enforceEnumMatch:
+            enabled: true
+        enforceIteratorToArrayPreserveKeys:
+            enabled: true
+        enforceListReturn:
+            enabled: false
+        enforceNativeReturnTypehint:
+            enabled: true
+        enforceReadonlyPublicProperty:
+            enabled: false
+        forbidArithmeticOperationOnNonNumber:
+            enabled: true
+            allowNumericString: false
+        forbidAssignmentNotMatchingVarDoc:
+            enabled: true
+            allowNarrowing: true
+        forbidCast:
+            enabled: true
+            blacklist: ['(array)', '(object)', '(unset)']
+        forbidCheckedExceptionInCallable:
+            enabled: false
+            immediatelyCalledCallables:
+                array_reduce: 1
+                array_intersect_ukey: 2
+                array_uintersect: 2
+                array_uintersect_assoc: 2
+                array_intersect_uassoc: 2
+                array_uintersect_uassoc: [2, 3]
+                array_diff_ukey: 2
+                array_udiff: 2
+                array_udiff_assoc: 2
+                array_diff_uassoc: 2
+                array_udiff_uassoc: [2, 3]
+                array_filter: 1
+                array_map: 0
+                array_walk_recursive: 1
+                array_walk: 1
+                call_user_func: 0
+                call_user_func_array: 0
+                forward_static_call: 0
+                forward_static_call_array: 0
+                uasort: 1
+                uksort: 1
+                usort: 1
+            allowedCheckedExceptionCallables: []
+        forbidCheckedExceptionInYieldingMethod:
+            enabled: true
+        forbidCustomFunctions:
+            enabled: true
+            list: []
+        forbidEnumInFunctionArguments:
+            enabled: true
+        forbidFetchOnMixed:
+            enabled: true
+        forbidIdenticalClassComparison:
+            enabled: true
+            blacklist: ['DateTimeInterface']
+        forbidIncrementDecrementOnNonInteger:
+            enabled: true
+        forbidMatchDefaultArmForEnums:
+            enabled: true
+        forbidMethodCallOnMixed:
+            enabled: true
+        forbidNotNormalizedType:
+            enabled: true
+            checkDisjunctiveNormalForm: true
+        forbidNullInAssignOperations:
+            enabled: false
+            blacklist: ['??=']
+        forbidNullInBinaryOperations:
+            enabled: false
+            blacklist: ['===', '!==', '??']
+        forbidNullInInterpolatedString:
+            enabled: true
+        forbidPhpDocNullabilityMismatchWithNativeTypehint:
+            enabled: true
+        forbidProtectedEnumMethod:
+            enabled: true
+        forbidReturnValueInYieldingMethod:
+            enabled: true
+            reportRegardlessOfReturnType: false
+        forbidVariableTypeOverwriting:
+            enabled: true
+        forbidUnsetClassField:
+            enabled: true
+        forbidUselessNullableReturn:
+            enabled: true
+        forbidUnusedException:
+            enabled: true
+        forbidUnusedMatchResult:
+            enabled: true
+        requirePreviousExceptionPass:
+            enabled: true
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
+        uselessPrivatePropertyDefaultValue:
+            enabled: true
+        uselessPrivatePropertyNullability:
+            enabled: true
+    banned_code:
+        nodes:
+            # enable detection of echo
+            -
+                type: Stmt_Echo
+                functions: null
+
+            # enable detection of eval
+            -
+                type: Expr_Eval
+                functions: null
+
+            # enable detection of die/exit
+            -
+                type: Expr_Exit
+                functions: null
+
+            # enable detection of a set of functions
+            -
+                type: Expr_FuncCall
+                functions:
+                    - dd
+                    - debug_backtrace
+                    - dump
+                    - exec
+                    - passthru
+                    - phpinfo
+                    - print_r
+                    - proc_open
+                    - shell_exec
+                    - system
+                    - var_dump
+
+            # enable detection of print statements
+            -
+                type: Expr_Print
+                functions: null
+
+            # enable detection of shell execution by backticks
+            -
+                type: Expr_ShellExec
+                functions: null

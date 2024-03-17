@@ -4,7 +4,7 @@ x-worker-template:
   worker_template: &worker_template
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./.docker/php/Dockerfile
       target: worker-dev
     volumes:
       - ./app:/app
@@ -13,15 +13,12 @@ x-worker-template:
 
 services:
   app:
-    container_name: mybudget-app
-    depends_on:
-      - mariadb
-    ports:
-      - "5173:5173"
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./.docker/php/Dockerfile
       target: dev
+    ports:
+      - "3150:3150"
     environment:
       SERVER_NAME: ":80"
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -33,19 +30,19 @@ services:
       MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
-      - ./:/app
-#      - ./castor.php:/app/castor.php
-#      - ./.castor:/app/.castor
-#      - ./tools:/tools
+      - ./app:/app
+      - ./castor.php:/app/castor.php
+      - ./.castor:/app/.castor
+      - ./tools:/tools
       - ~/.ssh:/home/www-data/.ssh:ro
       - caddy_data:/data
       - caddy_config:/config
     labels:
       - "traefik.enable=true"
       - "traefik.network=traefik"
-      - "traefik.http.routers.php-mybudget-web.rule=Host(`mybudget.web.localhost`)"
-      - "traefik.http.routers.php-mybudget-web.tls=true"
-      - "traefik.http.services.php-mybudget-web.loadbalancer.server.port=80"
+      - "traefik.http.routers.php-mybudget.rule=Host(`mybudget.web.localhost`)"
+      - "traefik.http.routers.php-mybudget.tls=true"
+      - "traefik.http.services.php-mybudget.loadbalancer.server.port=80"
     networks:
       - database
       - traefik
@@ -59,59 +56,36 @@ services:
   #  command: php /app/bin/console messenger:consume scheduler_default -vv
 
   mariadb:
-    container_name: mybudget-mariadb
-    image: mariadb:11.3
+    image: mariadb:10.5
     ports:
-      - "4306:3306"
+      - "3350:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mariadb:/var/lib/mysql
-    networks:
-      - database
     profiles:
       - app
-
-  phpmyadmin:
-    container_name: mybudget-phpmyadmin
-    depends_on:
-      - mariadb
-    image: phpmyadmin/phpmyadmin:5.2
-    environment:
-      PMA_HOST: mybudget-mariadb
-      PMA_USER: root
-      PMA_PASSWORD: root
-      PMA_ARBITRARY: 1
-      PMA_ABSOLUTE_URI: https://mybudget.db.localhost
     networks:
       - database
-      - traefik
+
+  mkdocs:
+    build:
+      dockerfile: ./.docker/mkdocs/Dockerfile
+      context: .
+    volumes:
+      - ./:/docs
     labels:
       - "traefik.enable=true"
-      - "traefik.network=traefik"
-      - "traefik.http.routers.mybudget-phpmyadmin.rule=Host(`mybudget.db.localhost`)"
-      - "traefik.http.routers.mybudget-phpmyadmin.tls=true"
-      - "traefik.http.services.mybudget-phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.http.routers.mkdocs.rule=Host(`mkdocs.web.localhost`)"
+      - "traefik.http.routers.mkdocs.tls=true"
+      - "traefik.http.services.mkdocs.loadbalancer.server.port=8000"
+    networks:
+      - traefik
     profiles:
       - app
-#
-#  mkdocs:
-#    image: squidfunk/mkdocs-material:9.5.10
-#    volumes:
-#      - ./:/docs
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.mybudget-mkdocs.rule=Host(`mybudget.docs.localhost`)"
-#      - "traefik.http.routers.mybudget-mkdocs.tls=true"
-#      - "traefik.http.services.mybudget-mkdocs.loadbalancer.server.port=8000"
-#    networks:
-#      - traefik
-#    profiles:
-#      - app
 
 networks:
   database:
-    external: false
   traefik:
     external: true
 

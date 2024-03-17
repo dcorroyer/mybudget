@@ -1,0 +1,2 @@
+#!/bin/sh
+/tools/rector/vendor/bin/rector "$@"

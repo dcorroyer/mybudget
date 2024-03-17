@@ -1,0 +1,25 @@
+services:
+    -
+        class: SlamPhpStan\ClassNotationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\GotoRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\PhpUnitFqcnAnnotationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\StringToClassRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\UnusedVariableRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\MissingClosureParameterTypehintRule
+        tags:
+            - phpstan.rules.rule

@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+site_name: My Docs
+
+plugins:
+  - search
+  - tags
+
+theme:
+  language: fr
+  name: material
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.indexes
+    - toc.follow
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+  icon:
+    setup: fontawesome/solid/person-breastfeeding
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Setup:
+      - 'Setup xdebug': 'xdebug/setup_xdebug.md'
+  - Castor:
+      - 'Usage of RunnerTrait': 'castor/how-to-use-runner-trait.md'
+  - Symfony:
+      - 'Use scheduler': 'symfony/use_scheduler.md'
+      - 'Create API endpoint': 'symfony/create_api_endpoint.md'
+
+extra:
+  status:
+    draft: 'Draft'
+    deprecated: 'Deprecated'
+  tags:
+    setup: 'Setup'
+
+
+markdown_extensions:
+  - admonition
+  - github-callouts
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      auto_title: true
+      linenums: true
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+
+extra_javascript:
+  - assets/javascripts/highlight.min.js
+extra_css:
+  - assets/stylesheets/highlight-github.min.css

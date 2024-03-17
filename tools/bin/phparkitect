@@ -1,0 +1,2 @@
+#!/bin/sh
+/tools/phparkitect/vendor/bin/phparkitect "$@"

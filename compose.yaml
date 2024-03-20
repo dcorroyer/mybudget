@@ -13,7 +13,6 @@ x-worker-template:
 
 services:
   app:
-    container_name: mybudget-app
     build:
       context: .
       dockerfile: ./.docker/php/Dockerfile
@@ -32,7 +31,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
       - ./app:/app
-      - ./castor.php:/app/castor.php
+      - ./castor.php:/castor.php
       - ./.castor:/app/.castor
       - ./tools:/tools
       - ~/.ssh:/home/www-data/.ssh:ro
@@ -57,7 +56,6 @@ services:
   #  command: php /app/bin/console messenger:consume scheduler_default -vv
 
   mariadb:
-    container_name: mybudget-mariadb
     image: mariadb:11.3
     ports:
       - "4306:3306"
@@ -71,12 +69,11 @@ services:
       - app
 
   phpmyadmin:
-    container_name: mybudget-phpmyadmin
     depends_on:
       - mariadb
     image: phpmyadmin/phpmyadmin:5.2
     environment:
-      PMA_HOST: mybudget-mariadb
+      PMA_HOST: mybudget-mariadb-1
       PMA_USER: root
       PMA_PASSWORD: root
       PMA_ARBITRARY: 1
@@ -95,7 +92,6 @@ services:
 
 
   mkdocs:
-    container_name: mybudget-mkdocs
     build:
       dockerfile: ./.docker/mkdocs/Dockerfile
       context: .

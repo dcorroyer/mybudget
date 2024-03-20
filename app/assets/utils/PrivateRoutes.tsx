@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { useToast } from '@/components/hooks/UseToast'
+import { useToast } from '@/components/hooks/useToast'
 import { useAuth } from '@/hooks/AuthProvider'
 
 const PrivateRoutes = (): React.JSX.Element => {
@@ -32,7 +32,7 @@ const PrivateRoutes = (): React.JSX.Element => {
         }, 1000)
 
         return () => clearInterval(interval)
-    }, [token, toast, clearToken])
+    }, [token])
 
     if (!token) {
         return <Navigate to='/login' />

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Income;
+namespace App\Controller\Budget;
 
-use App\Dto\Income\Payload\IncomePayload;
-use App\Entity\Income;
+use App\Dto\Budget\Payload\BudgetPayload;
+use App\Entity\Budget;
 use App\Serializable\SerializationGroups;
-use App\Service\IncomeService;
+use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
 use My\RestBundle\Controller\BaseRestController;
@@ -18,30 +18,30 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/incomes')]
-#[OA\Tag(name: 'Incomes')]
-class CreateIncomeController extends BaseRestController
+#[Route('/budgets')]
+#[OA\Tag(name: 'Budgets')]
+class CreateBudgetController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_POST,
-        operationId: 'post_income',
-        summary: 'post income',
+        operationId: 'post_budget',
+        summary: 'post budget',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Income::class,
-                groups: [SerializationGroups::INCOME_CREATE],
+                responseClassFqcn: Budget::class,
+                groups: [SerializationGroups::BUDGET_CREATE],
                 responseCode: Response::HTTP_CREATED,
-                description: 'Income creation',
+                description: 'Budget creation',
             ),
         ],
-        requestBodyClassFqcn: IncomePayload::class
+        requestBodyClassFqcn: BudgetPayload::class
     )]
-    #[Route('', name: 'api_incomes_create', methods: Request::METHOD_POST)]
-    public function __invoke(IncomeService $incomeService, #[MapRequestPayload] IncomePayload $incomePayload): JsonResponse
+    #[Route('', name: 'api_budgets_create', methods: Request::METHOD_POST)]
+    public function __invoke(BudgetService $budgetService, #[MapRequestPayload] BudgetPayload $budgetPayload): JsonResponse
     {
         return $this->successResponse(
-            data: $incomeService->create($incomePayload),
-            groups: [SerializationGroups::INCOME_CREATE],
+            data: $budgetService->create($budgetPayload),
+            groups: [SerializationGroups::BUDGET_CREATE],
             status: Response::HTTP_CREATED,
         );
     }

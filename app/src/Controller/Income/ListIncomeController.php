@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Income;
 
-use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\Income\Http\IncomeFilterQuery;
 use App\Entity\Income;
 use App\Serializable\SerializationGroups;
@@ -17,6 +16,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/incomes')]
 #[OA\Tag(name: 'Incomes')]

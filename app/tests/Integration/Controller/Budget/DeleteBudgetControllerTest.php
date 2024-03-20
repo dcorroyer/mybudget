@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\Tracking;
+namespace App\Tests\Integration\Controller\Budget;
 
 use App\Entity\User;
-use App\Repository\TrackingRepository;
-use App\Service\TrackingService;
-use App\Tests\Common\Factory\TrackingFactory;
+use App\Repository\BudgetRepository;
+use App\Service\BudgetService;
+use App\Tests\Common\Factory\BudgetFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -20,19 +20,19 @@ use Zenstruck\Foundry\Test\Factories;
  */
 #[Group('integration')]
 #[Group('controller')]
-#[Group('tracking')]
-#[Group('tracking-controller')]
-class DeleteTrackingControllerTest extends WebTestCase
+#[Group('budget')]
+#[Group('budget-controller')]
+class DeleteBudgetControllerTest extends WebTestCase
 {
     use Factories;
 
-    private const API_ENDPOINT = '/api/trackings';
+    private const API_ENDPOINT = '/api/budgets';
 
     private KernelBrowser $client;
 
-    private TrackingService $trackingService;
+    private BudgetService $budgetService;
 
-    private TrackingRepository $trackingRepository;
+    private BudgetRepository $budgetRepository;
 
     protected function setUp(): void
     {
@@ -41,35 +41,35 @@ class DeleteTrackingControllerTest extends WebTestCase
 
         $this->client->loginUser(new User());
 
-        $this->trackingService = $this->createMock(TrackingService::class);
-        $this->trackingRepository = $this->createMock(TrackingRepository::class);
+        $this->budgetService = $this->createMock(BudgetService::class);
+        $this->budgetRepository = $this->createMock(BudgetRepository::class);
 
         $container = self::getContainer();
-        $container->set(TrackingService::class, $this->trackingService);
-        $container->set(TrackingRepository::class, $this->trackingRepository);
+        $container->set(BudgetService::class, $this->budgetService);
+        $container->set(BudgetRepository::class, $this->budgetRepository);
     }
 
-    #[TestDox('When you call DELETE /api/trackings/{id}, it should update and return NoContent')]
+    #[TestDox('When you call DELETE /api/budgets/{id}, it should update and return NoContent')]
     #[Test]
-    public function deleteTrackingController_WhenDataOk_ReturnsNoContent(): void
+    public function deleteBudgetController_WhenDataOk_ReturnsNoContent(): void
     {
         // ARRANGE
-        $tracking = TrackingFactory::new()->withoutPersisting()->create()->object();
+        $budget = BudgetFactory::new()->withoutPersisting()->create()->object();
 
-        $this->trackingService
+        $this->budgetService
             ->expects($this->once())
             ->method('delete')
-            ->willReturn($tracking)
+            ->willReturn($budget)
         ;
 
-        $this->trackingRepository
+        $this->budgetRepository
             ->expects($this->once())
             ->method('find')
-            ->willReturn($tracking)
+            ->willReturn($budget)
         ;
 
         // ACT
-        $endpoint = self::API_ENDPOINT . '/' . $tracking->getId();
+        $endpoint = self::API_ENDPOINT . '/' . $budget->getId();
         $this->client->request(method: 'DELETE', uri: $endpoint, server: [
             'CONTENT_TYPE' => 'application/json',
         ],);

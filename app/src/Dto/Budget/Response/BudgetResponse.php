@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Tracking\Response;
+namespace App\Dto\Budget\Response;
 
 use App\Entity\Expense;
 use App\Entity\Income;
@@ -13,19 +13,19 @@ use App\Trait\Response\NameResponseTrait;
 use My\RestBundle\Contract\ResponseInterface;
 use Symfony\Component\Serializer\Annotation as Serializer;
 
-class TrackingResponse implements ResponseInterface
+class BudgetResponse implements ResponseInterface
 {
     use DateResponseTrait;
     use IdResponseTrait;
     use NameResponseTrait;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     private float $savingCapacity;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     private Income $income;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_CREATE, SerializationGroups::TRACKING_UPDATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     private Expense $expense;
 
     public function getSavingCapacity(): float

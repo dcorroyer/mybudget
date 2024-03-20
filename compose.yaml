@@ -19,7 +19,7 @@ services:
       dockerfile: ./.docker/php/Dockerfile
       target: dev
     ports:
-      - "3150:3150"
+      - "5173:5173"
     environment:
       SERVER_NAME: ":80"
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}

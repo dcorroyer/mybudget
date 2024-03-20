@@ -3,7 +3,6 @@
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
 
-
 use Castor\Utils\Docker\DockerUtils;
 
 use function Castor\context;
@@ -22,7 +21,6 @@ import('./.castor');
 
 //import(default_context()['paths']['castor']);
 import(default_context()['paths']['tools'] . '/k6/castor.php');
-
 
 #[AsTask(description: 'Start project')]
 function start(bool $force = false): void
@@ -60,6 +58,8 @@ function install(bool $force = false): void
 {
     start(force: $force);
     fingerprint(callback: static fn() => composer()->install(), fingerprint: composer_fingerprint(), force: $force);
+    db_reset();
+    npm_init();
 }
 
 #[AsTask(description: 'Open shell in the container (default: fish)', aliases: ['sh', 'fish'])]
@@ -166,4 +166,41 @@ function db_reset(): void
     symfony()->console('doctrine:database:create');
     symfony()->console('doctrine:schema:create');
     symfony()->console('doctrine:fixtures:load --no-interaction');
+}
+
+#[AsTask(name: 'ui:init', description: 'Run init')]
+function npm_init(): void
+{
+    npm_install();
+    npm_build();
+}
+
+#[AsTask(name: 'ui:install', description: 'Run NPM install')]
+function npm_install(): void
+{
+    node()->install();
+}
+
+#[AsTask(name: 'ui:build', description: 'Run NPM build')]
+function npm_build(): void
+{
+    node()->run('build');
+}
+
+#[AsTask(name: 'ui:dev', description: 'Run NPM dev')]
+function npm_dev(): void
+{
+    node()->run('dev');
+}
+
+#[AsTask(name: 'ui:lint', description: 'Run NPM lint')]
+function npm_lint(): void
+{
+    node()->run('lint');
+}
+
+#[AsTask(name: 'ui:format', description: 'Run NPM format')]
+function npm_format(): void
+{
+    node()->run('format');
 }

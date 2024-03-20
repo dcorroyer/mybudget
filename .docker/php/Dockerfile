@@ -10,8 +10,24 @@ RUN apt-get update && apt-get install -y \
     acl \
     file \
     gettext \
-    openssh-client \
-    yarn
+    openssh-client
+
+# Install NVM
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_VERSION=20.11.1
+ENV PATH=${NVM_DIR}/versions/node/v${NODE_VERSION}/bin:${PATH}
+
+RUN mkdir -p $NVM_DIR \
+    && chown -R www-data:www-data $NVM_DIR
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm use --delete-prefix $NODE_VERSION \
+    && nvm alias default $NODE_VERSION
+
+# Install Yarn
+RUN npm install -g yarn
 
 # Install PHP extensions
 RUN set -eux; \

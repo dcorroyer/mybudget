@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DeleteIcon, EuroIcon, XIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export default function TrackingPage(): React.JSX.Element {
+export default function BudgetPage(): React.JSX.Element {
     const form = useForm<FormTypeCreateBudget>({
         resolver: zodResolver(schemaCreateBudget),
         defaultValues: {

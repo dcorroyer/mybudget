@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Tracking\Payload;
+namespace App\Dto\Budget\Payload;
 
 use App\Trait\Payload\DatePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
 
-class TrackingPayload implements PayloadInterface
+class BudgetPayload implements PayloadInterface
 {
     use DatePayloadTrait;
 

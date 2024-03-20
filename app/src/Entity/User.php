@@ -53,15 +53,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     /**
-     * @var Collection<int, Tracking>
+     * @var Collection<int, Budget>
      */
     #[Serializer\Groups([SerializationGroups::USER_GET])]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tracking::class, orphanRemoval: true)]
-    private Collection $trackings;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Budget::class, orphanRemoval: true)]
+    private Collection $budgets;
 
     public function __construct()
     {
-        $this->trackings = new ArrayCollection();
+        $this->budgets = new ArrayCollection();
     }
 
     public function getId(): int
@@ -164,28 +164,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Tracking>
+     * @return Collection<int, Budget>
      */
-    public function getTrackings(): Collection
+    public function getBudgets(): Collection
     {
-        return $this->trackings;
+        return $this->budgets;
     }
 
-    public function addTracking(Tracking $tracking): static
+    public function addBudget(Budget $budget): static
     {
-        if (! $this->trackings->contains($tracking)) {
-            $this->trackings->add($tracking);
-            $tracking->setUser($this);
+        if (! $this->budgets->contains($budget)) {
+            $this->budgets->add($budget);
+            $budget->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeTracking(Tracking $tracking): static
+    public function removeBudget(Budget $budget): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->trackings->removeElement($tracking) && $tracking->getUser() === $this) {
-            $tracking->setUser(null);
+        if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {
+            $budget->setUser(null);
         }
 
         return $this;

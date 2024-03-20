@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\User;
 
-use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\User;
 use App\Serializable\SerializationGroups;
 use App\Service\UserService;
@@ -15,6 +14,7 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 

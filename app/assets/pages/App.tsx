@@ -14,7 +14,7 @@ import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import LoginPage from '@/pages/authentication/LoginPage'
 import RegisterPage from '@/pages/authentication/RegisterPage'
-import TrackingPage from '@/pages/tracking/TrackingPage'
+import BudgetPage from '@/pages/budget/BudgetPage'
 
 function App(): React.JSX.Element {
     return (
@@ -26,7 +26,7 @@ function App(): React.JSX.Element {
                             <Routes>
                                 <Route element={<PrivateRoutes />}>
                                     <Route path={'/'} element={<DashboardPage />} />
-                                    <Route path={'/tracking'} element={<TrackingPage />} />
+                                    <Route path={'/budget'} element={<BudgetPage />} />
                                 </Route>
                                 <Route element={<AuthenticationRoutes />}>
                                     <Route path={'/login'} element={<LoginPage />} />

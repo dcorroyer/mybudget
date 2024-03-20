@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\Tracking;
+namespace App\Tests\Integration\Controller\Budget;
 
 use App\Entity\User;
-use App\Repository\TrackingRepository;
-use App\Tests\Common\Factory\TrackingFactory;
+use App\Repository\BudgetRepository;
+use App\Tests\Common\Factory\BudgetFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -19,17 +19,17 @@ use Zenstruck\Foundry\Test\Factories;
  */
 #[Group('integration')]
 #[Group('controller')]
-#[Group('tracking')]
-#[Group('tracking-controller')]
-class GetTrackingControllerTest extends WebTestCase
+#[Group('budget')]
+#[Group('budget-controller')]
+class GetBudgetControllerTest extends WebTestCase
 {
     use Factories;
 
-    private const API_ENDPOINT = '/api/trackings';
+    private const API_ENDPOINT = '/api/budgets';
 
     private KernelBrowser $client;
 
-    private TrackingRepository $trackingRepository;
+    private BudgetRepository $budgetRepository;
 
     private User $user;
 
@@ -41,31 +41,31 @@ class GetTrackingControllerTest extends WebTestCase
         $this->user = new User();
         $this->client->loginUser($this->user);
 
-        $this->trackingRepository = $this->createMock(TrackingRepository::class);
+        $this->budgetRepository = $this->createMock(BudgetRepository::class);
 
         $container = self::getContainer();
-        $container->set(TrackingRepository::class, $this->trackingRepository);
+        $container->set(BudgetRepository::class, $this->budgetRepository);
     }
 
-    #[TestDox('When you call GET /api/trackings/{id}, it should return the tracking')]
+    #[TestDox('When you call GET /api/budgets/{id}, it should return the budget')]
     #[Test]
-    public function getTrackingController_WhenDataOk_ReturnsTracking(): void
+    public function getBudgetController_WhenDataOk_ReturnsBudget(): void
     {
         // ARRANGE
-        $tracking = TrackingFactory::new([
+        $budget = BudgetFactory::new([
             'user' => $this->user,
         ])->withoutPersisting()
             ->create()
             ->object()
         ;
 
-        $this->trackingRepository
+        $this->budgetRepository
             ->expects($this->once())
             ->method('find')
-            ->willReturn($tracking)
+            ->willReturn($budget)
         ;
 
-        $endpoint = self::API_ENDPOINT . '/' . $tracking->getId();
+        $endpoint = self::API_ENDPOINT . '/' . $budget->getId();
 
         // ACT
         $this->client->request(method: 'GET', uri: $endpoint, server: [
@@ -77,7 +77,7 @@ class GetTrackingControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertSame($tracking->getId(), $data['id']);
-        $this->assertSame($tracking->getDate()->format('Y-m'), $data['date']);
+        $this->assertSame($budget->getId(), $data['id']);
+        $this->assertSame($budget->getDate()->format('Y-m'), $data['date']);
     }
 }

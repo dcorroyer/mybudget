@@ -23,11 +23,11 @@ class Expense
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::TRACKING_LIST,
-        SerializationGroups::TRACKING_GET,
-        SerializationGroups::TRACKING_DELETE,
-        SerializationGroups::TRACKING_CREATE,
-        SerializationGroups::TRACKING_UPDATE,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_DELETE,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -38,7 +38,7 @@ class Expense
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[ORM\Column]
     private ?float $amount = 0;
@@ -50,7 +50,7 @@ class Expense
         SerializationGroups::EXPENSE_GET,
         SerializationGroups::EXPENSE_LIST,
         SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenseLines;

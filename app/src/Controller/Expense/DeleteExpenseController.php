@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Expense;
 
-use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Expense;
 use App\Serializable\SerializationGroups;
 use App\Service\ExpenseService;
@@ -15,6 +14,7 @@ use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/expenses')]
 #[OA\Tag(name: 'Expenses')]

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Authentication;
 
-use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\User\Payload\RegisterPayload;
 use App\Entity\User;
 use App\Serializable\SerializationGroups;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[OA\Tag(name: 'Authentication')]
 class RegisterController extends BaseRestController

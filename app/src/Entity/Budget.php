@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\TrackingRepository;
+use App\Repository\BudgetRepository;
 use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,25 +14,25 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: TrackingRepository::class)]
-#[ORM\Table(name: 'trackings')]
+#[ORM\Entity(repositoryClass: BudgetRepository::class)]
+#[ORM\Table(name: 'budgets')]
 #[ORM\HasLifecycleCallbacks]
-class Tracking
+class Budget
 {
     use TimestampableTrait;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
@@ -46,23 +46,23 @@ class Tracking
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Income $income = null;
 
-    #[Serializer\Groups([SerializationGroups::TRACKING_GET, SerializationGroups::TRACKING_LIST, SerializationGroups::TRACKING_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
     #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Expense $expense = null;
 
-    #[ORM\ManyToOne(inversedBy: 'trackings')]
+    #[ORM\ManyToOne(inversedBy: 'budgets')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -94,7 +94,7 @@ class Tracking
     #[ORM\PreUpdate]
     public function updateName(): void
     {
-        $this->name = 'Tracking ' . $this->date->format('Y-m');
+        $this->name = 'Budget ' . $this->date->format('Y-m');
     }
 
     public function getSavingCapacity(): ?float

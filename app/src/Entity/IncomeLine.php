@@ -22,7 +22,7 @@ class IncomeLine
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,7 +33,7 @@ class IncomeLine
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -43,7 +43,7 @@ class IncomeLine
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
@@ -54,7 +54,7 @@ class IncomeLine
         SerializationGroups::INCOME_GET,
         SerializationGroups::INCOME_LIST,
         SerializationGroups::INCOME_DELETE,
-        SerializationGroups::TRACKING_GET,
+        SerializationGroups::BUDGET_GET,
     ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]

@@ -32,15 +32,15 @@ final class SerializationGroups
 
     public const INCOME_LIST = 'INCOME_LIST';
 
-    public const TRACKING_CREATE = 'TRACKING_CREATE';
+    public const BUDGET_CREATE = 'BUDGET_CREATE';
 
-    public const TRACKING_DELETE = 'TRACKING_DELETE';
+    public const BUDGET_DELETE = 'BUDGET_DELETE';
 
-    public const TRACKING_UPDATE = 'TRACKING_UPDATE';
+    public const BUDGET_UPDATE = 'BUDGET_UPDATE';
 
-    public const TRACKING_GET = 'TRACKING_GET';
+    public const BUDGET_GET = 'BUDGET_GET';
 
-    public const TRACKING_LIST = 'TRACKING_LIST';
+    public const BUDGET_LIST = 'BUDGET_LIST';
 
     public const USER_CREATE = 'USER_CREATE';
 

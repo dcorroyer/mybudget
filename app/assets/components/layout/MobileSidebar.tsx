@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { MenuIcon } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { SideNav } from '@/components/layout/side-nav'
-import { NavItems } from '@/components/constants/side-nav'
+import { SideNav } from '@/components/layout/SideNav'
+import { NavItems } from '@/components/constants/SideNav'
 
 export const MobileSidebar = (): React.JSX.Element | null => {
     const [open, setOpen] = useState(false)

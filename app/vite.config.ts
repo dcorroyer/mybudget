@@ -11,14 +11,14 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                app: "./assets/index.tsx"
+                app: './assets/index.tsx'
             },
         }
     },
     resolve: {
         alias: [
-            { find: "~/app", replacement: resolve(__dirname, "./assets") },
-            { find: "@", replacement: resolve(__dirname, "./assets") },
+            { find: '~/app', replacement: resolve(__dirname, './assets') },
+            { find: '@', replacement: resolve(__dirname, './assets') },
         ],
     },
     server: {

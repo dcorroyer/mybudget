@@ -1,47 +1,102 @@
-image: jakzal/phpqa:php8.2-alpine
+image: php:8.3
 
 cache:
   paths:
-    - vendor/
+    - app/vendor/
+    - tools/**/vendor
+
+variables:
+  SYMFONY_DEPRECATIONS_HELPER: weak
 
 .before_script: &before_script
   before_script:
-    - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - cd app
 
-ecs:
-  <<: *before_script
-  stage: code-quality
-  script:
-    - ecs check src/ --config=/config/ecs.php
+stages:
+  - build
+  - qa
 
-phpstan:
-  <<: *before_script
-  stage: code-quality
+build:
+  stage: build
   script:
-    - phpstan analyse src/ -c phpstan.neon
+    - cd app
+    - apt-get update
+    - apt-get install -y unzip
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction
+  artifacts:
+    paths:
+      - app/vendor/
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+build-qa:
+  stage: build
+  script:
+    - cd app
+    - apt-get update
+    - apt-get install -y unzip
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - |
+      cd ../tools
+      for tool in "ecs" "rector" "phpstan" "phparkitect"; do
+        cd $tool
+        composer install --no-interaction
+        cd ..
+      done
+      cd ../app
+  artifacts:
+    paths:
+      - tools/**/vendor
+      - /usr/local/bin/**
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+qa-ecs:
+  stage: qa
+  <<: *before_script
+  script:
+    - ../tools/ecs/vendor/bin/ecs check --clear-cache
+  needs: [ "build" ]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - changes:
+        - app/src/**
+        - app/tests/**
+
+qa-phpstan:
+  stage: qa
+  <<: *before_script
+  script:
+    - ../tools/phpstan/vendor/bin/phpstan analyse src --level=8 --configuration ./app/phpstan.neon --memory-limit 1G
+  needs: [ "build" ]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - changes:
+        - app/src/**
+        - app/tests/**
 
 phpunit:
-  <<: *before_script
   image: php:8.2-apache
-  stage: code-quality
+  stage: qa
   services:
-    - name: mysql:8
+    - name: mysql:5.7
   variables:
     XDEBUG_MODE: coverage
-    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_ROOT_PASSWORD: pass_test
     MYSQL_DATABASE: mybudget_test
     MYSQL_HOST: mysql
     MYSQL_USER: root
-    MYSQL_PASSWORD: secret
-    DATABASE_URL: "mysql://root:secret@mysql:3306/mybudget"
+    MYSQL_PASSWORD: pass
+    DATABASE_URL: 'mysql://root:pass@mysql:3306/mybudget'
   before_script:
     - apt-get update && apt-get install -y git libzip-dev mariadb-client
     - curl -sSk https://getcomposer.org/installer | php -- --disable-tls && mv composer.phar /usr/local/bin/composer
     - docker-php-ext-install mysqli pdo pdo_mysql zip
     - pecl install xdebug && docker-php-ext-enable xdebug
-    - echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20220829/xdebug.so" >> /usr/local/etc/php/php.ini
+    - cd app
   script:
-    - mysql -uroot -psecret -h mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
+    - mysql -uroot -ppass_test -h mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
     - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
@@ -54,6 +109,3 @@ phpunit:
     - changes:
         - src/*
         - tests/*
-
-stages:
-  - code-quality

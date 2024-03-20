@@ -1,28 +1,8 @@
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
-
-.idea/
-.vscode/
-
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
-
-###> lexik/jwt-authentication-bundle ###
-/config/jwt/*.pem
-###< lexik/jwt-authentication-bundle ###
-
-###> pentatrion/vite-bundle ###
-/node_modules/
-/public/build/
-###< pentatrion/vite-bundle ###
-
 .castor.stub.php
+.idea
+tools/*/vendor
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf
+.idea/*.iml
+yarn-error.log

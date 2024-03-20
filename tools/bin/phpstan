@@ -1,0 +1,2 @@
+#!/bin/sh
+/tools/phpstan/vendor/bin/phpstan "$@"

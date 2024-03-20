@@ -24,11 +24,12 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { useToast } from '@/components/hooks/UseToast'
+import { useToast } from '@/components/hooks/useToast'
 
 import { registerFormSchema, registerFormType } from '@/schemas/register'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { register } from '@/api'
 
 function RegisterPage(): React.JSX.Element {
     const navigate = useNavigate()
@@ -47,18 +48,7 @@ function RegisterPage(): React.JSX.Element {
 
     async function onSubmit(values: registerFormType): Promise<void> {
         try {
-            const response = await fetch('api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    email: values.email,
-                    password: values.password,
-                }),
-            })
+            const response = await register(values)
 
             if (!response.ok) {
                 throw new Error('Failed to register')

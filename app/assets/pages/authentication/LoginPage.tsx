@@ -26,10 +26,11 @@ import {
 } from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/hooks/UseToast'
+import { useToast } from '@/components/hooks/useToast'
 
 import { useAuth } from '@/hooks/AuthProvider'
 import { loginFormSchema, loginFormType } from '@/schemas/login'
+import { login } from '@/api'
 
 function LoginPage(): React.JSX.Element {
     const navigate = useNavigate()
@@ -46,16 +47,7 @@ function LoginPage(): React.JSX.Element {
 
     async function onSubmit(values: loginFormType): Promise<void> {
         try {
-            const response = await fetch('api/login_check', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: values.email,
-                    password: values.password,
-                }),
-            })
+            const response = await login(values)
 
             if (!response.ok) {
                 throw new Error('Failed to login')

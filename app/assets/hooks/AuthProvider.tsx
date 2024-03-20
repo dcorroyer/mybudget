@@ -1,12 +1,14 @@
 import axios from 'axios'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { toast } from '@/components/hooks/UseToast'
+import { toast } from '@/components/hooks/useToast'
+import { getMe } from '@/api'
 
 interface AuthContextType {
     token: string | null
     getToken: () => string | null
     setToken: (newToken: React.SetStateAction<string | null>) => void
     clearToken: () => void
+    getTokenValue: (token: string) => string
     getExpireDateToken: (token: string) => number
     checkTokenValidity: () => void
 }
@@ -16,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
     getToken: () => '',
     setToken: () => {},
     clearToken: () => {},
+    getTokenValue: () => '',
     getExpireDateToken: () => 0,
     checkTokenValidity: () => {},
 })
@@ -52,13 +55,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const checkTokenValidity = async (): Promise<Response | void> => {
         if (token) {
             try {
-                const response = await fetch('/api/users/me', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${getTokenValue(token)}`,
-                    },
-                })
+                const response = await getMe(getTokenValue(token))
 
                 if (!response.ok) {
                     clearToken()
@@ -90,6 +87,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             getToken,
             setToken,
             clearToken,
+            getTokenValue,
             getExpireDateToken,
             checkTokenValidity,
         }),

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { SideNav } from '@/components/layout/side-nav'
-import { NavItems } from '@/components/constants/side-nav'
+import { SideNav } from '@/components/layout/SideNav'
+import { NavItems } from '@/components/constants/SideNav'
 
 import { cn } from '@/lib/utils'
 import { useSidebar } from '@/hooks/SidebarStateProvider'

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Tracking\Http;
+namespace App\Dto\Budget\Http;
 
 use Doctrine\Common\Collections\Criteria;
 use My\RestBundle\Contract\ORMFilterInterface;
 use My\RestBundle\Contract\QueryFilterInterface;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
 
-class TrackingFilterQuery implements QueryFilterInterface, ORMFilterInterface
+class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
     #[SerializedPath('[criteria][query]')]
     private ?string $query = null;

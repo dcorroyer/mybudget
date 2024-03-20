@@ -44,8 +44,10 @@ class ExpenseCategoryService
         ;
     }
 
-    public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?ExpenseCategoryFilterQuery $expenseCategoryFilterQuery = null): SlidingPagination
-    {
+    public function paginate(
+        ?PaginationQueryParams $paginationQueryParams = null,
+        ?ExpenseCategoryFilterQuery $expenseCategoryFilterQuery = null
+    ): SlidingPagination {
         return $this->expenseCategoryRepository->paginate($paginationQueryParams, $expenseCategoryFilterQuery, Criteria::create());
     }
 }

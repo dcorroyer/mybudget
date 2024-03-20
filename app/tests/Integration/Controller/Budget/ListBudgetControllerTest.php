@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\Tracking;
+namespace App\Tests\Integration\Controller\Budget;
 
 use App\Entity\User;
-use App\Repository\TrackingRepository;
-use App\Service\TrackingService;
-use App\Tests\Common\Factory\TrackingFactory;
+use App\Repository\BudgetRepository;
+use App\Service\BudgetService;
+use App\Tests\Common\Factory\BudgetFactory;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,17 +21,17 @@ use Zenstruck\Foundry\Test\Factories;
  */
 #[Group('integration')]
 #[Group('controller')]
-#[Group('tracking')]
-#[Group('tracking-controller')]
-class ListTrackingControllerTest extends WebTestCase
+#[Group('budget')]
+#[Group('budget-controller')]
+class ListBudgetControllerTest extends WebTestCase
 {
     use Factories;
 
-    private const API_ENDPOINT = '/api/trackings';
+    private const API_ENDPOINT = '/api/budgets';
 
     private KernelBrowser $client;
 
-    private TrackingService $trackingService;
+    private BudgetService $budgetService;
 
     protected function setUp(): void
     {
@@ -40,23 +40,23 @@ class ListTrackingControllerTest extends WebTestCase
 
         $this->client->loginUser(new User());
 
-        $this->trackingService = $this->createMock(TrackingService::class);
-        $trackingRepository = $this->createMock(TrackingRepository::class);
+        $this->budgetService = $this->createMock(BudgetService::class);
+        $budgetRepository = $this->createMock(BudgetRepository::class);
 
         $container = self::getContainer();
-        $container->set(TrackingService::class, $this->trackingService);
-        $container->set(TrackingRepository::class, $trackingRepository);
+        $container->set(BudgetService::class, $this->budgetService);
+        $container->set(BudgetRepository::class, $budgetRepository);
     }
 
-    #[TestDox('When you call GET /api/trackings, it should return the trackings list')]
+    #[TestDox('When you call GET /api/budgets, it should return the budgets list')]
     #[Test]
-    public function listTrackingController_WhenDataOk_ReturnsTrackings(): void
+    public function listBudgetController_WhenDataOk_ReturnsBudgets(): void
     {
         // ARRANGE
-        $trackings = TrackingFactory::new()->withoutPersisting()->createMany(20);
-        $slidingPagination = PaginationTestHelper::getPagination($trackings);
+        $budgets = BudgetFactory::new()->withoutPersisting()->createMany(20);
+        $slidingPagination = PaginationTestHelper::getPagination($budgets);
 
-        $this->trackingService
+        $this->budgetService
             ->expects($this->once())
             ->method('paginate')
             ->willReturn($slidingPagination)

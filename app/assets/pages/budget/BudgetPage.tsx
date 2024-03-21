@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 
-import { FormTypeCreateBudget, schemaCreateBudget } from '@/schemas/budget'
+import { formTypeCreateBudget, budgetFormSchema } from '@/schemas/budget'
 
 import {
     Form,
@@ -21,10 +21,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { DeleteIcon, EuroIcon, XIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { postBudget } from '@/api';
 
 export default function BudgetPage(): React.JSX.Element {
-    const form = useForm<FormTypeCreateBudget>({
-        resolver: zodResolver(schemaCreateBudget),
+    const form = useForm<formTypeCreateBudget>({
+        resolver: zodResolver(budgetFormSchema),
         defaultValues: {
             incomes: [
                 {
@@ -46,16 +47,22 @@ export default function BudgetPage(): React.JSX.Element {
         },
     })
 
-    const { handleSubmit } = form
+    async function onSubmit(data: formTypeCreateBudget): Promise<void> {
+        try {
+            const response = await postBudget(data)
 
-    const onSubmit = (data: FormTypeCreateBudget) => {
-        console.log('data', data)
+            if (!response.ok) {
+                throw new Error('Failed to register the budget')
+            }
+        } catch (error) {
+            console.log('Error logging in:', error)
+        }
     }
 
     return (
         <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8 max-w-screen-lg mx-auto'>
             <Form {...form}>
-                <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
                     <Tabs defaultValue='income' className='w-full max-w-screen-md'>
                         <TabsList className='flex space-x-1'>
                             <TabsTrigger value='income' className='w-1/2'>

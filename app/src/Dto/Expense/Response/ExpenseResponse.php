@@ -15,11 +15,25 @@ class ExpenseResponse implements ResponseInterface
     use AmountResponseTrait;
     use IdResponseTrait;
 
+    private string $categoryName;
+
     /**
      * @var array<ExpenseLineResponse>
      */
     #[Serializer\Groups([SerializationGroups::EXPENSE_CREATE, SerializationGroups::EXPENSE_UPDATE])]
     private array $expenseLines;
+
+    public function getCategoryName (): string
+    {
+        return $this->categoryName;
+    }
+
+    public function setCategoryName(string $categoryName): self
+    {
+        $this->categoryName = $categoryName;
+
+        return $this;
+    }
 
     /**
      * @return ExpenseLineResponse[]

@@ -45,6 +45,7 @@ class BudgetService
 
     public function create(BudgetPayload $budgetPayload): BudgetResponse
     {
+        dd($budgetPayload);
         $budget = new Budget();
 
         $income = $this->incomeRepository->find($budgetPayload->getIncomeId());

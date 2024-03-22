@@ -7,13 +7,11 @@ namespace App\Service;
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Dto\Budget\Payload\UpdateBudgetPayload;
-use App\Dto\Budget\Response\BudgetResponse;
 use App\Entity\Budget;
 use App\Entity\User;
 use App\Repository\BudgetRepository;
-use App\Repository\ExpenseRepository;
-use App\Repository\IncomeRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,9 +22,10 @@ class BudgetService
 {
     public function __construct(
         private readonly BudgetRepository $budgetRepository,
-        private readonly IncomeRepository $incomeRepository,
-        private readonly ExpenseRepository $expenseRepository,
+        private readonly IncomeService $incomeService,
+        private readonly ExpenseService $expenseService,
         private readonly Security $security,
+        private readonly EntityManagerInterface $em,
     ) {
     }
 
@@ -43,33 +42,73 @@ class BudgetService
         return $budget;
     }
 
-    public function create(BudgetPayload $budgetPayload): BudgetResponse
+    /**
+     * @throws \Exception
+     */
+    public function create(BudgetPayload $budgetPayload): Budget
     {
-        dd($budgetPayload);
         $budget = new Budget();
-
-        $income = $this->incomeRepository->find($budgetPayload->getIncomeId());
-        $expense = $this->expenseRepository->find($budgetPayload->getExpenseId());
 
         /** @var User $user */
         $user = $this->security->getUser();
 
-        if ($income === null || $expense === null) {
-            throw new \InvalidArgumentException('Income or Expense not found');
+        $budget->setDate($budgetPayload->getDate())
+            ->setUser($user);
+
+        $this->em->beginTransaction();
+
+        try {
+            foreach ($budgetPayload->getIncomes() as $incomePayload) {
+                $income = $this->incomeService->create($incomePayload, $budget);
+                $budget->addIncome($income);
+            }
+
+            foreach ($budgetPayload->getExpenses() as $expensePayload) {
+                $expense = $this->expenseService->create($expensePayload, $budget);
+                $budget->addExpense($expense);
+            }
+
+            dd("oui");
+
+            $this->em->persist($budget);
+            $this->em->flush();
+
+            $this->em->commit();
+        } catch (\Exception $e) {
+            $this->em->rollback();
+            throw $e;
         }
 
-        $budget->setDate($budgetPayload->getDate())
-            ->setIncome($income)
-            ->setExpense($expense)
-            ->setUser($user)
-        ;
-
-        $this->budgetRepository->save($budget, true);
-
-        return $this->budgetResponse($budget);
+        return $budget;
     }
 
-    public function update(UpdateBudgetPayload $updateBudgetPayload, Budget $budget): BudgetResponse
+//    public function create(BudgetPayload $budgetPayload): Budget
+//    {
+//        $budget = new Budget();
+//
+//        /** @var User $user */
+//        $user = $this->security->getUser();
+//
+//        foreach ($budgetPayload->getIncomes() as $incomePayload) {
+//            $income = $this->incomeService->create($incomePayload);
+//            $budget->addIncome($income);
+//        }
+//
+//        foreach ($budgetPayload->getExpenses() as $expensePayload) {
+//            $expense = $this->expenseService->create($expensePayload);
+//            $budget->addExpense($expense);
+//        }
+//
+//        $budget->setDate($budgetPayload->getDate())
+//            ->setUser($user)
+//        ;
+//
+//        $this->budgetRepository->save($budget, true);
+//
+//        return $budget;
+//    }
+
+    public function update(UpdateBudgetPayload $updateBudgetPayload, Budget $budget): Budget
     {
         $this->checkAccess($budget);
 
@@ -77,7 +116,7 @@ class BudgetService
 
         $this->budgetRepository->save($budget, true);
 
-        return $this->budgetResponse($budget);
+        return $budget;
     }
 
     public function delete(Budget $budget): Budget
@@ -89,24 +128,15 @@ class BudgetService
         return $budget;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?BudgetFilterQuery $budgetFilterQuery = null): SlidingPagination
     {
         $criteria = Criteria::create();
         $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()));
 
         return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
-    }
-
-    private function budgetResponse(Budget $budget): BudgetResponse
-    {
-        return (new BudgetResponse())
-            ->setId($budget->getId())
-            ->setName($budget->getName())
-            ->setDate($budget->getDate())
-            ->setSavingCapacity($budget->getSavingCapacity())
-            ->setIncome($budget->getIncome())
-            ->setExpense($budget->getExpense())
-        ;
     }
 
     private function checkAccess(Budget $budget): void

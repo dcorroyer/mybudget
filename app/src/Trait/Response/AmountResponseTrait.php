@@ -9,12 +9,6 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 
 trait AmountResponseTrait
 {
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::EXPENSE_CREATE,
-        SerializationGroups::EXPENSE_UPDATE,
-    ])]
     private float $amount;
 
     public function getAmount(): float

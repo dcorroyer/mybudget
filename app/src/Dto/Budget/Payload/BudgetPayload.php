@@ -8,20 +8,22 @@ use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\Income\Payload\IncomePayload;
 use App\Trait\Payload\DatePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class BudgetPayload implements PayloadInterface
 {
-    // Todo: data à ajouter
-//    use DatePayloadTrait;
+    use DatePayloadTrait;
 
     /**
      * @var array<int, IncomePayload>
      */
+    #[Assert\NotBlank]
     private array $incomes = [];
 
     /**
      * @var array<int, ExpensePayload>
      */
+    #[Assert\NotBlank]
     private array $expenses = [];
 
     /**

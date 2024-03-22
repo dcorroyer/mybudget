@@ -17,47 +17,22 @@ class ExpenseLine
 {
     use TimestampableTrait;
 
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
     private float $amount;
-
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
-    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER')]
-    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
-    private ExpenseCategory $category;
 
     #[ORM\ManyToOne(targetEntity: Expense::class, inversedBy: 'expenseLines')]
     #[ORM\JoinColumn(name: 'expense_id', referencedColumnName: 'id', nullable: false)]

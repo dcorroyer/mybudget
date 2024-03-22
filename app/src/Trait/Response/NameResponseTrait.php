@@ -10,11 +10,6 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 trait NameResponseTrait
 {
     #[Serializer\Groups([
-        SerializationGroups::INCOME_CREATE,
-        SerializationGroups::INCOME_UPDATE,
-        SerializationGroups::EXPENSE_CREATE,
-        SerializationGroups::EXPENSE_UPDATE,
-        SerializationGroups::EXPENSE_CATEGORY_UPDATE,
         SerializationGroups::BUDGET_CREATE,
         SerializationGroups::BUDGET_UPDATE,
     ])]

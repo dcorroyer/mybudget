@@ -6,119 +6,78 @@ namespace App\Entity;
 
 use App\Repository\IncomeRepository;
 use App\Serializable\SerializationGroups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IncomeRepository::class)]
 #[ORM\Table(name: 'incomes')]
-#[ORM\HasLifecycleCallbacks]
 class Income
 {
-    use TimestampableTrait;
-
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_DELETE,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Assert\NotBlank]
+    #[ORM\Column(length: 255)]
+    private string $name;
+
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Assert\NotBlank]
     #[ORM\Column]
-    private ?float $amount = 0;
+    private float $amount;
 
-    /**
-     * @var Collection<IncomeLine>
-     */
-    #[Serializer\Groups([
-        SerializationGroups::INCOME_GET,
-        SerializationGroups::INCOME_LIST,
-        SerializationGroups::INCOME_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
-    #[ORM\OneToMany(mappedBy: 'income', targetEntity: IncomeLine::class, cascade: ['persist'], orphanRemoval: true)]
-    private Collection $incomeLines;
-
-    public function __construct()
-    {
-        $this->incomeLines = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], inversedBy: 'incomes')]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id')]
+    private Budget $budget;
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): self
+    public function setAmount(float $amount): static
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateAmount(): void
+    public function getBudget(): Budget
     {
-        $this->amount = 0;
-
-        foreach ($this->incomeLines as $incomeLine) {
-            $this->amount += $incomeLine->getAmount();
-        }
+        return $this->budget;
     }
 
-    /**
-     * @return Collection<int, IncomeLine>
-     */
-    public function getIncomeLines(): Collection
+    public function setBudget(Budget $budget): static
     {
-        return $this->incomeLines;
-    }
-
-    public function addIncomeLine(IncomeLine $incomeLine): self
-    {
-        if (! $this->incomeLines->contains($incomeLine)) {
-            $this->incomeLines[] = $incomeLine;
-            $incomeLine->setIncome($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIncomeLine(IncomeLine $incomeLine): self
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->incomeLines->removeElement($incomeLine) && $incomeLine->getIncome() === $this) {
-            $incomeLine->setIncome(null);
-        }
+        $this->budget = $budget;
 
         return $this;
     }

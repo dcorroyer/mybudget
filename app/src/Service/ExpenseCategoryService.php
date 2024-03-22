@@ -29,25 +29,4 @@ class ExpenseCategoryService
 
         return $expenseCategory;
     }
-
-    public function update(ExpenseCategoryPayload $expenseCategoryPayload, ExpenseCategory $expenseCategory): ExpenseCategoryResponse
-    {
-        if ($expenseCategory->getName() !== $expenseCategoryPayload->getName()) {
-            $expenseCategory->setName($expenseCategoryPayload->getName());
-
-            $this->expenseCategoryRepository->save($expenseCategory, true);
-        }
-
-        return (new ExpenseCategoryResponse())
-            ->setId($expenseCategory->getId())
-            ->setName($expenseCategory->getName())
-        ;
-    }
-
-    public function paginate(
-        ?PaginationQueryParams $paginationQueryParams = null,
-        ?ExpenseCategoryFilterQuery $expenseCategoryFilterQuery = null
-    ): SlidingPagination {
-        return $this->expenseCategoryRepository->paginate($paginationQueryParams, $expenseCategoryFilterQuery, Criteria::create());
-    }
 }

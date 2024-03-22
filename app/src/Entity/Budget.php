@@ -6,9 +6,12 @@ namespace App\Entity;
 
 use App\Repository\BudgetRepository;
 use App\Serializable\SerializationGroups;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -17,22 +20,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ORM\Table(name: 'budgets')]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: 'name', message: 'There is already a budget with this name')]
 class Budget
 {
     use TimestampableTrait;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
+    #[Assert\Unique]
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
@@ -46,25 +51,29 @@ class Budget
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
-    #[ORM\OneToOne(cascade: ['remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Income $income = null;
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Income::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $incomes;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_DELETE])]
-    #[ORM\OneToOne(cascade: ['remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Expense $expense = null;
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Expense::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $expenses;
 
     #[ORM\ManyToOne(inversedBy: 'budgets')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    public function __construct()
+    {
+        $this->incomes = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -78,12 +87,12 @@ class Budget
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -109,11 +118,33 @@ class Budget
         return $this;
     }
 
+    public function calculateTotalIncomesAmount(): float
+    {
+        $totalIncomesAmount = 0.0;
+
+        foreach ($this->incomes as $income) {
+            $totalIncomesAmount += $income->getAmount();
+        }
+
+        return $totalIncomesAmount;
+    }
+
+    public function calculateTotalExpensesAmount(): float
+    {
+        $totalExpensesAmount = 0.0;
+
+        foreach ($this->expenses as $expense) {
+            $totalExpensesAmount += $expense->getAmount();
+        }
+
+        return $totalExpensesAmount;
+    }
+
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function updateSavingCapacity(): void
     {
-        $this->savingCapacity = $this->calculateTotalIncomes() - $this->calculateTotalExpenses();
+        $this->savingCapacity = $this->calculateTotalIncomesAmount() - $this->calculateTotalExpensesAmount();
     }
 
     public function getDate(): \DateTimeInterface
@@ -128,28 +159,44 @@ class Budget
         return $this;
     }
 
-    public function getIncome(): ?Income
+    public function getIncomes(): Collection
     {
-        return $this->income;
+        return $this->incomes;
     }
 
-    public function setIncome(Income $income): self
+    public function setIncomes(Collection $incomes): Budget
     {
-        $this->income = $income;
+        $this->incomes = $incomes;
 
         return $this;
     }
 
-    public function getExpense(): ?Expense
+    public function addIncome(Income $income): void
     {
-        return $this->expense;
+        if (!$this->incomes->contains($income)) {
+            $income->setBudget($this);
+            $this->incomes[] = $income;
+        }
     }
 
-    public function setExpense(Expense $expense): self
+    public function getExpenses(): Collection
     {
-        $this->expense = $expense;
+        return $this->expenses;
+    }
+
+    public function setExpenses(Collection $expenses): Budget
+    {
+        $this->expenses = $expenses;
 
         return $this;
+    }
+
+    public function addExpense(Expense $expense): void
+    {
+        if (!$this->expenses->contains($expense)) {
+            $expense->setBudget($this);
+            $this->expenses[] = $expense;
+        }
     }
 
     public function getUser(): ?User
@@ -162,27 +209,5 @@ class Budget
         $this->user = $user;
 
         return $this;
-    }
-
-    private function calculateTotalIncomes(): float
-    {
-        $totalIncomes = 0;
-
-        foreach ($this->income->getIncomeLines() as $incomeLine) {
-            $totalIncomes += $incomeLine->getAmount();
-        }
-
-        return $totalIncomes;
-    }
-
-    private function calculateTotalExpenses(): float
-    {
-        $totalExpenses = 0;
-
-        foreach ($this->expense->getExpenseLines() as $expenseLine) {
-            $totalExpenses += $expenseLine->getAmount();
-        }
-
-        return $totalExpenses;
     }
 }

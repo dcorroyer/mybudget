@@ -12,31 +12,17 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseCategoryRepository::class)]
-#[ORM\Table(name: 'expense_line_categories')]
-#[UniqueEntity(fields: 'name', message: 'There is already an expense line category with this name')]
+#[ORM\Table(name: 'expenses_categories')]
+#[UniqueEntity(fields: 'name', message: 'There is already an expense category with this name')]
 class ExpenseCategory
 {
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::EXPENSE_CATEGORY_GET,
-        SerializationGroups::EXPENSE_CATEGORY_LIST,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::EXPENSE_CATEGORY_GET,
-        SerializationGroups::EXPENSE_CATEGORY_LIST,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
     #[Assert\Unique]
     #[ORM\Column(length: 255)]

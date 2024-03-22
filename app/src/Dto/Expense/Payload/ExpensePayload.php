@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace App\Dto\Expense\Payload;
 
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ExpensePayload implements PayloadInterface
 {
     #[Assert\NotBlank]
-    private string $categoryName;
+    private ExpenseCategoryPayload $category;
 
     /**
      * @var array<int, ExpenseLinePayload>
      */
+    #[Assert\NotBlank]
     private array $expenseLines = [];
 
-    public function getCategoryName (): string
+    public function getCategory(): ExpenseCategoryPayload
     {
-        return $this->categoryName;
+        return $this->category;
     }
 
-    public function setCategoryName(string $categoryName): self
+    public function setCategory(ExpenseCategoryPayload $category): static
     {
-        $this->categoryName = $categoryName;
+        $this->category = $category;
 
         return $this;
     }

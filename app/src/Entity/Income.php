@@ -30,10 +30,6 @@ class Income
     #[ORM\Column]
     private float $amount;
 
-    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], inversedBy: 'incomes')]
-    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id')]
-    private Budget $budget;
-
     public function getId(): int
     {
         return $this->id;
@@ -66,18 +62,6 @@ class Income
     public function setAmount(float $amount): static
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getBudget(): Budget
-    {
-        return $this->budget;
-    }
-
-    public function setBudget(Budget $budget): static
-    {
-        $this->budget = $budget;
 
         return $this;
     }

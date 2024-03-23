@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Expense\Payload\ExpenseLinePayload;
 use App\Dto\Expense\Payload\ExpensePayload;
 use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
 use App\Entity\Budget;
@@ -21,23 +22,24 @@ class ExpenseService
     ) {
     }
 
-    public function create(ExpensePayload $expensePayload, Budget $budget): Expense
+    public function create(ExpensePayload $expensePayload): array
     {
-        dump($expensePayload);
-        $expense = new Expense();
-
+        $expenses = [];
         $category = $this->manageExpenseCategory($expensePayload->getCategory());
 
         foreach ($expensePayload->getExpenseLines() as $expenseLinePayload) {
+            $expense = new Expense();
+
             $expense->setAmount($expenseLinePayload->getAmount())
                 ->setName($expenseLinePayload->getName())
-                ->setExpenseCategory($category)
-                ->setBudget($budget);
+                ->setExpenseCategory($category);
+
+            $this->expenseRepository->save($expense, true);
+
+            $expenses[] = $expense;
         }
 
-        $this->expenseRepository->save($expense, true);
-
-        return $expense;
+        return $expenses;
     }
 
     private function manageExpenseCategory(ExpenseCategoryPayload $expenseCategoryPayload): ExpenseCategory

@@ -11,7 +11,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use My\RestBundle\Trait\TimestampableTrait;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -20,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ORM\Table(name: 'budgets')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: 'name', message: 'There is already a budget with this name')]
 class Budget
 {
     use TimestampableTrait;
@@ -33,7 +31,6 @@ class Budget
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
-    #[Assert\Unique]
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -57,10 +54,16 @@ class Budget
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
+    /**
+     * @var Collection<Income>
+     */
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Income::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
+    /**
+     * @var Collection<Expense>
+     */
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Expense::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
@@ -80,7 +83,7 @@ class Budget
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -92,7 +95,7 @@ class Budget
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -111,7 +114,7 @@ class Budget
         return $this->savingCapacity;
     }
 
-    public function setSavingCapacity(?float $savingCapacity): self
+    public function setSavingCapacity(?float $savingCapacity): static
     {
         $this->savingCapacity = $savingCapacity;
 
@@ -152,51 +155,46 @@ class Budget
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
+    /**
+     * @return Collection<int, Income>
+     */
+
     public function getIncomes(): Collection
     {
         return $this->incomes;
     }
 
-    public function setIncomes(Collection $incomes): Budget
+    public function addIncome(Income $income): static
     {
-        $this->incomes = $incomes;
+        if (!$this->incomes->contains($income)) {
+            $this->incomes[] = $income;
+        }
 
         return $this;
     }
 
-    public function addIncome(Income $income): void
-    {
-        if (!$this->incomes->contains($income)) {
-            $income->setBudget($this);
-            $this->incomes[] = $income;
-        }
-    }
-
+    /**
+     * @return Collection<int, Expense>
+     */
     public function getExpenses(): Collection
     {
         return $this->expenses;
     }
 
-    public function setExpenses(Collection $expenses): Budget
-    {
-        $this->expenses = $expenses;
-
-        return $this;
-    }
-
-    public function addExpense(Expense $expense): void
+    public function addExpense(Expense $expense): static
     {
         if (!$this->expenses->contains($expense)) {
-            $expense->setBudget($this);
             $this->expenses[] = $expense;
         }
+
+        return $this;
     }
 
     public function getUser(): ?User

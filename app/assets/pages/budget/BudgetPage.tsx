@@ -22,8 +22,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DeleteIcon, EuroIcon, XIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { postBudget } from '@/api';
+import { useAuth } from '@/hooks/AuthProvider';
 
 export default function BudgetPage(): React.JSX.Element {
+    const { token, getTokenValue } = useAuth()
     const form = useForm<formTypeCreateBudget>({
         resolver: zodResolver(budgetFormSchema),
         defaultValues: {
@@ -35,7 +37,9 @@ export default function BudgetPage(): React.JSX.Element {
             ],
             expenses: [
                 {
-                    categoryName: '',
+                    category: {
+                        name: '',
+                    },
                     expenseLines: [
                         {
                             name: '',
@@ -48,14 +52,16 @@ export default function BudgetPage(): React.JSX.Element {
     })
 
     async function onSubmit(data: formTypeCreateBudget): Promise<void> {
-        try {
-            const response = await postBudget(data)
+        if (token) {
+            try {
+                const response = await postBudget(data, getTokenValue(token))
 
-            if (!response.ok) {
-                throw new Error('Failed to register the budget')
+                if (!response.ok) {
+                    throw new Error('Failed to register the budget')
+                }
+            } catch (error) {
+                console.log('Error logging in:', error)
             }
-        } catch (error) {
-            console.log('Error logging in:', error)
         }
     }
 
@@ -180,7 +186,7 @@ const ManageExpenses = () => {
                                 <div className='flex items-center relative'>
                                     <FormField
                                         control={expenses.control}
-                                        name={`expenses.${expenseIndex}.categoryName`}
+                                        name={`expenses.${expenseIndex}.category.name`}
                                         defaultValue={''}
                                         render={({ field }) => (
                                             <FormItem>
@@ -193,7 +199,7 @@ const ManageExpenses = () => {
                                                 <FormMessage
                                                     content={
                                                         expenses.errors?.expenses?.[expenseIndex]
-                                                            ?.categoryName?.message
+                                                            ?.category.name?.message
                                                     }
                                                 />
                                             </FormItem>
@@ -226,7 +232,7 @@ const ManageExpenses = () => {
             <Button
                 type='button'
                 onClick={() => {
-                    append({ expenseLines: [{ name: '', amount: 0 }], categoryName: '' })
+                    append({ expenseLines: [{ name: '', amount: 0 }], category: { name: '' }})
                 }}
                 variant='ghost'
                 className='text-center w-full underline underline-offset-4 py-2'

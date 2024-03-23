@@ -1,6 +1,6 @@
-import { FormTypeCreateBudget } from '@/schemas'
+import { formTypeCreateBudget } from '@/schemas'
 
-export async function postBudget(values: FormTypeCreateBudget, token: string): Promise<Response> {
+export async function postBudget(values: formTypeCreateBudget, token: string): Promise<Response> {
     return await fetch('api/budgets', {
         method: 'POST',
         headers: {
@@ -8,6 +8,7 @@ export async function postBudget(values: FormTypeCreateBudget, token: string): P
             'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
+            date: '2023-01',
             incomes: values.incomes,
             expenses: values.expenses,
         }),

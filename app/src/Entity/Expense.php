@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
 use App\Serializable\SerializationGroups;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,22 +23,20 @@ class Expense
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
-    #[ORM\Column]
-    private float $amount;
+    #[Assert\Type(Types::STRING)]
+    #[ORM\Column(length: 255)]
+    private string $name;
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private string $name;
+    #[Assert\Type(Types::FLOAT)]
+    #[ORM\Column]
+    private float $amount;
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER', inversedBy: 'expenses')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
     private ExpenseCategory $expenseCategory;
-
-    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], inversedBy: 'expenses')]
-    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
-    private ?Budget $budget = null;
 
     public function getId(): int
     {
@@ -51,26 +50,27 @@ class Expense
         return $this;
     }
 
-    public function getAmount(): ?float
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(?float $amount): static
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAmount(): float
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(float $amount): static
+    {
+        $this->amount = $amount;
+
         return $this;
     }
 
@@ -82,18 +82,6 @@ class Expense
     public function setExpenseCategory(ExpenseCategory $expenseCategory): static
     {
         $this->expenseCategory = $expenseCategory;
-
-        return $this;
-    }
-
-    public function getBudget(): Budget
-    {
-        return $this->budget;
-    }
-
-    public function setBudget(Budget $budget): static
-    {
-        $this->budget = $budget;
 
         return $this;
     }

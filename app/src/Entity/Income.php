@@ -14,21 +14,25 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'incomes')]
 class Income
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column]
     private float $amount;
+
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'incomes')]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
+    private ?Budget $budget = null;
 
     public function getId(): int
     {
@@ -62,6 +66,18 @@ class Income
     public function setAmount(float $amount): static
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getBudget(): ?Budget
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(?Budget $budget): static
+    {
+        $this->budget = $budget;
 
         return $this;
     }

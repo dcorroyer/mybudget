@@ -51,12 +51,12 @@ class BudgetService
             ->setUser($user);
 
         foreach ($budgetPayload->getIncomes() as $incomePayload) {
-            $income = $this->incomeService->create($incomePayload);
+            $income = $this->incomeService->create($incomePayload, $budget);
             $budget->addIncome($income);
         }
 
         foreach ($budgetPayload->getExpenses() as $expensePayload) {
-            $expenses = $this->expenseService->create($expensePayload);
+            $expenses = $this->expenseService->create($expensePayload, $budget);
 
             foreach ($expenses as $expense) {
                 $budget->addExpense($expense);
@@ -83,7 +83,7 @@ class BudgetService
     {
         $this->checkAccess($budget);
 
-        $this->budgetRepository->delete($budget);
+        $this->budgetRepository->delete($budget, true);
 
         return $budget;
     }

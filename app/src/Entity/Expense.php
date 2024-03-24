@@ -15,28 +15,32 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'expenses')]
 class Expense
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::FLOAT)]
     #[ORM\Column]
     private float $amount;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_DELETE])]
-    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'EAGER', inversedBy: 'expenses')]
-    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(nullable: false)]
     private ExpenseCategory $expenseCategory;
+
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
+    private ?Budget $budget = null;
 
     public function getId(): int
     {
@@ -82,6 +86,18 @@ class Expense
     public function setExpenseCategory(ExpenseCategory $expenseCategory): static
     {
         $this->expenseCategory = $expenseCategory;
+
+        return $this;
+    }
+
+    public function getBudget(): ?Budget
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(?Budget $budget): static
+    {
+        $this->budget = $budget;
 
         return $this;
     }

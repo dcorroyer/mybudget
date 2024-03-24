@@ -20,8 +20,31 @@ class ExpenseCategoryService
         $expenseCategory = new ExpenseCategory();
         $expenseCategory->setName($expenseCategoryPayload->getName());
 
-        $this->expenseCategoryRepository->save($expenseCategory, true);
+        $this->expenseCategoryRepository->save($expenseCategory);
 
         return $expenseCategory;
+    }
+
+    public function manageExpenseCategory(ExpenseCategoryPayload $expenseCategoryPayload): ExpenseCategory
+    {
+        $category = null;
+        $categoryId = $expenseCategoryPayload->getId();
+        $categoryName = $expenseCategoryPayload->getName();
+
+        if ($categoryId !== null) {
+            $category = $this->expenseCategoryRepository->find($categoryId);
+        }
+
+        if ($category === null) {
+            $category = $this->expenseCategoryRepository->findOneBy([
+                'name' => $categoryName,
+            ]);
+        }
+
+        if ($category === null) {
+            return $this->create($expenseCategoryPayload);
+        }
+
+        return $category;
     }
 }

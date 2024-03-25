@@ -47,7 +47,7 @@ class Expense
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -59,7 +59,7 @@ class Expense
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -71,7 +71,7 @@ class Expense
         return $this->amount;
     }
 
-    public function setAmount(float $amount): static
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
@@ -83,7 +83,7 @@ class Expense
         return $this->expenseCategory;
     }
 
-    public function setExpenseCategory(ExpenseCategory $expenseCategory): static
+    public function setExpenseCategory(ExpenseCategory $expenseCategory): self
     {
         $this->expenseCategory = $expenseCategory;
 
@@ -95,7 +95,7 @@ class Expense
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): static
+    public function setBudget(?Budget $budget): self
     {
         $this->budget = $budget;
 

@@ -39,7 +39,7 @@ class UserResponse implements ResponseInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -51,7 +51,7 @@ class UserResponse implements ResponseInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
 

@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -105,7 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -171,7 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->budgets;
     }
 
-    public function addBudget(Budget $budget): static
+    public function addBudget(Budget $budget): self
     {
         if (! $this->budgets->contains($budget)) {
             $this->budgets->add($budget);
@@ -181,7 +181,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeBudget(Budget $budget): static
+    public function removeBudget(Budget $budget): self
     {
         // set the owning side to null (unless already changed)
         if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {

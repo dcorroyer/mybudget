@@ -39,7 +39,7 @@ class Income
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -51,7 +51,7 @@ class Income
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -63,7 +63,7 @@ class Income
         return $this->amount;
     }
 
-    public function setAmount(float $amount): static
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
@@ -75,7 +75,7 @@ class Income
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): static
+    public function setBudget(?Budget $budget): self
     {
         $this->budget = $budget;
 

@@ -37,7 +37,7 @@ class BudgetPayload implements PayloadInterface
     /**
      * @param IncomePayload[] $incomes
      */
-    public function setIncomes(array $incomes): static
+    public function setIncomes(array $incomes): self
     {
         $this->incomes = $incomes;
 
@@ -55,7 +55,7 @@ class BudgetPayload implements PayloadInterface
     /**
      * @param ExpensePayload[] $expenses
      */
-    public function setExpenses(array $expenses): static
+    public function setExpenses(array $expenses): self
     {
         $this->expenses = $expenses;
 

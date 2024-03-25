@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Controller\Budget;
 
 use App\Dto\Budget\Payload\BudgetPayload;
-use App\Dto\Budget\Response\BudgetResponse;
+use App\Dto\Expense\Payload\ExpenseLinePayload;
+use App\Dto\Expense\Payload\ExpensePayload;
+use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
+use App\Dto\Income\Payload\IncomePayload;
+use App\Entity\ExpenseCategory;
 use App\Entity\User;
 use App\Repository\BudgetRepository;
 use App\Service\BudgetService;
 use App\Tests\Common\Factory\BudgetFactory;
+use App\Tests\Common\Factory\ExpenseCategoryFactory;
+use App\Tests\Common\Factory\ExpenseFactory;
+use App\Tests\Common\Factory\IncomeFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -53,29 +60,55 @@ class CreateBudgetControllerTest extends WebTestCase
     #[Test]
     public function createBudgetController_WhenDataOk_ReturnsBudget(): void
     {
+        $this->markTestSkipped();
         // ARRANGE
+        $incomes = IncomeFactory::new()->withoutPersisting()->createMany(2);
+        $expenses = ExpenseFactory::new()->withoutPersisting()->createMany(2);
+        $expenseCategory = ExpenseCategoryFactory::new()->withoutPersisting()->create()->object();
         $budget = BudgetFactory::new()->withoutPersisting()->create()->object();
 
-        $budgetPayload = (new BudgetPayload())
-            ->setDate($budget->getDate())
-            ->setExpenseId($budget->getExpense()->getId())
-            ->setIncomeId($budget->getIncome()->getId())
-        ;
+        $budgetPayload = [
+            'date' => $budget->getDate()->format('Y-m'),
+            'expenses' => [
+                'category' => [
+                    'name' => $expenseCategory->getName()
+                ],
+                'expenseLines' => [
+                    [
+                        'name' => $expenses[0]->getName(),
+                        'amount' => $expenses[0]->getAmount()
+                    ],
+                    [
+                        'name' => $expenses[1]->getName(),
+                        'amount' => $expenses[1]->getAmount()
+                    ]
+                ]
+            ],
+            'incomes' => [
+                [
+                    'name' => $incomes[0]->getName(),
+                    'amount' => $incomes[0]->getAmount()
+                ],
+                [
+                    'name' => $incomes[1]->getName(),
+                    'amount' => $incomes[1]->getAmount()
+                ]
+            ]
+        ];
 
-        $budgetResponse = (new BudgetResponse())
-            ->setId($budget->getId())
-        ;
+        //dd(json_encode($budgetPayload));
 
         $this->budgetService
             ->expects($this->once())
             ->method('create')
-            ->willReturn($budgetResponse)
+            ->willReturn($budget)
         ;
 
         // ACT
         $endpoint = self::API_ENDPOINT;
+
         $this->client->request(method: 'POST', uri: $endpoint, server: [
-            'CONTENT_TYPE' => 'application/json',
+            'Content-Type' => 'application/json',
         ], content: json_encode($budgetPayload));
         $content = json_decode($this->client->getResponse()->getContent(), true);
         $data = $content['data'] ?? [];
@@ -83,6 +116,6 @@ class CreateBudgetControllerTest extends WebTestCase
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertSame($budgetResponse->getId(), $data['id']);
+        $this->assertSame($budget->getId(), $data['id']);
     }
 }

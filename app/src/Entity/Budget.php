@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -21,8 +20,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Budget
 {
-    use TimestampableTrait;
-
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -83,7 +80,7 @@ class Budget
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -95,7 +92,7 @@ class Budget
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -114,7 +111,7 @@ class Budget
         return $this->savingCapacity;
     }
 
-    public function setSavingCapacity(?float $savingCapacity): static
+    public function setSavingCapacity(?float $savingCapacity): self
     {
         $this->savingCapacity = $savingCapacity;
 
@@ -154,7 +151,7 @@ class Budget
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
 
@@ -170,7 +167,7 @@ class Budget
         return $this->incomes;
     }
 
-    public function addIncome(Income $income): static
+    public function addIncome(Income $income): self
     {
         if (!$this->incomes->contains($income)) {
             $this->incomes[] = $income;
@@ -188,7 +185,7 @@ class Budget
         return $this->expenses;
     }
 
-    public function addExpense(Expense $expense): static
+    public function addExpense(Expense $expense): self
     {
         if (!$this->expenses->contains($expense)) {
             $this->expenses[] = $expense;
@@ -203,7 +200,7 @@ class Budget
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 

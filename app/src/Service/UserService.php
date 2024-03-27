@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\User\Payload\RegisterPayload;
-use App\Dto\User\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use My\RestBundle\Helper\DtoToEntityHelper;
@@ -21,7 +20,7 @@ class UserService
     ) {
     }
 
-    public function create(RegisterPayload $registerPayload): UserResponse
+    public function create(RegisterPayload $registerPayload): User
     {
         $user = new User();
 
@@ -34,15 +33,10 @@ class UserService
 
         $this->userRepository->save($user, true);
 
-        return (new UserResponse())
-            ->setId($user->getId())
-            ->setEmail($user->getEmail())
-            ->setFirstName($user->getFirstName())
-            ->setLastName($user->getLastName())
-        ;
+        return $user;
     }
 
-    public function get(string $userIdentifier): UserResponse
+    public function get(string $userIdentifier): User
     {
         $user = $this->userRepository->findOneBy([
             'email' => $userIdentifier,
@@ -52,11 +46,6 @@ class UserService
             throw new NotFoundHttpException("User {$userIdentifier} not found");
         }
 
-        return (new UserResponse())
-            ->setId($user->getId())
-            ->setEmail($user->getEmail())
-            ->setFirstName($user->getFirstName())
-            ->setLastName($user->getLastName())
-        ;
+        return $user;
     }
 }

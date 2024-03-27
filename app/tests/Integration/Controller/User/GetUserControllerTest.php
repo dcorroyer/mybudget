@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\User;
 
-use App\Dto\User\Response\UserResponse;
+use App\Entity\User;
 use App\Service\UserService;
 use App\Tests\Common\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Group;
@@ -49,7 +49,7 @@ class GetUserControllerTest extends WebTestCase
         // ARRANGE
         $user = UserFactory::new()->withoutPersisting()->create()->object();
 
-        $userResponse = (new UserResponse())
+        $userResponse = (new User())
             ->setEmail($user->getEmail())
             ->setFirstName($user->getFirstName())
             ->setLastName($user->getLastName())

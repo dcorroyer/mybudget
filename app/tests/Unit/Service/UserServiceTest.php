@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\User\Payload\RegisterPayload;
-use App\Dto\User\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserService;
@@ -94,7 +93,7 @@ class UserServiceTest extends TestCase
         $userResponse = $this->userService->create($registerPayload);
 
         // ASSERT
-        $this->assertInstanceOf(UserResponse::class, $userResponse);
+        $this->assertInstanceOf(User::class, $userResponse);
         $this->assertInstanceOf(User::class, $user);
         $this->assertSame($user->getId(), $userResponse->getId());
         $this->assertSame($user->getEmail(), $userResponse->getEmail());
@@ -122,7 +121,7 @@ class UserServiceTest extends TestCase
         $userResponse = $this->userService->get($user->getEmail());
 
         // ASSERT
-        $this->assertInstanceOf(UserResponse::class, $userResponse);
+        $this->assertInstanceOf(User::class, $userResponse);
         $this->assertInstanceOf(User::class, $user);
         $this->assertSame($user->getId(), $userResponse->getId());
         $this->assertSame($user->getEmail(), $userResponse->getEmail());

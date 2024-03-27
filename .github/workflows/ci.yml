@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     services:
       mariadb:
-        image: mariadb:11.3
+        image: mariadb:10.5.24
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:

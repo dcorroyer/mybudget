@@ -64,9 +64,9 @@ jobs:
         working-directory: app
         run: $GITHUB_WORKSPACE/tools/rector/vendor/bin/rector --dry-run --clear-cache --config=rector.php
 
-#      - name: PHPStan
-#        working-directory: app
-#        run: $GITHUB_WORKSPACE/tools/phpstan/vendor/bin/phpstan analyse --level=8 --configuration $GITHUB_WORKSPACE/app/phpstan.neon --memory-limit=1G
+      - name: PHPStan
+        working-directory: app
+        run: $GITHUB_WORKSPACE/tools/phpstan/vendor/bin/phpstan analyse --level=8 --configuration $GITHUB_WORKSPACE/app/phpstan.neon --memory-limit=1G
 
       - name: Run Tests
         env:

@@ -80,7 +80,7 @@ class ExpenseCategoryServiceTest extends TestCase
     public function manageExpenseCategoryCategoryExpenseService_WhenDataContainsId_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
-        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $expenseCategoryService = new ExpenseCategoryService($this->expenseCategoryRepository);
         $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
 
         // ARRANGE
@@ -102,7 +102,7 @@ class ExpenseCategoryServiceTest extends TestCase
         ;
 
         // ACT
-        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
+        $expenseCategoryResponse = $method->invoke($expenseCategoryService, $expenseCategoryPayload);
 
         // ASSERT
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
@@ -115,7 +115,7 @@ class ExpenseCategoryServiceTest extends TestCase
     public function manageExpenseCategoryExpenseCategoryService_WhenDataContainsName_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
-        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $expenseCategoryService = new ExpenseCategoryService($this->expenseCategoryRepository);
         $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
 
         // ARRANGE
@@ -137,7 +137,7 @@ class ExpenseCategoryServiceTest extends TestCase
         ;
 
         // ACT
-        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
+        $expenseCategoryResponse = $method->invoke($expenseCategoryService, $expenseCategoryPayload);
 
         // ASSERT
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
@@ -150,7 +150,7 @@ class ExpenseCategoryServiceTest extends TestCase
     public function manageExpenseCategoryExpenseCategoryService_WhenDataContainsNewName_ReturnsExpenseCategory(): void
     {
         // ARRANGE PRIVATE METHOD TEST
-        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $expenseCategoryService = new ExpenseCategoryService($this->expenseCategoryRepository);
         $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
 
         // ARRANGE
@@ -172,7 +172,7 @@ class ExpenseCategoryServiceTest extends TestCase
         ;
 
         // ACT
-        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
+        $expenseCategoryResponse = $method->invoke($expenseCategoryService, $expenseCategoryPayload);
 
         // ASSERT
         $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);

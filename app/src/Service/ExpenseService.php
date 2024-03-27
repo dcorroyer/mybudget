@@ -17,6 +17,9 @@ class ExpenseService
     ) {
     }
 
+    /**
+     * @return array<int, Expense>
+     */
     public function create(ExpensePayload $expensePayload, Budget $budget): array
     {
         $expenses = [];
@@ -28,7 +31,8 @@ class ExpenseService
             $expense->setAmount($expenseLinePayload->getAmount())
                 ->setName($expenseLinePayload->getName())
                 ->setExpenseCategory($category)
-                ->setBudget($budget);
+                ->setBudget($budget)
+            ;
 
             $this->expenseRepository->save($expense);
 

@@ -46,10 +46,7 @@ class ExpenseServiceTest extends TestCase
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
         $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
 
-        $this->expenseService = new ExpenseService(
-            $this->expenseRepository,
-            $this->expenseCategoryService
-        );
+        $this->expenseService = new ExpenseService($this->expenseRepository, $this->expenseCategoryService);
     }
 
     #[TestDox('When calling create expense, it should create and return a new expense')]
@@ -60,8 +57,8 @@ class ExpenseServiceTest extends TestCase
         $expenses = ExpenseFactory::new([
             'id' => 1,
         ])->withoutPersisting()
-            ->createMany(5);
-
+            ->createMany(5)
+        ;
 
         /** @var ExpenseLinePayload[] $expenseLinesPayload */
         $expenseLinesPayload = $expenses;
@@ -71,11 +68,13 @@ class ExpenseServiceTest extends TestCase
         $expenseCategory = ExpenseCategoryFactory::new()->withoutPersisting()->create()->object();
 
         $expenseCategoryPayload = (new ExpenseCategoryPayload())
-            ->setName($expenseCategory->getName());
+            ->setName($expenseCategory->getName())
+        ;
 
         $expensePayload = (new ExpensePayload())
             ->setCategory($expenseCategoryPayload)
-            ->setExpenseLines($expenseLinesPayload);
+            ->setExpenseLines($expenseLinesPayload)
+        ;
 
         $this->expenseCategoryService->expects($this->once())
             ->method('manageExpenseCategory')

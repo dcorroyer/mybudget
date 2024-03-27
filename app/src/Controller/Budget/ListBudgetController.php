@@ -22,9 +22,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[OA\Tag(name: 'Budgets')]
 class ListBudgetController extends BaseRestController
 {
-    /**
-     * @throws \Exception
-     */
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
         operationId: 'list_budget',

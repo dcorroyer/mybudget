@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\Expense;
@@ -55,9 +57,8 @@ final class ExpenseFactory extends ModelFactory
      */
     protected function initialize(): self
     {
-        return $this
-            // ->afterInstantiate(function(Expense $expense): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(Expense $expense): void {})
     }
 
     protected static function getClass(): string

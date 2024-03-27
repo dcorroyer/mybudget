@@ -20,18 +20,33 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Budget
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
@@ -45,7 +60,12 @@ class Budget
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_LIST, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -54,14 +74,14 @@ class Budget
     /**
      * @var Collection<Income>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Income::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
      * @var Collection<Expense>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Expense::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 
@@ -161,7 +181,6 @@ class Budget
     /**
      * @return Collection<int, Income>
      */
-
     public function getIncomes(): Collection
     {
         return $this->incomes;
@@ -169,7 +188,7 @@ class Budget
 
     public function addIncome(Income $income): self
     {
-        if (!$this->incomes->contains($income)) {
+        if (! $this->incomes->contains($income)) {
             $this->incomes[] = $income;
             $income->setBudget($this);
         }
@@ -187,7 +206,7 @@ class Budget
 
     public function addExpense(Expense $expense): self
     {
-        if (!$this->expenses->contains($expense)) {
+        if (! $this->expenses->contains($expense)) {
             $this->expenses[] = $expense;
             $expense->setBudget($this);
         }

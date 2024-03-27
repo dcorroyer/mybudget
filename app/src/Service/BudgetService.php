@@ -48,7 +48,8 @@ class BudgetService
         $user = $this->security->getUser();
 
         $budget->setDate($budgetPayload->getDate())
-            ->setUser($user);
+            ->setUser($user)
+        ;
 
         foreach ($budgetPayload->getIncomes() as $incomePayload) {
             $income = $this->incomeService->create($incomePayload, $budget);
@@ -88,9 +89,6 @@ class BudgetService
         return $budget;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?BudgetFilterQuery $budgetFilterQuery = null): SlidingPagination
     {
         $criteria = Criteria::create();

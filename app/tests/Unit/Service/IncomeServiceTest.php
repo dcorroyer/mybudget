@@ -58,7 +58,8 @@ class IncomeServiceTest extends TestCase
 
         $incomePayload = (new IncomePayload())
             ->setName($income->getName())
-            ->setAmount($income->getAmount());
+            ->setAmount($income->getAmount())
+        ;
 
         $this->incomeRepository->expects($this->once())
             ->method('save')

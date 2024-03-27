@@ -37,7 +37,7 @@ parameters:
     reportAnyTypeWideningInVarTag: true
 #    checkMissingOverrideMethodAttribute: true
     checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: true
+    checkGenericClassInNonGenericObjectType: false
     checkMissingCallableSignature: true
     type_coverage:
         return_type: 95

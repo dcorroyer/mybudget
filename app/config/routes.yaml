@@ -19,5 +19,5 @@ app_default:
     defaults:
         template: base.html.twig
     requirements:
-        path: ".+"
+        path: "^(?!api/).*$"
 

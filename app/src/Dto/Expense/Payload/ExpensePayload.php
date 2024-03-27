@@ -24,9 +24,9 @@ class ExpensePayload implements PayloadInterface
         return $this->category;
     }
 
-    public function setCategory(ExpenseCategoryPayload $category): self
+    public function setCategory(ExpenseCategoryPayload $expenseCategoryPayload): self
     {
-        $this->category = $category;
+        $this->category = $expenseCategoryPayload;
 
         return $this;
     }

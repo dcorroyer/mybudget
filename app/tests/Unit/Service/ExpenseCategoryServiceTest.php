@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
-use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Entity\ExpenseCategory;
 use App\Repository\ExpenseCategoryRepository;
 use App\Service\ExpenseCategoryService;
 use App\Tests\Common\Factory\ExpenseCategoryFactory;
-use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
-use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -78,10 +75,14 @@ class ExpenseCategoryServiceTest extends TestCase
         $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    #[TestDox('When calling update expense category, it should update and returns the expense category updated')]
+    #[TestDox('When calling manage expense category with the Id of an existing category, it should returns the expense category')]
     #[Test]
-    public function updateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoryUpdated(): void
+    public function manageExpenseCategoryCategoryExpenseService_WhenDataContainsId_ReturnsExpenseCategory(): void
     {
+        // ARRANGE PRIVATE METHOD TEST
+        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
+
         // ARRANGE
         $expenseCategory = ExpenseCategoryFactory::new([
             'id' => 1,
@@ -91,70 +92,97 @@ class ExpenseCategoryServiceTest extends TestCase
         ;
 
         $expenseCategoryPayload = (new ExpenseCategoryPayload())
-            ->setName('category name updated')
+            ->setId($expenseCategory->getId())
+            ->setName($expenseCategory->getName())
         ;
 
-        $this->expenseCategoryRepository
-            ->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(static function (ExpenseCategory $expenseCategory): void {
-                $expenseCategory->setId(1);
-            })
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($expenseCategory)
         ;
 
         // ACT
-        $expenseCategoryResponse = $this->expenseCategoryService->update($expenseCategoryPayload, $expenseCategory);
+        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
 
         // ASSERT
-        $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
-        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
         $this->assertSame($expenseCategory->getId(), $expenseCategoryResponse->getId());
         $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    #[TestDox('When calling update expense category, it should NOT update but should only returns the expense category updated')]
+    #[TestDox('When calling manage expense category with the Name of an existing category, it should returns the expense category')]
     #[Test]
-    public function updateExpenseCategoryService_WhenNoNewData_ReturnsExpenseCategory(): void
+    public function manageExpenseCategoryExpenseCategoryService_WhenDataContainsName_ReturnsExpenseCategory(): void
     {
+        // ARRANGE PRIVATE METHOD TEST
+        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
+
         // ARRANGE
         $expenseCategory = ExpenseCategoryFactory::new([
             'id' => 1,
-            'name' => 'category name',
+            'name' => 'test',
         ])->withoutPersisting()
             ->create()
             ->object()
         ;
 
         $expenseCategoryPayload = (new ExpenseCategoryPayload())
-            ->setName('category name')
+            ->setName($expenseCategory->getName())
+        ;
+
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($expenseCategory)
         ;
 
         // ACT
-        $expenseCategoryResponse = $this->expenseCategoryService->update($expenseCategoryPayload, $expenseCategory);
+        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
 
         // ASSERT
-        $this->assertInstanceOf(ExpenseCategoryResponse::class, $expenseCategoryResponse);
-        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategory);
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
         $this->assertSame($expenseCategory->getId(), $expenseCategoryResponse->getId());
         $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
     }
 
-    #[TestDox('When you call paginate, it should returns the expense categories list')]
+    #[TestDox('When calling manage expense category with the Name of an existing category, it should returns the expense category')]
     #[Test]
-    public function paginateExpenseCategoryService_WhenDataOk_ReturnsExpenseCategoriesList(): void
+    public function manageExpenseCategoryExpenseCategoryService_WhenDataContainsNewName_ReturnsExpenseCategory(): void
     {
-        // ARRANGE
-        $expenseCategories = ExpenseCategoryFactory::new()->withoutPersisting()->createMany(20);
-        $slidingPagination = PaginationTestHelper::getPagination($expenseCategories);
+        // ARRANGE PRIVATE METHOD TEST
+        $expenseService = new ExpenseCategoryService($this->expenseCategoryRepository);
+        $method = $this->getPrivateMethod(ExpenseCategoryService::class, 'manageExpenseCategory');
 
-        $this->expenseCategoryRepository->method('paginate')
-            ->willReturn($slidingPagination)
+        // ARRANGE
+        $expenseCategory = ExpenseCategoryFactory::new([
+            'id' => 1,
+            'name' => 'test',
+        ])->withoutPersisting()
+            ->create()
+            ->object()
+        ;
+
+        $expenseCategoryPayload = (new ExpenseCategoryPayload())
+            ->setName($expenseCategory->getName())
+        ;
+
+        $this->expenseCategoryRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null)
         ;
 
         // ACT
-        $expenseCategoriesResponse = $this->expenseCategoryService->paginate(new PaginationQueryParams());
+        $expenseCategoryResponse = $method->invoke($expenseService, $expenseCategoryPayload);
 
         // ASSERT
-        $this->assertCount(20, $expenseCategoriesResponse);
+        $this->assertInstanceOf(ExpenseCategory::class, $expenseCategoryResponse);
+        $this->assertSame($expenseCategory->getName(), $expenseCategoryResponse->getName());
+    }
+
+    private function getPrivateMethod(string $className, string $methodName): \ReflectionMethod
+    {
+        $reflectionClass = new \ReflectionClass($className);
+
+        return $reflectionClass->getMethod($methodName);
     }
 }

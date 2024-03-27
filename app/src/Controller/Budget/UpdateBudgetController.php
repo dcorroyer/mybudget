@@ -24,16 +24,16 @@ use Symfony\Component\Routing\Attribute\Route;
 class UpdateBudgetController extends BaseRestController
 {
     #[MyOpenApi(
-        httpMethod: Request::METHOD_PUT,
-        operationId: 'put_budget',
-        summary: 'put budget',
+        httpMethod: Request::METHOD_PATCH,
+        operationId: 'patch_budget',
+        summary: 'patch budget',
         responses: [
-            new SuccessResponse(responseClassFqcn: Budget::class, groups: [SerializationGroups::BUDGET_UPDATE], description: 'Budget update'),
+            new SuccessResponse(responseClassFqcn: Budget::class, groups: [SerializationGroups::BUDGET_UPDATE], description: 'Budget updated'),
             new NotFoundResponse(description: 'Budget not found'),
         ],
         requestBodyClassFqcn: BudgetPayload::class
     )]
-    #[Route('/{id}', name: 'api_budgets_update', methods: Request::METHOD_PUT)]
+    #[Route('/{id}', name: 'api_budgets_update', methods: Request::METHOD_PATCH)]
     public function __invoke(BudgetService $budgetService, Budget $budget, #[MapRequestPayload] UpdateBudgetPayload $updateBudgetPayload): JsonResponse
     {
         return $this->successResponse(data: $budgetService->update($updateBudgetPayload, $budget), groups: [SerializationGroups::BUDGET_UPDATE]);

@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\ExpenseCategory\Http\ExpenseCategoryFilterQuery;
 use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
-use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
 use App\Entity\ExpenseCategory;
 use App\Repository\ExpenseCategoryRepository;
-use Doctrine\Common\Collections\Criteria;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
-use My\RestBundle\Dto\PaginationQueryParams;
 
 class ExpenseCategoryService
 {
@@ -25,29 +20,31 @@ class ExpenseCategoryService
         $expenseCategory = new ExpenseCategory();
         $expenseCategory->setName($expenseCategoryPayload->getName());
 
-        $this->expenseCategoryRepository->save($expenseCategory, true);
+        $this->expenseCategoryRepository->save($expenseCategory);
 
         return $expenseCategory;
     }
 
-    public function update(ExpenseCategoryPayload $expenseCategoryPayload, ExpenseCategory $expenseCategory): ExpenseCategoryResponse
+    public function manageExpenseCategory(ExpenseCategoryPayload $expenseCategoryPayload): ExpenseCategory
     {
-        if ($expenseCategory->getName() !== $expenseCategoryPayload->getName()) {
-            $expenseCategory->setName($expenseCategoryPayload->getName());
+        $category = null;
+        $categoryId = $expenseCategoryPayload->getId();
+        $categoryName = $expenseCategoryPayload->getName();
 
-            $this->expenseCategoryRepository->save($expenseCategory, true);
+        if ($categoryId !== null) {
+            $category = $this->expenseCategoryRepository->find($categoryId);
         }
 
-        return (new ExpenseCategoryResponse())
-            ->setId($expenseCategory->getId())
-            ->setName($expenseCategory->getName())
-        ;
-    }
+        if ($category === null) {
+            $category = $this->expenseCategoryRepository->findOneBy([
+                'name' => $categoryName,
+            ]);
+        }
 
-    public function paginate(
-        ?PaginationQueryParams $paginationQueryParams = null,
-        ?ExpenseCategoryFilterQuery $expenseCategoryFilterQuery = null
-    ): SlidingPagination {
-        return $this->expenseCategoryRepository->paginate($paginationQueryParams, $expenseCategoryFilterQuery, Criteria::create());
+        if ($category === null) {
+            return $this->create($expenseCategoryPayload);
+        }
+
+        return $category;
     }
 }

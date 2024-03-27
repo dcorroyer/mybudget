@@ -4,51 +4,60 @@ declare(strict_types=1);
 
 namespace App\Dto\Budget\Payload;
 
+use App\Dto\Expense\Payload\ExpensePayload;
+use App\Dto\Income\Payload\IncomePayload;
 use App\Trait\Payload\DatePayloadTrait;
 use My\RestBundle\Contract\PayloadInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class BudgetPayload implements PayloadInterface
 {
     use DatePayloadTrait;
 
-    private int $incomeId;
+    /**
+     * @var array<int, IncomePayload>
+     */
+    #[Assert\NotBlank]
+    private array $incomes = [];
 
-    private int $expenseId;
+    /**
+     * @var array<int, ExpensePayload>
+     */
+    #[Assert\NotBlank]
+    private array $expenses = [];
 
-    private int $userId;
-
-    public function getIncomeId(): int
+    /**
+     * @return IncomePayload[]
+     */
+    public function getIncomes(): array
     {
-        return $this->incomeId;
+        return $this->incomes;
     }
 
-    public function setIncomeId(int $incomeId): static
+    /**
+     * @param IncomePayload[] $incomes
+     */
+    public function setIncomes(array $incomes): self
     {
-        $this->incomeId = $incomeId;
+        $this->incomes = $incomes;
 
         return $this;
     }
 
-    public function getExpenseId(): int
+    /**
+     * @return ExpensePayload[]
+     */
+    public function getExpenses(): array
     {
-        return $this->expenseId;
+        return $this->expenses;
     }
 
-    public function setExpenseId(int $expenseId): static
+    /**
+     * @param ExpensePayload[] $expenses
+     */
+    public function setExpenses(array $expenses): self
     {
-        $this->expenseId = $expenseId;
-
-        return $this;
-    }
-
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
+        $this->expenses = $expenses;
 
         return $this;
     }

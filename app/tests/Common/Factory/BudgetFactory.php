@@ -47,9 +47,8 @@ final class BudgetFactory extends ModelFactory
         return [
             'id' => self::faker()->randomDigit(),
             'date' => self::faker()->dateTime(),
-            'expense' => ExpenseFactory::new()->withoutPersisting()->create(),
-            'income' => IncomeFactory::new()->withoutPersisting()->create(),
-            'user' => UserFactory::new()->withoutPersisting()->create(),
+            'name' => self::faker()->text(255),
+            'user' => UserFactory::new(),
         ];
     }
 

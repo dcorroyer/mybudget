@@ -45,8 +45,7 @@ final class ExpenseCategoryFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'id' => self::faker()->randomDigit(),
-            'name' => self::faker()->text(25),
+            'name' => self::faker()->text(255),
         ];
     }
 
@@ -56,7 +55,7 @@ final class ExpenseCategoryFactory extends ModelFactory
     protected function initialize(): self
     {
         return $this;
-        // ->afterInstantiate(function(ExpenseCategory $category): void {})
+        // ->afterInstantiate(function(ExpenseCategory $expenseCategory): void {})
     }
 
     protected static function getClass(): string

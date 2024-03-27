@@ -45,13 +45,10 @@ final class IncomeFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'id' => self::faker()->randomNumber(),
+            'id' => self::faker()->randomDigit(),
             'amount' => self::faker()->randomFloat(),
-            'incomeLines' => IncomeLineFactory::new([
-                'income' => $this,
-            ])->withoutPersisting()
-                ->many(2)
-                ->create(),
+            'budget' => BudgetFactory::new(),
+            'name' => self::faker()->text(255),
         ];
     }
 
@@ -61,7 +58,7 @@ final class IncomeFactory extends ModelFactory
     protected function initialize(): self
     {
         return $this;
-        // ->afterInstantiate(function(IncomeResponse $income): void {})
+        // ->afterInstantiate(function(Income $income): void {})
     }
 
     protected static function getClass(): string

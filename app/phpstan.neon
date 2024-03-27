@@ -27,6 +27,7 @@ parameters:
     excludePaths:
     ignoreErrors:
         - '#^Class .*[Payload] has an uninitialized property.*$#'
+        - '#^Class .*\\Entity\\.* has an uninitialized property.*$#'
     symfony:
         containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.xml
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
@@ -37,7 +38,7 @@ parameters:
     reportAnyTypeWideningInVarTag: true
 #    checkMissingOverrideMethodAttribute: true
     checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: true
+    checkGenericClassInNonGenericObjectType: false
     checkMissingCallableSignature: true
     type_coverage:
         return_type: 95

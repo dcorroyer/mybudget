@@ -22,7 +22,8 @@ class IncomeService
 
         $income->setName($incomePayload->getName())
             ->setAmount($incomePayload->getAmount())
-            ->setBudget($budget);
+            ->setBudget($budget)
+        ;
 
         $this->incomeRepository->save($income);
 

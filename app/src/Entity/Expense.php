@@ -15,25 +15,25 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'expenses')]
 class Expense
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::FLOAT)]
     #[ORM\Column]
     private float $amount;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY', inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
     private ExpenseCategory $expenseCategory;

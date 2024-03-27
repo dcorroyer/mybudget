@@ -22,9 +22,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[OA\Tag(name: 'Budgets')]
 class CreateBudgetController extends BaseRestController
 {
-    /**
-     * @throws \Exception
-     */
     #[MyOpenApi(
         httpMethod: Request::METHOD_POST,
         operationId: 'post_budget',
@@ -40,10 +37,7 @@ class CreateBudgetController extends BaseRestController
         requestBodyClassFqcn: BudgetPayload::class
     )]
     #[Route('', name: 'api_budgets_create', methods: Request::METHOD_POST)]
-    public function __invoke(
-        BudgetService $budgetService,
-        #[MapRequestPayload] BudgetPayload $budgetPayload
-    ): JsonResponse
+    public function __invoke(BudgetService $budgetService, #[MapRequestPayload] BudgetPayload $budgetPayload): JsonResponse
     {
         return $this->successResponse(
             data: $budgetService->create($budgetPayload),

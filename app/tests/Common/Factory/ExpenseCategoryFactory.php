@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\ExpenseCategory;
@@ -52,9 +54,8 @@ final class ExpenseCategoryFactory extends ModelFactory
      */
     protected function initialize(): self
     {
-        return $this
-            // ->afterInstantiate(function(ExpenseCategory $expenseCategory): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(ExpenseCategory $expenseCategory): void {})
     }
 
     protected static function getClass(): string

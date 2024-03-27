@@ -6,59 +6,41 @@ namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
 use App\Serializable\SerializationGroups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use My\RestBundle\Trait\TimestampableTrait;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
-#[ORM\HasLifecycleCallbacks]
 class Expense
 {
-    use TimestampableTrait;
-
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_DELETE,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
+    #[Assert\NotBlank]
+    #[Assert\Type(Types::STRING)]
+    #[ORM\Column(length: 255)]
+    private string $name;
+
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
+    #[Assert\NotBlank]
+    #[Assert\Type(Types::FLOAT)]
     #[ORM\Column]
-    private ?float $amount = 0;
+    private float $amount;
 
-    /**
-     * @var Collection<ExpenseLine>
-     */
-    #[Serializer\Groups([
-        SerializationGroups::EXPENSE_GET,
-        SerializationGroups::EXPENSE_LIST,
-        SerializationGroups::EXPENSE_DELETE,
-        SerializationGroups::BUDGET_GET,
-    ])]
-    #[ORM\OneToMany(mappedBy: 'expense', targetEntity: ExpenseLine::class, cascade: ['persist'], orphanRemoval: true)]
-    private Collection $expenseLines;
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
+    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ExpenseCategory $expenseCategory;
 
-    public function __construct()
-    {
-        $this->expenseLines = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
+    private ?Budget $budget = null;
 
     public function getId(): int
     {
@@ -72,53 +54,50 @@ class Expense
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateAmount(): void
+    public function getExpenseCategory(): ExpenseCategory
     {
-        $this->amount = 0;
-
-        foreach ($this->expenseLines as $expenseLine) {
-            $this->amount += $expenseLine->getAmount();
-        }
+        return $this->expenseCategory;
     }
 
-    /**
-     * @return Collection<int, ExpenseLine>
-     */
-    public function getExpenseLines(): Collection
+    public function setExpenseCategory(ExpenseCategory $expenseCategory): self
     {
-        return $this->expenseLines;
-    }
-
-    public function addExpenseLine(ExpenseLine $expenseLine): self
-    {
-        if (! $this->expenseLines->contains($expenseLine)) {
-            $this->expenseLines[] = $expenseLine;
-            $expenseLine->setExpense($this);
-        }
+        $this->expenseCategory = $expenseCategory;
 
         return $this;
     }
 
-    public function removeExpenseLine(ExpenseLine $expenseLine): self
+    public function getBudget(): ?Budget
     {
-        // set the owning side to null (unless already changed)
-        if ($this->expenseLines->removeElement($expenseLine) && $expenseLine->getExpense() === $this) {
-            $expenseLine->setExpense(null);
-        }
+        return $this->budget;
+    }
+
+    public function setBudget(?Budget $budget): self
+    {
+        $this->budget = $budget;
 
         return $this;
     }

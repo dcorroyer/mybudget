@@ -1,23 +1,27 @@
 import { z } from 'zod'
 
-export const schemaIncomes = z.object({
+export const incomesFormSchema = z.object({
     name: z.string().min(2),
     amount: z.coerce.number().gt(0),
 })
 
-export const schemaExpenseLines = z.object({
+export const expenseLinesFormSchema = z.object({
     name: z.string().min(2),
     amount: z.coerce.number().gt(0),
 })
 
-export const schemaExpenses = z.object({
-    categoryName: z.string().min(2),
-    expenseLines: z.array(schemaExpenseLines),
+export const expensesFormSchema = z.object({
+    category: z.object(
+        {
+            name: z.string().min(2),
+        }
+    ),
+    expenseLines: z.array(expenseLinesFormSchema),
 })
 
-export const schemaCreateBudget = z.object({
-    incomes: z.array(schemaIncomes),
-    expenses: z.array(schemaExpenses),
+export const budgetFormSchema = z.object({
+    incomes: z.array(incomesFormSchema),
+    expenses: z.array(expensesFormSchema),
 })
 
-export type FormTypeCreateBudget = z.infer<typeof schemaCreateBudget>
+export type formTypeCreateBudget = z.infer<typeof budgetFormSchema>

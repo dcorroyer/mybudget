@@ -11,7 +11,7 @@ export const NavItems: NavItem[] = [
     {
         title: 'Budget',
         icon: Euro,
-        href: '/tracking',
+        href: '/budget',
         color: 'text-orange-500',
     },
 ]

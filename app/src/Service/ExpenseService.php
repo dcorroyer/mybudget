@@ -4,113 +4,41 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\Expense\Http\ExpenseFilterQuery;
 use App\Dto\Expense\Payload\ExpensePayload;
-use App\Dto\Expense\Response\ExpenseLineResponse;
-use App\Dto\Expense\Response\ExpenseResponse;
-use App\Dto\ExpenseCategory\Payload\ExpenseCategoryPayload;
-use App\Dto\ExpenseCategory\Response\ExpenseCategoryResponse;
+use App\Entity\Budget;
 use App\Entity\Expense;
-use App\Entity\ExpenseCategory;
-use App\Entity\ExpenseLine;
-use App\Repository\ExpenseCategoryRepository;
-use App\Repository\ExpenseLineRepository;
 use App\Repository\ExpenseRepository;
-use Doctrine\Common\Collections\Criteria;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
-use My\RestBundle\Dto\PaginationQueryParams;
 
 class ExpenseService
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
-        private readonly ExpenseLineRepository $expenseLineRepository,
-        private readonly ExpenseCategoryRepository $expenseCategoryRepository,
         private readonly ExpenseCategoryService $expenseCategoryService,
     ) {
     }
 
-    public function create(ExpensePayload $expensePayload): ExpenseResponse
+    /**
+     * @return array<int, Expense>
+     */
+    public function create(ExpensePayload $expensePayload, Budget $budget): array
     {
-        $expense = new Expense();
-
-        return $this->updateOrCreateExpense($expensePayload, $expense);
-    }
-
-    public function update(ExpensePayload $expensePayload, Expense $expense): ExpenseResponse
-    {
-        return $this->updateOrCreateExpense($expensePayload, $expense);
-    }
-
-    public function delete(Expense $expense): Expense
-    {
-        $this->expenseRepository->delete($expense);
-
-        return $expense;
-    }
-
-    public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?ExpenseFilterQuery $expenseFilterQuery = null): SlidingPagination
-    {
-        return $this->expenseRepository->paginate($paginationQueryParams, $expenseFilterQuery, Criteria::create());
-    }
-
-    private function updateOrCreateExpense(ExpensePayload $expensePayload, Expense $expense): ExpenseResponse
-    {
-        $expenseLinesResponse = [];
+        $expenses = [];
+        $category = $this->expenseCategoryService->manageExpenseCategory($expensePayload->getCategory());
 
         foreach ($expensePayload->getExpenseLines() as $expenseLinePayload) {
-            $category = $this->manageExpenseCategory($expenseLinePayload->getCategory());
+            $expense = new Expense();
 
-            $expenseLine = $expenseLinePayload->getId() !== null
-                ? $this->expenseLineRepository->find($expenseLinePayload->getId())
-                : new ExpenseLine();
-
-            $expenseLine->setName($expenseLinePayload->getName())
-                ->setAmount($expenseLinePayload->getAmount())
-                ->setCategory($category)
+            $expense->setAmount($expenseLinePayload->getAmount())
+                ->setName($expenseLinePayload->getName())
+                ->setExpenseCategory($category)
+                ->setBudget($budget)
             ;
 
-            $expense->addExpenseLine($expenseLine);
+            $this->expenseRepository->save($expense);
+
+            $expenses[] = $expense;
         }
 
-        $this->expenseRepository->save($expense, true);
-
-        foreach ($expense->getExpenseLines() as $expenseLine) {
-            $expenseLinesResponse[] = (new ExpenseLineResponse())
-                ->setId($expenseLine->getId())
-                ->setName($expenseLine->getName())
-                ->setAmount($expenseLine->getAmount())
-                ->setCategory((new ExpenseCategoryResponse())->setId($expenseLine->getCategory()->getId())->setName($expenseLine->getCategory()->getName()))
-            ;
-        }
-
-        return (new ExpenseResponse())
-            ->setId($expense->getId())
-            ->setAmount($expense->getAmount())
-            ->setExpenseLines($expenseLinesResponse)
-        ;
-    }
-
-    private function manageExpenseCategory(ExpenseCategoryPayload $expenseCategoryPayload): ExpenseCategory
-    {
-        $category = null;
-        $categoryId = $expenseCategoryPayload->getId();
-        $categoryName = $expenseCategoryPayload->getName();
-
-        if ($categoryId !== null) {
-            $category = $this->expenseCategoryRepository->find($categoryId);
-        }
-
-        if ($category === null) {
-            $category = $this->expenseCategoryRepository->findOneBy([
-                'name' => $categoryName,
-            ]);
-        }
-
-        if ($category === null) {
-            return $this->expenseCategoryService->create($expenseCategoryPayload);
-        }
-
-        return $category;
+        return $expenses;
     }
 }

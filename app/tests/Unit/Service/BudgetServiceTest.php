@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\BudgetPayload;
 use App\Dto\Budget\Payload\UpdateBudgetPayload;
-use App\Dto\Budget\Response\BudgetResponse;
 use App\Entity\Budget;
 use App\Repository\BudgetRepository;
-use App\Repository\ExpenseRepository;
-use App\Repository\IncomeRepository;
 use App\Service\BudgetService;
+use App\Service\ExpenseService;
+use App\Service\IncomeService;
 use App\Tests\Common\Factory\BudgetFactory;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
@@ -39,9 +37,9 @@ class BudgetServiceTest extends TestCase
 
     private BudgetRepository $budgetRepository;
 
-    private IncomeRepository $incomeRepository;
+    private IncomeService $incomeService;
 
-    private ExpenseRepository $expenseRepository;
+    private ExpenseService $expenseService;
 
     private BudgetService $budgetService;
 
@@ -52,97 +50,16 @@ class BudgetServiceTest extends TestCase
         parent::setUp();
 
         $this->budgetRepository = $this->createMock(BudgetRepository::class);
-        $this->incomeRepository = $this->createMock(IncomeRepository::class);
-        $this->expenseRepository = $this->createMock(ExpenseRepository::class);
+        $this->incomeService = $this->createMock(IncomeService::class);
+        $this->expenseService = $this->createMock(ExpenseService::class);
         $this->security = $this->createMock(Security::class);
 
         $this->budgetService = new BudgetService(
             budgetRepository: $this->budgetRepository,
-            incomeRepository: $this->incomeRepository,
-            expenseRepository: $this->expenseRepository,
+            incomeService: $this->incomeService,
+            expenseService: $this->expenseService,
             security: $this->security,
         );
-    }
-
-    #[TestDox('When calling create budget, it should create and return a new budget')]
-    #[Test]
-    public function createBudgetService_WhenDataOk_ReturnsBudget(): void
-    {
-        // ARRANGE
-        $budget = BudgetFactory::new([
-            'id' => 1,
-        ])->withoutPersisting()
-            ->create()
-            ->object()
-        ;
-
-        $budgetPayload = (new BudgetPayload())
-            ->setDate($budget->getDate())
-            ->setIncomeId($budget->getIncome()->getId())
-            ->setExpenseId($budget->getExpense()->getId())
-        ;
-
-        $this->incomeRepository->expects($this->once())
-            ->method('find')
-            ->willReturn($budget->getIncome())
-        ;
-
-        $this->expenseRepository->expects($this->once())
-            ->method('find')
-            ->willReturn($budget->getExpense())
-        ;
-
-        $this->budgetRepository->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(static function (Budget $budget): void {
-                $budget->setId(1)
-                    ->updateName()
-                ;
-            })
-        ;
-
-        // ACT
-        $budgetResponse = $this->budgetService->create($budgetPayload);
-
-        // ASSERT
-        $this->assertInstanceOf(BudgetResponse::class, $budgetResponse);
-        $this->assertInstanceOf(Budget::class, $budget);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
-    }
-
-    #[TestDox('When calling create budget without income or expense, it should throw an InvalidArgumentException')]
-    #[Test]
-    public function createBudgetService_WhenBadData_ReturnsInvalidArgumentException(): void
-    {
-        // ASSERT
-        $this->expectException(\InvalidArgumentException::class);
-
-        // ARRANGE
-        $budget = BudgetFactory::new([
-            'id' => 1,
-        ])->withoutPersisting()
-            ->create()
-            ->object()
-        ;
-
-        $budgetPayload = (new BudgetPayload())
-            ->setDate($budget->getDate())
-            ->setIncomeId($budget->getIncome()->getId())
-            ->setExpenseId($budget->getExpense()->getId())
-        ;
-
-        $this->incomeRepository->expects($this->once())
-            ->method('find')
-            ->willReturn(null)
-        ;
-
-        $this->expenseRepository->expects($this->once())
-            ->method('find')
-            ->willReturn(null)
-        ;
-
-        // ACT
-        $this->budgetService->create($budgetPayload);
     }
 
     #[TestDox('When calling update budget, it should update and return the budget updated')]
@@ -175,7 +92,7 @@ class BudgetServiceTest extends TestCase
         $budgetResponse = $this->budgetService->update($updateBudgetPayload, $budget);
 
         // ASSERT
-        $this->assertInstanceOf(BudgetResponse::class, $budgetResponse);
+        $this->assertInstanceOf(Budget::class, $budgetResponse);
         $this->assertInstanceOf(Budget::class, $budget);
         $this->assertSame($budget->getId(), $budgetResponse->getId());
     }
@@ -311,32 +228,6 @@ class BudgetServiceTest extends TestCase
         $this->assertCount(20, $budgetsResponse);
     }
 
-    #[TestDox('When calling budgetResponse, it should returns the budget response')]
-    #[Test]
-    public function budgetResponseBudgetService_WhenDataContainsNewName_ReturnsBudgetResponse(): void
-    {
-        // ARRANGE PRIVATE METHOD TEST
-        $budgetService = new BudgetService($this->budgetRepository, $this->incomeRepository, $this->expenseRepository, $this->security);
-        $method = $this->getPrivateMethod(BudgetService::class, 'budgetResponse');
-
-        // ARRANGE
-        $budget = BudgetFactory::new([
-            'id' => 1,
-        ])->withoutPersisting()
-            ->create()
-            ->object()
-        ;
-
-        $budget->updateName();
-
-        // ACT
-        $budgetResponse = $method->invoke($budgetService, $budget);
-
-        // ASSERT
-        $this->assertInstanceOf(BudgetResponse::class, $budgetResponse);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
-    }
-
     #[TestDox('When calling checkAccess, it should returns an AccessDeniedException')]
     #[Test]
     public function checkAccessBudgetService_WhenBadData_ReturnsAccessDeniedException(): void
@@ -345,7 +236,7 @@ class BudgetServiceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         // ARRANGE PRIVATE METHOD TEST
-        $budgetService = new BudgetService($this->budgetRepository, $this->incomeRepository, $this->expenseRepository, $this->security);
+        $budgetService = new BudgetService($this->budgetRepository, $this->incomeService, $this->expenseService, $this->security);
         $method = $this->getPrivateMethod(BudgetService::class, 'checkAccess');
 
         // ARRANGE

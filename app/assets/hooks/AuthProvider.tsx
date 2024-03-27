@@ -39,6 +39,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         setToken_(null)
     }
 
+    // Todo: getTokenValue vs getToken ?
     const getTokenValue = (token: string): string => {
         return JSON.parse(token).token
     }

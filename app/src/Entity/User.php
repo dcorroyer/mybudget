@@ -20,22 +20,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
     private string $email;
 
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Column(length: 180)]
     private string $firstName;
 
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Column(length: 180)]
     private string $lastName;
 

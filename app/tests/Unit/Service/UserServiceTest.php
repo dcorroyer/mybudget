@@ -50,7 +50,7 @@ class UserServiceTest extends TestCase
         $this->userService = new UserService($this->userRepository, $this->dtoToEntityHelper, $this->passwordHasher);
     }
 
-    #[TestDox('When calling create expense category, it should create and return a new expense category')]
+    #[TestDox('When calling create user, it should create and return a new user')]
     #[Test]
     public function createUserService_WhenDataOk_ReturnsUser(): void
     {

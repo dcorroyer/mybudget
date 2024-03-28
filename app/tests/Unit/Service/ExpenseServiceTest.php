@@ -43,8 +43,8 @@ class ExpenseServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->expenseRepository = $this->createMock(ExpenseRepository::class);
-        $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
+        $this->expenseRepository = $this->getMockBuilder(ExpenseRepository::class)->disableOriginalConstructor()->getMock();
+        $this->expenseCategoryService = $this->getMockBuilder(ExpenseCategoryService::class)->disableOriginalConstructor()->getMock();
 
         $this->expenseService = new ExpenseService($this->expenseRepository, $this->expenseCategoryService);
     }

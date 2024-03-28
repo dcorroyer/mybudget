@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * @internal
@@ -24,6 +25,7 @@ use Zenstruck\Foundry\Test\Factories;
 class GetUserControllerTest extends WebTestCase
 {
     use Factories;
+    use ResetDatabase;
 
     private const API_ENDPOINT = '/api/users';
 

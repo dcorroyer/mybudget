@@ -37,7 +37,7 @@ class IncomeServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->incomeRepository = $this->createMock(IncomeRepository::class);
+        $this->incomeRepository = $this->getMockBuilder(IncomeRepository::class)->disableOriginalConstructor()->getMock();
 
         $this->incomeService = new IncomeService($this->incomeRepository);
     }

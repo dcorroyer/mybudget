@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
-use App\Dto\Budget\Payload\UpdateBudgetPayload;
 use App\Entity\Budget;
 use App\Entity\User;
 use App\Repository\BudgetRepository;
@@ -69,13 +68,13 @@ class BudgetService
         return $budget;
     }
 
-    public function update(UpdateBudgetPayload $updateBudgetPayload, Budget $budget): Budget
+    public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
     {
         $this->checkAccess($budget);
 
-        $budget->setDate($updateBudgetPayload->getDate());
+        $this->budgetRepository->delete($budget, true);
 
-        $this->budgetRepository->save($budget, true);
+        $this->create($budgetPayload);
 
         return $budget;
     }

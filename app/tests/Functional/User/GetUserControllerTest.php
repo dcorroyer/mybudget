@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\User;
+namespace App\Tests\Functional\User;
 
-use App\Entity\User;
-use App\Service\UserService;
 use App\Tests\Common\Factory\UserFactory;
+use App\Tests\Functional\TestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Zenstruck\Foundry\Test\Factories;
-use Zenstruck\Foundry\Test\ResetDatabase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @internal
@@ -22,63 +19,38 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 #[Group('controller')]
 #[Group('user')]
 #[Group('user-controller')]
-class GetUserControllerTest extends WebTestCase
+class GetUserControllerTest extends TestBase
 {
-    use Factories;
-    use ResetDatabase;
-
     private const API_ENDPOINT = '/api/users';
-
-    private KernelBrowser $client;
-
-    private UserService $userService;
-
-    protected function setUp(): void
-    {
-        self::ensureKernelShutdown();
-        $this->client = static::createClient();
-        $container = self::getContainer();
-
-        $this->userService = $this->createMock(UserService::class);
-
-        $container->set(UserService::class, $this->userService);
-    }
 
     #[TestDox('When you call GET /api/users/me, it should return the user informations')]
     #[Test]
     public function getUserController_WhenDataOk_ReturnsUser(): void
     {
         // ARRANGE
-        $user = UserFactory::new()->withoutPersisting()->create()->object();
-
-        $userResponse = (new User())
-            ->setEmail($user->getEmail())
-            ->setFirstName($user->getFirstName())
-            ->setLastName($user->getLastName())
-            ->setId($user->getId())
-        ;
-
-        $this->userService
-            ->expects($this->once())
-            ->method('get')
-            ->willReturn($userResponse)
-        ;
-
+        $user = UserFactory::new()->create()->object();
         $this->client->loginUser($user);
 
-        $endpoint = self::API_ENDPOINT . '/me';
-
         // ACT
-        $this->client->request(method: 'GET', uri: $endpoint, server: [
-            'CONTENT_TYPE' => 'application/json',
-        ]);
-        $content = json_decode($this->client->getResponse()->getContent(), true);
-        $data = $content['data'] ?? [];
+        $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/me');
+        $responseData = $response['data'] ?? [];
 
         // ASSERT
         $this->assertResponseIsSuccessful();
         $this->assertResponseFormatSame('json');
-        $this->assertSame($user->getId(), $data['id']);
-        $this->assertSame($user->getEmail(), $data['email']);
+        $this->assertSame($user->getId(), $responseData['id']);
+        $this->assertSame($user->getEmail(), $responseData['email']);
+    }
+
+    #[TestDox('When you call GET /api/users/me, it should return unauthorized')]
+    #[Test]
+    public function getUserController_WhenNotLogged_ReturnsUnauthorized(): void
+    {
+        // ACT
+        $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/me');
+
+        // ASSERT
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseFormatSame('json');
     }
 }

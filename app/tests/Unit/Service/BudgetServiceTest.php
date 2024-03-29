@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\UpdateBudgetPayload;
 use App\Entity\Budget;
 use App\Repository\BudgetRepository;
 use App\Service\BudgetService;

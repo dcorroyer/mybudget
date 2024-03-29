@@ -41,6 +41,6 @@ class ListBudgetControllerTest extends TestBase
 
         // ASSERT
         $this->assertResponseIsSuccessful();
-        $this->assertSame(\count($budgets), \count($responseData));
+        $this->assertCount(\count($budgets), $responseData);
     }
 }

@@ -22,10 +22,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DeleteIcon, EuroIcon, XIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { postBudget } from '@/api';
-import { useAuth } from '@/hooks/AuthProvider';
 
 export default function BudgetPage(): React.JSX.Element {
-    const { token, getTokenValue } = useAuth()
     const form = useForm<formTypeCreateBudget>({
         resolver: zodResolver(budgetFormSchema),
         defaultValues: {
@@ -52,16 +50,14 @@ export default function BudgetPage(): React.JSX.Element {
     })
 
     async function onSubmit(data: formTypeCreateBudget): Promise<void> {
-        if (token) {
-            try {
-                const response = await postBudget(data, getTokenValue(token))
+        try {
+            const response = await postBudget(data)
 
-                if (!response.ok) {
-                    throw new Error('Failed to register the budget')
-                }
-            } catch (error) {
-                console.log('Error logging in:', error)
+            if (!response.ok) {
+                throw new Error('Failed to register the budget')
             }
+        } catch (error) {
+            console.log('Error logging in:', error)
         }
     }
 

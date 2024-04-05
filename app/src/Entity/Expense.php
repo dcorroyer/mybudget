@@ -34,7 +34,7 @@ class Expense
     private float $amount;
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
-    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ExpenseCategory $expenseCategory;
 

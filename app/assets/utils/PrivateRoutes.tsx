@@ -1,38 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { useToast } from '@/components/hooks/useToast'
 import { useAuth } from '@/hooks/AuthProvider'
 
 const PrivateRoutes = (): React.JSX.Element => {
-    const { token, getExpireDateToken, clearToken, checkTokenValidity } = useAuth()
-    const { toast } = useToast()
+    const { token, checkTokenValidity } = useAuth()
 
-    useEffect(() => {
-        checkTokenValidity()
-
-        const interval = setInterval((): void => {
-            if (!token) {
-                toast({
-                    title: 'You are not logged in',
-                    description: 'You need to be logged in to access this page',
-                    variant: 'destructive',
-                })
-            } else {
-                const decodedToken = getExpireDateToken(token)
-                if (decodedToken * 1000 < Date.now()) {
-                    clearToken()
-                    toast({
-                        title: 'Session expired',
-                        description: 'Your session has expired. Please log in again.',
-                        variant: 'destructive',
-                    })
-                }
-            }
-        }, 1000)
-
-        return () => clearInterval(interval)
-    }, [token])
+    checkTokenValidity()
 
     if (!token) {
         return <Navigate to='/login' />

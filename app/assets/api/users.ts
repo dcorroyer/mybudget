@@ -1,9 +1,9 @@
-export async function getMe(token: string): Promise<Response> {
+export async function getMe(): Promise<Response> {
     return await fetch('/api/users/me', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')).token}`,
         },
     })
 }

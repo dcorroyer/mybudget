@@ -11,11 +11,9 @@ export const expenseLinesFormSchema = z.object({
 })
 
 export const expensesFormSchema = z.object({
-    category: z.object(
-        {
-            name: z.string().min(2),
-        }
-    ),
+    category: z.object({
+        name: z.string().min(2),
+    }),
     expenseLines: z.array(expenseLinesFormSchema),
 })
 

@@ -19,9 +19,9 @@ import { InputSuffixIn } from '@/components/ui/input-suffix-in'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { DeleteIcon, EuroIcon, XIcon } from 'lucide-react'
+import { DeleteIcon, EuroIcon, PlusIcon, XIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { postBudget } from '@/api';
+import { postBudget } from '@/api'
 
 export default function BudgetPage(): React.JSX.Element {
     const form = useForm<formTypeCreateBudget>({
@@ -62,9 +62,9 @@ export default function BudgetPage(): React.JSX.Element {
     }
 
     return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8 max-w-screen-lg mx-auto'>
+        <div className='flex justify-center py-12 sm:px-6 lg:px-8 max-w-screen-lg mx-auto mt-8'>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 basis-3/5'>
                     <Tabs defaultValue='income' className='w-full max-w-screen-md'>
                         <TabsList className='flex space-x-1'>
                             <TabsTrigger value='income' className='w-1/2'>
@@ -105,7 +105,7 @@ const ManageIncomes = () => {
                                         control={incomes.control}
                                         name={`incomes.${incomeIndex}.name`}
                                         render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem className='w-full'>
                                                 <FormLabel>Name</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder='Name' {...field} />
@@ -123,7 +123,7 @@ const ManageIncomes = () => {
                                         control={incomes.control}
                                         name={`incomes.${incomeIndex}.amount`}
                                         render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem className='w-full'>
                                                 <FormLabel>Amount</FormLabel>
                                                 <FormControl>
                                                     <InputSuffixIn
@@ -158,9 +158,9 @@ const ManageIncomes = () => {
                 onClick={() => {
                     append({ name: '', amount: 0 })
                 }}
-                className='text-gray-600 text-center w-full underline underline-offset-4 py-2'
+                className='text-gray-600 text-center w-full py-2 relative'
             >
-                add income
+                Add income <PlusIcon className='ml-1' />
             </Button>
         </div>
     )
@@ -177,7 +177,7 @@ const ManageExpenses = () => {
             {fields.map((expense, expenseIndex) => {
                 return (
                     <div key={expense.id}>
-                        <Card className='space-y-4'>
+                        <Card>
                             <CardHeader>
                                 <div className='flex items-center relative'>
                                     <FormField
@@ -187,10 +187,7 @@ const ManageExpenses = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder='Enter category name...'
-                                                        {...field}
-                                                    />
+                                                    <Input placeholder='Category name' {...field} />
                                                 </FormControl>
                                                 <FormMessage
                                                     content={
@@ -228,14 +225,14 @@ const ManageExpenses = () => {
             <Button
                 type='button'
                 onClick={() => {
-                    append({ expenseLines: [{ name: '', amount: 0 }], category: { name: '' }})
+                    append({ expenseLines: [{ name: '', amount: 0 }], category: { name: '' } })
                 }}
                 variant='ghost'
-                className='text-center w-full underline underline-offset-4 py-2'
+                className='text-gray-600 text-center w-full py-2'
             >
-                add category
+                Add category <PlusIcon className='ml-1' />
             </Button>
-            <Button className='px-4 py-2 rounded-lg' type='submit' variant='ghost'>
+            <Button className='text-center w-full py-2' type='submit' variant='ghost'>
                 Submit
             </Button>
         </div>
@@ -257,7 +254,7 @@ const ManageExpenseLines = ({ expenseIndex }: { expenseIndex: number }) => {
                             control={expenseLines.control}
                             name={`expenses.${expenseIndex}.expenseLines.${expenseLineIndex}.name`}
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='w-full'>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input placeholder='Name' {...field} />
@@ -275,7 +272,7 @@ const ManageExpenseLines = ({ expenseIndex }: { expenseIndex: number }) => {
                             control={expenseLines.control}
                             name={`expenses.${expenseIndex}.expenseLines.${expenseLineIndex}.amount`}
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='w-full'>
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <InputSuffixIn {...field} suffix={<EuroIcon />} />
@@ -304,9 +301,9 @@ const ManageExpenseLines = ({ expenseIndex }: { expenseIndex: number }) => {
                 onClick={() => {
                     append({ name: '', amount: 0 })
                 }}
-                className='text-gray-600 text-center w-full underline underline-offset-4 py-2'
+                className='text-gray-600 text-center w-full py-2'
             >
-                add expense
+                Add expense <PlusIcon className='ml-1' />
             </Button>
         </div>
     )

@@ -1,62 +1,87 @@
-#Prepare PHPSTAN CONFIG for :
-#
-#        "phpstan/phpstan-phpunit": "^1.3",
-#        "phpstan/phpstan-symfony": "^1.3",
-#        "phpstan/phpstan-webmozart-assert": "^1.2",
-#        "thecodingmachine/phpstan-strict-rules": "^1.0",
-#        "spaze/phpstan-disallowed-calls": "^3.1",
-#        "slam/phpstan-extensions": "^6.3",
-#        "voku/phpstan-rules": "^3.2",
-#        "shipmonk/phpstan-rules": "^2.11",
-#        "ergebnis/phpstan-rules": "^2.2",
-
-
 includes:
-    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
-    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
-    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
-    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
-    - %rootDir%/../../slam/phpstan-extensions/conf/not-now-rules.neon
-    - %rootDir%/../../slam/phpstan-extensions/conf/symfony-rules.neon
+    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+    - /tools/phpstan/vendor/slam/phpstan-extensions/conf/not-now-rules.neon
+    - /tools/phpstan/vendor/slam/phpstan-extensions/conf/symfony-rules.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
 
 parameters:
-    level: 8
+    level: max
     paths:
-        - src
-#        - tests
+        - %currentWorkingDirectory%/src
     excludePaths:
-    ignoreErrors:
-        - '#^Class .*[Payload] has an uninitialized property.*$#'
-        - '#^Class .*\\Entity\\.* has an uninitialized property.*$#'
+        - modules/api/src/Resolver/ApiResponseAstResolver.php
 #    symfony:
-#        containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.xml
+#        containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkBenevolentUnionTypes: true
+    checkDynamicProperties: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkGenericClassInNonGenericObjectType: true
+    checkImplicitMixed: true
+    checkInternalClassCaseSensitivity: true
+    checkMaybeUndefinedVariables: true
+    checkMissingCallableSignature: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
     checkUninitializedProperties: true
-    checkDynamicProperties: true
-    checkImplicitMixed: false
-    reportAlwaysTrueInLastCondition: true
+    inferPrivatePropertyTypeFromConstructor: true
+    polluteScopeWithAlwaysIterableForeach: false
+    polluteScopeWithLoopInitialAssignments: false
+    rememberPossiblyImpureFunctionValues: true
     reportAnyTypeWideningInVarTag: true
-#    checkMissingOverrideMethodAttribute: true
-    checkMissingIterableValueType: true
-#    checkGenericClassInNonGenericObjectType: false
-    checkMissingCallableSignature: true
+    reportMaybesInMethodSignatures: true
+    reportMaybesInPropertyPhpDocTypes: true
+    reportStaticMethodSignatures: true
+    reportUnmatchedIgnoredErrors: false
+#    editorUrl: 'phpstorm://open?file=/home/t/franken-base/%%relFile%%&line=%%line%%'
+    editorUrlTitle: '%%relFile%%:%%line%%'
+#    doctrine: # see: https://github.com/phpstan/phpstan-doctrine?tab=readme-ov-file#configuration
+#        ormRepositoryClass: Doctrine\ORM\EntityRepository
+#        odmRepositoryClass: Doctrine\ODM\MongoDB\DocumentRepository
+#    exceptions:
+#        uncheckedExceptionClasses:
+#            - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
+#            - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+#        check:
+#            missingCheckedExceptionInThrows: true
+#            tooWideThrowType: true
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 32
+        minimumNumberOfJobsPerProcess: 2
+        processTimeout: 300.0
     type_coverage:
-        return_type: 95
-        param_type: 95
-        property_type: 95
+        return_type: 100
+        param_type: 100
+        property_type: 100
+    ignoreErrors:
+        - "#^Method .*CollectionStateProvider::provide\\(\\) should return Rekalogika\\\\ApiLite\\\\Paginator\\\\MappingPaginatorDecorator<.*> but returns iterable<.*>.$#"
+    ergebnis:
+        final:
+            enabled: false
+        noExtends:
+            enabled: false
+        noParameterWithNullDefaultValue:
+            enabled: false
+        noIsset:
+            enabled: false
+        noConstructorParameterWithDefaultValue:
+            enabled: false
+        noParameterWithNullableTypeDeclaration:
+            enabled: false
+        finalInAbstractClass:
+            enabled: false
+        noNullableReturnTypeDeclaration:
+            enabled: false
     todo_by:
         nonIgnorable: false
         referenceTime: "now"
     shipmonkRules:
-        classSuffixNaming:
-            superclassToSuffixMapping!:
-                \Exception: Exception
-                \PHPUnit\Framework\TestCase: Test
-                \Symfony\Component\Console\Command\Command: Command
-                \Symfony\Bundle\FrameworkBundle\Controller\AbstractController: Controller
-                \Symfony\Component\Form\AbstractType: Type
-                \Symfony\Component\Validator\Constraint: Constraint
-                \Symfony\Component\Validator\ConstraintValidator: ConstraintValidator
         allowComparingOnlyComparableTypes:
             enabled: true
         allowNamedArgumentOnlyInAttributes:
@@ -65,13 +90,13 @@ parameters:
             enabled: false
         enforceClosureParamNativeTypehint:
             enabled: true
-            allowMissingTypeWhenInferred: false
+            allowMissingTypeWhenInferred: true
         enforceEnumMatch:
             enabled: true
         enforceIteratorToArrayPreserveKeys:
             enabled: true
         enforceListReturn:
-            enabled: false
+            enabled: true
         enforceNativeReturnTypehint:
             enabled: true
         enforceReadonlyPublicProperty:
@@ -113,6 +138,7 @@ parameters:
             allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbidcustomfunctions-
         forbidCustomFunctions:
             enabled: true
             list: []
@@ -120,6 +146,7 @@ parameters:
             enabled: true
         forbidFetchOnMixed:
             enabled: true
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbididenticalclasscomparison
         forbidIdenticalClassComparison:
             enabled: true
             blacklist: ['DateTimeInterface']
@@ -135,6 +162,7 @@ parameters:
         forbidNullInAssignOperations:
             enabled: false
             blacklist: ['??=']
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbidnullinbinaryoperations
         forbidNullInBinaryOperations:
             enabled: false
             blacklist: ['===', '!==', '??']
@@ -164,6 +192,9 @@ parameters:
             enabled: true
         uselessPrivatePropertyNullability:
             enabled: true
+    voku:
+        checkForAssignments: true
+        checkYodaConditions: false
     banned_code:
         nodes:
             # enable detection of echo

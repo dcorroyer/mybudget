@@ -1,0 +1,2 @@
+#!/bin/sh
+/tools/phpmd/vendor/bin/phpmd "$@"

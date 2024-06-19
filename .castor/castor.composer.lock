@@ -1,0 +1,48 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "58040e783f02b86e83e4ef111311b0f8",
+    "packages": [
+        {
+            "name": "theod02/castor-class-task",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TheoD02/castor-class-task.git",
+                "reference": "d3120b65f15c1424f755d682c326cd2dfd587c90"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TheoD02\\Castor\\Classes\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Theo D",
+                    "email": "theo.d02290@gmail.com"
+                }
+            ],
+            "description": "Add possibility to use class and methods to expose task in castor",
+            "time": "2024-04-14T11:27:40+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "theod02/castor-class-task": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "theod02/franken-base",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Theo D",
+      "email": "theo.d02290@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "dcorroyer\\mybudget\\": "./src/"
+    }
+  },
+  "require": {
+    "theod02/castor-class-task": "dev-main"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/TheoD02/castor-class-task.git"
+    }
+  ]
+}

@@ -1,5 +1,3 @@
-version: '3.9'
-
 x-worker-template:
   worker_template: &worker_template
     build:
@@ -31,8 +29,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
       - ./app:/app
-      - ./castor.php:/app/castor.php
-      - ./.castor:/app/.castor
+      - ./.castor:/.castor
       - ./tools:/tools
       - ~/.ssh:/home/www-data/.ssh:ro
       - caddy_data:/data

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger;
+namespace dcorroyer\mybudget;
 
-use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
+use dcorroyer\mybudget\Docker\ContainerDefinition;
 
 class ContainerDefinitionBag
 {

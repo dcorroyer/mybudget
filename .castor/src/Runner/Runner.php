@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger\Runner;
+namespace dcorroyer\mybudget\Runner;
 
 use Castor\Context;
+use dcorroyer\mybudget\Docker\ContainerDefinition;
+use dcorroyer\mybudget\Docker\DockerUtils;
 use Symfony\Component\Process\Process;
-use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
-use TheoD\MusicAutoTagger\Docker\DockerUtils;
 
 use function Castor\context;
 use function Castor\run;

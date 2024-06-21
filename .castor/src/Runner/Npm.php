@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger\Runner;
+namespace dcorroyer\mybudget\Runner;
 
 use Castor\Context;
-use TheoD\MusicAutoTagger\ContainerDefinitionBag;
-use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
+use dcorroyer\mybudget\ContainerDefinitionBag;
+use dcorroyer\mybudget\Docker\ContainerDefinition;
 
 use function Castor\io;
-use function TheoD\MusicAutoTagger\app_context;
+use function dcorroyer\mybudget\app_context;
 
 class Npm extends Runner
 {

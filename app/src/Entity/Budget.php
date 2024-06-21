@@ -5,48 +5,27 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BudgetRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
-#[ORM\Table(name: 'budgets')]
 #[ORM\HasLifecycleCallbacks]
 class Budget
 {
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
     #[ORM\Column]
@@ -60,12 +39,6 @@ class Budget
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -74,15 +47,13 @@ class Budget
     /**
      * @var Collection<Income>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
-    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Income::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
      * @var Collection<Expense>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
-    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Expense::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 
     #[ORM\ManyToOne(inversedBy: 'budgets')]
@@ -100,7 +71,7 @@ class Budget
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -112,7 +83,7 @@ class Budget
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -131,7 +102,7 @@ class Budget
         return $this->savingCapacity;
     }
 
-    public function setSavingCapacity(?float $savingCapacity): self
+    public function setSavingCapacity(?float $savingCapacity): static
     {
         $this->savingCapacity = $savingCapacity;
 
@@ -171,7 +142,7 @@ class Budget
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
 
@@ -186,7 +157,7 @@ class Budget
         return $this->incomes;
     }
 
-    public function addIncome(Income $income): self
+    public function addIncome(Income $income): static
     {
         if (! $this->incomes->contains($income)) {
             $this->incomes[] = $income;
@@ -204,7 +175,7 @@ class Budget
         return $this->expenses;
     }
 
-    public function addExpense(Expense $expense): self
+    public function addExpense(Expense $expense): static
     {
         if (! $this->expenses->contains($expense)) {
             $this->expenses[] = $expense;
@@ -219,7 +190,7 @@ class Budget
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 

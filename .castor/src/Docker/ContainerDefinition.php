@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger\Docker;
+namespace dcorroyer\mybudget\Docker;
 
 class ContainerDefinition
 {

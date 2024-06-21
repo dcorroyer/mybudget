@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger\Runner;
+namespace dcorroyer\mybudget\Runner;
 
 use Castor\Attribute\AsOption;
 use Castor\Context;
+use dcorroyer\mybudget\ContainerDefinitionBag;
+use dcorroyer\mybudget\Docker\ContainerDefinition;
 use Symfony\Component\Process\Process;
-use TheoD\MusicAutoTagger\ContainerDefinitionBag;
-use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
 use TheoD02\Castor\Classes\AsTaskClass;
 use TheoD02\Castor\Classes\AsTaskMethod;
 

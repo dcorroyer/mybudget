@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Budget;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends AbstractEntityRepository<Budget>
- *
- * @method Budget|null find($id, $lockMode = null, $lockVersion = null)
- * @method Budget|null findOneBy(array $criteria, array $orderBy = null)
- * @method Budget[]    findAll()
- * @method Budget[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Budget>
  */
-class BudgetRepository extends AbstractEntityRepository
+class BudgetRepository extends ServiceEntityRepository
 {
-    public function getEntityClass(): string
+    public function __construct(ManagerRegistry $registry)
     {
-        return Budget::class;
+        parent::__construct($registry, Budget::class);
     }
 }

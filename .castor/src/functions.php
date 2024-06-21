@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger;
+namespace dcorroyer\mybudget;
 
 use Castor\Context;
-use TheoD\MusicAutoTagger\Docker\DockerRunner;
+use dcorroyer\mybudget\Docker\DockerRunner;
 
 use function Castor\fingerprint;
 use function Castor\fingerprint_save;

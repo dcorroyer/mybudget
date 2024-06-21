@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\ExpenseCategory;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends AbstractEntityRepository<ExpenseCategory>
- *
- * @method ExpenseCategory|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExpenseCategory|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExpenseCategory[]    findAll()
- * @method ExpenseCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ExpenseCategory>
  */
-class ExpenseCategoryRepository extends AbstractEntityRepository
+class ExpenseCategoryRepository extends ServiceEntityRepository
 {
-    public function getEntityClass(): string
+    public function __construct(ManagerRegistry $registry)
     {
-        return ExpenseCategory::class;
+        parent::__construct($registry, ExpenseCategory::class);
     }
 }

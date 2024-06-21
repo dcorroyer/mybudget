@@ -5,16 +5,16 @@ use Castor\Attribute\AsContext;
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
 use Castor\Context;
-use TheoD\MusicAutoTagger\ContainerDefinitionBag;
+use dcorroyer\mybudget\ContainerDefinitionBag;
 use function Castor\context;
 use function Castor\finder;
 use function Castor\fs;
 use function Castor\hasher;
 use function Castor\io;
 use function Castor\run;
-use function TheoD\MusicAutoTagger\delayed_fingerprint;
-use function TheoD\MusicAutoTagger\root_context;
-use function TheoD\MusicAutoTagger\Runner\composer;
+use function dcorroyer\mybudget\delayed_fingerprint;
+use function dcorroyer\mybudget\root_context;
+use function dcorroyer\mybudget\Runner\composer;
 
 
 function getHash(string $toolDirectory): string

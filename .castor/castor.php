@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
-use TheoD\MusicAutoTagger\Docker\DockerUtils;
+use dcorroyer\mybudget\Docker\DockerUtils;
 
 use function Castor\capture;
 use function Castor\context;
@@ -13,12 +13,12 @@ use function Castor\import;
 use function Castor\io;
 use function Castor\notify;
 use function Castor\run;
-use function TheoD\MusicAutoTagger\delayed_fingerprint;
-use function TheoD\MusicAutoTagger\docker;
-use function TheoD\MusicAutoTagger\fgp;
-use function TheoD\MusicAutoTagger\Runner\composer;
-use function TheoD\MusicAutoTagger\Runner\npm;
-use function TheoD\MusicAutoTagger\Runner\qa;
+use function dcorroyer\mybudget\delayed_fingerprint;
+use function dcorroyer\mybudget\docker;
+use function dcorroyer\mybudget\fgp;
+use function dcorroyer\mybudget\Runner\composer;
+use function dcorroyer\mybudget\Runner\npm;
+use function dcorroyer\mybudget\Runner\qa;
 
 import('composer://theod02/castor-class-task');
 

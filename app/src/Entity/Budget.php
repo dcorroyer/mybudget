@@ -9,8 +9,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
@@ -18,18 +21,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Budget
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: UuidType::NAME)]
+    private Uuid $id;
 
     #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
-    private string $name;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $name = '';
 
     #[Assert\NotBlank]
-    #[Assert\Type('float')]
-    #[ORM\Column]
-    private ?float $savingCapacity = 0;
+    #[Assert\Type(Types::FLOAT)]
+    #[ORM\Column(type: Types::FLOAT)]
+    private float $savingCapacity = 0;
 
     #[Context(
         normalizationContext: [
@@ -45,33 +47,35 @@ class Budget
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<Income>
+     * @var Collection<int, Income>
      */
     #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
-     * @var Collection<Expense>
+     * @var Collection<int, Expense>
      */
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 
     #[ORM\ManyToOne(inversedBy: 'budgets')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
 
     public function __construct()
     {
+        $this->id = Uuid::v4();
+        $this->date = (new Clock())->now();
         $this->incomes = new ArrayCollection();
         $this->expenses = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function setId(Uuid $id): static
     {
         $this->id = $id;
 
@@ -97,12 +101,12 @@ class Budget
         $this->name = 'Budget ' . $this->date->format('Y-m');
     }
 
-    public function getSavingCapacity(): ?float
+    public function getSavingCapacity(): float
     {
         return $this->savingCapacity;
     }
 
-    public function setSavingCapacity(?float $savingCapacity): static
+    public function setSavingCapacity(float $savingCapacity): static
     {
         $this->savingCapacity = $savingCapacity;
 

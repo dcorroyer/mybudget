@@ -25,7 +25,7 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(uriTemplate: '/users', provider: UserCollectionStateProvider::class),
         new Get(uriTemplate: '/users/{id}', provider: UserStateProvider::class),
-        new Post(uriTemplate: '/users', input: CreateUserInputDto::class, processor: CreateUserProcessor::class),
+        new Post(uriTemplate: '/register', input: CreateUserInputDto::class, processor: CreateUserProcessor::class),
         new Delete(uriTemplate: '/users/{id}', input: null, read: false, processor: DeleteUserProcessor::class),
         new Patch(uriTemplate: '/users/{id}', input: UpdateUserInputDto::class, read: false, processor: UpdateUserProcessor::class),
     ],
@@ -33,11 +33,19 @@ use Symfony\Component\Uid\Uuid;
 class UserResource
 {
     public Uuid $id;
-    public string $email;
-    public string $firstName;
-    public string $lastName;
-    public array $roles;
-    public string $password;
+
+    public ?string $email = null;
+
+    public ?string $firstName = null;
+
+    public ?string $lastName = null;
+
+    /**
+     * @var list<string>|null The user roles
+     */
+    public ?array $roles = [];
+
+    public ?string $password = null;
 
     public function __construct()
     {
@@ -56,60 +64,66 @@ class UserResource
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
         return $this;
     }
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstName(?string $firstName): static
     {
         $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getRoles(): array
+    /**
+     * @return list<string>|null
+     */
+    public function getRoles(): ?array
     {
         return $this->roles;
     }
 
-    public function setRoles(array $roles): static
+    /**
+     * @param list<string>|null $roles
+     */
+    public function setRoles(?array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
 

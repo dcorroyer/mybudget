@@ -9,11 +9,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UpdateUserInputDto
 {
     #[Assert\When('this.email ?? "" != ""', constraints: [new Assert\Email()])]
-    public readonly string $email;
+    #[Assert\Email]
+    protected ?string $email;
 
-    public readonly string $password;
+    protected ?string $firstName;
 
-    public readonly string $firstName;
+    protected ?string $lastName;
 
-    public readonly string $lastName;
+    protected ?string $password;
 }

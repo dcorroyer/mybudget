@@ -19,7 +19,10 @@ class UserCollectionStateProvider extends AbstractProvider
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    /**
+     * @return iterable<UserResource>
+     */
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
     {
         return $this->mapCollection(collection: $this->userRepository, target: UserResource::class, operation: $operation, context: $context);
     }

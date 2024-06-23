@@ -5,49 +5,49 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 #[ORM\Table(name: 'expenses')]
 class Expense
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: UuidType::NAME)]
+    private Uuid $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
-    #[ORM\Column(length: 255)]
-    private string $name;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $name = '';
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::FLOAT)]
-    #[ORM\Column]
-    private float $amount;
+    #[ORM\Column(type: Types::FLOAT)]
+    private float $amount = 0;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ExpenseCategory $expenseCategory;
+    #[ORM\JoinColumn(name: 'expense_category_id', referencedColumnName: 'id')]
+    private ?ExpenseCategory $expenseCategory = null;
 
     #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
-    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id')]
     private ?Budget $budget = null;
 
-    public function getId(): int
+    public function __construct()
+    {
+        $this->id = Uuid::v4();
+    }
+
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(Uuid $id): static
     {
         $this->id = $id;
 
@@ -78,12 +78,12 @@ class Expense
         return $this;
     }
 
-    public function getExpenseCategory(): ExpenseCategory
+    public function getExpenseCategory(): ?ExpenseCategory
     {
         return $this->expenseCategory;
     }
 
-    public function setExpenseCategory(ExpenseCategory $expenseCategory): self
+    public function setExpenseCategory(?ExpenseCategory $expenseCategory): self
     {
         $this->expenseCategory = $expenseCategory;
 

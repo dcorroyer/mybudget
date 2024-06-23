@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ExpenseCategoryRepository;
-use App\Serializable\SerializationGroups;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseCategoryRepository::class)]
@@ -16,24 +17,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: 'name', message: 'There is already an expense category with this name')]
 class ExpenseCategory
 {
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: UuidType::NAME)]
+    private Uuid $id;
 
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Unique]
-    #[ORM\Column(length: 255)]
-    private string $name;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $name = '';
 
-    public function getId(): int
+    public function __construct()
+    {
+        $this->id = Uuid::v4();
+    }
+
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(Uuid $id): static
     {
         $this->id = $id;
 

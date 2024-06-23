@@ -23,11 +23,13 @@ class DeleteUserProcessor extends AbstractProcessor
     ) {
     }
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): UserResource
     {
         $user = $this->userRepository->find($uriVariables['id']) ?? throw new NotFoundException('User not found');
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+
+        return $this->map($user, UserResource::class);
     }
 }

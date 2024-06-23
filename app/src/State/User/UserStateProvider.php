@@ -20,7 +20,7 @@ class UserStateProvider extends AbstractProvider
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?UserResource
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): UserResource
     {
         $user = $this->userRepository->find($uriVariables['id']) ?? throw new NotFoundException('User not found');
 

@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -17,16 +21,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    private ?Uuid $id;
+    private Uuid $id;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    #[Assert\NotBlank]
+    #[ORM\Column(type: Types::STRING, length: 180)]
+    private string $email = '';
 
-    #[ORM\Column(length: 180)]
-    private ?string $firstName = null;
+    #[Assert\NotBlank]
+    #[ORM\Column(type: Types::STRING, length: 180)]
+    private string $firstName = '';
 
-    #[ORM\Column(length: 180)]
-    private ?string $lastName = null;
+    #[Assert\NotBlank]
+    #[ORM\Column(type: Types::STRING, length: 180)]
+    private string $lastName = '';
 
     /**
      * @var list<string> The user roles
@@ -35,10 +42,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     /**
-     * @var ?string The hashed password
+     * @var string The hashed password
      */
-    #[ORM\Column(length: 180)]
-    private ?string $password = null;
+    #[Assert\NotBlank]
+    #[ORM\Column(type: Types::STRING, length: 180)]
+    private string $password = '';
 
     /**
      * @var Collection<int, Budget>
@@ -52,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->budgets = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -64,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -76,24 +84,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
 
-    public function setFirstName(?string $firstName): static
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastName(): string
     {
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): static
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
 
@@ -105,12 +113,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
-    /**
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -145,7 +150,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see UserInterface
      */
     public function eraseCredentials(): void
-    {}
+    {
+    }
 
     /**
      * @return Collection<int, Budget>
@@ -160,16 +166,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (! $this->budgets->contains($budget)) {
             $this->budgets->add($budget);
             $budget->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBudget(Budget $budget): self
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {
-            $budget->setUser(null);
         }
 
         return $this;

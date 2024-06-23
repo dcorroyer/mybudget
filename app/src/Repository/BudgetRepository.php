@@ -13,8 +13,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BudgetRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry
+    ) {
         parent::__construct($registry, Budget::class);
     }
 }

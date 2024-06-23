@@ -13,7 +13,7 @@ use Rekalogika\ApiLite\State\AbstractProcessor;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * @implements AbstractProcessor<CreateUserInputDto, UserResource>
+ * @extends AbstractProcessor<CreateUserInputDto, UserResource>
  */
 class CreateUserProcessor extends AbstractProcessor
 {
@@ -26,6 +26,10 @@ class CreateUserProcessor extends AbstractProcessor
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): UserResource
     {
         $user = $this->map($data, User::class);
+
+        if ($data->getPassword() === null) {
+            throw new \InvalidArgumentException('Password is required');
+        }
 
         $password = $this->passwordHasher->hashPassword($user, $data->getPassword());
         $user->setPassword($password);

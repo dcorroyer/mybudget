@@ -10,5 +10,5 @@ class ExpenseResource
 
     public ?float $amount = 0;
 
-    public ?ExpenseCategoryResource $category = null;
+    public ?string $category = null;
 }

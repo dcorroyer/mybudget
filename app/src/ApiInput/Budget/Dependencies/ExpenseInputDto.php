@@ -9,12 +9,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ExpenseInputDto
 {
-    #[Assert\Type(Types::STRING)]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::STRING)]
     public string $name;
 
+    #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     public float $amount;
 
     #[Assert\NotBlank]
-    public ?ExpenseCategoryInputDto $category = null;
+    #[Assert\Type(type: Types::STRING)]
+    public string $category;
 }

@@ -9,9 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class IncomeInputDto
 {
-    #[Assert\Type(Types::STRING)]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::STRING)]
     public string $name;
 
+    #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     public float $amount;
 }

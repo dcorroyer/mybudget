@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateBudgetInputDto
 {
+    #[Assert\NotBlank]
     public \DateTimeInterface $date;
 
     /** @var ?array<int, IncomeInputDto> $incomes */

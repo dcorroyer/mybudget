@@ -29,11 +29,12 @@ class Expense
     #[ORM\Column(type: Types::FLOAT)]
     private float $amount = 0;
 
-    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, fetch: 'LAZY')]
-    #[ORM\JoinColumn(name: 'expense_category_id', referencedColumnName: 'id')]
-    private ?ExpenseCategory $expenseCategory = null;
+    #[Assert\NotBlank]
+    #[Assert\Type(Types::STRING)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $category = '';
 
-    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], inversedBy: 'expenses')]
     #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id')]
     private ?Budget $budget = null;
 
@@ -59,7 +60,7 @@ class Expense
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -71,21 +72,21 @@ class Expense
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(float $amount): static
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getExpenseCategory(): ?ExpenseCategory
+    public function getCategory(): string
     {
-        return $this->expenseCategory;
+        return $this->category;
     }
 
-    public function setExpenseCategory(?ExpenseCategory $expenseCategory): self
+    public function setCategory(string $category): static
     {
-        $this->expenseCategory = $expenseCategory;
+        $this->category = $category;
 
         return $this;
     }
@@ -95,7 +96,7 @@ class Expense
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): self
+    public function setBudget(?Budget $budget): static
     {
         $this->budget = $budget;
 

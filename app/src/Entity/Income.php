@@ -28,7 +28,7 @@ class Income
     #[ORM\Column(type: Types::FLOAT)]
     private float $amount = 0;
 
-    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'incomes')]
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], inversedBy: 'incomes')]
     #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id')]
     private ?Budget $budget = null;
 

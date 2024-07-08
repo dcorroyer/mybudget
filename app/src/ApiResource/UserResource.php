@@ -12,11 +12,14 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\ApiInput\User\CreateUserInputDto;
 use App\ApiInput\User\UpdateUserInputDto;
+use App\Entity\Budget;
 use App\State\User\CreateUserProcessor;
 use App\State\User\DeleteUserProcessor;
 use App\State\User\UpdateUserProcessor;
 use App\State\User\UserCollectionStateProvider;
 use App\State\User\UserStateProvider;
+use Doctrine\Common\Collections\Collection;
+use Rekalogika\Mapper\CollectionInterface;
 use Symfony\Component\Uid\Uuid;
 
 #[ApiResource(
@@ -32,7 +35,7 @@ use Symfony\Component\Uid\Uuid;
 )]
 class UserResource
 {
-    public Uuid $id;
+    public ?Uuid $id = null;
 
     public ?string $email = null;
 
@@ -47,86 +50,8 @@ class UserResource
 
     public ?string $password = null;
 
-    public function __construct()
-    {
-        $this->id = Uuid::v4();
-    }
-
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(?string $firstName): static
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(?string $lastName): static
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
     /**
-     * @return list<string>|null
+     * @var ?CollectionInterface<int, Budget>
      */
-    public function getRoles(): ?array
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @param list<string>|null $roles
-     */
-    public function setRoles(?array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
-    }
+    public ?CollectionInterface $budgets = null;
 }

@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Clock\Clock;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
@@ -22,7 +21,7 @@ class Budget
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    private Uuid $id;
+    private ?Uuid $id;
 
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 255)]
@@ -65,17 +64,16 @@ class Budget
     public function __construct()
     {
         $this->id = Uuid::v4();
-        $this->date = (new Clock())->now();
         $this->incomes = new ArrayCollection();
         $this->expenses = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
 
-    public function setId(Uuid $id): static
+    public function setId(?Uuid $id): static
     {
         $this->id = $id;
 
@@ -161,10 +159,11 @@ class Budget
         return $this->incomes;
     }
 
-    public function addIncome(Income $income): static
+    public function setIncomes(Collection $incomes): static
     {
-        if (! $this->incomes->contains($income)) {
-            $this->incomes[] = $income;
+        $this->incomes = $incomes;
+
+        foreach ($incomes as $income) {
             $income->setBudget($this);
         }
 
@@ -179,10 +178,11 @@ class Budget
         return $this->expenses;
     }
 
-    public function addExpense(Expense $expense): static
+    public function setExpenses(Collection $expenses): static
     {
-        if (! $this->expenses->contains($expense)) {
-            $this->expenses[] = $expense;
+        $this->expenses = $expenses;
+
+        foreach ($expenses as $expense) {
             $expense->setBudget($this);
         }
 

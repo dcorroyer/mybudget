@@ -8,7 +8,7 @@ use App\ApiInput\Budget\Dependencies\ExpenseInputDto;
 use App\ApiInput\Budget\Dependencies\IncomeInputDto;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateBudgetInputDto
+class BudgetInputDto
 {
     #[Assert\NotBlank]
     public \DateTimeInterface $date;

@@ -12,13 +12,11 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\ApiInput\User\CreateUserInputDto;
 use App\ApiInput\User\UpdateUserInputDto;
-use App\Entity\Budget;
 use App\State\User\CreateUserProcessor;
 use App\State\User\DeleteUserProcessor;
 use App\State\User\UpdateUserProcessor;
 use App\State\User\UserCollectionStateProvider;
 use App\State\User\UserStateProvider;
-use Doctrine\Common\Collections\Collection;
 use Rekalogika\Mapper\CollectionInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -51,7 +49,7 @@ class UserResource
     public ?string $password = null;
 
     /**
-     * @var ?CollectionInterface<int, Budget>
+     * @var ?CollectionInterface<int, BudgetResource>
      */
     public ?CollectionInterface $budgets = null;
 }

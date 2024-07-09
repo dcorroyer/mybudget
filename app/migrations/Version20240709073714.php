@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version0_0_0 extends AbstractMigration
+final class Version20240709073714 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'create user table, budget table and its related tables';
+        return '';
     }
 
     public function up(Schema $schema): void

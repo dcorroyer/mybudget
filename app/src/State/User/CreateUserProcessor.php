@@ -27,11 +27,11 @@ class CreateUserProcessor extends AbstractProcessor
     {
         $user = $this->map($data, User::class);
 
-        if ($data->getPassword() === null) {
+        if ($data->password === null) {
             throw new \InvalidArgumentException('Password is required');
         }
 
-        $password = $this->passwordHasher->hashPassword($user, $data->getPassword());
+        $password = $this->passwordHasher->hashPassword($user, $data->password);
         $user->setPassword($password);
 
         $this->entityManager->persist($user);

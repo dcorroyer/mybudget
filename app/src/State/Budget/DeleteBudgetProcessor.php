@@ -6,28 +6,34 @@ namespace App\State\Budget;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
+use App\ApiInput\User\CreateUserInputDto;
 use App\ApiResource\BudgetResource;
 use App\Repository\BudgetRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Rekalogika\ApiLite\Exception\NotFoundException;
-use Rekalogika\ApiLite\State\AbstractProvider;
+use Rekalogika\ApiLite\State\AbstractProcessor;
 
 /**
- * @extends AbstractProvider<BudgetResource>
+ * @extends AbstractProcessor<CreateUserInputDto, BudgetResource>
  */
-class BudgetStateProvider extends AbstractProvider
+class DeleteBudgetProcessor extends AbstractProcessor
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly BudgetRepository $budgetRepository
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): BudgetResource
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): BudgetResource
     {
         $budget = $this->budgetRepository->find($uriVariables['id']) ?? throw new NotFoundException('Budget not found');
 
         if (!$budget->isOwnedByUser($this->getUser())) {
             throw new AccessDeniedException('Denied access to this budget');
         }
+
+        $this->entityManager->remove($budget);
+        $this->entityManager->flush();
 
         return $this->map($budget, BudgetResource::class);
     }

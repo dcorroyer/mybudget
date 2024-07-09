@@ -6,6 +6,7 @@ namespace App\State\Budget;
 
 use ApiPlatform\Metadata\Operation;
 use App\ApiResource\BudgetResource;
+use App\Entity\User;
 use App\Repository\BudgetRepository;
 use Rekalogika\ApiLite\State\AbstractProvider;
 
@@ -24,6 +25,11 @@ class BudgetCollectionStateProvider extends AbstractProvider
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
     {
-        return $this->mapCollection(collection: $this->budgetRepository, target: BudgetResource::class, operation: $operation, context: $context);
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $qb = $this->budgetRepository->getBudgetsByUser(user: $user);
+
+        return $this->mapCollection(collection: $qb, target: BudgetResource::class, operation: $operation, context: $context);
     }
 }

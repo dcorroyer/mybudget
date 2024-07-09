@@ -92,8 +92,7 @@ class Budget
         return $this;
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
+    #[ORM\PreFlush]
     public function updateName(): void
     {
         $this->name = 'Budget ' . $this->date->format('Y-m');
@@ -199,5 +198,10 @@ class Budget
         $this->user = $user;
 
         return $this;
+    }
+
+    public function isOwnedByUser(?User $user): bool
+    {
+        return $this->getUser() === $user;
     }
 }

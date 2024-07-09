@@ -10,11 +10,11 @@ class UpdateUserInputDto
 {
     #[Assert\When('this.email ?? "" != ""', constraints: [new Assert\Email()])]
     #[Assert\Email]
-    protected ?string $email;
+    public ?string $email;
 
-    protected ?string $firstName;
+    public ?string $firstName;
 
-    protected ?string $lastName;
+    public ?string $lastName;
 
-    protected ?string $password;
+    public ?string $password;
 }

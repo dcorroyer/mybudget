@@ -7,16 +7,14 @@ namespace App\ApiResource;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\ApiInput\User\CreateUserInputDto;
 use App\ApiInput\User\UpdateUserInputDto;
-use App\State\User\CreateUserProcessor;
+use App\State\User\GetMeStateProvider;
+use App\State\User\RegisterUserProcessor;
 use App\State\User\DeleteUserProcessor;
 use App\State\User\UpdateUserProcessor;
-use App\State\User\UserCollectionStateProvider;
-use App\State\User\UserStateProvider;
 use Rekalogika\Mapper\CollectionInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -24,11 +22,10 @@ use Symfony\Component\Uid\Uuid;
     uriTemplate: '/users',
     shortName: 'User',
     operations: [
-        new GetCollection(uriTemplate: '/users', provider: UserCollectionStateProvider::class),
-        new Get(uriTemplate: '/users/{id}', provider: UserStateProvider::class),
-        new Post(uriTemplate: '/register', input: CreateUserInputDto::class, processor: CreateUserProcessor::class),
-        new Delete(uriTemplate: '/users/{id}', input: null, read: false, processor: DeleteUserProcessor::class),
-        new Patch(uriTemplate: '/users/{id}', input: UpdateUserInputDto::class, read: false, processor: UpdateUserProcessor::class),
+        new Get(uriTemplate: '/me', provider: GetMeStateProvider::class),
+        new Post(uriTemplate: '/register', input: CreateUserInputDto::class, processor: RegisterUserProcessor::class),
+        new Delete(uriTemplate: '/me', input: null, read: false, processor: DeleteUserProcessor::class),
+        new Patch(uriTemplate: '/me', input: UpdateUserInputDto::class, read: false, processor: UpdateUserProcessor::class),
     ],
 )]
 class UserResource

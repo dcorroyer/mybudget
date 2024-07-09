@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 /**
  * @extends AbstractProcessor<CreateUserInputDto, UserResource>
  */
-class CreateUserProcessor extends AbstractProcessor
+class RegisterUserProcessor extends AbstractProcessor
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

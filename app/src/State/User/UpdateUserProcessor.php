@@ -25,7 +25,7 @@ class UpdateUserProcessor extends AbstractProcessor
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): UserResource
     {
-        $user = $this->userRepository->find($uriVariables['id']) ?? throw new NotFoundException('User not found');
+        $user = $this->userRepository->find($this->getUser()) ?? throw new NotFoundException('User not found');
         $user = $this->map($data, $user);
 
         $this->entityManager->flush();

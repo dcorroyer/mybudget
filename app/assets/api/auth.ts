@@ -17,7 +17,7 @@ export async function register(values: registerFormType): Promise<Response> {
   return await fetch('api/register', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/ld+json',
     },
     body: JSON.stringify({
       firstName: values.firstName,

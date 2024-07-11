@@ -19,7 +19,6 @@ import {
 
 import { useAuth } from '@/hooks/AuthProvider'
 import { loginFormSchema, loginFormType } from '@/schemas/login'
-
 import { login } from '@/api'
 
 import classes from './LoginPage.module.css'

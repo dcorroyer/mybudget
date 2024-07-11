@@ -39,6 +39,8 @@
         "doctrine/doctrine-fixtures-bundle": "^3.6",
         "roave/security-advisories": "dev-latest",
         "symfony/maker-bundle": "^1.60",
+        "symfony/stopwatch": "7.1.*",
+        "symfony/web-profiler-bundle": "7.1.*",
         "zenstruck/foundry": "^2.0"
     },
     "config": {

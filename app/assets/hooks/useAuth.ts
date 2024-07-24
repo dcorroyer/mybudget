@@ -1,13 +1,26 @@
-import { postLogin, postRegister } from '@/api/auth'
+import { getMe, postLogin, postRegister } from '@/api/auth'
 import { useAuthProvider } from '@/providers/AuthProvider'
 import { notifications } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 export function useAuth() {
-  const navigate = useNavigate()
   const { setToken, clearToken } = useAuthProvider()
+
+  const authenticate = useCallback(async () => {
+    try {
+      await getMe()
+    } catch (error) {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error while fetching user data',
+      })
+    }
+  }, [])
 
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
@@ -59,13 +72,6 @@ export function useAuth() {
     mutationFn: postRegister,
     onSuccess: (data, variables) => {
       login(variables.email, variables.password)
-      notifications.show({
-        withBorder: true,
-        radius: 'md',
-        color: 'blue',
-        title: 'Successful Register',
-        message: 'You are now registered',
-      })
       return
     },
     onError: (error: Error) => {
@@ -90,13 +96,12 @@ export function useAuth() {
       title: 'Logout',
       message: 'You are now logged out',
     })
-
-    navigate('/login')
   }
 
   return {
     login,
     logout,
     register,
+    authenticate,
   }
 }

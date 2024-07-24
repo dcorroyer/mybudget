@@ -1,70 +1,37 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 
-import { getMe } from '@/api'
-import { notifications } from '@mantine/notifications'
+import { useAuth } from '@/hooks/useAuth'
+import { useLocalStorage } from '@mantine/hooks'
 
 interface AuthContextType {
   token: string | null
-  getToken: () => string | null
-  setToken: (newToken: React.SetStateAction<string | null>) => void
+  setToken: (val: ((prevState: null) => null) | null) => void
   clearToken: () => void
   checkTokenValidity: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
   token: null,
-  getToken: () => '',
   setToken: () => {},
   clearToken: () => {},
   checkTokenValidity: () => {},
 })
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken_] = useState<string | null>(() => localStorage.getItem('token'))
+  const { authenticate } = useAuth()
 
-  const getToken = (): string | null => {
-    const tokenValue = JSON.parse(token as string)
-    return tokenValue?.token || null
-  }
+  const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
 
-  const setToken = (newToken: string | null): void => {
-    setToken_(newToken)
-    if (newToken !== null) {
-      localStorage.setItem('token', newToken)
-    }
-  }
-
-  const clearToken = (): void => {
-    setToken_(null)
-    localStorage.removeItem('token')
-  }
-
-  const checkTokenValidity = async (): Promise<void> => {
-    return
-    if (token) {
-      try {
-        const response = await getMe()
-
-        if (!response.ok) {
-          clearToken()
-          notifications.show({
-            title: 'Session expired',
-            message: 'Your session has expired. Please log in again.',
-          })
-        }
-      } catch (error) {
-        console.error('Error checking token validity:', error)
-      }
-    }
+  const checkTokenValidity = () => {
+    authenticate()
   }
 
   const contextValue = useMemo(
     () => ({
       token,
-      getToken,
       setToken,
-      clearToken,
       checkTokenValidity,
+      clearToken: () => setToken(null),
     }),
     [token],
   )

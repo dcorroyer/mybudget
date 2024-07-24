@@ -1,3 +1,5 @@
+import { readLocalStorageValue } from '@mantine/hooks'
+
 import { LoginParams, RegisterParams } from '@/types'
 
 export async function postLogin(values: LoginParams): Promise<Response> {
@@ -32,6 +34,22 @@ export async function postRegister(values: RegisterParams): Promise<Response> {
   })
 
   if (!response.ok) throw new Error('Failed to login')
+
+  return await response.json()
+}
+
+export async function getMe(): Promise<Response> {
+  const token = readLocalStorageValue({ key: 'token' }) as string | null
+
+  const response = await fetch('api/me', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/ld+json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) throw new Error('Failed')
 
   return await response.json()
 }

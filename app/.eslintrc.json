@@ -9,7 +9,7 @@
     "plugin:react/recommended",
     "prettier"
   ],
-  "ignorePatterns": ["node_modules", "assets/components/ui"],
+  "ignorePatterns": ["node_modules", "assets/components/ui", "assets/vite-env.d.ts"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",

@@ -28,6 +28,7 @@ export function useAuth() {
 
   const authLogin = useMutation({
     mutationFn: postLogin,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSuccess: (data: any) => {
       if (data.error !== undefined) {
         notifications.show({

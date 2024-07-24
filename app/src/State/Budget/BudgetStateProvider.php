@@ -7,6 +7,7 @@ namespace App\State\Budget;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
 use App\ApiResource\BudgetResource;
+use App\Entity\User;
 use App\Repository\BudgetRepository;
 use Rekalogika\ApiLite\Exception\NotFoundException;
 use Rekalogika\ApiLite\State\AbstractProvider;
@@ -25,7 +26,10 @@ class BudgetStateProvider extends AbstractProvider
     {
         $budget = $this->budgetRepository->find($uriVariables['id']) ?? throw new NotFoundException('Budget not found');
 
-        if (!$budget->isOwnedByUser($this->getUser())) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (! $budget->isOwnedByUser($user)) {
             throw new AccessDeniedException('Denied access to this budget');
         }
 

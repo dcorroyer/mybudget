@@ -63,7 +63,7 @@ class Qa extends Runner
         $this->add('phpstan', 'clear-result-cache')->run();
 
         return $this
-            ->add('phpstan', 'analyse', '--configuration', '/tools/phpstan/phpstan.neon', '--memory-limit=2G')
+            ->add('phpstan', 'analyse', '--configuration', '/tools/phpstan/phpstan.neon', '--memory-limit=2G', '-vv')
             ->run()
         ;
     }

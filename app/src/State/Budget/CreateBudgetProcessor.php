@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use App\ApiInput\Budget\BudgetInputDto;
 use App\ApiResource\BudgetResource;
 use App\Entity\Budget;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Rekalogika\ApiLite\State\AbstractProcessor;
 
@@ -24,7 +25,11 @@ class CreateBudgetProcessor extends AbstractProcessor
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): BudgetResource
     {
         $budget = $this->map($data, Budget::class);
-        $budget->setUser($this->getUser());
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $budget->setUser($user);
 
         $this->em->persist($budget);
         $this->em->flush();

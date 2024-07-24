@@ -6,7 +6,6 @@ namespace App\Tests\Common\Factory;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Component\Uid\Uuid;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Zenstruck\Foundry\Persistence\Proxy;
 use Zenstruck\Foundry\Persistence\ProxyRepositoryDecorator;

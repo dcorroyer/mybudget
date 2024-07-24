@@ -1,7 +1,7 @@
-import { loginFormType, registerFormType } from '@/schemas'
+import { LoginParams, RegisterParams } from '@/types'
 
-export async function login(values: loginFormType): Promise<Response> {
-  return await fetch('api/login', {
+export async function postLogin(values: LoginParams): Promise<Response> {
+  const response = await fetch('/api/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/ld+json',
@@ -11,10 +11,14 @@ export async function login(values: loginFormType): Promise<Response> {
       password: values.password,
     }),
   })
+
+  if (!response.ok) throw new Error('Failed to login')
+
+  return await response.json()
 }
 
-export async function register(values: registerFormType): Promise<Response> {
-  return await fetch('api/register', {
+export async function postRegister(values: RegisterParams): Promise<Response> {
+  const response = await fetch('api/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/ld+json',
@@ -26,4 +30,8 @@ export async function register(values: registerFormType): Promise<Response> {
       password: values.password,
     }),
   })
+
+  if (!response.ok) throw new Error('Failed to login')
+
+  return await response.json()
 }

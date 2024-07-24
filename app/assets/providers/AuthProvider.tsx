@@ -27,9 +27,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     return tokenValue?.token || null
   }
 
-  const setToken = (newToken: React.SetStateAction<string | null>): void => {
+  const setToken = (newToken: string | null): void => {
     setToken_(newToken)
-    localStorage.setItem('token', newToken)
+    if (newToken !== null) {
+      localStorage.setItem('token', newToken)
+    }
   }
 
   const clearToken = (): void => {
@@ -38,6 +40,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   }
 
   const checkTokenValidity = async (): Promise<void> => {
+    return
     if (token) {
       try {
         const response = await getMe()
@@ -69,7 +72,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }
 
-export const useAuth = () => {
+export const useAuthProvider = () => {
   return useContext(AuthContext)
 }
 

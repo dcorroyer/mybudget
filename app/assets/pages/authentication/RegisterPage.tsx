@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { notifications } from '@mantine/notifications'
-
 import {
   Anchor,
   Button,
@@ -17,13 +15,14 @@ import {
   Title,
 } from '@mantine/core'
 
-import { register } from '@/api'
+import { useAuth } from '@/hooks/useAuth'
 import { registerFormSchema, registerFormType } from '@/schemas/register'
 
 import classes from './RegisterPage.module.css'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
+  const { register } = useAuth()
 
   const registerForm = useForm<registerFormType>({
     resolver: zodResolver(registerFormSchema),
@@ -36,27 +35,8 @@ export default function RegisterPage() {
     },
   })
 
-  async function onSubmit(values: registerFormType): Promise<void> {
-    try {
-      const response = await register(values)
-
-      if (!response.ok) {
-        throw new Error('Failed to register')
-      }
-
-      navigate('/login')
-      notifications.show({
-        title: 'Registered successfully',
-        message: 'You have successfully registered in.',
-      })
-    } catch (error) {
-      console.log('Error logging in:', error)
-
-      notifications.show({
-        title: 'Something went wrong ...',
-        message: 'You have to try again.',
-      })
-    }
+  const onSubmit = (values: registerFormType) => {
+    register(values.firstName, values.lastName, values.email, values.password)
   }
 
   return (

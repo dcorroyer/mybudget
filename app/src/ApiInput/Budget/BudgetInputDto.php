@@ -13,11 +13,15 @@ class BudgetInputDto
     #[Assert\NotBlank]
     public \DateTimeInterface $date;
 
-    /** @var ?array<int, IncomeInputDto> $incomes */
+    /**
+     * @var ?array<int, IncomeInputDto> $incomes
+     */
     #[Assert\NotBlank]
     public ?array $incomes = null;
 
-    /** @var ?array<int, ExpenseInputDto> $expenses */
+    /**
+     * @var ?array<int, ExpenseInputDto> $expenses
+     */
     #[Assert\NotBlank]
     public ?array $expenses = null;
 }

@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { notifications } from '@mantine/notifications'
-
 import {
   Anchor,
   Button,
@@ -17,15 +15,14 @@ import {
   Title,
 } from '@mantine/core'
 
-import { useAuth } from '@/hooks/AuthProvider'
+import { useAuth } from '@/hooks/useAuth'
 import { loginFormSchema, loginFormType } from '@/schemas/login'
-import { login } from '@/api'
 
 import classes from './LoginPage.module.css'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { setToken } = useAuth()
+  const { login } = useAuth()
 
   const loginForm = useForm<loginFormType>({
     resolver: zodResolver(loginFormSchema),
@@ -35,30 +32,8 @@ export default function LoginPage() {
     },
   })
 
-  async function onSubmit(values: loginFormType): Promise<void> {
-    try {
-      const response = await login(values)
-
-      if (!response.ok) {
-        throw new Error('Failed to login')
-      }
-
-      const token = await response.text()
-      setToken(token)
-
-      navigate('/')
-      notifications.show({
-        title: 'Logged in',
-        message: 'You have successfully logged in.',
-      })
-    } catch (error) {
-      console.log('Error logging in:', error)
-
-      notifications.show({
-        title: 'Something went wrong ...',
-        message: 'You have to try again.',
-      })
-    }
+  const onSubmit = (values: loginFormType) => {
+    login(values.email, values.password)
   }
 
   return (

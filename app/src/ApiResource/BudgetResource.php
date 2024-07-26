@@ -41,12 +41,12 @@ class BudgetResource
     public ?\DateTimeInterface $date = null;
 
     /**
-     * @var ?CollectionInterface<int, IncomeResource>
+     * @var CollectionInterface<int, IncomeResource>|null
      */
     public ?CollectionInterface $incomes = null;
 
     /**
-     * @var ?CollectionInterface<int, ExpenseResource>
+     * @var CollectionInterface<int, ExpenseResource>|null
      */
     public ?CollectionInterface $expenses = null;
 

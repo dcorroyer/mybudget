@@ -46,7 +46,7 @@ class UserResource
     public ?string $password = null;
 
     /**
-     * @var ?CollectionInterface<int, BudgetResource>
+     * @var CollectionInterface<int, BudgetResource>|null
      */
     public ?CollectionInterface $budgets = null;
 }

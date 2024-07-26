@@ -15,3 +15,7 @@
 ###< lexik/jwt-authentication-bundle ###
 
 /node_modules/
+###> pentatrion/vite-bundle ###
+/node_modules/
+/public/build/
+###< pentatrion/vite-bundle ###

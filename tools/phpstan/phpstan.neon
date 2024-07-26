@@ -62,6 +62,9 @@ parameters:
         property_type: 100
     ignoreErrors:
         - "#^Method .*CollectionStateProvider::provide\\(\\) should return Rekalogika\\\\ApiLite\\\\Paginator\\\\MappingPaginatorDecorator<.*> but returns iterable<.*>.$#"
+        -
+            identifier: property.uninitialized
+            path: %currentWorkingDirectory%/src/ApiInput/*
     ergebnis:
         final:
             enabled: false

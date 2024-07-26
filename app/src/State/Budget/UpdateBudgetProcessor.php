@@ -9,6 +9,7 @@ use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
 use App\ApiInput\Budget\BudgetInputDto;
 use App\ApiResource\BudgetResource;
 use App\Entity\Budget;
+use App\Entity\User;
 use App\Repository\BudgetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Rekalogika\ApiLite\Exception\NotFoundException;
@@ -29,7 +30,10 @@ class UpdateBudgetProcessor extends AbstractProcessor
     {
         $budget = $this->budgetRepository->find($uriVariables['id']) ?? throw new NotFoundException('Budget not found');
 
-        if (!$budget->isOwnedByUser($this->getUser())) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (! $budget->isOwnedByUser($user)) {
             throw new AccessDeniedException('Denied access to this budget');
         }
 

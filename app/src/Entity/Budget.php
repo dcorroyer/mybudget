@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BudgetRepository;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -64,6 +65,7 @@ class Budget
     public function __construct()
     {
         $this->id = Uuid::v4();
+        $this->date = Carbon::now();
         $this->incomes = new ArrayCollection();
         $this->expenses = new ArrayCollection();
     }
@@ -158,6 +160,9 @@ class Budget
         return $this->incomes;
     }
 
+    /**
+     * @param Collection<int, Income> $incomes
+     */
     public function setIncomes(Collection $incomes): static
     {
         $this->incomes = $incomes;
@@ -177,6 +182,9 @@ class Budget
         return $this->expenses;
     }
 
+    /**
+     * @param Collection<int, Expense> $expenses
+     */
     public function setExpenses(Collection $expenses): static
     {
         $this->expenses = $expenses;

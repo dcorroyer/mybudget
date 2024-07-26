@@ -1,181 +1,103 @@
 import React from 'react'
-import { MailIcon, UserIcon } from 'lucide-react'
-
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form'
-
-import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/ui/password-input'
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
-
-import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
-import { useToast } from '@/components/hooks/useToast'
-
-import { registerFormSchema, registerFormType } from '@/schemas/register'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+
 import { zodResolver } from '@hookform/resolvers/zod'
-import { register } from '@/api'
 
-function RegisterPage(): React.JSX.Element {
-    const navigate = useNavigate()
-    const { toast } = useToast()
+import {
+  Anchor,
+  Button,
+  Container,
+  Paper,
+  PasswordInput,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core'
 
-    const registerForm = useForm<registerFormType>({
-        resolver: zodResolver(registerFormSchema),
-        defaultValues: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            repeatPassword: '',
-        },
-    })
+import { useAuth } from '@/hooks/useAuth'
+import { registerFormSchema, registerFormType } from '@/schemas/register'
 
-    async function onSubmit(values: registerFormType): Promise<void> {
-        try {
-            const response = await register(values)
+import classes from './RegisterPage.module.css'
 
-            if (!response.ok) {
-                throw new Error('Failed to register')
-            }
+export default function RegisterPage() {
+  const navigate = useNavigate()
+  const { register } = useAuth()
 
+  const registerForm = useForm<registerFormType>({
+    resolver: zodResolver(registerFormSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      repeatPassword: '',
+    },
+  })
+
+  const onSubmit = (values: registerFormType) => {
+    register(values.firstName, values.lastName, values.email, values.password)
+  }
+
+  return (
+    <Container size={420} my={40}>
+      <Title ta='center' className={classes.title}>
+        Register Page
+      </Title>
+      <Text c='dimmed' size='sm' ta='center' mt={5}>
+        Already have an account?{' '}
+        <Anchor
+          size='sm'
+          component='button'
+          onClick={() => {
             navigate('/login')
-            toast({
-                title: 'Registered successfully',
-                description: 'You have successfully registered in.',
-                variant: 'default',
-            })
-        } catch (error) {
-            console.log('Error logging in:', error)
+          }}
+        >
+          Sign in
+        </Anchor>
+      </Text>
 
-            toast({
-                title: 'Something went wrong ...',
-                variant: 'destructive',
-            })
-        }
-    }
-
-    return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
-            <Card className='w-full max-w-md space-y-4'>
-                <CardHeader>
-                    <CardTitle>Register page</CardTitle>
-                    <CardDescription>
-                        Enter your credentials to create your account.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...registerForm}>
-                        <form onSubmit={registerForm.handleSubmit(onSubmit)} className='space-y-2'>
-                            <FormField
-                                control={registerForm.control}
-                                name='firstName'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Firstname</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Firstname'
-                                                {...field}
-                                                type='text'
-                                                suffix={<UserIcon />}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={registerForm.control}
-                                name='lastName'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Lastname</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Lastname'
-                                                {...field}
-                                                type='text'
-                                                suffix={<UserIcon />}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={registerForm.control}
-                                name='email'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Email'
-                                                {...field}
-                                                type='email'
-                                                suffix={<MailIcon />}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={registerForm.control}
-                                name='password'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <PasswordInput placeholder='Password' {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={registerForm.control}
-                                name='repeatPassword'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <PasswordInput
-                                                placeholder='Repeat Password'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type='submit'>Register</Button>
-                        </form>
-                    </Form>
-                </CardContent>
-                <CardFooter>
-                    <Button className='mx-auto' variant='ghost' onClick={() => navigate('/login')}>
-                        You already have an account? Login here
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
-    )
+      <form onSubmit={registerForm.handleSubmit(onSubmit)}>
+        <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
+          <TextInput
+            label='Lastname'
+            placeholder='Doe'
+            required
+            {...registerForm.register('lastName')}
+          />
+          <TextInput
+            label='Firstname'
+            placeholder='John'
+            required
+            mt='md'
+            {...registerForm.register('firstName')}
+          />
+          <TextInput
+            label='Email'
+            placeholder='john.doeuf@mybudget.fr'
+            required
+            mt='md'
+            {...registerForm.register('email')}
+          />
+          <PasswordInput
+            label='Password'
+            placeholder='Your password'
+            required
+            mt='md'
+            {...registerForm.register('password')}
+          />
+          <PasswordInput
+            label='Repeat-password'
+            placeholder='Repeat your password'
+            required
+            mt='md'
+            {...registerForm.register('repeatPassword')}
+          />
+          <Button type='submit' fullWidth mt='xl'>
+            Register
+          </Button>
+        </Paper>
+      </form>
+    </Container>
+  )
 }
-
-export default RegisterPage

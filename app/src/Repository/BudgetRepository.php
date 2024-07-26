@@ -25,6 +25,7 @@ class BudgetRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->where('b.user = :user')
-            ->setParameter('user', $user->getUuid());
+            ->setParameter('user', $user->getUuid())
+        ;
     }
 }

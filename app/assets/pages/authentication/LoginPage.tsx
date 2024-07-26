@@ -1,136 +1,79 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { MailIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form'
+  Anchor,
+  Button,
+  Container,
+  Paper,
+  PasswordInput,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core'
 
-import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/ui/password-input'
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
-
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/hooks/useToast'
-
-import { useAuth } from '@/hooks/AuthProvider'
+import { useAuth } from '@/hooks/useAuth'
 import { loginFormSchema, loginFormType } from '@/schemas/login'
-import { login } from '@/api'
 
-function LoginPage(): React.JSX.Element {
-    const navigate = useNavigate()
-    const { setToken } = useAuth()
-    const { toast } = useToast()
+import classes from './LoginPage.module.css'
 
-    const loginForm = useForm<loginFormType>({
-        resolver: zodResolver(loginFormSchema),
-        defaultValues: {
-            email: '',
-            password: '',
-        },
-    })
+export default function LoginPage() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
 
-    async function onSubmit(values: loginFormType): Promise<void> {
-        try {
-            const response = await login(values)
+  const loginForm = useForm<loginFormType>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
 
-            if (!response.ok) {
-                throw new Error('Failed to login')
-            }
+  const onSubmit = (values: loginFormType) => {
+    login(values.email, values.password)
+  }
 
-            const token = await response.text()
-            setToken(token)
+  return (
+    <Container size={420} my={40}>
+      <Title ta='center' className={classes.title}>
+        Login Page
+      </Title>
+      <Text c='dimmed' size='sm' ta='center' mt={5}>
+        Do not have an account yet?{' '}
+        <Anchor
+          size='sm'
+          component='button'
+          onClick={() => {
+            navigate('/register')
+          }}
+        >
+          Create account
+        </Anchor>
+      </Text>
 
-            navigate('/')
-            toast({
-                title: 'Logged in',
-                description: 'You have successfully logged in.',
-                variant: 'default',
-            })
-        } catch (error) {
-            console.log('Error logging in:', error)
-
-            toast({
-                title: 'Something went wrong ...',
-                variant: 'destructive',
-            })
-        }
-    }
-
-    return (
-        <div className='flex flex-col items-center py-12 sm:px-6 lg:px-8'>
-            <Card className='w-full max-w-md space-y-4'>
-                <CardHeader>
-                    <CardTitle>Login page</CardTitle>
-                    <CardDescription>
-                        Use your credentials to login to your account.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...loginForm}>
-                        <form onSubmit={loginForm.handleSubmit(onSubmit)} className='space-y-2'>
-                            <FormField
-                                control={loginForm.control}
-                                name='email'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Email'
-                                                {...field}
-                                                type='email'
-                                                suffix={<MailIcon />}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={loginForm.control}
-                                name='password'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <PasswordInput placeholder='Password' {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type='submit'>Login</Button>
-                        </form>
-                    </Form>
-                </CardContent>
-                <CardFooter>
-                    <Button
-                        className='mx-auto'
-                        variant='ghost'
-                        onClick={() => navigate('/register')}
-                    >
-                        Not yet registered? Create an account here
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
-    )
+      <form onSubmit={loginForm.handleSubmit(onSubmit)}>
+        <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
+          <TextInput
+            label='Email'
+            placeholder='john.doeuf@mybudget.fr'
+            required
+            {...loginForm.register('email')}
+          />
+          <PasswordInput
+            label='Password'
+            placeholder='Your password'
+            required
+            mt='md'
+            {...loginForm.register('password')}
+          />
+          <Button type='submit' fullWidth mt='xl'>
+            Sign in
+          </Button>
+        </Paper>
+      </form>
+    </Container>
+  )
 }
-
-export default LoginPage

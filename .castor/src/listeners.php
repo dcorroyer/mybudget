@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger;
+namespace dcorroyer\mybudget;
 
 use Castor\Attribute\AsListener;
 use Castor\Event\AfterExecuteTaskEvent;
@@ -15,7 +15,7 @@ use function Castor\fs;
 use function Castor\http_request;
 use function Castor\input;
 use function Castor\io;
-use function TheoD\MusicAutoTagger\Runner\composer;
+use function dcorroyer\mybudget\Runner\composer;
 
 #[AsListener(BeforeExecuteTaskEvent::class, priority: 1000)]
 function check_tool_deps(BeforeExecuteTaskEvent $event): void

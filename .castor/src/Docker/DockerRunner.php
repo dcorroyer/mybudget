@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger\Docker;
+namespace dcorroyer\mybudget\Docker;
 
 use Castor\Context;
-use TheoD\MusicAutoTagger\Runner\Runner;
+use dcorroyer\mybudget\Runner\Runner;
 
 class DockerRunner extends Runner
 {

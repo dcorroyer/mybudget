@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheoD\MusicAutoTagger;
+namespace dcorroyer\mybudget;
 
 use Castor\Attribute\AsContext;
 use Castor\Context;

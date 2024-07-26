@@ -1,10 +1,10 @@
 includes:
-    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
-    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
-    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
-    - /tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
-    - /tools/phpstan/vendor/slam/phpstan-extensions/conf/not-now-rules.neon
-    - /tools/phpstan/vendor/slam/phpstan-extensions/conf/symfony-rules.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - %rootDir%/../../spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+    - %rootDir%/../../slam/phpstan-extensions/conf/not-now-rules.neon
+    - %rootDir%/../../slam/phpstan-extensions/conf/symfony-rules.neon
     - phar://phpstan.phar/conf/bleedingEdge.neon
 
 parameters:
@@ -38,6 +38,7 @@ parameters:
     reportMaybesInPropertyPhpDocTypes: true
     reportStaticMethodSignatures: true
     reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
 #    editorUrl: 'phpstorm://open?file=/home/t/franken-base/%%relFile%%&line=%%line%%'
     editorUrlTitle: '%%relFile%%:%%line%%'
 #    doctrine: # see: https://github.com/phpstan/phpstan-doctrine?tab=readme-ov-file#configuration
@@ -61,6 +62,9 @@ parameters:
         property_type: 100
     ignoreErrors:
         - "#^Method .*CollectionStateProvider::provide\\(\\) should return Rekalogika\\\\ApiLite\\\\Paginator\\\\MappingPaginatorDecorator<.*> but returns iterable<.*>.$#"
+        -
+            identifier: property.uninitialized
+            path: %currentWorkingDirectory%/src/ApiInput/*
     ergebnis:
         final:
             enabled: false

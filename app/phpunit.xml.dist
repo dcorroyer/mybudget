@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+        cacheDirectory="var/.phpunit.cache"
+        backupGlobals="false"
+        colors="true"
+        executionOrder="depends,defects"
+        requireCoverageMetadata="false"
+        beStrictAboutCoverageMetadata="false"
+        beStrictAboutOutputDuringTests="false"
+        failOnRisky="true"
+        failOnWarning="true"
+        bootstrap="tests/bootstrap.php"
+>
+    <!-- see https://maks-rafalko.github.io/blog/2021-11-21/symfony-tests-performance/#collect-coverage-with-pcov-if-possible -->
+    <php>
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+        <env name="KERNEL_CLASS" value="App\Kernel" force="true"/>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="APP_DEBUG" value="false" force="true"/>
+        <env name="XDEBUG_MODE" value="OFF" force="true"/>
+        <server name="APP_DEBUG" value="false" force="true"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+        <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+        <server name="SYMFONY_PHPUNIT_VERSION" value="10.5"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
+    </php>
+    <coverage cacheDirectory="var/.coverage-cache">
+    </coverage>
+    <extensions>
+        <bootstrap class="Ergebnis\PHPUnit\SlowTestDetector\Extension"/>
+    </extensions>
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>

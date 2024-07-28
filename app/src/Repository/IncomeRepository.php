@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Income;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
- * @extends ServiceEntityRepository<Income>
+ * @extends AbstractEntityRepository<Income>
+ *
+ * @method Income|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Income|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Income[]    findAll()
+ * @method Income[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IncomeRepository extends ServiceEntityRepository
+class IncomeRepository extends AbstractEntityRepository
 {
-    public function __construct(
-        ManagerRegistry $registry
-    ) {
-        parent::__construct($registry, Income::class);
+    public function getEntityClass(): string
+    {
+        return Income::class;
     }
 }

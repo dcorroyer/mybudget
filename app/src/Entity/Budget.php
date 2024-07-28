@@ -5,33 +5,53 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BudgetRepository;
+use App\Serializable\SerializationGroups;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Budget
 {
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+        SerializationGroups::USER_GET,
+    ])]
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME)]
-    private ?Uuid $id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
-    #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $name = '';
+    #[ORM\Column(length: 255)]
+    private string $name;
 
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
-    #[Assert\Type(Types::FLOAT)]
-    #[ORM\Column(type: Types::FLOAT)]
-    private float $savingCapacity = 0;
+    #[Assert\Type('float')]
+    #[ORM\Column]
+    private ?float $savingCapacity = 0;
 
     #[Context(
         normalizationContext: [
@@ -41,41 +61,48 @@ class Budget
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<int, Income>
+     * @var Collection<Income>
      */
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
-     * @var Collection<int, Expense>
+     * @var Collection<Expense>
      */
+    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 
     #[ORM\ManyToOne(inversedBy: 'budgets')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
         $this->date = Carbon::now();
         $this->incomes = new ArrayCollection();
         $this->expenses = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?Uuid $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -160,15 +187,20 @@ class Budget
         return $this->incomes;
     }
 
-    /**
-     * @param Collection<int, Income> $incomes
-     */
-    public function setIncomes(Collection $incomes): static
+    public function addIncome(Income $income): self
     {
-        $this->incomes = $incomes;
-
-        foreach ($incomes as $income) {
+        if (! $this->incomes->contains($income)) {
+            $this->incomes->add($income);
             $income->setBudget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIncome(Income $income): static
+    {
+        if ($this->incomes->removeElement($income) && $income->getBudget() === $this) {
+            $income->setBudget(null);
         }
 
         return $this;
@@ -182,15 +214,20 @@ class Budget
         return $this->expenses;
     }
 
-    /**
-     * @param Collection<int, Expense> $expenses
-     */
-    public function setExpenses(Collection $expenses): static
+    public function addExpense(Expense $expense): self
     {
-        $this->expenses = $expenses;
-
-        foreach ($expenses as $expense) {
+        if (! $this->expenses->contains($expense)) {
+            $this->expenses->add($expense);
             $expense->setBudget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expense $expense): static
+    {
+        if ($this->expenses->removeElement($expense) && $expense->getBudget() === $this) {
+            $expense->setBudget(null);
         }
 
         return $this;
@@ -206,10 +243,5 @@ class Budget
         $this->user = $user;
 
         return $this;
-    }
-
-    public function isOwnedByUser(?User $user): bool
-    {
-        return $this->getUser() === $user;
     }
 }

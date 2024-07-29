@@ -50,7 +50,7 @@ export default function Login() {
             navigate('/register')
           }}
         >
-          Create account
+          Sign up
         </Anchor>
       </Text>
 

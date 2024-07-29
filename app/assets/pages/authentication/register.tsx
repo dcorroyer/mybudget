@@ -53,7 +53,7 @@ export default function Register() {
             navigate('/login')
           }}
         >
-          Sign in
+          Log in
         </Anchor>
       </Text>
 

@@ -53,11 +53,10 @@ class ExpenseServiceTest extends TestCase
 
         $budget = BudgetFactory::createOne();
 
-        $expensePayload = (new ExpensePayload())
-            ->setName($expense->getName())
-            ->setAmount($expense->getAmount())
-            ->setCategory($expense->getCategory())
-        ;
+        $expensePayload = (new ExpensePayload());
+        $expensePayload->name = $expense->getName();
+        $expensePayload->amount = $expense->getAmount();
+        $expensePayload->category = $expense->getCategory();
 
         $this->expenseRepository->expects($this->once())
             ->method('save')

@@ -20,25 +20,4 @@ class ExpensePayload
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::STRING)]
     public string $category;
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function setAmount(float $amount): static
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function setCategory(string $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
 }

@@ -55,11 +55,11 @@ class UserServiceTest extends TestCase
             'id' => 1,
         ]);
 
-        $registerPayload = (new RegisterPayload())
-            ->setEmail($user->getEmail())
-            ->setFirstName($user->getFirstName())
-            ->setLastName($user->getLastName())
-            ->setPassword($user->getPassword());
+        $registerPayload = (new RegisterPayload());
+        $registerPayload->email = $user->getEmail();
+        $registerPayload->firstName = $user->getFirstName();
+        $registerPayload->lastName = $user->getLastName();
+        $registerPayload->password = $user->getPassword();
 
         $this->passwordHasher
             ->expects($this->once())

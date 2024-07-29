@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\Income;
@@ -32,8 +34,7 @@ final class IncomeFactory extends PersistentProxyObjectFactory
      */
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(Income $income): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(Income $income): void {})
     }
 }

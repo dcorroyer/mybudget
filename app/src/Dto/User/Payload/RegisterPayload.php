@@ -10,42 +10,14 @@ class RegisterPayload
 {
     #[Assert\NotBlank]
     #[Assert\Email]
-    public ?string $email = null;
+    public string $email;
 
     #[Assert\NotBlank]
-    public ?string $firstName = null;
+    public string $firstName;
 
     #[Assert\NotBlank]
-    public ?string $lastName = null;
+    public string $lastName;
 
     #[Assert\NotBlank]
-    public ?string $password = null;
-
-    public function setEmail(?string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function setFirstName(?string $firstName): static
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function setLastName(?string $lastName): static
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function setPassword(?string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
-    }
+    public string $password;
 }

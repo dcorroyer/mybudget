@@ -43,6 +43,22 @@ class BudgetService
     {
         $budget = new Budget();
 
+        return $this->createOrUpdateBudget($budgetPayload, $budget);
+    }
+
+    public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
+    {
+        $this->checkAccess($budget);
+
+        // Clear existing incomes and expenses
+        $budget->clearIncomes();
+        $budget->clearExpenses();
+
+        return $this->createOrUpdateBudget($budgetPayload, $budget);
+    }
+
+    private function createOrUpdateBudget(BudgetPayload $budgetPayload, Budget $budget): Budget
+    {
         /** @var User $user */
         $user = $this->security->getUser();
 
@@ -50,29 +66,20 @@ class BudgetService
             ->setUser($user)
         ;
 
+        $incomes = $budgetPayload->incomes ?? [];
+        $expenses = $budgetPayload->expenses ?? [];
 
-        foreach ($budgetPayload->incomes as $incomePayload) {
+        foreach ($incomes as $incomePayload) {
             $income = $this->incomeService->create($incomePayload, $budget);
             $budget->addIncome($income);
         }
 
-        foreach ($budgetPayload->expenses as $expensePayload) {
+        foreach ($expenses as $expensePayload) {
             $expense = $this->expenseService->create($expensePayload, $budget);
             $budget->addExpense($expense);
         }
 
         $this->budgetRepository->save($budget, true);
-
-        return $budget;
-    }
-
-    public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
-    {
-        $this->checkAccess($budget);
-
-        $this->budgetRepository->delete($budget, true);
-
-        $this->create($budgetPayload);
 
         return $budget;
     }
@@ -86,10 +93,13 @@ class BudgetService
         return $budget;
     }
 
+    /**
+     * @return SlidingPagination<int, Budget>
+     */
     public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?BudgetFilterQuery $budgetFilterQuery = null): SlidingPagination
     {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()?->eq('user', $this->security->getUser()));
+        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()));
 
         return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
     }

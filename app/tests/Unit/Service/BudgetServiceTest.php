@@ -60,56 +60,92 @@ class BudgetServiceTest extends TestCase
         );
     }
 
-//        #[TestDox('When calling update budget, it should update and return the budget updated')]
-//        #[Test]
-//        public function updateBudgetService_WhenDataOk_ReturnsBudgetUpdated(): void
-//        {
-//            // ARRANGE
-//            $budget = BudgetFactory::createOne([
-//                'id' => 1,
-//                'user' => $this->security->getUser(),
-//            ]);
-//
-//            $updateBudgetPayload = (new BudgetPayload())
-//                ->setDate(new \DateTime('2022-01'));
-//
-//            $this->budgetRepository->expects($this->once())
-//                ->method('save')
-//                ->willReturnCallback(static function (Budget $budget): void {
-//                    $budget->setId(1)
-//                        ->setDate(new \DateTime('2022-01'))
-//                        ->updateName()
-//                    ;
-//                })
-//            ;
-//
-//            // ACT
-//            $budgetResponse = $this->budgetService->update($updateBudgetPayload, $budget);
-//
-//            // ASSERT
-//            $this->assertInstanceOf(Budget::class, $budget);
-//            $this->assertSame($budget->getId(), $budgetResponse->getId());
-//            $this->assertSame('Budget 2022-01', $budgetResponse->getName());
-//        }
+    #[TestDox('When calling create budget, it should update and return the budget created')]
+    #[Test]
+    public function createBudgetService_WhenDataOk_ReturnsBudgetCreated(): void
+    {
+        // ARRANGE
+        $budget = BudgetFactory::createOne([
+            'id' => 1,
+            'user' => $this->security->getUser(),
+        ]);
 
-        #[TestDox('When calling update budget with bad user, it should returns access denied exception')]
-        #[Test]
-        public function updateBudgetService_WithBadUser_ReturnsAccessDeniedException(): void
-        {
-            // ASSERT
-            $this->expectException(AccessDeniedHttpException::class);
+        $BudgetPayload = (new BudgetPayload());
+        $BudgetPayload->date = new \DateTime('2022-03');
+        $BudgetPayload->incomes = [];
+        $BudgetPayload->expenses = [];
 
-            // ARRANGE
-            $budget = BudgetFactory::createOne([
-                'id' => 1,
-            ]);
+        $this->budgetRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Budget $budget): void {
+                $budget->setId(1)
+                    ->setDate(new \DateTime('2022-03'))
+                    ->updateName()
+                ;
+            })
+        ;
 
-            $updateBudgetPayload = (new BudgetPayload())
-                ->setDate(new \DateTime('2022-01'));
+        // ACT
+        $budgetResponse = $this->budgetService->create($BudgetPayload);
 
-            // ACT
-            $this->budgetService->update($updateBudgetPayload, $budget);
-        }
+        // ASSERT
+        $this->assertInstanceOf(Budget::class, $budget);
+        $this->assertSame($budget->getId(), $budgetResponse->getId());
+        $this->assertSame('Budget 2022-03', $budgetResponse->getName());
+    }
+
+    #[TestDox('When calling update budget, it should update and return the budget updated')]
+    #[Test]
+    public function updateBudgetService_WhenDataOk_ReturnsBudgetUpdated(): void
+    {
+        // ARRANGE
+        $budget = BudgetFactory::createOne([
+            'id' => 1,
+            'user' => $this->security->getUser(),
+        ]);
+
+        $updateBudgetPayload = (new BudgetPayload());
+        $updateBudgetPayload->date = new \DateTime('2022-03');
+        $updateBudgetPayload->incomes = [];
+        $updateBudgetPayload->expenses = [];
+
+        $this->budgetRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Budget $budget): void {
+                $budget->setId(1)
+                    ->setDate(new \DateTime('2022-03'))
+                    ->updateName()
+                ;
+            })
+        ;
+
+        // ACT
+        $budgetResponse = $this->budgetService->update($updateBudgetPayload, $budget);
+
+        // ASSERT
+        $this->assertInstanceOf(Budget::class, $budget);
+        $this->assertSame($budget->getId(), $budgetResponse->getId());
+        $this->assertSame('Budget 2022-03', $budgetResponse->getName());
+    }
+
+    #[TestDox('When calling update budget with bad user, it should returns access denied exception')]
+    #[Test]
+    public function updateBudgetService_WithBadUser_ReturnsAccessDeniedException(): void
+    {
+        // ASSERT
+        $this->expectException(AccessDeniedHttpException::class);
+
+        // ARRANGE
+        $budget = BudgetFactory::createOne([
+            'id' => 1,
+        ]);
+
+        $updateBudgetPayload = (new BudgetPayload());
+        $updateBudgetPayload->date = new \DateTime('2022-01');
+
+        // ACT
+        $this->budgetService->update($updateBudgetPayload, $budget);
+    }
 
     #[TestDox('When calling get budget, it should get the budget')]
     #[Test]
@@ -154,7 +190,7 @@ class BudgetServiceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         // ARRANGE
-        $budget = BudgetFactory::createOne();
+        $budget = BudgetFactory::new()->withoutPersisting()->create();
 
         $this->budgetRepository->expects($this->once())
             ->method('find')
@@ -215,9 +251,6 @@ class BudgetServiceTest extends TestCase
         $this->assertCount(20, $budgetsResponse);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     #[TestDox('When calling checkAccess, it should returns an AccessDeniedException')]
     #[Test]
     public function checkAccessBudgetService_WhenBadData_ReturnsAccessDeniedException(): void
@@ -238,9 +271,6 @@ class BudgetServiceTest extends TestCase
         $method->invoke($budgetService, $budget);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     private function getPrivateMethod(string $className, string $methodName): \ReflectionMethod
     {
         return (new \ReflectionClass($className))->getMethod($methodName);

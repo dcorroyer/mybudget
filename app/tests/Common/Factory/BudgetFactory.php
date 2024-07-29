@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\Budget;
@@ -21,6 +23,7 @@ final class BudgetFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
+            'id' => self::faker()->randomNumber(),
             'date' => self::faker()->dateTime(),
             'name' => self::faker()->text(255),
             'savingCapacity' => self::faker()->randomFloat(),
@@ -33,8 +36,7 @@ final class BudgetFactory extends PersistentProxyObjectFactory
      */
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(Budget $budget): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(Budget $budget): void {})
     }
 }

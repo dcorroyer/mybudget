@@ -39,8 +39,9 @@ class Budget
         SerializationGroups::BUDGET_UPDATE,
     ])]
     #[Assert\NotBlank]
+    #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
-    private string $name;
+    private string $name = '';
 
     #[Serializer\Groups([
         SerializationGroups::BUDGET_GET,
@@ -49,9 +50,9 @@ class Budget
         SerializationGroups::BUDGET_UPDATE,
     ])]
     #[Assert\NotBlank]
-    #[Assert\Type('float')]
+    #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
-    private ?float $savingCapacity = 0;
+    private float $savingCapacity = 0;
 
     #[Context(
         normalizationContext: [
@@ -73,14 +74,14 @@ class Budget
     private \DateTimeInterface $date;
 
     /**
-     * @var Collection<Income>
+     * @var Collection<int, Income>
      */
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
-     * @var Collection<Expense>
+     * @var Collection<int, Expense>
      */
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
@@ -187,6 +188,11 @@ class Budget
         return $this->incomes;
     }
 
+    public function clearIncomes(): void
+    {
+        $this->incomes->clear();
+    }
+
     public function addIncome(Income $income): self
     {
         if (! $this->incomes->contains($income)) {
@@ -212,6 +218,11 @@ class Budget
     public function getExpenses(): Collection
     {
         return $this->expenses;
+    }
+
+    public function clearExpenses(): void
+    {
+        $this->expenses->clear();
     }
 
     public function addExpense(Expense $expense): self

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\Expense;
@@ -33,8 +35,7 @@ final class ExpenseFactory extends PersistentProxyObjectFactory
      */
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(Expense $expense): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(Expense $expense): void {})
     }
 }

@@ -24,19 +24,19 @@ class Expense
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
-    private string $name;
+    private string $name = '';
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::FLOAT)]
     #[ORM\Column]
-    private float $amount;
+    private float $amount = 0;
 
     #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
-    private string $category;
+    private string $category = '';
 
     #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
     #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]

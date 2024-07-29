@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Common\Factory;
 
 use App\Entity\User;
@@ -34,8 +36,7 @@ final class UserFactory extends PersistentProxyObjectFactory
      */
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(User $user): void {})
-        ;
+        return $this;
+        // ->afterInstantiate(function(User $user): void {})
     }
 }

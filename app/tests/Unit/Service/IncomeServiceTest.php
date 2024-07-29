@@ -53,10 +53,9 @@ class IncomeServiceTest extends TestCase
 
         $budget = BudgetFactory::createOne();
 
-        $incomePayload = (new IncomePayload())
-            ->setName($income->getName())
-            ->setAmount($income->getAmount())
-        ;
+        $incomePayload = (new IncomePayload());
+        $incomePayload->name = $income->getName();
+        $incomePayload->amount = $income->getAmount();
 
         $this->incomeRepository->expects($this->once())
             ->method('save')

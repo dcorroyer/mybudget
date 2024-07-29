@@ -3,14 +3,10 @@
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+        xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
         cacheDirectory="var/.phpunit.cache"
-        backupGlobals="false"
         colors="true"
         executionOrder="depends,defects"
-        requireCoverageMetadata="false"
-        beStrictAboutCoverageMetadata="false"
-        beStrictAboutOutputDuringTests="false"
         failOnRisky="true"
         failOnWarning="true"
         bootstrap="tests/bootstrap.php"
@@ -21,9 +17,8 @@
         <ini name="error_reporting" value="-1"/>
         <env name="KERNEL_CLASS" value="App\Kernel" force="true"/>
         <env name="APP_ENV" value="test" force="true"/>
-        <env name="APP_DEBUG" value="false" force="true"/>
         <env name="XDEBUG_MODE" value="OFF" force="true"/>
-        <server name="APP_DEBUG" value="false" force="true"/>
+        <server name="APP_DEBUG" value="0" force="true"/>
         <server name="SHELL_VERBOSITY" value="-1"/>
         <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
         <server name="SYMFONY_PHPUNIT_VERSION" value="10.5"/>

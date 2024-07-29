@@ -14,10 +14,10 @@ import AuthProvider from '@/providers/AuthProvider'
 import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
 import PrivateRoutes from '@/utils/PrivateRoutes'
 
-import LoginPage from '@/pages/authentication/LoginPage'
-import RegisterPage from '@/pages/authentication/RegisterPage'
+import Login from '@/pages/authentication/login'
+import Register from '@/pages/authentication/register'
 
-import DashboardPage from '@/pages/dashboard/DashboardPage'
+import Home from '@/pages/home'
 
 const queryClient = new QueryClient()
 
@@ -30,11 +30,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <BrowserRouter>
             <Routes>
               <Route element={<PrivateRoutes />}>
-                <Route path={'/'} element={<DashboardPage />} />
+                <Route path={'/'} element={<Home />} />
               </Route>
               <Route element={<AuthenticationRoutes />}>
-                <Route path={'/login'} element={<LoginPage />} />
-                <Route path={'/register'} element={<RegisterPage />} />
+                <Route path={'/login'} element={<Login />} />
+                <Route path={'/register'} element={<Register />} />
               </Route>
             </Routes>
           </BrowserRouter>

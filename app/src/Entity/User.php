@@ -5,32 +5,37 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Serializable\SerializationGroups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME)]
-    private Uuid $id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $email = '';
 
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $firstName = '';
 
+    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $lastName = '';
@@ -51,26 +56,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Budget>
      */
+    #[Serializer\Groups([SerializationGroups::USER_GET])]
     #[ORM\OneToMany(targetEntity: Budget::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $budgets;
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
         $this->budgets = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getUuid(): string
-    {
-        return $this->id->toBinary();
-    }
-
-    public function setId(Uuid $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -171,6 +171,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (! $this->budgets->contains($budget)) {
             $this->budgets->add($budget);
             $budget->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBudget(Budget $budget): self
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {
+            $budget->setUser(null);
         }
 
         return $this;

@@ -1,4 +1,4 @@
-import { getMe, postLogin, postRegister } from '@/api/auth'
+import { postLogin, postRegister } from '@/api/auth'
 import { useAuthProvider } from '@/providers/AuthProvider'
 import { notifications } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
@@ -6,21 +6,6 @@ import { useCallback } from 'react'
 
 export function useAuth() {
   const { setToken, clearToken } = useAuthProvider()
-
-  const authenticate = useCallback(async () => {
-    try {
-      await getMe()
-    } catch (error) {
-      console.log('error:', error)
-      notifications.show({
-        withBorder: true,
-        radius: 'md',
-        color: 'red',
-        title: 'Error',
-        message: 'There was an error while fetching user data',
-      })
-    }
-  }, [])
 
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
@@ -103,6 +88,5 @@ export function useAuth() {
     login,
     logout,
     register,
-    authenticate,
   }
 }

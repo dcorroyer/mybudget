@@ -8,7 +8,7 @@ const PrivateRoutes = (): React.JSX.Element => {
 
   checkTokenValidity()
 
-  if (!token) {
+  if (token === null) {
     return <Navigate to='/login' />
   }
 

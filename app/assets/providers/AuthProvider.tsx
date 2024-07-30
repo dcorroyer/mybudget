@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { createContext, useCallback, useContext } from 'react'
 
-import { useAuth } from '@/hooks/useAuth'
+import { getMe } from '@/api/auth'
+
 import { useLocalStorage } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 
 interface AuthContextType {
   token: string | null
@@ -18,23 +20,36 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { authenticate } = useAuth()
-
   const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
 
-  const checkTokenValidity = () => {
-    authenticate()
+  const clearToken = () => {
+    setToken(null)
   }
 
-  const contextValue = useMemo(
-    () => ({
-      token,
-      setToken,
-      checkTokenValidity,
-      clearToken: () => setToken(null),
-    }),
-    [token],
-  )
+  const checkTokenValidity = useCallback(async () => {
+    try {
+      await getMe()
+    } catch (error) {
+      console.log('error:', error)
+
+      clearToken()
+
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error while fetching user data',
+      })
+    }
+  }, [])
+
+  const contextValue = {
+    token,
+    setToken,
+    checkTokenValidity,
+    clearToken,
+  }
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }

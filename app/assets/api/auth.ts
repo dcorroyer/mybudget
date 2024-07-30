@@ -41,7 +41,7 @@ export async function postRegister(values: RegisterParams): Promise<Response> {
 export async function getMe(): Promise<Response> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
 
-  const response = await fetch('api/me', {
+  const response = await fetch('api/users/me', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/ld+json',

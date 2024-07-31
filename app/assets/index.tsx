@@ -9,6 +9,7 @@ import { Notifications } from '@mantine/notifications'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 
+import { Layout } from '@/layout/layout'
 import AuthProvider from '@/providers/AuthProvider'
 
 import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
@@ -28,15 +29,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Notifications />
         <AuthProvider>
           <BrowserRouter>
-            <Routes>
-              <Route element={<PrivateRoutes />}>
-                <Route path={'/'} element={<Home />} />
-              </Route>
-              <Route element={<AuthenticationRoutes />}>
-                <Route path={'/login'} element={<Login />} />
-                <Route path={'/register'} element={<Register />} />
-              </Route>
-            </Routes>
+            <Layout>
+              <Routes>
+                <Route element={<PrivateRoutes />}>
+                  <Route path={'/'} element={<Home />} />
+                </Route>
+                <Route element={<AuthenticationRoutes />}>
+                  <Route path={'/login'} element={<Login />} />
+                  <Route path={'/register'} element={<Register />} />
+                </Route>
+              </Routes>
+            </Layout>
           </BrowserRouter>
         </AuthProvider>
       </MantineProvider>

@@ -40,7 +40,7 @@ export default function Register() {
   }
 
   return (
-    <Container size={420} my={40}>
+    <Container size={460} my={40}>
       <Title ta='center' className={classes.title}>
         Register Page
       </Title>

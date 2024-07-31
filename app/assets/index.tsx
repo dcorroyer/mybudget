@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
@@ -9,16 +8,8 @@ import { Notifications } from '@mantine/notifications'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 
-import { Layout } from '@/layout/layout'
 import AuthProvider from '@/providers/AuthProvider'
-
-import AuthenticationRoutes from '@/utils/AuthenticationRoutes'
-import PrivateRoutes from '@/utils/PrivateRoutes'
-
-import Login from '@/pages/authentication/login'
-import Register from '@/pages/authentication/register'
-
-import Home from '@/pages/home'
+import AppRouter from './app-router'
 
 const queryClient = new QueryClient()
 
@@ -28,19 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <MantineProvider>
         <Notifications />
         <AuthProvider>
-          <BrowserRouter>
-            <Layout>
-              <Routes>
-                <Route element={<PrivateRoutes />}>
-                  <Route path={'/'} element={<Home />} />
-                </Route>
-                <Route element={<AuthenticationRoutes />}>
-                  <Route path={'/login'} element={<Login />} />
-                  <Route path={'/register'} element={<Register />} />
-                </Route>
-              </Routes>
-            </Layout>
-          </BrowserRouter>
+          <AppRouter />
         </AuthProvider>
       </MantineProvider>
     </QueryClientProvider>

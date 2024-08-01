@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 
 import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
-import { IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
+import { useMediaQuery } from '@mantine/hooks'
+import { IconCoinEuro, IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
 
 import { ThemeToggle } from '@/components/shell/theme-toggle'
 import { useAuth } from '@/hooks/useAuth'
@@ -34,6 +35,8 @@ export function Sidebar() {
   const [active, setActive] = useState(2)
   const { logout } = useAuth()
 
+  const isMobile = useMediaQuery(`(max-width: 768px)`)
+
   const links = mockdata.map((link, index) => (
     <NavbarLink
       {...link}
@@ -45,6 +48,7 @@ export function Sidebar() {
 
   return (
     <nav className={classes.navbar}>
+      {!isMobile && <IconCoinEuro stroke={1.5} style={{ margin: '0 auto' }} />}
       <div className={classes.navbarMain}>
         <Stack justify='center' gap={0}>
           {links}

@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { AppShell, Burger, Group } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { MantineLogo } from '@mantinex/mantine-logo'
+import { useDisclosure, useMediaQuery } from '@mantine/hooks'
+import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Router } from '@/router'
 
@@ -11,12 +11,15 @@ import { Sidebar } from '@/components/shell/sidebar'
 export const AuthenticatedLayout = () => {
   const [opened, { toggle }] = useDisclosure()
 
+  const isMobile = useMediaQuery(`(max-width: 768px)`)
+  const height = isMobile ? 60 : 0
+
   return (
     <>
       <AppShell
-        header={{ height: 60 }}
+        header={{ height: height }}
         navbar={{
-          width: 300,
+          width: 80,
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}
@@ -25,7 +28,7 @@ export const AuthenticatedLayout = () => {
         <AppShell.Header>
           <Group h='100%' px='md'>
             <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
-            <MantineLogo size={28} inverted style={{ color: 'white' }} />
+            {isMobile && <IconCoinEuro />}
           </Group>
         </AppShell.Header>
         <AppShell.Navbar>

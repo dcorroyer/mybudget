@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
 import { IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
 
-import { ThemeToggle } from '@/components/theme-toggle'
+import { ThemeToggle } from '@/components/shell/theme-toggle'
 import { useAuth } from '@/hooks/useAuth'
 
 import classes from './sidebar.module.css'

@@ -6,7 +6,7 @@ import { MantineLogo } from '@mantinex/mantine-logo'
 
 import { Router } from '@/router'
 
-import { Sidebar } from '@/components/sidebar'
+import { Sidebar } from '@/components/shell/sidebar'
 
 export const AuthenticatedLayout = () => {
   const [opened, { toggle }] = useDisclosure()

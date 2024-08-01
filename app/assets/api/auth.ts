@@ -6,7 +6,7 @@ export async function postLogin(values: LoginParams): Promise<Response> {
   const response = await fetch('/api/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       username: values.email,
@@ -14,7 +14,7 @@ export async function postLogin(values: LoginParams): Promise<Response> {
     }),
   })
 
-  if (!response.ok) throw new Error('Failed to login')
+  if (!response.ok) return Promise.reject('Failed to login')
 
   return await response.json()
 }
@@ -23,7 +23,7 @@ export async function postRegister(values: RegisterParams): Promise<Response> {
   const response = await fetch('api/register', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       firstName: values.firstName,
@@ -33,7 +33,7 @@ export async function postRegister(values: RegisterParams): Promise<Response> {
     }),
   })
 
-  if (!response.ok) throw new Error('Failed to login')
+  if (!response.ok) return Promise.reject('Failed to register')
 
   return await response.json()
 }
@@ -44,12 +44,12 @@ export async function getMe(): Promise<Response> {
   const response = await fetch('api/users/me', {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
   })
 
-  if (!response.ok) throw new Error('Failed')
+  if (!response.ok) return Promise.reject('Failed to get current user')
 
   return await response.json()
 }

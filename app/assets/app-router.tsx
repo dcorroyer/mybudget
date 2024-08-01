@@ -1,15 +1,19 @@
 import React from 'react'
 
-import { AuthenticatedLayout } from '@/layout/authenticated-layout'
+import { AuthenticatedLayout } from '@/layouts/authenticated-layout'
 import { useAuthProvider } from '@/providers/AuthProvider'
-import { UnAuthenticatedLayout } from './layout/unauthenticated-layout'
+import { UnAuthenticatedLayout } from './layouts/unauthenticated-layout'
 
 const AppRouter = () => {
-  const { token, checkTokenValidity } = useAuthProvider()
+  const { auth, isAuthenticated, loading } = useAuthProvider()
 
-  checkTokenValidity()
+  auth()
 
-  if (token !== null) {
+  if (loading) {
+    return <div>Chargement...</div>
+  }
+
+  if (isAuthenticated === true) {
     return <AuthenticatedLayout />
   }
 

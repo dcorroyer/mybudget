@@ -1,6 +1,5 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -20,8 +19,7 @@ import { registerFormSchema, registerFormType } from '@/schemas/register'
 
 import classes from './register.module.css'
 
-export default function Register() {
-  const navigate = useNavigate()
+export const Register = ({ setMode }: { setMode: (mode: 'register' | 'login') => void }) => {
   const { register } = useAuth()
 
   const registerForm = useForm<registerFormType>({
@@ -50,7 +48,7 @@ export default function Register() {
           size='sm'
           component='button'
           onClick={() => {
-            navigate('/login')
+            setMode('login')
           }}
         >
           Sign in

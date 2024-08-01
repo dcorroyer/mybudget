@@ -1,54 +1,57 @@
-import React, { createContext, useCallback, useContext } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
 import { getMe } from '@/api/auth'
 
 import { useLocalStorage } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
 
 interface AuthContextType {
   token: string | null
   setToken: (val: ((prevState: null) => null) | null) => void
   clearToken: () => void
-  checkTokenValidity: () => void
+  auth: () => void
+  isAuthenticated: boolean
+  loading: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
   token: null,
   setToken: () => {},
   clearToken: () => {},
-  checkTokenValidity: () => {},
+  auth: () => {},
+  isAuthenticated: false,
+  loading: true,
 })
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const clearToken = () => {
     setToken(null)
+    setIsAuthenticated(false)
   }
 
-  const checkTokenValidity = useCallback(async () => {
-    try {
-      await getMe()
-    } catch (error) {
-      console.log('error:', error)
-
-      clearToken()
-
-      notifications.show({
-        withBorder: true,
-        radius: 'md',
-        color: 'red',
-        title: 'Error',
-        message: 'There was an error while fetching user data',
+  const auth = () => {
+    getMe()
+      .then(() => {
+        setIsAuthenticated(true)
       })
-    }
-  }, [])
+      .catch(() => {
+        clearToken()
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
 
   const contextValue = {
     token,
     setToken,
-    checkTokenValidity,
     clearToken,
+    isAuthenticated,
+    auth,
+    loading,
   }
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

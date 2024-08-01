@@ -1,11 +1,9 @@
 import React from 'react'
 
-function Home(): React.JSX.Element {
+export default function Home() {
   return (
     <>
-      <h1>yoooo</h1>
+      <h1>yo</h1>
     </>
   )
 }
-
-export default Home

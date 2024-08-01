@@ -35,6 +35,7 @@
     "@mantine/form": "^7.11.1",
     "@mantine/hooks": "^7.11.2",
     "@mantine/notifications": "^7.11.1",
+    "@mantinex/mantine-logo": "^1.0.1",
     "@tabler/icons-react": "^3.10.0",
     "@tanstack/react-query": "^5.51.11",
     "react": "^18.3.1",

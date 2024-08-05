@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconCoinEuro, IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
 
+import { LogoutToggle } from '@/components/shell/logout-toggle'
 import { ThemeToggle } from '@/components/shell/theme-toggle'
+
 import { useAuth } from '@/hooks/useAuth'
 
 import classes from './sidebar.module.css'
@@ -14,12 +17,19 @@ interface NavbarLinkProps {
   label: string
   active?: boolean
   onClick?(): void
+  to: string
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, label, to, active, onClick }: NavbarLinkProps) {
   return (
     <Tooltip label={label} position='right' transitionProps={{ duration: 0 }}>
-      <UnstyledButton onClick={onClick} className={classes.link} data-active={active || undefined}>
+      <UnstyledButton
+        onClick={onClick}
+        component={Link}
+        to={to}
+        className={classes.link}
+        data-active={active || undefined}
+      >
         <Icon style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
       </UnstyledButton>
     </Tooltip>
@@ -27,15 +37,15 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const mockdata = [
-  { icon: IconHome2, label: 'Home' },
-  { icon: IconGauge, label: 'Budget' },
+  { icon: IconHome2, label: 'Home', path: '/' },
+  { icon: IconGauge, label: 'Budget', path: '/budgets' },
 ]
 
 export function Sidebar() {
   const [active, setActive] = useState(2)
   const { logout } = useAuth()
 
-  const isMobile = useMediaQuery(`(max-width: 768px)`)
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -43,6 +53,7 @@ export function Sidebar() {
       key={link.label}
       active={index === active}
       onClick={() => setActive(index)}
+      to={link.path}
     />
   ))
 
@@ -57,7 +68,7 @@ export function Sidebar() {
 
       <Stack justify='center' gap={0}>
         <ThemeToggle />
-        <NavbarLink icon={IconLogout} label='Logout' onClick={() => logout()} />
+        <LogoutToggle icon={IconLogout} onClick={() => logout()} />
       </Stack>
     </nav>
   )

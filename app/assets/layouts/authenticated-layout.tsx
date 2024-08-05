@@ -1,21 +1,23 @@
 import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { AppShell, Burger, Group } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import { IconCoinEuro } from '@tabler/icons-react'
 
-import { Router } from '@/router'
-
 import { Sidebar } from '@/components/shell/sidebar'
+
+import BudgetList from '@/pages/budget'
+import Home from '@/pages/home'
 
 export const AuthenticatedLayout = () => {
   const [opened, { toggle }] = useDisclosure()
 
-  const isMobile = useMediaQuery(`(max-width: 768px)`)
+  const isMobile = useMediaQuery('(max-width: 768px)')
   const height = isMobile ? 60 : 0
 
   return (
-    <>
+    <BrowserRouter>
       <AppShell
         header={{ height: height }}
         navbar={{
@@ -35,9 +37,12 @@ export const AuthenticatedLayout = () => {
           <Sidebar />
         </AppShell.Navbar>
         <AppShell.Main>
-          <Router />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/budgets' element={<BudgetList />} />
+          </Routes>
         </AppShell.Main>
       </AppShell>
-    </>
+    </BrowserRouter>
   )
 }

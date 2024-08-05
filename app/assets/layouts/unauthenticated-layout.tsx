@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import { Auth } from '@/pages/authentication/auth'
+import { Auth } from '@/pages/authentication/index'
 
 export const UnAuthenticatedLayout = () => {
   return (

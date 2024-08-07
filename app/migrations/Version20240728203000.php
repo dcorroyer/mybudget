@@ -14,7 +14,7 @@ final class Version20240728203000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create user table, budget tables and its dependencies';
     }
 
     public function up(Schema $schema): void

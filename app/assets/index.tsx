@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -7,6 +6,9 @@ import { Notifications } from '@mantine/notifications'
 
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import AppRouter from '@/app-router'
 import AuthProvider from '@/providers/AuthProvider'
@@ -29,6 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Notifications />
         <AuthProvider>
           <AppRouter />
+          <ReactQueryDevtools initialIsOpen={false} />
         </AuthProvider>
       </MantineProvider>
     </QueryClientProvider>

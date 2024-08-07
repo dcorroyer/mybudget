@@ -7,7 +7,7 @@ import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Sidebar } from '@/components/shell/sidebar'
 
-import BudgetList from '@/pages/budget'
+import BudgetList from '@/pages/budgets'
 import Home from '@/pages/home'
 
 export const AuthenticatedLayout = () => {

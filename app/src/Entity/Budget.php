@@ -52,6 +52,28 @@ class Budget
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
+    private float $incomesAmount = 0;
+
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::FLOAT)]
+    #[ORM\Column]
+    private float $expensesAmount = 0;
+
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::FLOAT)]
+    #[ORM\Column]
     private float $savingCapacity = 0;
 
     #[Context(
@@ -138,6 +160,42 @@ class Budget
         $this->savingCapacity = $savingCapacity;
 
         return $this;
+    }
+
+    public function getIncomesAmount(): float
+    {
+        return $this->incomesAmount;
+    }
+
+    public function setIncomesAmount(float $incomesAmount): static
+    {
+        $this->incomesAmount = $incomesAmount;
+
+        return $this;
+    }
+
+    #[ORM\PreFlush]
+    public function updateIncomesAmount(): void
+    {
+        $this->incomesAmount = $this->calculateTotalIncomesAmount();
+    }
+
+    public function getExpensesAmount(): float
+    {
+        return $this->expensesAmount;
+    }
+
+    public function setExpensesAmount(float $expensesAmount): static
+    {
+        $this->expensesAmount = $expensesAmount;
+
+        return $this;
+    }
+
+    #[ORM\PreFlush]
+    public function updateExpensesAmount(): void
+    {
+        $this->expensesAmount = $this->calculateTotalExpensesAmount();
     }
 
     public function calculateTotalIncomesAmount(): float

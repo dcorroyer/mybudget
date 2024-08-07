@@ -1,8 +1,10 @@
 import React from 'react'
 
+import { Center, Loader } from '@mantine/core'
+
 import { AuthenticatedLayout } from '@/layouts/authenticated-layout'
+import { UnAuthenticatedLayout } from '@/layouts/unauthenticated-layout'
 import { useAuthProvider } from '@/providers/AuthProvider'
-import { UnAuthenticatedLayout } from './layouts/unauthenticated-layout'
 
 const AppRouter = () => {
   const { auth, isAuthenticated, loading } = useAuthProvider()
@@ -10,7 +12,11 @@ const AppRouter = () => {
   auth()
 
   if (loading) {
-    return <div>Chargement...</div>
+    return (
+      <Center>
+        <Loader />
+      </Center>
+    )
   }
 
   if (isAuthenticated === true) {

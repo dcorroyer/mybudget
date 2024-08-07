@@ -1,13 +1,16 @@
-import { getBudgetList } from '@/api'
+import { getBudgetDetail, getBudgetList } from '@/api'
 import { useQuery } from '@tanstack/react-query'
 
-export function useBudget() {
-  const budgetList = useQuery({
+export function useBudgetList() {
+  return useQuery({
     queryKey: ['budgets'],
     queryFn: getBudgetList,
   })
+}
 
-  return {
-    budgetList,
-  }
+export function useBudgetDetail(id: number) {
+  return useQuery({
+    queryKey: ['budgets', { id: id }],
+    queryFn: () => getBudgetDetail(id),
+  })
 }

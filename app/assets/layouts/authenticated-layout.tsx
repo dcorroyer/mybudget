@@ -6,6 +6,8 @@ import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Outlet } from '@tanstack/react-router'
 
+import { Sidebar } from '@/components/shell/sidebar'
+
 export default function AuthenticatedLayout() {
   const [opened, { toggle }] = useDisclosure()
 
@@ -28,7 +30,9 @@ export default function AuthenticatedLayout() {
           {isMobile && <IconCoinEuro />}
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar>{/* <Sidebar /> */}</AppShell.Navbar>
+      <AppShell.Navbar>
+        <Sidebar />
+      </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>

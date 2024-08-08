@@ -8,11 +8,9 @@ import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
-import AuthProvider from '@/providers/AuthProvider'
-
+import { useAuthContext } from '@/contexts/AuthContext'
 import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient({
@@ -26,7 +24,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree, context: { authentication: undefined! } })
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -34,15 +32,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
+const authentication = useAuthContext()
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
         <Notifications />
-        <AuthProvider>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </AuthProvider>
+        <RouterProvider router={router} context={{ authentication }} />
       </MantineProvider>
     </QueryClientProvider>
   </React.StrictMode>,

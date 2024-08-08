@@ -1,12 +1,20 @@
-import { postLogin, postRegister } from '@/api/auth'
-import { useAuthProvider } from '@/providers/AuthProvider'
-import { readLocalStorageValue } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { useMutation } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
+import { useMutation } from '@tanstack/react-query'
+
+import { useLocalStorage } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
+
+import { postLogin, postRegister } from '@/api/auth'
+import { useRouter } from '@tanstack/react-router'
+
 export const useAuth = () => {
-  const { setToken, clearToken } = useAuthProvider()
+  const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
+  const [isAuthenticated, setIsAuthenticated] = useLocalStorage({
+    key: 'isAuthenticated',
+    defaultValue: false,
+  })
+  const router = useRouter()
 
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
@@ -28,6 +36,10 @@ export const useAuth = () => {
       }
 
       setToken(data.token)
+      setIsAuthenticated(true)
+
+      router.invalidate()
+
       notifications.show({
         withBorder: true,
         radius: 'md',
@@ -74,7 +86,10 @@ export const useAuth = () => {
   })
 
   const logout = () => {
-    clearToken()
+    setToken(null)
+    setIsAuthenticated(false)
+
+    router.invalidate()
 
     notifications.show({
       withBorder: true,
@@ -85,14 +100,9 @@ export const useAuth = () => {
     })
   }
 
-  const isLogged = readLocalStorageValue({ key: 'isAuthenticated' })
-
   return {
     login,
     logout,
     register,
-    isLogged,
   }
 }
-
-export type AuthContext = ReturnType<typeof useAuth>

@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'

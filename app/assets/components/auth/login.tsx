@@ -17,6 +17,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { loginFormSchema, loginFormType } from '@/schemas/login'
 
+import { Link } from '@tanstack/react-router'
 import classes from './login.module.css'
 
 export const Login = () => {
@@ -41,13 +42,7 @@ export const Login = () => {
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>
         Do not have an account yet?{' '}
-        <Anchor
-          size='sm'
-          component='button'
-          // onClick={() => {
-          //   setMode('register')
-          // }}
-        >
+        <Anchor size='sm' component={Link} to='/register'>
           Create account
         </Anchor>
       </Text>

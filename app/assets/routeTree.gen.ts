@@ -11,27 +11,27 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
+import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
-import { Route as RegisterIndexImport } from './routes/register/index'
-import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedBudgetsIndexImport } from './routes/_authenticated/budgets/index'
 import { Route as AuthenticatedBudgetsIdIndexImport } from './routes/_authenticated/budgets/$id/index'
 
 // Create/Update Routes
 
+const RegisterRoute = RegisterImport.update({
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const RegisterIndexRoute = RegisterIndexImport.update({
-  path: '/register/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginIndexRoute = LoginIndexImport.update({
-  path: '/login/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -45,11 +45,10 @@ const AuthenticatedBudgetsIndexRoute = AuthenticatedBudgetsIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedBudgetsIdIndexRoute =
-  AuthenticatedBudgetsIdIndexImport.update({
-    path: '/budgets/$id/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedBudgetsIdIndexRoute = AuthenticatedBudgetsIdIndexImport.update({
+  path: '/budgets/$id/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -62,26 +61,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/register/': {
-      id: '/register/'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterIndexImport
-      parentRoute: typeof rootRoute
     }
     '/_authenticated/budgets/': {
       id: '/_authenticated/budgets/'
@@ -108,8 +107,8 @@ export const routeTree = rootRoute.addChildren({
     AuthenticatedBudgetsIndexRoute,
     AuthenticatedBudgetsIdIndexRoute,
   }),
-  LoginIndexRoute,
-  RegisterIndexRoute,
+  LoginRoute,
+  RegisterRoute,
 })
 
 /* prettier-ignore-end */
@@ -121,8 +120,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_authenticated",
-        "/login/",
-        "/register/"
+        "/login",
+        "/register"
       ]
     },
     "/_authenticated": {
@@ -133,15 +132,15 @@ export const routeTree = rootRoute.addChildren({
         "/_authenticated/budgets/$id/"
       ]
     },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/register": {
+      "filePath": "register.tsx"
+    },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
-    },
-    "/login/": {
-      "filePath": "login/index.tsx"
-    },
-    "/register/": {
-      "filePath": "register/index.tsx"
     },
     "/_authenticated/budgets/": {
       "filePath": "_authenticated/budgets/index.tsx",

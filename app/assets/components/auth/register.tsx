@@ -17,9 +17,10 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { registerFormSchema, registerFormType } from '@/schemas/register'
 
+import { Link } from '@tanstack/react-router'
 import classes from './register.module.css'
 
-export const Register = ({ setMode }: { setMode: (mode: 'register' | 'login') => void }) => {
+export const Register = () => {
   const { register } = useAuth()
 
   const registerForm = useForm<registerFormType>({
@@ -44,13 +45,7 @@ export const Register = ({ setMode }: { setMode: (mode: 'register' | 'login') =>
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>
         Already have an account?{' '}
-        <Anchor
-          size='sm'
-          component='button'
-          onClick={() => {
-            setMode('login')
-          }}
-        >
+        <Anchor size='sm' component={Link} to='/login'>
           Sign in
         </Anchor>
       </Text>

@@ -1,15 +1,12 @@
-import React from 'react'
-
-import { createFileRoute } from '@tanstack/react-router'
-
 import AuthenticatedLayout from '@/layouts/authenticated-layout'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated')({
-  component: () => {
-    // if (!isAuthenticated()) {
-    //   return <Login />
-    // }
-
-    return <AuthenticatedLayout />
+  beforeLoad: async ({ context }) => {
+    const { isLogged } = context.authentication
+    if (!isLogged()) {
+      throw redirect({ to: '/login' })
+    }
   },
+  component: AuthenticatedLayout,
 })

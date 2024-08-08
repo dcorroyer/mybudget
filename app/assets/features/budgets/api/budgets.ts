@@ -1,5 +1,5 @@
-import { Budget, BudgetDetails } from '@/types'
-import { ApiResponseList } from '@/utils/api-response'
+import { Budget, BudgetDetails } from '@/features/budgets/types'
+import { ApiResponse, ApiResponseList } from '@/utils/ApiResponse'
 import { readLocalStorageValue } from '@mantine/hooks'
 
 export async function getBudgetList(): Promise<ApiResponseList<Budget[]>> {
@@ -18,7 +18,7 @@ export async function getBudgetList(): Promise<ApiResponseList<Budget[]>> {
   return await response.json()
 }
 
-export async function getBudgetDetail(id: number): Promise<ApiResponseList<BudgetDetails>> {
+export async function getBudgetDetail(id: string): Promise<ApiResponse<BudgetDetails>> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
 
   const response = await fetch(`/api/budgets/${id}`, {

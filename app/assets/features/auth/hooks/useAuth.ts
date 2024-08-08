@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useLocalStorage } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 
-import { postLogin, postRegister } from '@/api/auth'
+import { postLogin, postRegister } from '@/features/auth/api/auth'
 import { useRouter } from '@tanstack/react-router'
 
 export const useAuth = () => {
@@ -104,5 +104,7 @@ export const useAuth = () => {
     login,
     logout,
     register,
+    isAuthenticated,
+    token,
   }
 }

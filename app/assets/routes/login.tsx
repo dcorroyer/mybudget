@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
-import { Login } from '@/components/pages/auth/login'
+import { Login } from '@/features/auth/pages/login'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {

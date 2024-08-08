@@ -5,7 +5,7 @@ import { Link } from '@tanstack/react-router'
 import { ActionIcon, Badge, Container, Group, Loader, rem, Table, Text } from '@mantine/core'
 import { IconPencil, IconTrash } from '@tabler/icons-react'
 
-import { useBudgetList } from '@/hooks/useBudget'
+import { useBudgetList } from '@/features/budgets/hooks/useBudget'
 
 export const BudgetList = () => {
   const { data, isLoading } = useBudgetList()
@@ -35,7 +35,7 @@ export const BudgetList = () => {
       <Table.Td>
         <Group gap={0} justify='flex-end'>
           <ActionIcon variant='subtle' color='gray'>
-            <Link to={'/budgets/$id'} params={{ id: budget.id }}>
+            <Link to={'/budgets/$id'} params={{ id: budget.id.toString() }}>
               <IconPencil style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
             </Link>
           </ActionIcon>

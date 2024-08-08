@@ -5,10 +5,10 @@ import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconCoinEuro, IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
 
-import { LogoutToggle } from '@/components/ui/logout-toggle'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { LogoutToggle } from '@/components/logout-toggle'
+import { ThemeToggle } from '@/components/theme-toggle'
 
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 
 import classes from './sidebar.module.css'
 

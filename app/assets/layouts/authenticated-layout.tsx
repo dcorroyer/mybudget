@@ -6,7 +6,7 @@ import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Outlet } from '@tanstack/react-router'
 
-import { Sidebar } from '@/components/ui/sidebar'
+import { Sidebar } from '@/components/sidebar'
 
 export default function AuthenticatedLayout() {
   const [opened, { toggle }] = useDisclosure()

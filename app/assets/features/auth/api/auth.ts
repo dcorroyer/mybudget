@@ -1,8 +1,10 @@
 import { readLocalStorageValue } from '@mantine/hooks'
 
-import { LoginParams, RegisterParams } from '@/types'
+import { LoginParams, RegisterParams, User } from '@/features/auth/types'
+import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
+import { ApiResponse } from '@/utils/ApiResponse'
 
-export async function postLogin(values: LoginParams): Promise<Response> {
+export async function postLogin(values: LoginParams): Promise<Response | ApiErrorResponse> {
   const response = await fetch('/api/login', {
     method: 'POST',
     headers: {
@@ -19,7 +21,7 @@ export async function postLogin(values: LoginParams): Promise<Response> {
   return await response.json()
 }
 
-export async function postRegister(values: RegisterParams): Promise<Response> {
+export async function postRegister(values: RegisterParams): Promise<Response | ApiErrorResponse> {
   const response = await fetch('api/register', {
     method: 'POST',
     headers: {
@@ -38,7 +40,7 @@ export async function postRegister(values: RegisterParams): Promise<Response> {
   return await response.json()
 }
 
-export async function getMe(): Promise<Response> {
+export async function getMe(): Promise<ApiResponse<User>> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
 
   const response = await fetch('api/users/me', {

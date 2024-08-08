@@ -14,8 +14,8 @@ import {
   Title,
 } from '@mantine/core'
 
-import { useAuth } from '@/hooks/useAuth'
-import { registerFormSchema, registerFormType } from '@/schemas/register'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { registerFormSchema, registerFormType } from '@/features/auth/schemas/register'
 
 import { Link } from '@tanstack/react-router'
 import classes from './register.module.css'

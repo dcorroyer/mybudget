@@ -14,8 +14,8 @@ import {
   Title,
 } from '@mantine/core'
 
-import { useAuth } from '@/hooks/useAuth'
-import { loginFormSchema, loginFormType } from '@/schemas/login'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { loginFormSchema, loginFormType } from '@/features/auth/schemas/login'
 
 import { Link } from '@tanstack/react-router'
 import classes from './login.module.css'

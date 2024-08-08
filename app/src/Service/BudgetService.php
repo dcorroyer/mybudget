@@ -100,7 +100,10 @@ class BudgetService
     {
         $criteria = Criteria::create();
         $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()))
-            ->orderBy(['date' => 'DESC']);
+            ->orderBy([
+                'date' => 'DESC',
+            ])
+        ;
 
         return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
     }

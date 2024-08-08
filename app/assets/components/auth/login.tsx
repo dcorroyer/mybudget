@@ -19,7 +19,7 @@ import { loginFormSchema, loginFormType } from '@/schemas/login'
 
 import classes from './login.module.css'
 
-export const Login = ({ setMode }: { setMode: (mode: 'register' | 'login') => void }) => {
+export const Login = () => {
   const { login } = useAuth()
 
   const loginForm = useForm<loginFormType>({
@@ -44,9 +44,9 @@ export const Login = ({ setMode }: { setMode: (mode: 'register' | 'login') => vo
         <Anchor
           size='sm'
           component='button'
-          onClick={() => {
-            setMode('register')
-          }}
+          // onClick={() => {
+          //   setMode('register')
+          // }}
         >
           Create account
         </Anchor>

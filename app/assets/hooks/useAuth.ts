@@ -1,10 +1,11 @@
 import { postLogin, postRegister } from '@/api/auth'
 import { useAuthProvider } from '@/providers/AuthProvider'
+import { readLocalStorageValue } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-export function useAuth() {
+export const useAuth = () => {
   const { setToken, clearToken } = useAuthProvider()
 
   const login = useCallback((email: string, password: string) => {
@@ -84,9 +85,14 @@ export function useAuth() {
     })
   }
 
+  const isLogged = readLocalStorageValue({ key: 'isAuthenticated' })
+
   return {
     login,
     logout,
     register,
+    isLogged,
   }
 }
+
+export type AuthContext = ReturnType<typeof useAuth>

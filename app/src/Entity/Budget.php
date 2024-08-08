@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['date'], message: 'This budget already exists.')]
 class Budget
 {
     #[Serializer\Groups([
@@ -52,6 +54,28 @@ class Budget
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
+    private float $incomesAmount = 0;
+
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::FLOAT)]
+    #[ORM\Column]
+    private float $expensesAmount = 0;
+
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_LIST,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: Types::FLOAT)]
+    #[ORM\Column]
     private float $savingCapacity = 0;
 
     #[Context(
@@ -70,7 +94,7 @@ class Budget
     ])]
     #[Assert\NotBlank]
     #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, unique: true)]
     private \DateTimeInterface $date;
 
     /**
@@ -138,6 +162,42 @@ class Budget
         $this->savingCapacity = $savingCapacity;
 
         return $this;
+    }
+
+    public function getIncomesAmount(): float
+    {
+        return $this->incomesAmount;
+    }
+
+    public function setIncomesAmount(float $incomesAmount): static
+    {
+        $this->incomesAmount = $incomesAmount;
+
+        return $this;
+    }
+
+    #[ORM\PreFlush]
+    public function updateIncomesAmount(): void
+    {
+        $this->incomesAmount = $this->calculateTotalIncomesAmount();
+    }
+
+    public function getExpensesAmount(): float
+    {
+        return $this->expensesAmount;
+    }
+
+    public function setExpensesAmount(float $expensesAmount): static
+    {
+        $this->expensesAmount = $expensesAmount;
+
+        return $this;
+    }
+
+    #[ORM\PreFlush]
+    public function updateExpensesAmount(): void
+    {
+        $this->expensesAmount = $this->calculateTotalExpensesAmount();
     }
 
     public function calculateTotalIncomesAmount(): float

@@ -8,7 +8,7 @@ import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { createRouter, RouterProvider } from '@tanstack/react-router'
 
 import { useAuthContext } from '@/contexts/AuthContext'
 import { routeTree } from './routeTree.gen'

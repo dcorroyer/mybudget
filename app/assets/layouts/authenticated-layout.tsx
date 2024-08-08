@@ -6,7 +6,7 @@ import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Outlet } from '@tanstack/react-router'
 
-import { Sidebar } from '@/components/shell/sidebar'
+import { Sidebar } from '@/components/ui/sidebar'
 
 export default function AuthenticatedLayout() {
   const [opened, { toggle }] = useDisclosure()
@@ -24,13 +24,13 @@ export default function AuthenticatedLayout() {
       }}
       padding='md'
     >
-      <AppShell.Header>
+      <AppShell.Header withBorder={false}>
         <Group h='100%' px='md'>
           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
           {isMobile && <IconCoinEuro />}
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar>
+      <AppShell.Navbar withBorder={false}>
         <Sidebar />
       </AppShell.Navbar>
       <AppShell.Main>

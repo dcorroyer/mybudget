@@ -5,8 +5,8 @@ import { rem, Stack, Tooltip, UnstyledButton } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconCoinEuro, IconGauge, IconHome2, IconLogout } from '@tabler/icons-react'
 
-import { LogoutToggle } from '@/components/shell/logout-toggle'
-import { ThemeToggle } from '@/components/shell/theme-toggle'
+import { LogoutToggle } from '@/components/ui/logout-toggle'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 import { useAuth } from '@/hooks/useAuth'
 

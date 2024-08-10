@@ -7,6 +7,8 @@ import { Notifications } from '@mantine/notifications'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 
+import './index.module.css'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 
@@ -37,7 +39,7 @@ const authentication = useAuthContext()
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <MantineProvider>
+      <MantineProvider withCssVariables>
         <Notifications />
         <RouterProvider router={router} context={{ authentication }} />
       </MantineProvider>

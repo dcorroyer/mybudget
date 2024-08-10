@@ -2,10 +2,10 @@ import React from 'react'
 
 import { AppShell, Burger, Group } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
-import { IconCoinEuro } from '@tabler/icons-react'
 
 import { Outlet } from '@tanstack/react-router'
 
+import Logo from '@/components/logo'
 import { Sidebar } from '@/components/sidebar'
 
 export default function AuthenticatedLayout() {
@@ -18,7 +18,7 @@ export default function AuthenticatedLayout() {
     <AppShell
       header={{ height: height }}
       navbar={{
-        width: 80,
+        width: 250,
         breakpoint: 'sm',
         collapsed: { mobile: !opened },
       }}
@@ -27,7 +27,7 @@ export default function AuthenticatedLayout() {
       <AppShell.Header withBorder={false}>
         <Group h='100%' px='md'>
           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
-          {isMobile && <IconCoinEuro />}
+          {isMobile && <Logo />}
         </Group>
       </AppShell.Header>
       <AppShell.Navbar withBorder={false}>

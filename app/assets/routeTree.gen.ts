@@ -45,11 +45,10 @@ const AuthenticatedBudgetsIndexRoute = AuthenticatedBudgetsIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedBudgetsIdIndexRoute =
-  AuthenticatedBudgetsIdIndexImport.update({
-    path: '/budgets/$id/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedBudgetsIdIndexRoute = AuthenticatedBudgetsIdIndexImport.update({
+  path: '/budgets/$id/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 

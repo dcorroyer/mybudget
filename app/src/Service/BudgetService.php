@@ -99,7 +99,11 @@ class BudgetService
     public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?BudgetFilterQuery $budgetFilterQuery = null): SlidingPagination
     {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()));
+        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()))
+            ->orderBy([
+                'date' => 'DESC',
+            ])
+        ;
 
         return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
     }

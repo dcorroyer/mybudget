@@ -1,50 +1,72 @@
 import React from 'react'
 
-import { Link } from '@tanstack/react-router'
+import {
+  ActionIcon,
+  Badge,
+  Card,
+  Container,
+  Group,
+  Loader,
+  rem,
+  SimpleGrid,
+  Text,
+} from '@mantine/core'
 
-import { ActionIcon, Badge, Container, Group, Loader, rem, Table, Text } from '@mantine/core'
-import { IconPencil, IconTrash } from '@tabler/icons-react'
+import { IconEdit } from '@tabler/icons-react'
 
 import { useBudgetList } from '@/features/budgets/hooks/useBudget'
+
+import { Link } from '@tanstack/react-router'
+import classes from './list.module.css'
 
 export const BudgetList = () => {
   const { data, isLoading } = useBudgetList()
 
   const budgets = data?.data.map((budget) => (
-    <Table.Tr key={budget.id}>
-      <Table.Td>
-        <Group gap='sm'>
-          <Text fz='sm' fw={500}>
-            {budget.name}
+    <div key={budget.id}>
+      <Card radius='lg' pb='xl'>
+        <Card.Section inheritPadding py='xs'>
+          <Group justify='space-between'>
+            <Text fw={500}>{budget.name}</Text>
+            <ActionIcon
+              component={Link}
+              to={'/budgets/$id'}
+              params={{ id: budget.id.toString() }}
+              variant='subtle'
+              color='gray'
+              className={classes.editButton}
+            >
+              <IconEdit style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+            </ActionIcon>
+          </Group>
+          <Text fw={500} c='blue' className={classes.subTitle}>
+            <span>Saving Capacity: </span>
+            {budget.savingCapacity} €
           </Text>
-        </Group>
-      </Table.Td>
-      <Table.Td>
-        <Badge variant='light'>{budget.savingCapacity}</Badge>
-      </Table.Td>
-      <Table.Td>
-        <Badge variant='light' color='green'>
-          {budget.incomesAmount}
-        </Badge>
-      </Table.Td>
-      <Table.Td>
-        <Badge variant='light' color='red'>
-          {budget.expensesAmount}
-        </Badge>
-      </Table.Td>
-      <Table.Td>
-        <Group gap={0} justify='flex-end'>
-          <ActionIcon variant='subtle' color='gray'>
-            <Link to={'/budgets/$id'} params={{ id: budget.id.toString() }}>
-              <IconPencil style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
-            </Link>
-          </ActionIcon>
-          <ActionIcon variant='subtle' color='red'>
-            <IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
-          </ActionIcon>
-        </Group>
-      </Table.Td>
-    </Table.Tr>
+        </Card.Section>
+
+        <Card.Section inheritPadding py='xs'>
+          <Group justify='center' gap='xl'>
+            <div className={classes.amount}>
+              <Text fw={500} size='sm' c='gray'>
+                Incomes
+              </Text>
+              <Badge className={classes.incomesBadge} size='lg' radius='md'>
+                {budget.incomesAmount} €
+              </Badge>
+            </div>
+            <div className={classes.amount}>
+              <Text fw={500} size='sm' c='gray'>
+                Expenses
+              </Text>
+              <Badge className={classes.expensesBadge} size='lg' radius='md'>
+                {budget.expensesAmount} €
+              </Badge>
+            </div>
+          </Group>
+        </Card.Section>
+      </Card>
+    </div>
   ))
 
   if (isLoading) {
@@ -57,21 +79,18 @@ export const BudgetList = () => {
 
   return (
     <>
+      <Text fw={500} size='lg' pb='xl'>
+        Budget&apos;s List
+      </Text>
       <Container>
-        <Table.ScrollContainer minWidth={800}>
-          <Table verticalSpacing='sm'>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Name</Table.Th>
-                <Table.Th>Saving Capacity</Table.Th>
-                <Table.Th>Incomes</Table.Th>
-                <Table.Th>Expenses</Table.Th>
-                <Table.Th />
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>{budgets}</Table.Tbody>
-          </Table>
-        </Table.ScrollContainer>
+        <SimpleGrid cols={3} pb='xs'>
+          <Link className={classes.link} to={'/budgets/create'}>
+            <IconEdit className={classes.linkIcon} stroke={1.5} />
+            <span>Create</span>
+          </Link>
+        </SimpleGrid>
+
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>
       </Container>
     </>
   )

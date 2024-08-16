@@ -1,5 +1,12 @@
 import React from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import {
+  Control,
+  useFieldArray,
+  useForm,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '@mantine/core'
@@ -17,6 +24,22 @@ interface Card {
     name: string
     amount: number
   }[]
+}
+
+interface BudgetFormProps {
+  budgetForm: {
+    control: Control<createBudgetFormType>
+    register: UseFormRegister<createBudgetFormType>
+    setValue?: UseFormSetValue<createBudgetFormType>
+    watch?: UseFormWatch<createBudgetFormType>
+  }
+}
+
+interface ExpenseCardProps {
+  cardIndex: number
+  budgetForm: BudgetFormProps['budgetForm']
+  removeCard: (cardIndex: number) => void
+  totalCards: number
 }
 
 const defaultExpense = {
@@ -88,7 +111,7 @@ export const BudgetForm = () => {
   )
 }
 
-const ManageIncomes = ({ budgetForm }) => {
+const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
   const { control, register } = budgetForm
   const { append, remove, fields } = useFieldArray({
@@ -149,17 +172,19 @@ const ManageIncomes = ({ budgetForm }) => {
   )
 }
 
-const ManageExpenses = ({ budgetForm }) => {
+const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
   const { setValue, watch, control } = budgetForm
-  const cards = watch('expenses')
+  const cards = watch ? watch('expenses') : []
   const { remove } = useFieldArray({
     control,
     name: 'expenses',
   })
 
   const addCard = () => {
-    const newCard = { ...defaultExpense }
-    setValue('expenses', [...cards, newCard])
+    if (setValue) {
+      const newCard = { ...defaultExpense }
+      setValue('expenses', [...cards, newCard])
+    }
   }
 
   const removeCard = (cardIndex: number) => {
@@ -206,7 +231,7 @@ const ManageExpenses = ({ budgetForm }) => {
   )
 }
 
-const ExpenseCard = ({ cardIndex, budgetForm, removeCard, totalCards }) => {
+const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, removeCard }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
   const { control, register } = budgetForm
   const { append, remove, fields } = useFieldArray({

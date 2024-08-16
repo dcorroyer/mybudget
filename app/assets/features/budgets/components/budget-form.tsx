@@ -62,17 +62,7 @@ export const BudgetForm = () => {
           amount: 0,
         },
       ],
-      expenses: [
-        {
-          category: '',
-          items: [
-            {
-              name: '',
-              amount: 0,
-            },
-          ],
-        },
-      ],
+      expenses: [defaultExpense],
     },
   })
 

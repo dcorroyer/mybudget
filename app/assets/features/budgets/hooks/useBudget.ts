@@ -11,6 +11,6 @@ export function useBudgetList() {
 export function useBudgetDetail(id: number) {
   return useQuery({
     queryKey: ['budgets', { id: id }],
-    queryFn: () => getBudgetDetail(id),
+    queryFn: () => getBudgetDetail(id.toString()),
   })
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Control,
+  Controller,
   useFieldArray,
   useForm,
   UseFormRegister,
@@ -11,11 +12,13 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '@mantine/core'
 
-import { IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
+import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 
 import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas'
 
+import { MonthPickerInput } from '@mantine/dates'
 import { budgetDataTransformer } from '../helpers'
+import { useBudget } from '../hooks/useBudget'
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -66,9 +69,15 @@ export const BudgetForm = () => {
     },
   })
 
+  const [monthValue, setMonthValue] = React.useState<Date | null>(null)
+  const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+
+  const { create } = useBudget()
+
   const onSubmit = (values: createBudgetFormType) => {
-    const data = budgetDataTransformer(values)
+    const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
     console.log(data)
+    create(data)
   }
 
   return (
@@ -79,6 +88,24 @@ export const BudgetForm = () => {
           onSubmit(budgetForm.getValues())
         }}
       >
+        <Controller
+          control={budgetForm.control}
+          name='date'
+          render={({ field }) => (
+            <MonthPickerInput
+              {...field}
+              leftSection={icon}
+              leftSectionPointerEvents='none'
+              label='Budget date'
+              placeholder='Date'
+              value={monthValue}
+              onChange={(month) => {
+                setMonthValue(month)
+                field.onChange(month)
+              }}
+            />
+          )}
+        />
         <Tabs defaultValue='incomes' mt='xl'>
           <Tabs.List>
             <Tabs.Tab value='incomes' color='green'>
@@ -265,7 +292,9 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, remove
             <TextInput
               type='number'
               label='Amount'
-              {...register(`expenses.${cardIndex}.items.${expenseIndex}.amount`)}
+              {...register(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
+                valueAsNumber: true,
+              })}
               rightSection={currency}
             />
             <IconX

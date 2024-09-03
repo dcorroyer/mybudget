@@ -1,5 +1,6 @@
-import { getBudgetDetail, getBudgetList } from '@/features/budgets/api'
-import { useQuery } from '@tanstack/react-query'
+import { getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
 
 export function useBudgetList() {
   return useQuery({
@@ -13,4 +14,21 @@ export function useBudgetDetail(id: number) {
     queryKey: ['budgets', { id: id }],
     queryFn: () => getBudgetDetail(id.toString()),
   })
+}
+
+export const useBudget = () => {
+  const create = useCallback((data) => {
+    createBudget.mutate(data)
+  }, [])
+
+  const createBudget = useMutation({
+    mutationFn: postBudget,
+    onSuccess: () => {
+      console.log('Budget created')
+    },
+  })
+
+  return {
+    create,
+  }
 }

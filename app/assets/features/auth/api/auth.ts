@@ -22,7 +22,7 @@ export async function postLogin(values: LoginParams): Promise<Response | ApiErro
 }
 
 export async function postRegister(values: RegisterParams): Promise<Response | ApiErrorResponse> {
-  const response = await fetch('api/register', {
+  const response = await fetch('/api/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export async function postRegister(values: RegisterParams): Promise<Response | A
 export async function getMe(): Promise<ApiResponse<User>> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
 
-  const response = await fetch('api/users/me', {
+  const response = await fetch('/api/users/me', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

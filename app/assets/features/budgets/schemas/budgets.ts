@@ -1,25 +1,25 @@
 import { z } from 'zod'
 
 export const incomesFormSchema = z.object({
-  name: z.string().min(2),
-  amount: z.coerce.number().gt(0),
+  name: z.string().min(2, 'Name is required'),
+  amount: z.coerce.number().gt(0, 'Amount is required'),
 })
 
 export const expenseItemSchema = z.object({
-  name: z.string().min(2),
-  amount: z.coerce.number().gt(0),
+  name: z.string().min(2, 'Name is required'),
+  amount: z.coerce.number().gt(0, 'Amount is required'),
 })
 
 export const expensesFormSchema = z.object({
-  category: z.string().min(2),
+  category: z.string().min(2, 'Category is required'),
   items: z.array(expenseItemSchema),
 })
 
-const dateRegex = /^\d{4}-(0[1-9]|1[0-2])$/
-
 export const budgetFormSchema = z.object({
-  date: z.string().refine((val) => dateRegex.test(val), {
-    message: 'Invalid date format. Expected format: YYYY-MM',
+  date: z.date({
+    errorMap: () => ({
+      message: 'Date is required',
+    }),
   }),
   incomes: z.array(incomesFormSchema),
   expenses: z.array(expensesFormSchema),

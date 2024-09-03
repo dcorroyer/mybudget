@@ -19,6 +19,7 @@ import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schem
 import { MonthPickerInput } from '@mantine/dates'
 import { budgetDataTransformer } from '../helpers'
 import { useBudget } from '../hooks/useBudget'
+
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -35,6 +36,7 @@ interface BudgetFormProps {
     register: UseFormRegister<createBudgetFormType>
     setValue?: UseFormSetValue<createBudgetFormType>
     watch?: UseFormWatch<createBudgetFormType>
+    errors: any
   }
 }
 
@@ -69,6 +71,12 @@ export const BudgetForm = () => {
     },
   })
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = budgetForm
+
   const [monthValue, setMonthValue] = React.useState<Date | null>(null)
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
@@ -82,28 +90,26 @@ export const BudgetForm = () => {
 
   return (
     <>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault()
-          onSubmit(budgetForm.getValues())
-        }}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
-          control={budgetForm.control}
+          control={control}
           name='date'
           render={({ field }) => (
-            <MonthPickerInput
-              {...field}
-              leftSection={icon}
-              leftSectionPointerEvents='none'
-              label='Budget date'
-              placeholder='Date'
-              value={monthValue}
-              onChange={(month) => {
-                setMonthValue(month)
-                field.onChange(month)
-              }}
-            />
+            <div className={classes.relative}>
+              <MonthPickerInput
+                {...field}
+                leftSection={icon}
+                leftSectionPointerEvents='none'
+                label='Budget date'
+                placeholder='Date'
+                value={monthValue}
+                onChange={(month) => {
+                  setMonthValue(month)
+                  field.onChange(month)
+                }}
+              />
+              {errors.date && <span className={classes.error}>{errors.date.message}</span>}
+            </div>
           )}
         />
         <Tabs defaultValue='incomes' mt='xl'>
@@ -117,10 +123,10 @@ export const BudgetForm = () => {
           </Tabs.List>
 
           <Tabs.Panel value='incomes'>
-            <ManageIncomes budgetForm={budgetForm} />
+            <ManageIncomes budgetForm={{ ...budgetForm, errors }} />
           </Tabs.Panel>
           <Tabs.Panel value='expenses'>
-            <ManageExpenses budgetForm={budgetForm} />
+            <ManageExpenses budgetForm={{ ...budgetForm, errors }} />
           </Tabs.Panel>
         </Tabs>
       </form>
@@ -130,7 +136,7 @@ export const BudgetForm = () => {
 
 const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-  const { control, register } = budgetForm
+  const { control, register, errors } = budgetForm
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'incomes',
@@ -147,18 +153,34 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
               className={classes.budgetLine}
               key={income.id}
             >
-              <TextInput
-                label='Name'
-                placeholder='Name'
-                {...register(`incomes.${incomeIndex}.name`)}
-                rightSection={'  '}
-              />
-              <TextInput
-                type='number'
-                label='Amount'
-                {...register(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
-                rightSection={currency}
-              />
+              <div className={classes.relative}>
+                <TextInput
+                  label='Name'
+                  placeholder='Name'
+                  {...register(`incomes.${incomeIndex}.name`)}
+                  rightSection={'  '}
+                />
+                {errors.incomes?.[incomeIndex]?.name && (
+                  <span className={classes.error}>
+                    {errors.incomes?.[incomeIndex]?.name?.message}
+                  </span>
+                )}
+              </div>
+
+              <div className={classes.relative}>
+                <TextInput
+                  type='number'
+                  label='Amount'
+                  {...register(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
+                  rightSection={currency}
+                />
+                {errors.incomes?.[incomeIndex]?.amount && (
+                  <span className={classes.error}>
+                    {errors.incomes?.[incomeIndex]?.amount?.message}
+                  </span>
+                )}
+              </div>
+
               <IconX
                 onClick={() => {
                   remove(incomeIndex)
@@ -190,7 +212,7 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
 }
 
 const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
-  const { setValue, watch, control } = budgetForm
+  const { setValue, watch, control, errors } = budgetForm
   const cards = watch ? watch('expenses') : []
   const { remove } = useFieldArray({
     control,
@@ -215,7 +237,7 @@ const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
           <ExpenseCard
             key={cardIndex}
             cardIndex={cardIndex}
-            budgetForm={budgetForm}
+            budgetForm={{ ...budgetForm, errors }}
             removeCard={removeCard}
             totalCards={cards.length}
           />
@@ -250,7 +272,7 @@ const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, removeCard }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-  const { control, register } = budgetForm
+  const { control, register, errors } = budgetForm
   const { append, remove, fields } = useFieldArray({
     control,
     name: `expenses.${cardIndex}.items`,
@@ -266,12 +288,19 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, remove
     <Card radius='lg' py='xl' mt='sm'>
       <Card.Section inheritPadding>
         <Group justify='space-between'>
-          <TextInput
-            variant='unstyled'
-            placeholder='Expense category name'
-            {...register(`expenses.${cardIndex}.category`)}
-            className={classes.categoryName}
-          />
+          <div className={classes.relative}>
+            <TextInput
+              variant='unstyled'
+              placeholder='Expense category name'
+              {...register(`expenses.${cardIndex}.category`)}
+              className={classes.categoryName}
+            />
+            {errors.expenses?.[cardIndex]?.category && (
+              <span className={classes.errorCategory}>
+                {errors.expenses?.[cardIndex]?.category?.message}
+              </span>
+            )}
+          </div>
         </Group>
       </Card.Section>
       <Divider mt='xl' className={classes.divider} />
@@ -283,20 +312,36 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, remove
             className={classes.budgetLine}
             key={expense.id}
           >
-            <TextInput
-              label='Name'
-              placeholder='Name'
-              {...register(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
-              rightSection={'  '}
-            />
-            <TextInput
-              type='number'
-              label='Amount'
-              {...register(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
-                valueAsNumber: true,
-              })}
-              rightSection={currency}
-            />
+            <div className={classes.relative}>
+              <TextInput
+                label='Name'
+                placeholder='Name'
+                {...register(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
+                rightSection={'  '}
+              />
+              {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.name && (
+                <span className={classes.error}>
+                  {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.name?.message}
+                </span>
+              )}
+            </div>
+
+            <div className={classes.relative}>
+              <TextInput
+                type='number'
+                label='Amount'
+                {...register(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
+                  valueAsNumber: true,
+                })}
+                rightSection={currency}
+              />
+              {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.amount && (
+                <span className={classes.error}>
+                  {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.amount?.message}
+                </span>
+              )}
+            </div>
+
             <IconX
               onClick={() => remove(expenseIndex)}
               className={classes.removeBudgetLineIcon}

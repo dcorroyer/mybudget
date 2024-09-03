@@ -41,3 +41,23 @@
     color: #f87171;
   }
 }
+
+.relative {
+  position: relative;
+}
+
+.error {
+  position: absolute;
+  color: #f87171;
+  top: 100%;
+  left: 0;
+  font-size: 0.75rem;
+}
+
+.errorCategory {
+  position: absolute;
+  color: #f87171;
+  top: 65%;
+  left: 0;
+  font-size: 0.75rem;
+}

@@ -23,3 +23,9 @@ export interface BudgetDetails extends Budget {
     },
   ]
 }
+
+export type BudgetParams = {
+  date: string
+  incomes: { name: string; amount: number }[]
+  expenses: { category: string; name: string; amount: number }[]
+}

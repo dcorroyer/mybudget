@@ -1,0 +1,63 @@
+.divider {
+  width: 100vh;
+  left: 0;
+  position: absolute;
+  color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.categoryName {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.categoryAmount {
+  color: var(--mantine-color-gray-6);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.budgetLine {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.formButton {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-0);
+  }
+}
+
+.removeBudgetLineIcon {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  transform: translateY(0.75rem);
+
+  &:hover {
+    color: #f87171;
+  }
+}
+
+.relative {
+  position: relative;
+}
+
+.error {
+  position: absolute;
+  color: #f87171;
+  top: 100%;
+  left: 0;
+  font-size: 0.75rem;
+}
+
+.errorCategory {
+  position: absolute;
+  color: #f87171;
+  top: 65%;
+  left: 0;
+  font-size: 0.75rem;
+}

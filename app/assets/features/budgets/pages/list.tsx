@@ -13,10 +13,10 @@ import {
 } from '@mantine/core'
 
 import { IconEdit } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 
 import { useBudgetList } from '@/features/budgets/hooks/useBudget'
 
-import { Link } from '@tanstack/react-router'
 import classes from './list.module.css'
 
 export const BudgetList = () => {
@@ -44,7 +44,6 @@ export const BudgetList = () => {
             {budget.savingCapacity} €
           </Text>
         </Card.Section>
-
         <Card.Section inheritPadding py='xs'>
           <Group justify='center' gap='xl'>
             <div className={classes.amount}>
@@ -89,7 +88,6 @@ export const BudgetList = () => {
             <span>Create</span>
           </Link>
         </SimpleGrid>
-
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>
       </Container>
     </>

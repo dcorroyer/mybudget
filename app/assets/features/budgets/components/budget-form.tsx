@@ -15,9 +15,9 @@ import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '
 import { MonthPickerInput } from '@mantine/dates'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 
-import { budgetDataTransformer } from '../helpers'
-import { useBudget } from '../hooks/useBudget'
-import { budgetFormSchema, createBudgetFormType } from '../schemas'
+import { budgetDataTransformer } from '@/features/budgets/helpers'
+import { useBudget } from '@/features/budgets/hooks/useBudget'
+import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas'
 
 import classes from './budget-form.module.css'
 
@@ -80,11 +80,11 @@ export const BudgetForm = () => {
   const [monthValue, setMonthValue] = React.useState<Date | null>(null)
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const { create } = useBudget()
+  const { createBudget } = useBudget()
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
-    create(data)
+    createBudget(data)
   }
 
   return (

@@ -10,15 +10,14 @@ import {
 } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '@mantine/core'
 
+import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '@mantine/core'
+import { MonthPickerInput } from '@mantine/dates'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 
-import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas'
-
-import { MonthPickerInput } from '@mantine/dates'
 import { budgetDataTransformer } from '../helpers'
 import { useBudget } from '../hooks/useBudget'
+import { budgetFormSchema, createBudgetFormType } from '../schemas'
 
 import classes from './budget-form.module.css'
 
@@ -36,6 +35,7 @@ interface BudgetFormProps {
     register: UseFormRegister<createBudgetFormType>
     setValue?: UseFormSetValue<createBudgetFormType>
     watch?: UseFormWatch<createBudgetFormType>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     errors: any
   }
 }
@@ -84,7 +84,6 @@ export const BudgetForm = () => {
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
-    console.log(data)
     create(data)
   }
 
@@ -121,7 +120,6 @@ export const BudgetForm = () => {
               Expenses
             </Tabs.Tab>
           </Tabs.List>
-
           <Tabs.Panel value='incomes'>
             <ManageIncomes budgetForm={{ ...budgetForm, errors }} />
           </Tabs.Panel>
@@ -166,7 +164,6 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
                   </span>
                 )}
               </div>
-
               <div className={classes.relative}>
                 <TextInput
                   type='number'
@@ -180,7 +177,6 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
                   </span>
                 )}
               </div>
-
               <IconX
                 onClick={() => {
                   remove(incomeIndex)
@@ -325,7 +321,6 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, remove
                 </span>
               )}
             </div>
-
             <div className={classes.relative}>
               <TextInput
                 type='number'
@@ -341,7 +336,6 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, remove
                 </span>
               )}
             </div>
-
             <IconX
               onClick={() => remove(expenseIndex)}
               className={classes.removeBudgetLineIcon}

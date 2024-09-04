@@ -1,6 +1,12 @@
-import { getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+
+import { notifications } from '@mantine/notifications'
+
+import { getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
+import { BudgetParams } from '@/features/budgets/types'
 
 export function useBudgetList() {
   return useQuery({
@@ -17,14 +23,33 @@ export function useBudgetDetail(id: number) {
 }
 
 export const useBudget = () => {
-  const create = useCallback((data) => {
+  const navigate = useNavigate()
+
+  const create = useCallback((data: BudgetParams) => {
     createBudget.mutate(data)
   }, [])
 
   const createBudget = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
-      console.log('Budget created')
+      navigate({ to: '/budgets' })
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'blue',
+        title: 'Successful Creation',
+        message: 'You have successfully created a budget',
+      })
+    },
+    onError: (error: Error) => {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error during the budget create process',
+      })
     },
   })
 

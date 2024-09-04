@@ -2,9 +2,10 @@ import React from 'react'
 
 import { ActionIcon, Container, Text } from '@mantine/core'
 import { IconChevronLeft } from '@tabler/icons-react'
-import { BudgetForm } from '../components/budget-form'
-
 import { Link } from '@tanstack/react-router'
+
+import { BudgetForm } from '@/features/budgets/components/budget-form'
+
 import classes from './create.module.css'
 
 export const BudgetCreate = () => {

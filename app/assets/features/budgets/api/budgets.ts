@@ -1,9 +1,9 @@
-import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
-import { ApiResponse, ApiResponseList } from '@/utils/ApiResponse'
 import { readLocalStorageValue } from '@mantine/hooks'
 
-import { createBudgetFormType } from '@/features/budgets/schemas'
-import { Budget, BudgetDetails } from '@/features/budgets/types'
+import { Budget, BudgetDetails, BudgetParams } from '@/features/budgets/types'
+
+import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
+import { ApiResponse, ApiResponseList } from '@/utils/ApiResponse'
 
 export async function getBudgetList(): Promise<ApiResponseList<Budget[]>> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
@@ -37,9 +37,7 @@ export async function getBudgetDetail(id: string): Promise<ApiResponse<BudgetDet
   return await response.json()
 }
 
-export async function postBudget(
-  values: createBudgetFormType,
-): Promise<Response | ApiErrorResponse> {
+export async function postBudget(values: BudgetParams): Promise<Response | ApiErrorResponse> {
   const token = readLocalStorageValue({ key: 'token' }) as string | null
 
   const response = await fetch('/api/budgets', {

@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 
 import { notifications } from '@mantine/notifications'
 
-import { getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
+import { deleteBudgetId, getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
 import { BudgetParams } from '@/features/budgets/types'
 
 export function useBudgetList() {
@@ -24,12 +24,13 @@ export function useBudgetDetail(id: number) {
 
 export const useBudget = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
-  const create = useCallback((data: BudgetParams) => {
-    createBudget.mutate(data)
+  const createBudget = useCallback((data: BudgetParams) => {
+    createBudgetMutation.mutate(data)
   }, [])
 
-  const createBudget = useMutation({
+  const createBudgetMutation = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
       navigate({ to: '/budgets' })
@@ -53,7 +54,36 @@ export const useBudget = () => {
     },
   })
 
+  const deleteBudget = useCallback((id: string) => {
+    deleteBudgetMutation.mutate(id)
+  }, [])
+
+  const deleteBudgetMutation = useMutation({
+    mutationFn: deleteBudgetId,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'blue',
+        title: 'Successful Deletion',
+        message: 'You have successfully deleted a budget',
+      })
+    },
+    onError: (error: Error) => {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error during the budget delete process',
+      })
+    },
+  })
+
   return {
-    create,
+    createBudget,
+    deleteBudget,
   }
 }

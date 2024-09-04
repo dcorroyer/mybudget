@@ -57,3 +57,19 @@ export async function postBudget(values: BudgetParams): Promise<Response | ApiEr
 
   return await response.json()
 }
+
+export async function deleteBudgetId(id: string): Promise<Response | ApiErrorResponse> {
+  const token = readLocalStorageValue({ key: 'token' }) as string | null
+
+  const response = await fetch(`/api/budgets/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) return Promise.reject('Failed to delete budget')
+
+  return response
+}

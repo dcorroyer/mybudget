@@ -7,18 +7,19 @@ const formatDateToYYYYMM = (date: Date | null): string => {
 
 export const budgetDataTransformer = (data: {
   date: Date | null
-  incomes: { name: string; amount: number }[]
-  expenses: { category: string; items: { name: string; amount: number }[] }[]
+  incomes: { id: number; name: string; amount: number }[]
+  expenses: { category: string; items: { id: number; name: string; amount: number }[] }[]
 }) => {
   const newData = {
     date: formatDateToYYYYMM(data.date),
     incomes: data.incomes,
-    expenses: [] as { name: string; amount: number; category: string }[],
+    expenses: [] as { id: number; name: string; amount: number; category: string }[],
   }
 
   data.expenses.forEach((category) => {
     category.items.forEach((item) => {
       newData.expenses.push({
+        id: item.id,
         name: item.name,
         amount: item.amount,
         category: category.category,
@@ -27,4 +28,26 @@ export const budgetDataTransformer = (data: {
   })
 
   return newData
+}
+
+export const reverseExpensesTransformation = (
+  expenses: { id: number; name: string; amount: number; category: string }[],
+) => {
+  const groupedExpenses: { [key: string]: { id: number; name: string; amount: number }[] } = {}
+
+  expenses.forEach((expense) => {
+    if (!groupedExpenses[expense.category]) {
+      groupedExpenses[expense.category] = []
+    }
+    groupedExpenses[expense.category].push({
+      id: expense.id,
+      name: expense.name,
+      amount: expense.amount,
+    })
+  })
+
+  return Object.keys(groupedExpenses).map((category) => ({
+    category,
+    items: groupedExpenses[category],
+  }))
 }

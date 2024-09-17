@@ -82,6 +82,7 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
     reset,
   } = budgetForm
@@ -89,27 +90,32 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
   const [monthValue, setMonthValue] = useState<Date | null>(null)
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const { createBudget } = useBudget()
+  const { createBudget, updateBudget } = useBudget()
 
   useEffect(() => {
     if (initialValues) {
+      const initialDate = initialValues.date ? new Date(initialValues.date) : null
+
       reset(initialValues)
-      setMonthValue(initialValues.date ? new Date(initialValues.date) : null)
+      setMonthValue(initialDate)
+
+      if (initialDate) {
+        setValue('date', initialDate)
+      }
+
       setIsEditMode(true)
     } else {
       setIsEditMode(false)
     }
-  }, [initialValues, reset])
+  }, [initialValues, reset, setValue])
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
 
     if (!isEditMode) {
-      console.log(data)
       createBudget(data)
-    } else {
-      console.log(data)
-      // updateBudget()
+    } else if (initialValues && initialValues.id) {
+      updateBudget(initialValues.id, data)
     }
   }
 

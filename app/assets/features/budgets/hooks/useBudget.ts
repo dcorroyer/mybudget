@@ -5,7 +5,13 @@ import { useNavigate } from '@tanstack/react-router'
 
 import { notifications } from '@mantine/notifications'
 
-import { deleteBudgetId, getBudgetDetail, getBudgetList, postBudget } from '@/features/budgets/api'
+import {
+  deleteBudgetId,
+  getBudgetDetail,
+  getBudgetList,
+  postBudget,
+  updateBudgetId,
+} from '@/features/budgets/api'
 import { BudgetParams } from '@/features/budgets/types'
 
 export function useBudgetList() {
@@ -54,6 +60,36 @@ export const useBudget = () => {
     },
   })
 
+  const updateBudget = useCallback((id: number, data: BudgetParams) => {
+    updateBudgetMutation.mutate({ id, ...data })
+  }, [])
+
+  const updateBudgetMutation = useMutation({
+    mutationFn: ({ id, ...data }: { id: number } & BudgetParams) =>
+      updateBudgetId(id.toString(), data),
+    onSuccess: () => {
+      navigate({ to: '/budgets' })
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'blue',
+        title: 'Successful Update',
+        message: 'You have successfully updated the budget',
+      })
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+    },
+    onError: (error: Error) => {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error during the budget update process',
+      })
+    },
+  })
+
   const deleteBudget = useCallback((id: string) => {
     deleteBudgetMutation.mutate(id)
   }, [])
@@ -84,6 +120,7 @@ export const useBudget = () => {
 
   return {
     createBudget,
+    updateBudget,
     deleteBudget,
   }
 }

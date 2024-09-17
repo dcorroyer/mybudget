@@ -73,3 +73,27 @@ export async function deleteBudgetId(id: string): Promise<Response | ApiErrorRes
 
   return response
 }
+
+export async function updateBudgetId(
+  id: string,
+  values: BudgetParams,
+): Promise<Response | ApiErrorResponse> {
+  const token = readLocalStorageValue({ key: 'token' }) as string | null
+
+  const response = await fetch(`/api/budgets/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      date: values.date,
+      incomes: values.incomes,
+      expenses: values.expenses,
+    }),
+  })
+
+  if (!response.ok) return Promise.reject('Failed to update budget')
+
+  return await response.json()
+}

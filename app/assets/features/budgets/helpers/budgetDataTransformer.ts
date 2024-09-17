@@ -6,9 +6,12 @@ const formatDateToYYYYMM = (date: Date | null): string => {
 }
 
 export const budgetDataTransformer = (data: {
-  date: Date | null
-  incomes: { id: number; name: string; amount: number }[]
-  expenses: { category: string; items: { id: number; name: string; amount: number }[] }[]
+  date: Date
+  incomes: { id?: number | undefined; name: string; amount: number }[]
+  expenses: {
+    category: string
+    items: { id?: number | undefined; name: string; amount: number }[]
+  }[]
 }) => {
   const newData = {
     date: formatDateToYYYYMM(data.date),
@@ -19,7 +22,7 @@ export const budgetDataTransformer = (data: {
   data.expenses.forEach((category) => {
     category.items.forEach((item) => {
       newData.expenses.push({
-        id: item.id,
+        id: item.id ?? 0,
         name: item.name,
         amount: item.amount,
         category: category.category,

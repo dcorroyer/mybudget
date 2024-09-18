@@ -1,11 +1,13 @@
 import { z } from 'zod'
 
 export const incomesFormSchema = z.object({
+  id: z.number().optional(),
   name: z.string().min(2, 'Name is required'),
   amount: z.coerce.number().gt(0, 'Amount is required'),
 })
 
 export const expenseItemSchema = z.object({
+  id: z.number().optional(),
   name: z.string().min(2, 'Name is required'),
   amount: z.coerce.number().gt(0, 'Amount is required'),
 })

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Control,
   Controller,
@@ -19,6 +19,7 @@ import { budgetDataTransformer } from '@/features/budgets/helpers'
 import { useBudget } from '@/features/budgets/hooks/useBudget'
 import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas'
 
+import { BudgetFormDetails } from '../types'
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -38,6 +39,7 @@ interface BudgetFormProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     errors: any
   }
+  isEditMode?: boolean
 }
 
 interface ExpenseCardProps {
@@ -57,10 +59,16 @@ const defaultExpense = {
   ],
 }
 
-export const BudgetForm = () => {
+interface BudgetFormComponentProps {
+  initialValues?: BudgetFormDetails
+}
+
+export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }) => {
+  const [isEditMode, setIsEditMode] = useState<boolean>(false)
+
   const budgetForm = useForm<createBudgetFormType>({
     resolver: zodResolver(budgetFormSchema),
-    defaultValues: {
+    defaultValues: initialValues || {
       incomes: [
         {
           name: '',
@@ -74,17 +82,41 @@ export const BudgetForm = () => {
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
+    reset,
   } = budgetForm
 
-  const [monthValue, setMonthValue] = React.useState<Date | null>(null)
+  const [monthValue, setMonthValue] = useState<Date | null>(null)
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const { createBudget } = useBudget()
+  const { createBudget, updateBudget } = useBudget()
+
+  useEffect(() => {
+    if (initialValues) {
+      const initialDate = initialValues.date ? new Date(initialValues.date) : null
+
+      reset(initialValues)
+      setMonthValue(initialDate)
+
+      if (initialDate) {
+        setValue('date', initialDate)
+      }
+
+      setIsEditMode(true)
+    } else {
+      setIsEditMode(false)
+    }
+  }, [initialValues, reset, setValue])
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
-    createBudget(data)
+
+    if (!isEditMode) {
+      createBudget(data)
+    } else if (initialValues && initialValues.id) {
+      updateBudget(initialValues.id, data)
+    }
   }
 
   return (
@@ -124,7 +156,7 @@ export const BudgetForm = () => {
             <ManageIncomes budgetForm={{ ...budgetForm, errors }} />
           </Tabs.Panel>
           <Tabs.Panel value='expenses'>
-            <ManageExpenses budgetForm={{ ...budgetForm, errors }} />
+            <ManageExpenses budgetForm={{ ...budgetForm, errors }} isEditMode={isEditMode} />
           </Tabs.Panel>
         </Tabs>
       </form>
@@ -207,7 +239,7 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
   )
 }
 
-const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
+const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm, isEditMode }) => {
   const { setValue, watch, control, errors } = budgetForm
   const cards = watch ? watch('expenses') : []
   const { remove } = useFieldArray({
@@ -259,7 +291,8 @@ const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm }) => {
           mt='sm'
           style={{ float: 'right' }}
         >
-          Save <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+          {isEditMode ? 'Update' : 'Create'}{' '}
+          <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
         </Button>
       </div>
     </>

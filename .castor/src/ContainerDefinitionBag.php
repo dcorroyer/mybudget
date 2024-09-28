@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget;
+namespace TheoD\MusicAutoTagger;
 
-use dcorroyer\mybudget\Docker\ContainerDefinition;
+use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
 
 class ContainerDefinitionBag
 {
-    public static function php(): ContainerDefinition
-    {
-        return new ContainerDefinition(composeName: 'app', name: 'mybudget-app-1', workingDirectory: '/app', user: 'www-data');
-    }
-
     public static function tools(?string $toolName = null): ContainerDefinition
     {
         if ($toolName === null) {
@@ -22,8 +17,23 @@ class ContainerDefinitionBag
         return self::php()->withWorkingDirectory("/tools/{$toolName}");
     }
 
+    public static function php(): ContainerDefinition
+    {
+        return new ContainerDefinition(
+            composeName: 'php',
+            name: 'mybudget-php-1',
+            workingDirectory: '/app',
+            user: 'www-data',
+        );
+    }
+
     public static function node(): ContainerDefinition
     {
-        return new ContainerDefinition(composeName: 'app', name: 'mybudget-app-1', workingDirectory: '/app', user: 'www-data');
+        return new ContainerDefinition(
+            composeName: 'php',
+            name: 'mybudget-php-1',
+            workingDirectory: '/app',
+            user: 'www-data',
+        );
     }
 }

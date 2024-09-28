@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
+#[ORM\Table(name: '`budget`')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['date'], message: 'This budget already exists.')]
 class Budget
@@ -100,14 +101,22 @@ class Budget
     /**
      * @var Collection<int, Income>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
      * @var Collection<int, Expense>
      */
-    #[Serializer\Groups([SerializationGroups::BUDGET_GET, SerializationGroups::BUDGET_CREATE, SerializationGroups::BUDGET_UPDATE])]
+    #[Serializer\Groups([
+        SerializationGroups::BUDGET_GET,
+        SerializationGroups::BUDGET_CREATE,
+        SerializationGroups::BUDGET_UPDATE,
+    ])]
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 

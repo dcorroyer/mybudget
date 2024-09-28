@@ -47,7 +47,9 @@ class BudgetServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->budgetRepository = $this->getMockBuilder(BudgetRepository::class)->disableOriginalConstructor()->getMock();
+        $this->budgetRepository = $this->getMockBuilder(
+            BudgetRepository::class
+        )->disableOriginalConstructor()->getMock();
         $this->incomeService = $this->getMockBuilder(IncomeService::class)->disableOriginalConstructor()->getMock();
         $this->expenseService = $this->getMockBuilder(ExpenseService::class)->disableOriginalConstructor()->getMock();
         $this->security = $this->getMockBuilder(Security::class)->disableOriginalConstructor()->getMock();
@@ -259,7 +261,12 @@ class BudgetServiceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         // ARRANGE PRIVATE METHOD TEST
-        $budgetService = new BudgetService($this->budgetRepository, $this->incomeService, $this->expenseService, $this->security);
+        $budgetService = new BudgetService(
+            $this->budgetRepository,
+            $this->incomeService,
+            $this->expenseService,
+            $this->security
+        );
         $method = $this->getPrivateMethod(BudgetService::class, 'checkAccess');
 
         // ARRANGE

@@ -117,16 +117,99 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  AuthenticatedRoute: AuthenticatedRoute.addChildren({
-    AuthenticatedIndexRoute,
-    AuthenticatedBudgetsCreateRoute,
-    AuthenticatedBudgetsIndexRoute,
-    AuthenticatedBudgetsIdIndexRoute,
-  }),
-  LoginRoute,
-  RegisterRoute,
-})
+interface AuthenticatedRouteChildren {
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedBudgetsCreateRoute: typeof AuthenticatedBudgetsCreateRoute
+  AuthenticatedBudgetsIndexRoute: typeof AuthenticatedBudgetsIndexRoute
+  AuthenticatedBudgetsIdIndexRoute: typeof AuthenticatedBudgetsIdIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedBudgetsCreateRoute: AuthenticatedBudgetsCreateRoute,
+  AuthenticatedBudgetsIndexRoute: AuthenticatedBudgetsIndexRoute,
+  AuthenticatedBudgetsIdIndexRoute: AuthenticatedBudgetsIdIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+export interface FileRoutesByFullPath {
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/budgets': typeof AuthenticatedBudgetsIndexRoute
+  '/budgets/$id': typeof AuthenticatedBudgetsIdIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/budgets': typeof AuthenticatedBudgetsIndexRoute
+  '/budgets/$id': typeof AuthenticatedBudgetsIdIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/_authenticated/budgets/': typeof AuthenticatedBudgetsIndexRoute
+  '/_authenticated/budgets/$id/': typeof AuthenticatedBudgetsIdIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ''
+    | '/login'
+    | '/register'
+    | '/'
+    | '/budgets/create'
+    | '/budgets'
+    | '/budgets/$id'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/login'
+    | '/register'
+    | '/'
+    | '/budgets/create'
+    | '/budgets'
+    | '/budgets/$id'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/register'
+    | '/_authenticated/'
+    | '/_authenticated/budgets/create'
+    | '/_authenticated/budgets/'
+    | '/_authenticated/budgets/$id/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 

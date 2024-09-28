@@ -96,8 +96,10 @@ class BudgetService
     /**
      * @return SlidingPagination<int, Budget>
      */
-    public function paginate(?PaginationQueryParams $paginationQueryParams = null, ?BudgetFilterQuery $budgetFilterQuery = null): SlidingPagination
-    {
+    public function paginate(
+        ?PaginationQueryParams $paginationQueryParams = null,
+        ?BudgetFilterQuery $budgetFilterQuery = null
+    ): SlidingPagination {
         $criteria = Criteria::create();
         $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()))
             ->orderBy([

@@ -50,7 +50,11 @@ class GetUserControllerTest extends TestBase
         $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/me');
 
         // ASSERT
-        $this->assertSame(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
+        $this->assertSame(
+            Response::HTTP_UNAUTHORIZED,
+            $this->client->getResponse()->getStatusCode(),
+            $this->client->getResponse()->getContent()
+        );
         self::assertResponseFormatSame('json');
     }
 }

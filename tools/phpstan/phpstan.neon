@@ -9,12 +9,12 @@ includes:
 
 parameters:
     level: max
+    errorFormat: ticketswap
     paths:
         - %currentWorkingDirectory%/src
-    excludePaths:
-        - modules/api/src/Resolver/ApiResponseAstResolver.php
+#        - %currentWorkingDirectory%/tests
 #    symfony:
-#        containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+#        containerXmlPath: %currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.xml
     checkAlwaysTrueCheckTypeFunctionCall: true
     checkAlwaysTrueInstanceof: true
     checkAlwaysTrueStrictComparison: true
@@ -39,18 +39,17 @@ parameters:
     reportStaticMethodSignatures: true
     reportUnmatchedIgnoredErrors: false
     treatPhpDocTypesAsCertain: false
-#    editorUrl: 'phpstorm://open?file=/home/t/franken-base/%%relFile%%&line=%%line%%'
-    editorUrlTitle: '%%relFile%%:%%line%%'
 #    doctrine: # see: https://github.com/phpstan/phpstan-doctrine?tab=readme-ov-file#configuration
 #        ormRepositoryClass: Doctrine\ORM\EntityRepository
 #        odmRepositoryClass: Doctrine\ODM\MongoDB\DocumentRepository
-#    exceptions:
-#        uncheckedExceptionClasses:
-#            - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
-#            - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
-#        check:
-#            missingCheckedExceptionInThrows: true
-#            tooWideThrowType: true
+    exceptions:
+        uncheckedExceptionClasses:
+            - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
+            - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+            - 'Doctrine\DBAL\Exception'
+#    check:
+#        missingCheckedExceptionInThrows: true
+#        tooWideThrowType: true
     parallel:
         jobSize: 20
         maximumNumberOfProcesses: 32
@@ -61,13 +60,26 @@ parameters:
         param_type: 100
         property_type: 100
     ignoreErrors:
-        - "#^Method .*CollectionStateProvider::provide\\(\\) should return Rekalogika\\\\ApiLite\\\\Paginator\\\\MappingPaginatorDecorator<.*> but returns iterable<.*>.$#"
+        - "#^Method .*Provider::provide\\(\\) should return Rekalogika\\\\ApiLite\\\\Paginator\\\\MappingPaginatorDecorator<.*> but returns iterable<.*>.$#"
+        -
+            message: "#^Class .*ApiPlatform\\\\Payload\\\\.*Input.*#"
+            identifier: property.uninitialized
+        - "#^Method .*Factory\\:\\:defaults\\(\\) return type has no value type specified in iterable type array\\.$#"
+        - "#^Return type \\(array\\) of method .*Factory\\:\\:defaults\\(\\) should be covariant with return type \\(.*\\) of method .*Factory.*\\:\\:defaults\\(\\)$#"
+        -
+            message: "#^Parameter .* \\$parameters .*Test\\:\\:url\\(\\) should be contravariant with parameter \\$parameters .* App\\\\Tests\\\\AbstractApiTestCase\\:\\:url\\(\\)$#"
+            identifier: method.childParameterType
         -
             identifier: property.uninitialized
             path: %currentWorkingDirectory%/src/Dto/*
         -
             identifier: doctrine.associationType
             path: %currentWorkingDirectory%/src/Entity/*
+    type_perfect:
+        no_mixed: true
+        null_over_false: true
+        narrow_param: false
+        narrow_return: true
     ergebnis:
         final:
             enabled: false
@@ -91,8 +103,6 @@ parameters:
     shipmonkRules:
         allowComparingOnlyComparableTypes:
             enabled: true
-        allowNamedArgumentOnlyInAttributes:
-            enabled: false
         backedEnumGenerics:
             enabled: false
         enforceClosureParamNativeTypehint:
@@ -111,38 +121,9 @@ parameters:
         forbidArithmeticOperationOnNonNumber:
             enabled: true
             allowNumericString: false
-        forbidAssignmentNotMatchingVarDoc:
-            enabled: true
-            allowNarrowing: true
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
-        forbidCheckedExceptionInCallable:
-            enabled: false
-            immediatelyCalledCallables:
-                array_reduce: 1
-                array_intersect_ukey: 2
-                array_uintersect: 2
-                array_uintersect_assoc: 2
-                array_intersect_uassoc: 2
-                array_uintersect_uassoc: [2, 3]
-                array_diff_ukey: 2
-                array_udiff: 2
-                array_udiff_assoc: 2
-                array_diff_uassoc: 2
-                array_udiff_uassoc: [2, 3]
-                array_filter: 1
-                array_map: 0
-                array_walk_recursive: 1
-                array_walk: 1
-                call_user_func: 0
-                call_user_func_array: 0
-                forward_static_call: 0
-                forward_static_call_array: 0
-                uasort: 1
-                uksort: 1
-                usort: 1
-            allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
         # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbidcustomfunctions-

@@ -27,10 +27,12 @@ class UserRepository extends AbstractEntityRepository implements PasswordUpgrade
         return User::class;
     }
 
-    public function upgradePassword(PasswordAuthenticatedUserInterface $passwordAuthenticatedUser, string $newHashedPassword): void
-    {
+    public function upgradePassword(
+        PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
+        string $newHashedPassword
+    ): void {
         if (! $passwordAuthenticatedUser instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', User::class));
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', User::class));
         }
 
         $passwordAuthenticatedUser->setPassword($newHashedPassword);

@@ -27,14 +27,22 @@ class UpdateBudgetController extends BaseRestController
         operationId: 'put_budget',
         summary: 'put budget',
         responses: [
-            new SuccessResponse(responseClassFqcn: Budget::class, groups: [SerializationGroups::BUDGET_UPDATE], description: 'Budget updated'),
+            new SuccessResponse(responseClassFqcn: Budget::class, groups: [
+                SerializationGroups::BUDGET_UPDATE,
+            ], description: 'Budget updated'),
             new NotFoundResponse(description: 'Budget not found'),
         ],
         requestBodyClassFqcn: BudgetPayload::class
     )]
     #[Route('/{id}', name: 'api_budgets_update', methods: Request::METHOD_PUT)]
-    public function __invoke(BudgetService $budgetService, Budget $budget, #[MapRequestPayload] BudgetPayload $budgetPayload): JsonResponse
-    {
-        return $this->successResponse(data: $budgetService->update($budgetPayload, $budget), groups: [SerializationGroups::BUDGET_UPDATE]);
+    public function __invoke(
+        BudgetService $budgetService,
+        Budget $budget,
+        #[MapRequestPayload] BudgetPayload $budgetPayload
+    ): JsonResponse {
+        return $this->successResponse(
+            data: $budgetService->update($budgetPayload, $budget),
+            groups: [SerializationGroups::BUDGET_UPDATE]
+        );
     }
 }

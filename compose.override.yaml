@@ -1,0 +1,52 @@
+# Development environment override
+services:
+  php:
+    build:
+      context: .
+      target: frankenphp_dev
+    ports:
+      - "5173:5173" # React Hot Module
+      - "11112:11112" # PHPStan
+    volumes:
+      - ./app:/app
+      - ./tools:/tools
+      - ./.castor:/.castor
+      - ~/.ssh:/home/www-data/.ssh:ro
+      - user_data:/home/www-data
+      - ./.docker/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./.docker/frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
+      # If you develop on Mac or Windows you can remove the vendor/ directory
+      #  from the bind-mount for better performance by enabling the next line:
+      #- /app/vendor
+    environment:
+      MERCURE_EXTRA_DIRECTIVES: demo
+      # See https://xdebug.org/docs/all_settings#mode
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+    tty: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.network=traefik"
+      - "traefik.http.routers.php-mybudget.rule=Host(`mybudget.web.localhost`)"
+      - "traefik.http.routers.php-mybudget.tls=true"
+      - "traefik.http.services.php-mybudget.loadbalancer.server.port=80"
+    networks:
+      - traefik
+
+  ###> symfony/mercure-bundle ###
+  ###< symfony/mercure-bundle ###
+
+  ###> doctrine/doctrine-bundle ###
+  database:
+    ports:
+      - "5455:5432"
+###< doctrine/doctrine-bundle ###
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  user_data:

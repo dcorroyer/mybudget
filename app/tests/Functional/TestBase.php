@@ -31,6 +31,9 @@ class TestBase extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
         ], content: json_encode($payload));
 
-        return json_decode($this->client->getResponse()->getContent(), true) ?? $this->client->getResponse()->getStatusCode();
+        return json_decode(
+            $this->client->getResponse()->getContent(),
+            true
+        ) ?? $this->client->getResponse()->getStatusCode();
     }
 }

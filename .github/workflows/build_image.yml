@@ -1,0 +1,52 @@
+name: Deploy Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy'
+        required: true
+        type: string
+        default: '0.0.0-dev.1'
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker registry
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Determine Tag
+        id: determine-tag
+        run: |
+          if [ -z "${{ github.event.inputs.tag }}" ]; then
+            if [ -f VERSION ]; then
+              TAG=$(cat VERSION)
+            else
+              TAG="0.0.0-dev.1" # Default tag if VERSION file does not exist
+            fi
+            echo "Tag=${TAG}" >> $GITHUB_ENV
+          else
+            echo "Tag=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          fi
+
+      - name: Build and Cache Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ vars.DOKPLOY_DOCKER_IMAGE }}:${{ env.Tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

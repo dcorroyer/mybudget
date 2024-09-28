@@ -27,13 +27,18 @@ class GetUserController extends BaseRestController
         operationId: 'get_user',
         summary: 'get user',
         responses: [
-            new SuccessResponse(responseClassFqcn: User::class, groups: [SerializationGroups::USER_GET], description: 'User get'),
+            new SuccessResponse(responseClassFqcn: User::class, groups: [
+                SerializationGroups::USER_GET,
+            ], description: 'User get'),
             new NotFoundResponse(description: 'User not found'),
         ],
     )]
     #[Route('/me', name: 'api_users_get', methods: Request::METHOD_GET)]
     public function __invoke(UserService $userService, #[CurrentUser] UserInterface $tokenUser): JsonResponse
     {
-        return $this->successResponse(data: $userService->get($tokenUser->getUserIdentifier()), groups: [SerializationGroups::USER_GET]);
+        return $this->successResponse(
+            data: $userService->get($tokenUser->getUserIdentifier()),
+            groups: [SerializationGroups::USER_GET]
+        );
     }
 }

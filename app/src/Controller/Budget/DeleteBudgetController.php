@@ -24,7 +24,11 @@ class DeleteBudgetController extends BaseRestController
         operationId: 'delete_budget',
         summary: 'delete budget',
         responses: [
-            new SuccessResponse(responseClassFqcn: Budget::class, responseCode: Response::HTTP_NO_CONTENT, description: 'Budget deleted'),
+            new SuccessResponse(
+                responseClassFqcn: Budget::class,
+                responseCode: Response::HTTP_NO_CONTENT,
+                description: 'Budget deleted'
+            ),
             new NotFoundResponse(description: 'Budget not found'),
         ],
     )]

@@ -9,11 +9,9 @@
     "format": "prettier --write 'assets/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "devDependencies": {
-    "@tanstack/router-vite-plugin": "^1.46.6",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -22,13 +20,8 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "postcss": "^8.4.39",
-    "postcss-preset-mantine": "^1.15.0",
-    "postcss-simple-vars": "^7.0.1",
     "prettier": "3.3.2",
-    "typescript": "^5.2.2",
-    "vite": "^5.0",
-    "vite-plugin-symfony": "^6.4"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -42,10 +35,19 @@
     "@tanstack/react-query-devtools": "^5.51.21",
     "@tanstack/react-router": "^1.46.8",
     "@tanstack/router": "^0.0.1-beta.53",
+    "@tanstack/router-vite-plugin": "^1.46.6",
+    "@vitejs/plugin-react": "^4.3.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "postcss": "^8.4.39",
+    "postcss-preset-mantine": "^1.15.0",
+    "postcss-simple-vars": "^7.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.1",
+    "vite": "^5.0",
+    "vite-plugin-symfony": "^6.4",
     "zod": "^3.23.8"
-  }
+  },
+  "packageManager": "pnpm@9.11.0+sha512.0a203ffaed5a3f63242cd064c8fb5892366c103e328079318f78062f24ea8c9d50bc6a47aa3567cabefd824d170e78fa2745ed1f16b132e16436146b7688f19b"
 }

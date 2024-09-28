@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget\Docker;
+namespace TheoD\MusicAutoTagger\Docker;
 
 use function Castor\context;
 

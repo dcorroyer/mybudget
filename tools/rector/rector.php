@@ -2,14 +2,26 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\PhpUnit\PhpUnitDataProviderStaticFixer;
+use Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
 use Rector\Doctrine\Set\DoctrineSetList;
+use Rector\EarlyReturn\Rector\StmtsAwareInterface\ReturnEarlyIfVariableRector;
+use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
 use Rector\Naming\Rector\Class_\RenamePropertyToMatchTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameParamToMatchTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\Php74\Rector\Assign\NullCoalescingOperatorRector;
+use Rector\Php80\Rector\Class_\AnnotationToAttributeRector;
+use Rector\PHPUnit\AnnotationsToAttributes\Rector\Class_\AnnotationWithValueToAttributeRector;
+use Rector\PHPUnit\AnnotationsToAttributes\Rector\ClassMethod\DataProviderAnnotationToAttributeRector;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\PreferPHPUnitThisCallRector;
+use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
+use Rector\PHPUnit\Rector\Class_\PreferPHPUnitSelfCallRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Set\ValueObject\LevelSetList;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 
@@ -26,6 +38,7 @@ return RectorConfig::configure()
     ->withPaths($paths)
     ->withRootFiles()
     ->withPhpSets(php83: true)
+//    ->withSymfonyContainerXml($appPathPrefix . '/var/cache/dev/App_KernelDevDebugContainer.xml')
     ->withAttributesSets(
         symfony: true,
         doctrine: true,
@@ -42,30 +55,49 @@ return RectorConfig::configure()
         instanceOf: true,
         earlyReturn: true,
         strictBooleans: true,
+        carbon: true,
+        rectorPreset: true,
+        phpunitCodeQuality: true,
+        doctrineCodeQuality: true,
+        symfonyCodeQuality: true,
+        symfonyConfigs: true,
+        phpunit: true,
     )
     ->withImportNames(
         importShortClasses: false,
-        removeUnusedImports: true
+        removeUnusedImports: true,
     )
     ->withSets([
-        SymfonySetList::SYMFONY_64,
         SymfonySetList::ANNOTATIONS_TO_ATTRIBUTES,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         DoctrineSetList::DOCTRINE_ORM_214,
         DoctrineSetList::DOCTRINE_CODE_QUALITY,
-        DoctrineSetList::DOCTRINE_DBAL_30,
         DoctrineSetList::DOCTRINE_COMMON_20,
-        PHPUnitSetList::PHPUNIT_100,
+        DoctrineSetList::DOCTRINE_DBAL_40,
+        PHPUnitSetList::PHPUNIT_90,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
-        PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
+//        PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        LevelSetList::UP_TO_PHP_83,
+        SymfonySetList::SYMFONY_71,
     ])
     ->withRules([
         AddVoidReturnTypeWhereNoReturnRector::class,
+        PreferPHPUnitSelfCallRector::class,
     ])
     ->withSkip([
+        PreferPHPUnitThisCallRector::class,
         EncapsedStringsToSprintfRector::class,
         RenamePropertyToMatchTypeRector::class,
         NullCoalescingOperatorRector::class,
         RenameParamToMatchTypeRector::class,
         RenameVariableToMatchNewTypeRector::class,
+        ReturnEarlyIfVariableRector::class,
+        AnnotationToAttributeRector::class,
+        DataProviderAnnotationToAttributeRector::class,
+        AnnotationWithValueToAttributeRector::class,
+        RenameVariableToMatchMethodCallReturnTypeRector::class,
+        RemoveNonExistingVarAnnotationRector::class,
+        MakeInheritedMethodVisibilitySameAsParentRector::class,
+        PhpUnitDataProviderStaticFixer::class,
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class,
     ]);

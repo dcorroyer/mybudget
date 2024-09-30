@@ -9,11 +9,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "dcorroyer\\mybudget\\": "./src/"
+      "TheoD\\MusicAutoTagger\\": "./src/"
     }
   },
   "require": {
-    "theod02/castor-class-task": "dev-main"
+    "theod02/castor-class-task": "dev-main",
+    "phlak/semver": "dev-master"
   },
   "repositories": [
     {

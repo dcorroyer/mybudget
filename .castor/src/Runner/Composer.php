@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget\Runner;
+namespace TheoD\MusicAutoTagger\Runner;
 
 use Castor\Context;
-use dcorroyer\mybudget\ContainerDefinitionBag;
-use dcorroyer\mybudget\Docker\ContainerDefinition;
+use TheoD\MusicAutoTagger\ContainerDefinitionBag;
+use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
 
 class Composer extends Runner
 {

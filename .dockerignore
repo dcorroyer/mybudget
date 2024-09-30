@@ -1,0 +1,44 @@
+**/*.log
+**/*.md
+**/*.php~
+**/*.dist.php
+**/*.dist
+**/*.cache
+**/._*
+**/.dockerignore
+**/.DS_Store
+**/.git/
+**/.gitattributes
+**/.gitignore
+**/.gitmodules
+**/Thumbs.db
+.github/
+app/public/bundles/
+app/tests/
+app/var/
+app/vendor/
+app/.editorconfig
+app/.env.*.local
+app/.env.local
+app/.env.local.php
+app/.env.test
+app/.pnpm-store
+app/node_modules/
+
+# Root directories
+.castor/
+.github/
+api/
+docs/
+tools/
+
+# Docker related
+Dockerfile
+compose.yaml
+compose.*.yaml
+docker-compose.yaml
+docker-compose.*.yaml
+
+# PHPStorm / VSCode
+/.idea/
+/.vscode/

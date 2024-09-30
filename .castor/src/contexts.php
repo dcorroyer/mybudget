@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget;
+namespace TheoD\MusicAutoTagger;
 
 use Castor\Attribute\AsContext;
 use Castor\Context;
 
 \define('ROOT_DIR', \dirname(__DIR__, 2));
 
-#[AsContext]
+#[AsContext(default: true)]
 function root_context(): Context
 {
     return new Context(
@@ -21,10 +21,8 @@ function root_context(): Context
     );
 }
 
-#[AsContext(default: true)]
+#[AsContext]
 function app_context(): Context
 {
-    return root_context()
-        ->withWorkingDirectory(ROOT_DIR . '/app')
-    ;
+    return root_context()->withWorkingDirectory(ROOT_DIR . '/app');
 }

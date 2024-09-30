@@ -38,6 +38,10 @@ class RegisterController extends BaseRestController
     #[Route('/register', name: 'api_register', methods: Request::METHOD_POST)]
     public function __invoke(UserService $userService, #[MapRequestPayload] RegisterPayload $payload): JsonResponse
     {
-        return $this->successResponse(data: $userService->create($payload), groups: [SerializationGroups::USER_CREATE], status: Response::HTTP_CREATED);
+        return $this->successResponse(
+            data: $userService->create($payload),
+            groups: [SerializationGroups::USER_CREATE],
+            status: Response::HTTP_CREATED
+        );
     }
 }

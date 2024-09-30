@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('register-controller')]
 class RegisterControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/register';
+    private const string API_ENDPOINT = '/api/register';
 
     #[Test]
     #[TestDox('When call /api/register  without Email, it should return error')]
@@ -37,6 +37,8 @@ class RegisterControllerTest extends TestBase
 
         // ASSERT
         self::assertResponseStatusCodeSame(422);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        self::assertSame('This value should not be blank.', $response['violations'][0]['title']);
     }
 
     #[Test]
@@ -112,6 +114,6 @@ class RegisterControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        $this->assertSame($payload['email'], $responseData['email']);
+        self::assertSame($payload['email'], $responseData['email']);
     }
 }

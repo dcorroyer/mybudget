@@ -14,6 +14,7 @@ class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface
     #[OA\Parameter(name: 'name', description: 'Filter by name')]
     public ?string $name = null;
 
+    #[\Override]
     public function getCriteria(): Criteria
     {
         $criteria = Criteria::create();

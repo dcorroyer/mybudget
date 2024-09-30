@@ -5,9 +5,11 @@ declare(strict_types=1);
 use PhpCsFixer\Fixer\ClassNotation\FinalInternalClassFixer;
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use PhpCsFixer\Fixer\Operator\AssignNullCoalescingToCoalesceEqualFixer;
+use PhpCsFixer\Fixer\PhpUnit\PhpUnitDataProviderStaticFixer;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitStrictFixer;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitTestCaseStaticMethodCallsFixer;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitTestClassRequiresCoversFixer;
+use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Symfony\Component\Finder\Finder;
 use Symplify\CodingStandard\Fixer\ArrayNotation\StandaloneLineInMultilineArrayFixer;
 use Symplify\CodingStandard\Fixer\LineLength\LineLengthFixer;
@@ -25,7 +27,7 @@ $castorFilesFinder = (new Finder())
     ->name('*.php')
     ->notPath('vendor');
 
-$castorFilePaths = array_map(static fn(\SplFileInfo $fileInfo) => $fileInfo->getRealPath(), iterator_to_array($castorFilesFinder));
+$castorFilePaths = array_map(static fn (\SplFileInfo $fileInfo) => $fileInfo->getRealPath(), iterator_to_array($castorFilesFinder));
 
 $paths = [
     "{$appPathPrefix}/src",
@@ -44,7 +46,7 @@ return ECSConfig::configure()
     ->withRules([
         NoUnusedImportsFixer::class,
         StandaloneLineConstructorParamFixer::class,
-        StandaloneLineInMultilineArrayFixer::class
+        StandaloneLineInMultilineArrayFixer::class,
     ])
     ->withSkip([
         PhpUnitTestClassRequiresCoversFixer::class,
@@ -54,12 +56,14 @@ return ECSConfig::configure()
         PhpUnitTestCaseStaticMethodCallsFixer::class,
         AssignNullCoalescingToCoalesceEqualFixer::class,
         PhpUnitStrictFixer::class,
+        PhpUnitDataProviderStaticFixer::class,
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class,
     ])
     ->withConfiguredRule(
         LineLengthFixer::class,
         [
-            LineLengthFixer::LINE_LENGTH => 160,
-        ]
+            LineLengthFixer::LINE_LENGTH => 120,
+        ],
     )
     ->withPreparedSets(
         psr12: true,
@@ -79,6 +83,8 @@ return ECSConfig::configure()
         indentation: '    ',
         lineEnding: '\n',
     )
+    ->withSets([
+    ])
     ->withPhpCsFixerSets(
         doctrineAnnotation: true,
         per: true,

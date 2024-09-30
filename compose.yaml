@@ -1,121 +1,57 @@
-x-worker-template:
-  worker_template: &worker_template
-    build:
-      context: .
-      dockerfile: ./.docker/php/Dockerfile
-      target: worker-dev
-    volumes:
-      - ./app:/app
-    profiles:
-      - worker
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: ./.docker/php/Dockerfile
-      target: dev
-    ports:
-      - "5173:5173"
+  php:
+    image: ${IMAGES_PREFIX:-}app-php
+    restart: unless-stopped
     environment:
       SERVER_NAME: ":80"
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
-      TRUSTED_HOSTS: ^${SERVER_NAME:-example\.com|localhost}|php$$
+      # Run "composer require symfony/orm-pack" to install and configure Doctrine ORM
+      # DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
       # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
-      MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
+      MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}/.well-known/mercure}
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
-      - ./app:/app
-      - ./.castor:/.castor
-      - ./tools:/tools
-      - ~/.ssh:/home/www-data/.ssh:ro
-      - caddy_data:/data
+      - caddy_data:/datan
       - caddy_config:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.network=traefik"
-      - "traefik.http.routers.php-mybudget.rule=Host(`mybudget.web.localhost`)"
-      - "traefik.http.routers.php-mybudget.tls=true"
-      - "traefik.http.services.php-mybudget.loadbalancer.server.port=80"
     networks:
       - database
-      - traefik
-    profiles:
-      - app
-    extra_hosts:
-      - host.docker.internal:host-gateway
 
-  #scheduler:
-  #  <<: *worker_template
-  #  command: php /app/bin/console messenger:consume scheduler_default -vv
+  # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
+  ###> symfony/mercure-bundle ###
+  ###< symfony/mercure-bundle ###
 
-  mariadb:
-    image: mariadb:11.3
-    ports:
-      - "4306:3306"
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-root}" ]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     volumes:
-      - mariadb:/var/lib/mysql
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      - postgres_data:/var/lib/postgresql/data:rw
     networks:
       - database
-    profiles:
-      - app
-
-  phpmyadmin:
-    depends_on:
-      - mariadb
-    image: phpmyadmin/phpmyadmin:5.2
-    environment:
-      PMA_HOST: mybudget-mariadb-1
-      PMA_USER: root
-      PMA_PASSWORD: root
-      PMA_ARBITRARY: 1
-      PMA_ABSOLUTE_URI: https://mybudget.db.localhost
-    networks:
-      - database
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.network=traefik"
-      - "traefik.http.routers.mybudget-phpmyadmin.rule=Host(`mybudget.db.localhost`)"
-      - "traefik.http.routers.mybudget-phpmyadmin.tls=true"
-      - "traefik.http.services.mybudget-phpmyadmin.loadbalancer.server.port=80"
-    profiles:
-      - app
-
-
-  mkdocs:
-    build:
-      dockerfile: ./.docker/mkdocs/Dockerfile
-      context: .
-    volumes:
-      - ./:/docs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mkdocs.rule=Host(`mkdocs.web.localhost`)"
-      - "traefik.http.routers.mkdocs.tls=true"
-      - "traefik.http.services.mkdocs.loadbalancer.server.port=8000"
-    networks:
-      - traefik
-    profiles:
-      - app
+###< doctrine/doctrine-bundle ###
 
 networks:
-  database:
-  traefik:
-    external: true
-
-# Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+  database: ~
 
 volumes:
   caddy_data:
   caddy_config:
-  mariadb:
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+  ###> symfony/mercure-bundle ###
+  ###< symfony/mercure-bundle ###
+
+  postgres_data:
+
+  ###> doctrine/doctrine-bundle ###
+###< doctrine/doctrine-bundle ###

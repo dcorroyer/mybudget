@@ -14,23 +14,22 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  * @extends AbstractEntityRepository<User>
  *
  * @implements PasswordUpgraderInterface<User>
- *
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends AbstractEntityRepository implements PasswordUpgraderInterface
 {
+    #[\Override]
     public function getEntityClass(): string
     {
         return User::class;
     }
 
-    public function upgradePassword(PasswordAuthenticatedUserInterface $passwordAuthenticatedUser, string $newHashedPassword): void
-    {
+    #[\Override]
+    public function upgradePassword(
+        PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
+        string $newHashedPassword
+    ): void {
         if (! $passwordAuthenticatedUser instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', User::class));
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', User::class));
         }
 
         $passwordAuthenticatedUser->setPassword($newHashedPassword);

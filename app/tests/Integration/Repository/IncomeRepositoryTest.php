@@ -22,13 +22,13 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 #[Group('repository')]
 #[Group('income')]
 #[Group('income-repository')]
-class IncomeRepositoryTest extends KernelTestCase
+final class IncomeRepositoryTest extends KernelTestCase
 {
     use Factories;
     use ResetDatabase;
-
     private IncomeRepository $incomeRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -48,7 +48,7 @@ class IncomeRepositoryTest extends KernelTestCase
         $income = $this->incomeRepository->find($income);
 
         // ASSERT
-        $this->assertNull($income);
+        self::assertNull($income);
     }
 
     #[TestDox('When you send an income into find method, it should returns the income')]
@@ -68,7 +68,7 @@ class IncomeRepositoryTest extends KernelTestCase
         $incomeResponse = $this->incomeRepository->find($income);
 
         // ASSERT
-        $this->assertSame($income, $incomeResponse);
+        self::assertSame($income, $incomeResponse);
     }
 
     #[TestDox('When you send an income into save method with flush, it should returns the income')]
@@ -88,7 +88,7 @@ class IncomeRepositoryTest extends KernelTestCase
         $incomeResponse = $this->incomeRepository->save($income, true);
 
         // ASSERT
-        $this->assertSame($income->getId(), $incomeResponse);
+        self::assertSame($income->getId(), $incomeResponse);
     }
 
     #[TestDox('When you send an income into save method without flush, it should returns null')]
@@ -108,6 +108,6 @@ class IncomeRepositoryTest extends KernelTestCase
         $incomeResponse = $this->incomeRepository->save($income);
 
         // ASSERT
-        $this->assertNull($incomeResponse);
+        self::assertNull($incomeResponse);
     }
 }

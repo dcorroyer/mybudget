@@ -12,6 +12,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class UserFactory extends PersistentProxyObjectFactory
 {
+    #[\Override]
     public static function class(): string
     {
         return User::class;
@@ -20,10 +21,11 @@ final class UserFactory extends PersistentProxyObjectFactory
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      */
+    #[\Override]
     protected function defaults(): array|callable
     {
         return [
-            'email' => self::faker()->text(180),
+            'email' => self::faker()->email(),
             'firstName' => self::faker()->text(180),
             'lastName' => self::faker()->text(180),
             'password' => self::faker()->text(180),
@@ -34,6 +36,7 @@ final class UserFactory extends PersistentProxyObjectFactory
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
      */
+    #[\Override]
     protected function initialize(): static
     {
         return $this;

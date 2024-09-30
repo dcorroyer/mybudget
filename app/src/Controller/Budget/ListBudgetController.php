@@ -41,6 +41,9 @@ class ListBudgetController extends BaseRestController
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?BudgetFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginateResponse($budgetService->paginate($paginationQueryParams, $filter), [SerializationGroups::BUDGET_LIST]);
+        return $this->paginateResponse(
+            $budgetService->paginate($paginationQueryParams, $filter),
+            [SerializationGroups::BUDGET_LIST]
+        );
     }
 }

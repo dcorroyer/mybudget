@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget\Runner;
+namespace TheoD\MusicAutoTagger\Runner;
 
 use Castor\Attribute\AsOption;
 use Castor\Context;
-use dcorroyer\mybudget\ContainerDefinitionBag;
-use dcorroyer\mybudget\Docker\ContainerDefinition;
 use Symfony\Component\Process\Process;
+use TheoD\MusicAutoTagger\ContainerDefinitionBag;
+use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
 use TheoD02\Castor\Classes\AsTaskClass;
 use TheoD02\Castor\Classes\AsTaskMethod;
 
@@ -18,33 +18,57 @@ use function Castor\io;
 class Qa extends Runner
 {
     private static bool $runOnce = false;
+    private static bool $runInstall = true;
 
-    public function __construct(?Context $context = null, ?ContainerDefinition $containerDefinition = null, bool $preventRunningUsingDocker = false)
-    {
+    public function __construct(
+        ?Context $context = null,
+        ?ContainerDefinition $containerDefinition = null,
+        bool $preventRunningUsingDocker = false,
+    ) {
         parent::__construct(
             context: $context,
             containerDefinition: $containerDefinition ?? ContainerDefinitionBag::php(),
-            preventRunningUsingDocker: $preventRunningUsingDocker
+            preventRunningUsingDocker: $preventRunningUsingDocker,
         );
 
         $this->addIf($containerDefinition?->name, '--container', $containerDefinition?->name);
     }
 
-    protected function preRunCommand(): void
+    #[AsTaskMethod(aliases: ['qa:phpunit'])]
+    public function phpunit(): Process
     {
-        $this->install();
+        $this->disableInstall();
+
+        return $this
+            ->add('vendor/bin/phpunit', '--configuration', '/app/phpunit.xml.dist')
+            ->run()
+        ;
     }
 
-    #[AsTaskMethod(aliases: ['qa:update'])]
-    public function install(): void
+    public function disableInstall(): void
     {
-        if (self::$runOnce) {
-            return;
-        }
+        self::$runInstall = false;
+    }
 
-        install_tools();
+    #[AsTaskMethod]
+    public function preCommit(): void
+    {
+        io()->title('Running QA tools - Pre-commit hook');
 
-        self::$runOnce = true;
+        io()->section('Running ECS');
+        $this->ecs(fix: true);
+
+        io()->section('Running Rector');
+        $this->rector(fix: true);
+
+        io()->section('Running PHPStan');
+        $this->phpstan();
+
+        io()->section('Running PHParkitect');
+        $this->phparkitect();
+
+        io()->section('Running PHPMD');
+        $this->phpmd();
     }
 
     #[AsTaskMethod]
@@ -58,17 +82,6 @@ class Qa extends Runner
     }
 
     #[AsTaskMethod]
-    public function phpstan(): Process
-    {
-        $this->add('phpstan', 'clear-result-cache')->run();
-
-        return $this
-            ->add('phpstan', 'analyse', '--configuration', '/tools/phpstan/phpstan.neon', '--memory-limit=2G', '-vv')
-            ->run()
-        ;
-    }
-
-    #[AsTaskMethod]
     public function rector(#[AsOption(description: 'Fix the issues')] bool $fix = false): Process
     {
         $this->add('rector', 'process', '--clear-cache', '--config', '/tools/rector/rector.php');
@@ -76,6 +89,41 @@ class Qa extends Runner
         $this->addIf(! $fix, '--dry-run');
 
         return $this->run(qa_context()->withAllowFailure(! $fix));
+    }
+
+    #[AsTaskMethod]
+    public function phpstan(bool $pro = false, bool $watch = false): Process
+    {
+        $this->add('phpstan', 'clear-result-cache')->run();
+
+        $runPhpstan = function () use ($pro): Process {
+            return $this
+                ->add(
+                    'phpstan',
+                    'analyse',
+                    '--configuration',
+                    '/tools/phpstan/phpstan.neon',
+                    '--memory-limit=2G',
+                    '-vv'
+                )
+                ->addIf($pro, '--pro')
+                ->run($this->context->withAllowFailure())
+            ;
+        };
+
+        if ($watch) {
+            do {
+                $process = $runPhpstan();
+                $hasFailed = $process->getExitCode() !== 0;
+            } while ($hasFailed === true && io()->confirm('Press enter to run phpstan again'));
+
+            io()->newLine();
+            io()->success('Oh, you\'ve done it! 🎉 You fixed all the issues! 🎉');
+
+            return $process;
+        }
+
+        return $runPhpstan();
     }
 
     #[AsTaskMethod(aliases: ['qa:arki'])]
@@ -100,25 +148,22 @@ class Qa extends Runner
         return $process;
     }
 
-    #[AsTaskMethod]
-    public function preCommit(): void
+    protected function preRunCommand(): void
     {
-        io()->title('Running QA tools - Pre-commit hook');
+        if (self::$runOnce) {
+            return;
+        }
 
-        io()->section('Running ECS');
-        $this->ecs(fix: true);
+        if (self::$runInstall) {
+            $this->install();
+        }
 
-        io()->section('Running Rector');
-        $this->rector(fix: true);
+        self::$runOnce = true;
+    }
 
-        io()->section('Running PHPStan');
-        $this->phpstan();
-
-        io()->section('Running PHParkitect');
-        $this->phparkitect();
-
-        io()->section('Running PHPMD');
-        $this->phpmd();
+    public function install(): void
+    {
+        install_tools();
     }
 }
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace dcorroyer\mybudget\Runner;
+namespace TheoD\MusicAutoTagger\Runner;
 
 use Castor\Context;
-use dcorroyer\mybudget\Docker\ContainerDefinition;
-use dcorroyer\mybudget\Docker\DockerUtils;
 use Symfony\Component\Process\Process;
+use TheoD\MusicAutoTagger\Docker\ContainerDefinition;
+use TheoD\MusicAutoTagger\Docker\DockerUtils;
 
 use function Castor\context;
 use function Castor\run;
@@ -68,8 +68,15 @@ class Runner
             $commands = array_merge($envs, $commands);
         }
 
-        $commandsAsArrays = array_map(callback: static fn ($command) => \is_array($command) ? $command : explode(' ', $command), array: $commands);
-        $flattened = array_reduce(array: $commandsAsArrays, callback: static fn ($carry, $item) => [...$carry, ...$item], initial: []);
+        $commandsAsArrays = array_map(
+            callback: static fn ($command) => \is_array($command) ? $command : explode(' ', $command),
+            array: $commands
+        );
+        $flattened = array_reduce(
+            array: $commandsAsArrays,
+            callback: static fn ($carry, $item) => [...$carry, ...$item],
+            initial: []
+        );
 
         return implode(' ', $flattened);
     }
@@ -164,7 +171,12 @@ class Runner
      */
     public function debug(bool $block = true, bool $inlined = true): static
     {
-        $commands = $this->mergeCommands($this->shouldRunUsingDocker() ? $this->doBuildDockerCommand() : [$this->getBaseCommand(), ...$this->commands]);
+        $commands = $this->mergeCommands(
+            $this->shouldRunUsingDocker() ? $this->doBuildDockerCommand() : [
+                $this->getBaseCommand(),
+                ...$this->commands,
+            ]
+        );
         if ($inlined) {
             $block ? dd($commands) : dump($commands);
         }
@@ -232,12 +244,12 @@ class Runner
             $this->isDockerInteractive() ? '-i' : '',
             $this->isDockerTty() ? '-t' : '',
             ...$dockerEnvs,
-            sprintf('--user="%s"', $containerDefinition->user),
-            sprintf('-w "%s"', $containerDefinition->workingDirectory),
+            \sprintf('--user="%s"', $containerDefinition->user),
+            \sprintf('-w "%s"', $containerDefinition->workingDirectory),
             $containerDefinition->name,
             $this->dockerShell,
             '-c',
-            sprintf('"%s"', implode(' ', [...$baseCommands, ...$this->commands])),
+            \sprintf('"%s"', implode(' ', [...$baseCommands, ...$this->commands])),
         ];
 
         return $this->commands;

@@ -11,6 +11,7 @@ use App\Service\BudgetService;
 use App\Service\ExpenseService;
 use App\Service\IncomeService;
 use App\Tests\Common\Factory\BudgetFactory;
+use Carbon\Carbon;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
@@ -29,10 +30,9 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('budget')]
 #[Group('budget-service')]
-class BudgetServiceTest extends TestCase
+final class BudgetServiceTest extends TestCase
 {
     use Factories;
-
     private BudgetRepository $budgetRepository;
 
     private IncomeService $incomeService;
@@ -43,14 +43,15 @@ class BudgetServiceTest extends TestCase
 
     private BudgetService $budgetService;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->budgetRepository = $this->getMockBuilder(BudgetRepository::class)->disableOriginalConstructor()->getMock();
-        $this->incomeService = $this->getMockBuilder(IncomeService::class)->disableOriginalConstructor()->getMock();
-        $this->expenseService = $this->getMockBuilder(ExpenseService::class)->disableOriginalConstructor()->getMock();
-        $this->security = $this->getMockBuilder(Security::class)->disableOriginalConstructor()->getMock();
+        $this->budgetRepository = $this->createMock(BudgetRepository::class);
+        $this->incomeService = $this->createMock(IncomeService::class);
+        $this->expenseService = $this->createMock(ExpenseService::class);
+        $this->security = $this->createMock(Security::class);
 
         $this->budgetService = new BudgetService(
             budgetRepository: $this->budgetRepository,
@@ -71,7 +72,7 @@ class BudgetServiceTest extends TestCase
         ]);
 
         $BudgetPayload = (new BudgetPayload());
-        $BudgetPayload->date = new \DateTime('2022-03');
+        $BudgetPayload->date = Carbon::parse('2022-03');
         $BudgetPayload->incomes = [];
         $BudgetPayload->expenses = [];
 
@@ -79,7 +80,7 @@ class BudgetServiceTest extends TestCase
             ->method('save')
             ->willReturnCallback(static function (Budget $budget): void {
                 $budget->setId(1)
-                    ->setDate(new \DateTime('2022-03'))
+                    ->setDate(Carbon::parse('2022-03'))
                     ->updateName()
                 ;
             })
@@ -89,9 +90,9 @@ class BudgetServiceTest extends TestCase
         $budgetResponse = $this->budgetService->create($BudgetPayload);
 
         // ASSERT
-        $this->assertInstanceOf(Budget::class, $budget);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
-        $this->assertSame('Budget 2022-03', $budgetResponse->getName());
+        self::assertInstanceOf(Budget::class, $budget);
+        self::assertSame($budget->getId(), $budgetResponse->getId());
+        self::assertSame('Budget 2022-03', $budgetResponse->getName());
     }
 
     #[TestDox('When calling update budget, it should update and return the budget updated')]
@@ -105,7 +106,7 @@ class BudgetServiceTest extends TestCase
         ]);
 
         $updateBudgetPayload = (new BudgetPayload());
-        $updateBudgetPayload->date = new \DateTime('2022-03');
+        $updateBudgetPayload->date = Carbon::parse('2022-03');
         $updateBudgetPayload->incomes = [];
         $updateBudgetPayload->expenses = [];
 
@@ -113,7 +114,7 @@ class BudgetServiceTest extends TestCase
             ->method('save')
             ->willReturnCallback(static function (Budget $budget): void {
                 $budget->setId(1)
-                    ->setDate(new \DateTime('2022-03'))
+                    ->setDate(Carbon::parse('2022-03'))
                     ->updateName()
                 ;
             })
@@ -123,9 +124,9 @@ class BudgetServiceTest extends TestCase
         $budgetResponse = $this->budgetService->update($updateBudgetPayload, $budget);
 
         // ASSERT
-        $this->assertInstanceOf(Budget::class, $budget);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
-        $this->assertSame('Budget 2022-03', $budgetResponse->getName());
+        self::assertInstanceOf(Budget::class, $budget);
+        self::assertSame($budget->getId(), $budgetResponse->getId());
+        self::assertSame('Budget 2022-03', $budgetResponse->getName());
     }
 
     #[TestDox('When calling update budget with bad user, it should returns access denied exception')]
@@ -141,7 +142,7 @@ class BudgetServiceTest extends TestCase
         ]);
 
         $updateBudgetPayload = (new BudgetPayload());
-        $updateBudgetPayload->date = new \DateTime('2022-01');
+        $updateBudgetPayload->date = Carbon::parse('2022-01');
 
         // ACT
         $this->budgetService->update($updateBudgetPayload, $budget);
@@ -166,9 +167,9 @@ class BudgetServiceTest extends TestCase
         $budgetResponse = $this->budgetService->get($budget->getId());
 
         // ASSERT
-        $this->assertInstanceOf(Budget::class, $budget);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
-        $this->assertSame('Budget 2022-01', $budgetResponse->getName());
+        self::assertInstanceOf(Budget::class, $budget);
+        self::assertSame($budget->getId(), $budgetResponse->getId());
+        self::assertSame('Budget 2022-01', $budgetResponse->getName());
     }
 
     #[TestDox('When calling get budget with bad id, it should throw not found exception')]
@@ -214,8 +215,8 @@ class BudgetServiceTest extends TestCase
         $budgetResponse = $this->budgetService->delete($budget);
 
         // ASSERT
-        $this->assertInstanceOf(Budget::class, $budget);
-        $this->assertSame($budget->getId(), $budgetResponse->getId());
+        self::assertInstanceOf(Budget::class, $budget);
+        self::assertSame($budget->getId(), $budgetResponse->getId());
     }
 
     #[TestDox('When calling delete budget with bad user, it should returns access denied exception')]
@@ -248,7 +249,7 @@ class BudgetServiceTest extends TestCase
         $budgetsResponse = $this->budgetService->paginate(new PaginationQueryParams());
 
         // ASSERT
-        $this->assertCount(20, $budgetsResponse);
+        self::assertCount(20, $budgetsResponse);
     }
 
     #[TestDox('When calling checkAccess, it should returns an AccessDeniedException')]
@@ -259,7 +260,12 @@ class BudgetServiceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         // ARRANGE PRIVATE METHOD TEST
-        $budgetService = new BudgetService($this->budgetRepository, $this->incomeService, $this->expenseService, $this->security);
+        $budgetService = new BudgetService(
+            $this->budgetRepository,
+            $this->incomeService,
+            $this->expenseService,
+            $this->security
+        );
         $method = $this->getPrivateMethod(BudgetService::class, 'checkAccess');
 
         // ARRANGE

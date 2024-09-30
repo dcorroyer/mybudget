@@ -19,9 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]
-class ListBudgetControllerTest extends TestBase
+final class ListBudgetControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/budgets';
+    private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call GET /api/budgets, it should returns the budgets list')]
     #[Test]
@@ -41,6 +41,6 @@ class ListBudgetControllerTest extends TestBase
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        $this->assertCount(\count($budgets), $responseData);
+        self::assertCount(\count($budgets), $responseData);
     }
 }

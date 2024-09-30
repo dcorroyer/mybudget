@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]
-class CreateBudgetControllerTest extends TestBase
+final class CreateBudgetControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/budgets';
+    private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call POST /api/budgets, it should create and return the budget')]
     #[Test]
@@ -73,7 +73,7 @@ class CreateBudgetControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        $this->assertSame('Budget 2024-02', $responseData['name']);
-        $this->assertSame(1680, $responseData['savingCapacity']);
+        self::assertSame('Budget 2024-02', $responseData['name']);
+        self::assertSame(1680, $responseData['savingCapacity']);
     }
 }

@@ -19,10 +19,11 @@ class TestBase extends WebTestCase
 
     protected KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
-        $this->client = static::createClient();
+        $this->client = self::createClient();
     }
 
     public function clientRequest(string $method, string $endpoint, array $payload = []): array|int|null
@@ -31,6 +32,9 @@ class TestBase extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
         ], content: json_encode($payload));
 
-        return json_decode($this->client->getResponse()->getContent(), true) ?? $this->client->getResponse()->getStatusCode();
+        return json_decode(
+            $this->client->getResponse()->getContent(),
+            true
+        ) ?? $this->client->getResponse()->getStatusCode();
     }
 }

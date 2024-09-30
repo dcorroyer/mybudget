@@ -1,5 +1,6 @@
 {
     "require": {
-        "symplify/easy-coding-standard": "^12.1"
+        "symplify/easy-coding-standard": "^12.1",
+        "symfony/finder": "^7.1"
     }
 }

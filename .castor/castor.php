@@ -2,23 +2,28 @@
 
 declare(strict_types=1);
 
+use Castor\Attribute\AsArgument;
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
-use dcorroyer\mybudget\Docker\DockerUtils;
+use TheoD\MusicAutoTagger\ContainerDefinitionBag;
+use TheoD\MusicAutoTagger\Docker\DockerUtils;
 
+use function Castor\Attribute\AsArgument;
 use function Castor\capture;
 use function Castor\context;
 use function Castor\finder;
+use function Castor\fingerprint;
+use function Castor\fs;
 use function Castor\import;
 use function Castor\io;
-use function Castor\notify;
 use function Castor\run;
-use function dcorroyer\mybudget\delayed_fingerprint;
-use function dcorroyer\mybudget\docker;
-use function dcorroyer\mybudget\fgp;
-use function dcorroyer\mybudget\Runner\composer;
-use function dcorroyer\mybudget\Runner\npm;
-use function dcorroyer\mybudget\Runner\qa;
+use function TheoD\MusicAutoTagger\app_context;
+use function TheoD\MusicAutoTagger\docker;
+use function TheoD\MusicAutoTagger\fgp;
+use function TheoD\MusicAutoTagger\Runner\composer;
+use function TheoD\MusicAutoTagger\Runner\pnpm;
+use function TheoD\MusicAutoTagger\Runner\qa;
+use function TheoD\MusicAutoTagger\Runner\symfony;
 
 import('composer://theod02/castor-class-task');
 
@@ -35,18 +40,19 @@ function start(bool $force = false): void
     }
 
     if (
-        ! delayed_fingerprint(
+        ! fingerprint(
             callback: static fn () => docker()
-                ->compose('--profile', 'app', 'build', '--no-cache')
+                ->compose('-f', 'compose.yaml', '-f', 'compose.override.yaml', 'build')
                 ->run(),
-            fingerprint: static fn () => fgp()->php_docker(),
-            force: $force
+            id: 'docker',
+            fingerprint: fgp()->php_docker(),
+            force: $force,
         )
     ) {
         io()->note('Docker images are already built.');
     }
 
-    docker()->compose('--profile', 'app', 'up', '-d', '--wait')->run();
+    docker()->compose('-f', 'compose.yaml', '-f', 'compose.override.yaml', 'up', '-d', '--wait')->run();
 }
 
 #[AsTask]
@@ -69,46 +75,71 @@ function install(bool $force = false): void
 
     io()->title('Installing dependencies');
     io()->section('Composer');
-    $forceVendor = $force || ! is_dir(context()->workingDirectory . '/vendor');
-    if (! delayed_fingerprint(
+    $forceVendor = $force || ! is_dir(app_context()->workingDirectory . '/vendor');
+    if (! fingerprint(
         callback: static fn () => composer()->install()->run(),
-        fingerprint: static fn () => fgp()->composer(),
-        force: $forceVendor || $force
+        id: 'composer',
+        fingerprint: fgp()->composer(),
+        force: $forceVendor || $force,
     )) {
         io()->note('Composer dependencies are already installed.');
     } else {
         io()->success('Composer dependencies installed');
     }
 
+    //    io()->section('Generate auth Keypair');
+    //    if (fs()->exists(app_context()->workingDirectory . '/config/jwt/private.pem')) {
+    //        io()->note('Auth keypair already exists');
+    //    } else {
+    //        symfony()->console('lexik:jwt:generate-keypair')->run();
+    //    }
+
     io()->section('QA tools');
     qa()->install();
 
-    io()->section('NPM');
-    $forceNodeModules = $force || ! is_dir(context()->workingDirectory . '/node_modules');
-    if (! delayed_fingerprint(
-        callback: static fn () => npm()->install()->run(),
-        fingerprint: static fn () => fgp()->npm(),
-        force: $forceNodeModules || $force
-    )) {
-        io()->note('NPM dependencies are already installed.');
-    } else {
-        io()->success('NPM dependencies installed');
+    if (pnpm()->hasPackageJson()) {
+        io()->section('NPM');
+        $forceNodeModules = $force || ! is_dir(app_context()->workingDirectory . '/node_modules');
+        if (! fingerprint(
+            callback: static fn () => pnpm()->install()->run(),
+            id: 'npm',
+            fingerprint: fgp()->npm(),
+            force: $forceNodeModules || $force,
+        )) {
+            io()->note('NPM dependencies are already installed.');
+        } else {
+            io()->success('NPM dependencies installed');
+        }
+
+        pnpm()->add('run', 'build')->run();
     }
 
-    npm()->add('run', 'build')->run();
+    db_reset();
 
-    notify('Dependencies installed');
+    //    notify('Dependencies installed');
+}
+
+#[AsTask(name: 'sync')]
+function sync(): void
+{
+    symfony()->console('spotify:sync')->run();
+    symfony()->console('spotify:sync:artists:full')->run();
+    symfony()->console('spotify:sync:tracks:full')->run();
+    symfony()->console('spotify:sync:tracks:full:audio-feature')->run();
 }
 
 #[AsTask]
 function shell(
     #[AsOption(name: 'no-check', description: 'Don\'t check the dependencies')]
-    bool $noCheck = false // Not used here, but used in listeners.php
+    bool $noCheck = false, // Not used here, but used in listeners.php,
+    #[AsArgument(name: 'cmd', description: 'Command to run')]
+    ?string $command = null,
 ): void {
     docker(context()->withTty())
         ->compose('exec')
         ->add('--user', 'www-data')
-        ->add('app', 'fish')
+        ->add(ContainerDefinitionBag::php()->composeName, 'fish')
+        ->addIf($command !== null, '-c', "\"{$command}\"")
         ->run()
     ;
 }
@@ -117,10 +148,10 @@ function shell(
 #[AsTask]
 function generate_domain_dir(string $domainName): void
 {
-    $srcDirectory = context()->workingDirectory . '/src';
+    $srcDirectory = app_context()->workingDirectory . '/src';
     $domainName = ucfirst($domainName);
 
-    $domainDirectory = $srcDirectory . '/' . $domainName;
+    $domainDirectory = "{$srcDirectory}/{$domainName}";
 
     if (is_dir($domainDirectory)) {
         io()->error("Domain directory {$domainName} already exists");
@@ -212,13 +243,13 @@ function import_sql(): void
 #[AsTask(name: 'ui:install')]
 function ui_install(): void
 {
-    npm()->install();
+    pnpm()->install();
 }
 
 #[AsTask(name: 'ui:dev')]
 function ui_dev(): void
 {
-    npm(context()->withTty())->add('run', 'dev')->run();
+    pnpm(context()->withTty())->add('run', 'dev')->run();
 }
 
 #[AsTask(name: 'ui:format')]
@@ -265,7 +296,33 @@ function ui_http_schema(): void
         ->compose('exec')
         ->add('--user', 'www-data')
         ->add('--workdir', '/app/assets')
-        ->add('app', 'npx', 'openapi-typescript', 'http://music-auto-tagger.web.localhost/api/docs.json', '-o', './src/api/schema.d.ts')
+        ->add(
+            'app',
+            'npx',
+            'openapi-typescript',
+            'http://mantine-starter-kit.web.localhost/api/docs.json',
+            '-o',
+            './src/api/schema.d.ts',
+        )
         ->run()
     ;
+}
+
+#[AsTask(name: 'db:reset')]
+function db_reset(): void
+{
+    // Check if the database app exists
+    $output = docker(context()->withQuiet())->compose(
+        "exec -it database sh -c \"psql -d app -c '\\l'\"",
+    )->run()->getOutput();
+    if (str_contains($output, 'app')) {
+        if (io()->confirm('The database "app" already exists. Do you want to drop it?', false) === false) {
+            return;
+        }
+    }
+
+    symfony()->console('doctrine:database:drop', '--force', '--if-exists')->run();
+    symfony()->console('doctrine:database:create')->run();
+    symfony()->console('doctrine:migrations:migrate', '--allow-no-migration', '--no-interaction')->run();
+    symfony()->console('doctrine:fixtures:load', '--no-interaction', '--append')->run();
 }

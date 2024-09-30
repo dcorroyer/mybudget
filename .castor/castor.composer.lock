@@ -4,8 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58040e783f02b86e83e4ef111311b0f8",
+    "content-hash": "e3190e3b17a93ad92270d7d00ccff47d",
     "packages": [
+        {
+            "name": "phlak/semver",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHLAK/SemVer.git",
+                "reference": "22437c7505bc5bfcda4d852290214b1d3beff3e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHLAK/SemVer/zipball/22437c7505bc5bfcda4d852290214b1d3beff3e9",
+                "reference": "22437c7505bc5bfcda4d852290214b1d3beff3e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0 || ^8.1 || ^8.2 || 8.3"
+            },
+            "require-dev": {
+                "phlak/coding-standards": "^2.0",
+                "phpstan/phpstan": "^1.11",
+                "phpunit/phpunit": "^9.0 || ^10.0",
+                "yoast/phpunit-polyfills": "^2.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "PHLAK\\SemVer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Kankiewicz",
+                    "email": "Chris@ChrisKankiewicz.com"
+                }
+            ],
+            "description": "Semantic versioning helper library",
+            "support": {
+                "issues": "https://github.com/PHLAK/SemVer/issues",
+                "source": "https://github.com/PHLAK/SemVer/tree/master"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PHLAK",
+                    "type": "github"
+                },
+                {
+                    "url": "https://paypal.me/ChrisKankiewicz",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2024-08-02T17:13:23+00:00"
+        },
         {
             "name": "theod02/castor-class-task",
             "version": "dev-main",

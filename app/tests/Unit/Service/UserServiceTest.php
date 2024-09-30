@@ -25,17 +25,17 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('user')]
 #[Group('user-service')]
-class UserServiceTest extends TestCase
+final class UserServiceTest extends TestCase
 {
     use Factories;
     use SerializerTrait;
-
     private UserService $userService;
 
     private UserRepository $userRepository;
 
     private UserPasswordHasherInterface $passwordHasher;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -79,9 +79,9 @@ class UserServiceTest extends TestCase
         $userResponse = $this->userService->create($registerPayload);
 
         // ASSERT
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertSame($user->getId(), $userResponse->getId());
-        $this->assertSame($user->getEmail(), $userResponse->getEmail());
+        self::assertInstanceOf(User::class, $user);
+        self::assertSame($user->getId(), $userResponse->getId());
+        self::assertSame($user->getEmail(), $userResponse->getEmail());
     }
 
     #[TestDox('When calling get user, it should returns the connected user')]
@@ -103,9 +103,9 @@ class UserServiceTest extends TestCase
         $userResponse = $this->userService->get($user->getEmail());
 
         // ASSERT
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertSame($user->getId(), $userResponse->getId());
-        $this->assertSame($user->getEmail(), $userResponse->getEmail());
+        self::assertInstanceOf(User::class, $user);
+        self::assertSame($user->getId(), $userResponse->getId());
+        self::assertSame($user->getEmail(), $userResponse->getEmail());
     }
 
     #[TestDox('When calling get user with a bad email, it should returns NotFoundHttpException')]

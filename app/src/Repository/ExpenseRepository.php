@@ -17,6 +17,7 @@ use My\RestBundle\Repository\Common\AbstractEntityRepository;
  */
 class ExpenseRepository extends AbstractEntityRepository
 {
+    #[\Override]
     public function getEntityClass(): string
     {
         return Expense::class;

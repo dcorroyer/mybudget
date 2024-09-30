@@ -117,11 +117,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Override]
     public function getUserIdentifier(): string
     {
         return $this->email;
     }
 
+    #[\Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -140,6 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[\Override]
     public function getPassword(): string
     {
         return $this->password;
@@ -155,6 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Override]
     public function eraseCredentials(): void
     {
     }

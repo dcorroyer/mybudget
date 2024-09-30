@@ -19,9 +19,11 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]
-class GetBudgetControllerTest extends TestBase
+final class GetBudgetControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/budgets';
+    public $client;
+
+    private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call GET /api/budgets/{id}, it should returns the budget')]
     #[Test]
@@ -41,6 +43,6 @@ class GetBudgetControllerTest extends TestBase
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        $this->assertSame($budget->getId(), $responseData['id']);
+        self::assertSame($budget->getId(), $responseData['id']);
     }
 }

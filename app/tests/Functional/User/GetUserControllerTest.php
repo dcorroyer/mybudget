@@ -19,9 +19,11 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('controller')]
 #[Group('user')]
 #[Group('user-controller')]
-class GetUserControllerTest extends TestBase
+final class GetUserControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/users';
+    public $client;
+
+    private const string API_ENDPOINT = '/api/users';
 
     #[TestDox('When you call GET /api/users/me, it should return the user informations')]
     #[Test]
@@ -38,8 +40,8 @@ class GetUserControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        $this->assertSame($user->getId(), $responseData['id']);
-        $this->assertSame($user->getEmail(), $responseData['email']);
+        self::assertSame($user->getId(), $responseData['id']);
+        self::assertSame($user->getEmail(), $responseData['email']);
     }
 
     #[TestDox('When you call GET /api/users/me, it should return unauthorized')]
@@ -50,7 +52,7 @@ class GetUserControllerTest extends TestBase
         $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/me');
 
         // ASSERT
-        $this->assertSame(
+        self::assertSame(
             Response::HTTP_UNAUTHORIZED,
             $this->client->getResponse()->getStatusCode(),
             $this->client->getResponse()->getContent()

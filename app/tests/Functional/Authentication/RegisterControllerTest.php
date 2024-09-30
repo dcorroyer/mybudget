@@ -17,9 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('controller')]
 #[Group('register')]
 #[Group('register-controller')]
-class RegisterControllerTest extends TestBase
+final class RegisterControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/register';
+    private const string API_ENDPOINT = '/api/register';
 
     #[Test]
     #[TestDox('When call /api/register  without Email, it should return error')]
@@ -112,6 +112,6 @@ class RegisterControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        $this->assertSame($payload['email'], $responseData['email']);
+        self::assertSame($payload['email'], $responseData['email']);
     }
 }

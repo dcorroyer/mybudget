@@ -12,17 +12,18 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 /**
  * @internal
  */
-class TestBase extends WebTestCase
+final class TestBase extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
 
-    protected KernelBrowser $client;
+    private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
-        $this->client = static::createClient();
+        $this->client = self::createClient();
     }
 
     public function clientRequest(string $method, string $endpoint, array $payload = []): array|int|null

@@ -24,22 +24,20 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('expense')]
 #[Group('expense-service')]
-class ExpenseServiceTest extends TestCase
+final class ExpenseServiceTest extends TestCase
 {
     use Factories;
     use SerializerTrait;
-
     private ExpenseRepository $expenseRepository;
 
     private ExpenseService $expenseService;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->expenseRepository = $this->getMockBuilder(
-            ExpenseRepository::class
-        )->disableOriginalConstructor()->getMock();
+        $this->expenseRepository = $this->createMock(ExpenseRepository::class);
 
         $this->expenseService = new ExpenseService($this->expenseRepository);
     }
@@ -71,9 +69,9 @@ class ExpenseServiceTest extends TestCase
         $expenseResponse = $this->expenseService->create($expensePayload, $budget);
 
         // ASSERT
-        $this->assertInstanceOf(Expense::class, $expense);
-        $this->assertSame($expense->getId(), $expenseResponse->getId());
-        $this->assertSame($expense->getName(), $expenseResponse->getName());
-        $this->assertSame($expense->getAmount(), $expenseResponse->getAmount());
+        self::assertInstanceOf(Expense::class, $expense);
+        self::assertSame($expense->getId(), $expenseResponse->getId());
+        self::assertSame($expense->getName(), $expenseResponse->getName());
+        self::assertSame($expense->getAmount(), $expenseResponse->getAmount());
     }
 }

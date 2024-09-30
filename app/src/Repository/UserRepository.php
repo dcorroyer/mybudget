@@ -22,11 +22,13 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends AbstractEntityRepository implements PasswordUpgraderInterface
 {
+    #[\Override]
     public function getEntityClass(): string
     {
         return User::class;
     }
 
+    #[\Override]
     public function upgradePassword(
         PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
         string $newHashedPassword

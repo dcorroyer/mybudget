@@ -20,9 +20,11 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]
-class DeleteBudgetControllerTest extends TestBase
+final class DeleteBudgetControllerTest extends TestBase
 {
-    private const API_ENDPOINT = '/api/budgets';
+    public $client;
+
+    private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call DELETE /api/budgets/{id}, it should delete the budget')]
     #[Test]
@@ -41,6 +43,6 @@ class DeleteBudgetControllerTest extends TestBase
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        $this->assertSame(Response::HTTP_NO_CONTENT, $response);
+        self::assertSame(Response::HTTP_NO_CONTENT, $response);
     }
 }

@@ -24,22 +24,20 @@ use Zenstruck\Foundry\Test\Factories;
 #[Group('service')]
 #[Group('income')]
 #[Group('income-service')]
-class IncomeServiceTest extends TestCase
+final class IncomeServiceTest extends TestCase
 {
     use Factories;
     use SerializerTrait;
-
     private IncomeRepository $incomeRepository;
 
     private IncomeService $incomeService;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->incomeRepository = $this->getMockBuilder(
-            IncomeRepository::class
-        )->disableOriginalConstructor()->getMock();
+        $this->incomeRepository = $this->createMock(IncomeRepository::class);
 
         $this->incomeService = new IncomeService($this->incomeRepository);
     }
@@ -70,9 +68,9 @@ class IncomeServiceTest extends TestCase
         $incomeResponse = $this->incomeService->create($incomePayload, $budget);
 
         // ASSERT
-        $this->assertInstanceOf(Income::class, $income);
-        $this->assertSame($income->getId(), $incomeResponse->getId());
-        $this->assertSame($income->getName(), $incomeResponse->getName());
-        $this->assertSame($income->getAmount(), $incomeResponse->getAmount());
+        self::assertInstanceOf(Income::class, $income);
+        self::assertSame($income->getId(), $incomeResponse->getId());
+        self::assertSame($income->getName(), $incomeResponse->getName());
+        self::assertSame($income->getAmount(), $incomeResponse->getAmount());
     }
 }

@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('controller')]
 #[Group('register')]
 #[Group('register-controller')]
-final class RegisterControllerTest extends TestBase
+class RegisterControllerTest extends TestBase
 {
     private const string API_ENDPOINT = '/api/register';
 
@@ -37,6 +37,8 @@ final class RegisterControllerTest extends TestBase
 
         // ASSERT
         self::assertResponseStatusCodeSame(422);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        self::assertSame('This value should not be blank.', $response['violations'][0]['title']);
     }
 
     #[Test]

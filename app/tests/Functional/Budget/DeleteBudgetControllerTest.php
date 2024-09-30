@@ -22,8 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('budget-controller')]
 final class DeleteBudgetControllerTest extends TestBase
 {
-    public $client;
-
     private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call DELETE /api/budgets/{id}, it should delete the budget')]

@@ -21,8 +21,6 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('budget-controller')]
 final class GetBudgetControllerTest extends TestBase
 {
-    public $client;
-
     private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call GET /api/budgets/{id}, it should returns the budget')]

@@ -19,10 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('controller')]
 #[Group('user')]
 #[Group('user-controller')]
-final class GetUserControllerTest extends TestBase
+class GetUserControllerTest extends TestBase
 {
-    public $client;
-
     private const string API_ENDPOINT = '/api/users';
 
     #[TestDox('When you call GET /api/users/me, it should return the user informations')]

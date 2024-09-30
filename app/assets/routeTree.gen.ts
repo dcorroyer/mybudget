@@ -46,18 +46,15 @@ const AuthenticatedBudgetsIndexRoute = AuthenticatedBudgetsIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedBudgetsCreateRoute = AuthenticatedBudgetsCreateImport.update(
-  {
-    path: '/budgets/create',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any,
-)
+const AuthenticatedBudgetsCreateRoute = AuthenticatedBudgetsCreateImport.update({
+  path: '/budgets/create',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
-const AuthenticatedBudgetsIdIndexRoute =
-  AuthenticatedBudgetsIdIndexImport.update({
-    path: '/budgets/$id/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedBudgetsIdIndexRoute = AuthenticatedBudgetsIdIndexImport.update({
+  path: '/budgets/$id/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -167,22 +164,9 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/login'
-    | '/register'
-    | '/'
-    | '/budgets/create'
-    | '/budgets'
-    | '/budgets/$id'
+  fullPaths: '' | '/login' | '/register' | '/' | '/budgets/create' | '/budgets' | '/budgets/$id'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/register'
-    | '/'
-    | '/budgets/create'
-    | '/budgets'
-    | '/budgets/$id'
+  to: '/login' | '/register' | '/' | '/budgets/create' | '/budgets' | '/budgets/$id'
   id:
     | '__root__'
     | '/_authenticated'

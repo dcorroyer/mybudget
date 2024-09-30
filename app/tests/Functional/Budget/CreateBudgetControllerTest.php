@@ -20,8 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('budget-controller')]
 final class CreateBudgetControllerTest extends TestBase
 {
-    public $client;
-
     private const string API_ENDPOINT = '/api/budgets';
 
     #[TestDox('When you call POST /api/budgets, it should create and return the budget')]

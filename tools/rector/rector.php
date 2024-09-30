@@ -35,8 +35,8 @@ if (file_exists("{$appPathPrefix}/tests")) {
 
 return RectorConfig::configure()
     ->withCache('/var/tmp/rector')
-    ->withPaths($paths)
     ->withRootFiles()
+    ->withPaths($paths)
     ->withPhpSets(php83: true)
 //    ->withSymfonyContainerXml($appPathPrefix . '/var/cache/dev/App_KernelDevDebugContainer.xml')
     ->withAttributesSets(

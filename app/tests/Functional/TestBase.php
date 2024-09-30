@@ -12,12 +12,12 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 /**
  * @internal
  */
-final class TestBase extends WebTestCase
+class TestBase extends WebTestCase
 {
     use Factories;
     use ResetDatabase;
 
-    private KernelBrowser $client;
+    protected KernelBrowser $client;
 
     #[\Override]
     protected function setUp(): void

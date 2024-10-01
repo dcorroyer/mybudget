@@ -1,4 +1,4 @@
-async function client(url: string, options: RequestInit) {
+export async function client(url: string, options: RequestInit) {
   const token = localStorage.getItem('token')
 
   const clientOptions: RequestInit = {

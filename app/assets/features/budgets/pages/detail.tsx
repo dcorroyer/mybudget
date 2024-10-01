@@ -8,7 +8,7 @@ import {
   IconCreditCardRefund,
 } from '@tabler/icons-react'
 
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 
 import { ApiResponse } from '@/utils/ApiResponse'
 

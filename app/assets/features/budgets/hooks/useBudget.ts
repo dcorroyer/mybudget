@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 
 import { notifications } from '@mantine/notifications'
 
@@ -13,6 +12,7 @@ import {
   updateBudgetId,
 } from '@/features/budgets/api'
 import { BudgetParams } from '@/features/budgets/types'
+import { Navigate } from 'react-router-dom'
 
 export function useBudgetList() {
   return useQuery({
@@ -29,7 +29,6 @@ export function useBudgetDetail(id: number) {
 }
 
 export const useBudget = () => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const createBudget = useCallback((data: BudgetParams) => {
@@ -39,7 +38,7 @@ export const useBudget = () => {
   const createBudgetMutation = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
-      navigate({ to: '/budgets' })
+      Navigate({ to: '/budgets' })
       notifications.show({
         withBorder: true,
         radius: 'md',
@@ -68,7 +67,7 @@ export const useBudget = () => {
     mutationFn: ({ id, ...data }: { id: number } & BudgetParams) =>
       updateBudgetId(id.toString(), data),
     onSuccess: () => {
-      navigate({ to: '/budgets' })
+      Navigate({ to: '/budgets' })
       notifications.show({
         withBorder: true,
         radius: 'md',

@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+
 import { useBudget, useBudgetList } from '@/features/budgets/hooks/useBudget'
 import {
   ActionIcon,
@@ -12,10 +14,12 @@ import {
   SimpleGrid,
   Text,
 } from '@mantine/core'
+
 import { useDisclosure } from '@mantine/hooks'
 import { IconEdit, IconTrash } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
-import React, { useState } from 'react'
+
+import { Link } from 'react-router-dom'
+
 import classes from './list.module.css'
 
 export const BudgetList = () => {
@@ -38,7 +42,7 @@ export const BudgetList = () => {
           <Group justify='space-between'>
             <Text fw={500}>{budget.name}</Text>
             <div>
-              <ActionIcon
+              {/* <ActionIcon
                 component={Link}
                 to={'/budgets/$id'}
                 params={{ id: budget.id.toString() }}
@@ -46,7 +50,7 @@ export const BudgetList = () => {
                 color='gray'
               >
                 <IconEdit style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-              </ActionIcon>
+              </ActionIcon> */}
               <ActionIcon
                 onClick={() => {
                   setBudgetIdToDelete(budget.id.toString())
@@ -117,10 +121,10 @@ export const BudgetList = () => {
           centered
         >
           <Center>
-            <Link className={classes.deleteItem} onClick={handleDelete}>
+            {/* <Link className={classes.deleteItem} onClick={handleDelete}>
               <IconTrash className={classes.deleteIcon} stroke={1.5} />
               <span>Delete</span>
-            </Link>
+            </Link> */}
           </Center>
         </Modal>
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>

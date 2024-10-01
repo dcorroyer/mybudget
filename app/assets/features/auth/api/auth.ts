@@ -1,5 +1,7 @@
 import { LoginParams, RegisterParams, User } from '@/features/auth/types'
 import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
+import { ApiResponse } from '@/utils/ApiResponse'
+import { client } from '@/utils/client'
 
 export async function postLogin(values: LoginParams): Promise<Response | ApiErrorResponse> {
   const response = await client('/api/login', {
@@ -12,7 +14,7 @@ export async function postLogin(values: LoginParams): Promise<Response | ApiErro
 
   if (!response.ok) return Promise.reject('Failed to login')
 
-  return await response.json()
+  return response.json()
 }
 
 export async function postRegister(values: RegisterParams): Promise<Response | ApiErrorResponse> {
@@ -28,16 +30,15 @@ export async function postRegister(values: RegisterParams): Promise<Response | A
 
   if (!response.ok) return Promise.reject('Failed to register')
 
-  return await response.json()
+  return response.json()
 }
 
-export async function getMe(): Promise<User> {
+export const getMe = async (): Promise<ApiResponse<User>> => {
   const response = await client('/api/users/me', {
     method: 'GET',
   })
 
   if (!response.ok) return Promise.reject('Failed to get current user')
 
-  const data: User = await response.json()
-  return data
+  return response.json()
 }

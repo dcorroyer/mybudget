@@ -2,7 +2,7 @@ import React from 'react'
 
 import { ActionIcon, Container, Text } from '@mantine/core'
 import { IconChevronLeft } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 
 import { BudgetForm } from '@/features/budgets/components/budget-form'
 

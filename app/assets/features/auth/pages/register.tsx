@@ -1,5 +1,6 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -17,10 +18,9 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { registerFormSchema, registerFormType } from '@/features/auth/schemas/register'
 
-import { Link } from '@tanstack/react-router'
 import classes from './register.module.css'
 
-export const Register = () => {
+const Register: React.FC = () => {
   const { register } = useAuth()
 
   const registerForm = useForm<registerFormType>({
@@ -94,3 +94,5 @@ export const Register = () => {
     </Container>
   )
 }
+
+export default Register

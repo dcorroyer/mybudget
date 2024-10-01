@@ -5,12 +5,9 @@ import { useMutation } from '@tanstack/react-query'
 import { notifications } from '@mantine/notifications'
 
 import { postLogin, postRegister } from '@/features/auth/api/auth'
-import { useRouter } from '@tanstack/react-router'
 import { removeUser, saveUser } from './useUserLocalStorage'
 
 export const useAuth = () => {
-  const router = useRouter()
-
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
   }, [])
@@ -31,7 +28,6 @@ export const useAuth = () => {
       }
 
       saveUser(data)
-      router.invalidate()
 
       notifications.show({
         withBorder: true,
@@ -80,7 +76,6 @@ export const useAuth = () => {
 
   const logout = () => {
     removeUser()
-    router.invalidate()
 
     notifications.show({
       withBorder: true,

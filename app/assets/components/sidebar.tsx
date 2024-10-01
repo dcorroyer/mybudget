@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 
-import { Link, useLocation } from '@tanstack/react-router'
-
-import cx from 'clsx'
+import { Link, useLocation } from 'react-router-dom'
 
 import { Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconHome2, IconLogout, IconMoon, IconSun, IconWallet } from '@tabler/icons-react'
+import { IconHome2, IconWallet } from '@tabler/icons-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
@@ -60,7 +58,7 @@ export function Sidebar() {
       </div>
 
       <div className={classes.footer}>
-        <Link
+        {/* <Link
           onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
           className={classes.link}
         >
@@ -72,7 +70,7 @@ export function Sidebar() {
         <Link onClick={() => logout()} className={classes.link}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
-        </Link>
+        </Link> */}
       </div>
     </nav>
   )

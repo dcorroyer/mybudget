@@ -2,13 +2,13 @@ import React from 'react'
 
 import { Button, Container, Group, Text, Title } from '@mantine/core'
 
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 
 import { Illustration } from '@/components/illustration'
 
 import classes from './not-found.module.css'
 
-export default function NotFound() {
+const NotFound: React.FC = () => {
   return (
     <Container className={classes.root}>
       <div className={classes.inner}>
@@ -28,3 +28,5 @@ export default function NotFound() {
     </Container>
   )
 }
+
+export default NotFound

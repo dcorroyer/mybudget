@@ -2,6 +2,7 @@ import { Budget, BudgetDetails, BudgetParams } from '@/features/budgets/types'
 
 import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
 import { ApiResponse, ApiResponseList } from '@/utils/ApiResponse'
+import { client } from '@/utils/client'
 
 export async function getBudgetList(): Promise<ApiResponseList<Budget[]>> {
   const response = await client('/api/budgets', {

@@ -13,9 +13,7 @@ import '@mantine/notifications/styles.css'
 
 import Router from './router'
 
-import Loader from './components/loader'
-
-import './index.module.css'
+import './index.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,7 +26,7 @@ const queryClient = new QueryClient({
   },
 })
 
-//loader: async ({ params }) => await getBudgetDetail(params.id.toString()),
+// loader: async ({ params }) => await getBudgetDetail(params.id.toString()),
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -36,7 +34,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <MantineProvider withCssVariables>
         <ReactQueryDevtools initialIsOpen={false} />
         <Notifications />
-        <Loader />
         <Router />
       </MantineProvider>
     </QueryClientProvider>

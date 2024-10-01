@@ -121,10 +121,10 @@ export const BudgetList = () => {
           centered
         >
           <Center>
-            {/* <Link className={classes.deleteItem} onClick={handleDelete}>
+            <Link className={classes.deleteItem} onClick={handleDelete} to={''}>
               <IconTrash className={classes.deleteIcon} stroke={1.5} />
               <span>Delete</span>
-            </Link> */}
+            </Link>
           </Center>
         </Modal>
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>

@@ -5,9 +5,11 @@ import { useMutation } from '@tanstack/react-query'
 import { notifications } from '@mantine/notifications'
 
 import { postLogin, postRegister } from '@/features/auth/api/auth'
+import { useNavigate } from 'react-router-dom'
 import { removeUser, saveUser } from './useUserLocalStorage'
 
 export const useAuth = () => {
+  const navigate = useNavigate()
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
   }, [])
@@ -36,6 +38,8 @@ export const useAuth = () => {
         title: 'Successful Login',
         message: 'You are now logged in',
       })
+
+      navigate('/')
     },
     onError: (error: Error) => {
       console.log('error:', error)
@@ -84,6 +88,8 @@ export const useAuth = () => {
       title: 'Logout',
       message: 'You are now logged out',
     })
+
+    navigate('/auth/login')
   }
 
   return {

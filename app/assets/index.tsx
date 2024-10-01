@@ -14,9 +14,19 @@ import '@mantine/notifications/styles.css'
 import Router from './router'
 
 import Loader from './components/loader'
+
 import './index.module.css'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+    },
+  },
+})
 
 //loader: async ({ params }) => await getBudgetDetail(params.id.toString()),
 

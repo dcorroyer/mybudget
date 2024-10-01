@@ -1,6 +1,7 @@
+import { Loader } from '@mantine/core'
 import React, { PropsWithChildren } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-// import { useUser } from './features/auth/hooks/useUser'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { useUser } from './features/auth/hooks/useUser'
 import AuthenticatedLayout from './layouts/authenticated-layout'
 
 const NotFoundPage = React.lazy(() => import('./components/not-found'))
@@ -9,8 +10,10 @@ const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
 const Register = React.lazy(() => import('./features/auth/pages/register'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
-  // const { user } = useUser()
-  // if (!user) return <Navigate to='/auth/login' replace />
+  const { user, isFetching } = useUser()
+
+  if (isFetching) return <Loader />
+  if (!user) return <Navigate to='/auth/login' replace />
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>
 }

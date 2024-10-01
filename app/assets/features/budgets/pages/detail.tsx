@@ -12,11 +12,11 @@ import { Link } from 'react-router-dom'
 
 import { ApiResponse } from '@/utils/ApiResponse'
 
-import { BudgetDetails } from '@/features/budgets/types'
+import { BudgetDetails } from '@/features/budgets/types/budgets'
 import { BudgetForm } from '../components/budget-form'
+import { reverseExpensesTransformation } from '../helpers/budgetDataTransformer'
 
 import classes from './detail.module.css'
-import { reverseExpensesTransformation } from '../helpers'
 
 export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> }) {
   const formattedExpenses = reverseExpensesTransformation(budget.data.expenses)

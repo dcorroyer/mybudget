@@ -10,8 +10,8 @@ import {
   getBudgetList,
   postBudget,
   updateBudgetId,
-} from '@/features/budgets/api'
-import { BudgetParams } from '@/features/budgets/types'
+} from '@/features/budgets/api/budgets'
+import { BudgetParams } from '@/features/budgets/types/budgets'
 import { Navigate } from 'react-router-dom'
 
 export function useBudgetList() {

@@ -2,18 +2,13 @@ import { useCallback } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 
-import { useLocalStorage } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 
 import { postLogin, postRegister } from '@/features/auth/api/auth'
 import { useRouter } from '@tanstack/react-router'
+import { removeUser, saveUser } from './useUserLocalStorage'
 
 export const useAuth = () => {
-  const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
-  const [isAuthenticated, setIsAuthenticated] = useLocalStorage({
-    key: 'isAuthenticated',
-    defaultValue: false,
-  })
   const router = useRouter()
 
   const login = useCallback((email: string, password: string) => {
@@ -35,9 +30,7 @@ export const useAuth = () => {
         return
       }
 
-      setToken(data.token)
-      setIsAuthenticated(true)
-
+      saveUser(data)
       router.invalidate()
 
       notifications.show({
@@ -86,9 +79,7 @@ export const useAuth = () => {
   })
 
   const logout = () => {
-    setToken(null)
-    setIsAuthenticated(false)
-
+    removeUser()
     router.invalidate()
 
     notifications.show({
@@ -104,7 +95,5 @@ export const useAuth = () => {
     login,
     logout,
     register,
-    isAuthenticated,
-    token,
   }
 }

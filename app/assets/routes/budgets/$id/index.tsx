@@ -4,7 +4,7 @@ import { BudgetDetail } from '@/features/budgets/pages/detail'
 import { getBudgetDetail } from '@/features/budgets/api'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_authenticated/budgets/$id/')({
+export const Route = createFileRoute('/budgets/$id/')({
   component: () => {
     return <BudgetDetail budget={Route.useLoaderData()} />
   },

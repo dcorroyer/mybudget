@@ -11,184 +11,168 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as RegisterImport } from './routes/register'
-import { Route as LoginImport } from './routes/login'
-import { Route as AuthenticatedImport } from './routes/_authenticated'
-import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedBudgetsIndexImport } from './routes/_authenticated/budgets/index'
-import { Route as AuthenticatedBudgetsCreateImport } from './routes/_authenticated/budgets/create'
-import { Route as AuthenticatedBudgetsIdIndexImport } from './routes/_authenticated/budgets/$id/index'
+import { Route as IndexImport } from './routes/index'
+import { Route as BudgetsIndexImport } from './routes/budgets/index'
+import { Route as BudgetsCreateImport } from './routes/budgets/create'
+import { Route as AuthRegisterImport } from './routes/auth/register'
+import { Route as AuthLoginImport } from './routes/auth/login'
+import { Route as BudgetsIdIndexImport } from './routes/budgets/$id/index'
 
 // Create/Update Routes
 
-const RegisterRoute = RegisterImport.update({
-  path: '/register',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginRoute = LoginImport.update({
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthenticatedRoute = AuthenticatedImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+const IndexRoute = IndexImport.update({
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedBudgetsIndexRoute = AuthenticatedBudgetsIndexImport.update({
+const BudgetsIndexRoute = BudgetsIndexImport.update({
   path: '/budgets/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedBudgetsCreateRoute = AuthenticatedBudgetsCreateImport.update({
+const BudgetsCreateRoute = BudgetsCreateImport.update({
   path: '/budgets/create',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedBudgetsIdIndexRoute = AuthenticatedBudgetsIdIndexImport.update({
+const AuthRegisterRoute = AuthRegisterImport.update({
+  path: '/auth/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthLoginRoute = AuthLoginImport.update({
+  path: '/auth/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BudgetsIdIndexRoute = BudgetsIdIndexImport.update({
   path: '/budgets/$id/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterImport
-      parentRoute: typeof rootRoute
-    }
-    '/_authenticated/': {
-      id: '/_authenticated/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
     }
-    '/_authenticated/budgets/create': {
-      id: '/_authenticated/budgets/create'
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterImport
+      parentRoute: typeof rootRoute
+    }
+    '/budgets/create': {
+      id: '/budgets/create'
       path: '/budgets/create'
       fullPath: '/budgets/create'
-      preLoaderRoute: typeof AuthenticatedBudgetsCreateImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof BudgetsCreateImport
+      parentRoute: typeof rootRoute
     }
-    '/_authenticated/budgets/': {
-      id: '/_authenticated/budgets/'
+    '/budgets/': {
+      id: '/budgets/'
       path: '/budgets'
       fullPath: '/budgets'
-      preLoaderRoute: typeof AuthenticatedBudgetsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof BudgetsIndexImport
+      parentRoute: typeof rootRoute
     }
-    '/_authenticated/budgets/$id/': {
-      id: '/_authenticated/budgets/$id/'
+    '/budgets/$id/': {
+      id: '/budgets/$id/'
       path: '/budgets/$id'
       fullPath: '/budgets/$id'
-      preLoaderRoute: typeof AuthenticatedBudgetsIdIndexImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof BudgetsIdIndexImport
+      parentRoute: typeof rootRoute
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedBudgetsCreateRoute: typeof AuthenticatedBudgetsCreateRoute
-  AuthenticatedBudgetsIndexRoute: typeof AuthenticatedBudgetsIndexRoute
-  AuthenticatedBudgetsIdIndexRoute: typeof AuthenticatedBudgetsIdIndexRoute
-}
-
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedBudgetsCreateRoute: AuthenticatedBudgetsCreateRoute,
-  AuthenticatedBudgetsIndexRoute: AuthenticatedBudgetsIndexRoute,
-  AuthenticatedBudgetsIdIndexRoute: AuthenticatedBudgetsIdIndexRoute,
-}
-
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
-
 export interface FileRoutesByFullPath {
-  '': typeof AuthenticatedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/': typeof AuthenticatedIndexRoute
-  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
-  '/budgets': typeof AuthenticatedBudgetsIndexRoute
-  '/budgets/$id': typeof AuthenticatedBudgetsIdIndexRoute
+  '/': typeof IndexRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/budgets/create': typeof BudgetsCreateRoute
+  '/budgets': typeof BudgetsIndexRoute
+  '/budgets/$id': typeof BudgetsIdIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/': typeof AuthenticatedIndexRoute
-  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
-  '/budgets': typeof AuthenticatedBudgetsIndexRoute
-  '/budgets/$id': typeof AuthenticatedBudgetsIdIndexRoute
+  '/': typeof IndexRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/budgets/create': typeof BudgetsCreateRoute
+  '/budgets': typeof BudgetsIndexRoute
+  '/budgets/$id': typeof BudgetsIdIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/budgets/create': typeof AuthenticatedBudgetsCreateRoute
-  '/_authenticated/budgets/': typeof AuthenticatedBudgetsIndexRoute
-  '/_authenticated/budgets/$id/': typeof AuthenticatedBudgetsIdIndexRoute
+  '/': typeof IndexRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/budgets/create': typeof BudgetsCreateRoute
+  '/budgets/': typeof BudgetsIndexRoute
+  '/budgets/$id/': typeof BudgetsIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/register' | '/' | '/budgets/create' | '/budgets' | '/budgets/$id'
+  fullPaths:
+    | '/'
+    | '/auth/login'
+    | '/auth/register'
+    | '/budgets/create'
+    | '/budgets'
+    | '/budgets/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/register' | '/' | '/budgets/create' | '/budgets' | '/budgets/$id'
+  to:
+    | '/'
+    | '/auth/login'
+    | '/auth/register'
+    | '/budgets/create'
+    | '/budgets'
+    | '/budgets/$id'
   id:
     | '__root__'
-    | '/_authenticated'
-    | '/login'
-    | '/register'
-    | '/_authenticated/'
-    | '/_authenticated/budgets/create'
-    | '/_authenticated/budgets/'
-    | '/_authenticated/budgets/$id/'
+    | '/'
+    | '/auth/login'
+    | '/auth/register'
+    | '/budgets/create'
+    | '/budgets/'
+    | '/budgets/$id/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  RegisterRoute: typeof RegisterRoute
+  IndexRoute: typeof IndexRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  BudgetsCreateRoute: typeof BudgetsCreateRoute
+  BudgetsIndexRoute: typeof BudgetsIndexRoute
+  BudgetsIdIndexRoute: typeof BudgetsIdIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  LoginRoute: LoginRoute,
-  RegisterRoute: RegisterRoute,
+  IndexRoute: IndexRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  BudgetsCreateRoute: BudgetsCreateRoute,
+  BudgetsIndexRoute: BudgetsIndexRoute,
+  BudgetsIdIndexRoute: BudgetsIdIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -203,41 +187,31 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_authenticated",
-        "/login",
-        "/register"
+        "/",
+        "/auth/login",
+        "/auth/register",
+        "/budgets/create",
+        "/budgets/",
+        "/budgets/$id/"
       ]
     },
-    "/_authenticated": {
-      "filePath": "_authenticated.tsx",
-      "children": [
-        "/_authenticated/",
-        "/_authenticated/budgets/create",
-        "/_authenticated/budgets/",
-        "/_authenticated/budgets/$id/"
-      ]
+    "/": {
+      "filePath": "index.tsx"
     },
-    "/login": {
-      "filePath": "login.tsx"
+    "/auth/login": {
+      "filePath": "auth/login.tsx"
     },
-    "/register": {
-      "filePath": "register.tsx"
+    "/auth/register": {
+      "filePath": "auth/register.tsx"
     },
-    "/_authenticated/": {
-      "filePath": "_authenticated/index.tsx",
-      "parent": "/_authenticated"
+    "/budgets/create": {
+      "filePath": "budgets/create.tsx"
     },
-    "/_authenticated/budgets/create": {
-      "filePath": "_authenticated/budgets/create.tsx",
-      "parent": "/_authenticated"
+    "/budgets/": {
+      "filePath": "budgets/index.tsx"
     },
-    "/_authenticated/budgets/": {
-      "filePath": "_authenticated/budgets/index.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/budgets/$id/": {
-      "filePath": "_authenticated/budgets/$id/index.tsx",
-      "parent": "/_authenticated"
+    "/budgets/$id/": {
+      "filePath": "budgets/$id/index.tsx"
     }
   }
 }

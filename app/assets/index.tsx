@@ -26,8 +26,6 @@ const queryClient = new QueryClient({
   },
 })
 
-// loader: async ({ params }) => await getBudgetDetail(params.id.toString()),
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>

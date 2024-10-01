@@ -45,7 +45,7 @@ const Register: React.FC = () => {
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>
         Already have an account?{' '}
-        <Anchor size='sm' component={Link} to='/login'>
+        <Anchor size='sm' component={Link} to='/auth/login'>
           Sign in
         </Anchor>
       </Text>

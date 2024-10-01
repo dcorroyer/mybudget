@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom'
 
 import classes from './list.module.css'
 
-export const BudgetList = () => {
+const BudgetList: React.FC = () => {
   const { data, isLoading } = useBudgetList()
   const [opened, { open, close }] = useDisclosure(false)
   const { deleteBudget } = useBudget()
@@ -42,15 +42,14 @@ export const BudgetList = () => {
           <Group justify='space-between'>
             <Text fw={500}>{budget.name}</Text>
             <div>
-              {/* <ActionIcon
+              <ActionIcon
                 component={Link}
-                to={'/budgets/$id'}
-                params={{ id: budget.id.toString() }}
+                to={`/budgets/${budget.id}`}
                 variant='subtle'
                 color='gray'
               >
                 <IconEdit style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-              </ActionIcon> */}
+              </ActionIcon>
               <ActionIcon
                 onClick={() => {
                   setBudgetIdToDelete(budget.id.toString())
@@ -132,3 +131,5 @@ export const BudgetList = () => {
     </>
   )
 }
+
+export default BudgetList

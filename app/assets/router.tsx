@@ -7,7 +7,11 @@ import AuthenticatedLayout from './layouts/authenticated-layout'
 const NotFoundPage = React.lazy(() => import('./components/not-found'))
 
 const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
-const Register = React.lazy(() => import('./features/auth/pages/register'))
+const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
+
+const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
+const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
+// const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
@@ -30,6 +34,38 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/budgets',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={<Loader />}>
+          <BudgetListPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/budgets/create',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={<Loader />}>
+          <BudgetCreatePage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // {
+  //   path: '/budgets/:id',
+  //   element: (
+  //     <ProtectedRoute>
+  //       <React.Suspense fallback={<Loader />}>
+  //         <BudgetDetailPage />
+  //       </React.Suspense>
+  //     </ProtectedRoute>
+  //   ),
+  // },
+
+  // Auth routes
+  {
     path: '/auth/login',
     element: (
       <React.Suspense fallback={'Loading...'}>
@@ -41,7 +77,7 @@ const router = createBrowserRouter([
     path: '/auth/register',
     element: (
       <React.Suspense fallback={'Loading...'}>
-        <Register />
+        <RegisterPage />
       </React.Suspense>
     ),
   },

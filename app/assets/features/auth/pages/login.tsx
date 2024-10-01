@@ -42,7 +42,7 @@ const Login: React.FC = () => {
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>
         Do not have an account yet?{' '}
-        <Anchor size='sm' component={Link} to='/register'>
+        <Anchor size='sm' component={Link} to='/auth/register'>
           Create account
         </Anchor>
       </Text>

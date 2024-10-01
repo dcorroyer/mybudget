@@ -8,7 +8,7 @@ import { BudgetForm } from '@/features/budgets/components/budget-form'
 
 import classes from './create.module.css'
 
-export const BudgetCreate = () => {
+const BudgetCreate: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
@@ -23,3 +23,5 @@ export const BudgetCreate = () => {
     </>
   )
 }
+
+export default BudgetCreate

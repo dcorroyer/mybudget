@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ActionIcon, Card, Container, Group, SimpleGrid, Text } from '@mantine/core'
+import { ActionIcon, Card, Container, Group, Loader, SimpleGrid, Text } from '@mantine/core'
 import {
   IconChevronLeft,
   IconCreditCard,
@@ -8,19 +8,24 @@ import {
   IconCreditCardRefund,
 } from '@tabler/icons-react'
 
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
-import { ApiResponse } from '@/utils/ApiResponse'
-
-import { BudgetDetails } from '@/features/budgets/types/budgets'
 import { BudgetForm } from '../components/budget-form'
 import { reverseExpensesTransformation } from '../helpers/budgetDataTransformer'
+import { useBudget } from '../hooks/useBudget'
 
 import classes from './detail.module.css'
 
-export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> }) {
-  const formattedExpenses = reverseExpensesTransformation(budget.data.expenses)
-  const updatedBudgetData = { ...budget.data, expenses: formattedExpenses }
+const BudgetDetail: React.FC = () => {
+  const { id } = useParams()
+  const { useBudgetDetail } = useBudget()
+
+  const { budget, isFetching } = useBudgetDetail(Number(id))
+
+  if (isFetching) return <Loader />
+
+  const formattedExpenses = reverseExpensesTransformation(budget?.data.expenses)
+  const updatedBudgetData = { ...budget?.data, expenses: formattedExpenses }
 
   return (
     <>
@@ -28,7 +33,7 @@ export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> })
         <ActionIcon variant='transparent' c='black' component={Link} to='/budgets'>
           <IconChevronLeft className={classes.title} />
         </ActionIcon>
-        {budget.data.name}
+        {budget?.data.name}
       </Text>
       <Container>
         <SimpleGrid cols={3}>
@@ -45,7 +50,7 @@ export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> })
                 <Text fw={500}>Saving Capacity</Text>
               </Group>
               <Text fw={500} c='blue'>
-                {budget.data.savingCapacity} €
+                {budget?.data.savingCapacity} €
               </Text>
             </Card.Section>
           </Card>
@@ -63,7 +68,7 @@ export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> })
                 <Text fw={500}>Total Incomes</Text>
               </Group>
               <Text fw={500} c='green'>
-                {budget.data.incomesAmount} €
+                {budget?.data.incomesAmount} €
               </Text>
             </Card.Section>
           </Card>
@@ -81,7 +86,7 @@ export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> })
                 <Text fw={500}>Total Expenses</Text>
               </Group>
               <Text fw={500} c='red'>
-                {budget.data.expensesAmount} €
+                {budget?.data.expensesAmount} €
               </Text>
             </Card.Section>
           </Card>
@@ -94,3 +99,5 @@ export function BudgetDetail({ budget }: { budget: ApiResponse<BudgetDetails> })
     </>
   )
 }
+
+export default BudgetDetail

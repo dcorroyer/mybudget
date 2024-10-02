@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { useBudget, useBudgetList } from '@/features/budgets/hooks/useBudget'
+import { useBudget } from '@/features/budgets/hooks/useBudget'
 import {
   ActionIcon,
   Badge,
@@ -23,7 +23,9 @@ import { Link } from 'react-router-dom'
 import classes from './list.module.css'
 
 const BudgetList: React.FC = () => {
-  const { data, isLoading } = useBudgetList()
+  const { useBudgetList } = useBudget()
+
+  const { budgetList, isFetching } = useBudgetList()
   const [opened, { open, close }] = useDisclosure(false)
   const { deleteBudget } = useBudget()
   const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
@@ -35,7 +37,9 @@ const BudgetList: React.FC = () => {
     }
   }
 
-  const budgets = data?.data.map((budget) => (
+  if (isFetching) return <Loader />
+
+  const budgets = budgetList?.data.map((budget) => (
     <div key={budget.id}>
       <Card radius='lg' pb='xl'>
         <Card.Section inheritPadding py='xs'>
@@ -90,14 +94,6 @@ const BudgetList: React.FC = () => {
       </Card>
     </div>
   ))
-
-  if (isLoading) {
-    return (
-      <Container>
-        <Loader />
-      </Container>
-    )
-  }
 
   return (
     <>

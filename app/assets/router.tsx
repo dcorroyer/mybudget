@@ -11,7 +11,7 @@ const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
 
 const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
-// const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
+const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <ProtectedRoute>
-        <React.Suspense fallback={'Loading...'}>
+        <React.Suspense fallback={<Loader />}>
           <NotFoundPage />
         </React.Suspense>
       </ProtectedRoute>
@@ -53,22 +53,22 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: '/budgets/:id',
-  //   element: (
-  //     <ProtectedRoute>
-  //       <React.Suspense fallback={<Loader />}>
-  //         <BudgetDetailPage />
-  //       </React.Suspense>
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: '/budgets/:id',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={<Loader />}>
+          <BudgetDetailPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
 
   // Auth routes
   {
     path: '/auth/login',
     element: (
-      <React.Suspense fallback={'Loading...'}>
+      <React.Suspense fallback={<Loader />}>
         <LoginPage />
       </React.Suspense>
     ),
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
   {
     path: '/auth/register',
     element: (
-      <React.Suspense fallback={'Loading...'}>
+      <React.Suspense fallback={<Loader />}>
         <RegisterPage />
       </React.Suspense>
     ),

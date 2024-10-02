@@ -1,14 +1,12 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 
 import { AppShell, Burger, Group } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 
-import { Outlet } from '@tanstack/react-router'
-
 import Logo from '@/components/logo'
 import { Sidebar } from '@/components/sidebar'
 
-export default function AuthenticatedLayout() {
+export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure()
 
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -33,9 +31,7 @@ export default function AuthenticatedLayout() {
       <AppShell.Navbar withBorder={false}>
         <Sidebar />
       </AppShell.Navbar>
-      <AppShell.Main>
-        <Outlet />
-      </AppShell.Main>
+      <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
   )
 }

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 
 import { notifications } from '@mantine/notifications'
 
@@ -11,26 +11,31 @@ import {
   getBudgetList,
   postBudget,
   updateBudgetId,
-} from '@/features/budgets/api'
-import { BudgetParams } from '@/features/budgets/types'
+} from '@/features/budgets/api/budgets'
 
-export function useBudgetList() {
-  return useQuery({
-    queryKey: ['budgets'],
-    queryFn: getBudgetList,
-  })
-}
-
-export function useBudgetDetail(id: number) {
-  return useQuery({
-    queryKey: ['budgets', { id: id }],
-    queryFn: () => getBudgetDetail(id.toString()),
-  })
-}
+import { BudgetParams } from '@/features/budgets/types/budgets'
 
 export const useBudget = () => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
+
+  const useBudgetList = () => {
+    const { data: budgetList, isFetching } = useQuery({
+      queryKey: ['budgets'],
+      queryFn: getBudgetList,
+    })
+
+    return { budgetList, isFetching }
+  }
+
+  const useBudgetDetail = (id: number) => {
+    const { data: budget, isFetching } = useQuery({
+      queryKey: ['budgets', { id: id }],
+      queryFn: () => getBudgetDetail(id.toString()),
+    })
+
+    return { budget, isFetching }
+  }
 
   const createBudget = useCallback((data: BudgetParams) => {
     createBudgetMutation.mutate(data)
@@ -39,7 +44,8 @@ export const useBudget = () => {
   const createBudgetMutation = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
-      navigate({ to: '/budgets' })
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      navigate('/budgets')
       notifications.show({
         withBorder: true,
         radius: 'md',
@@ -68,7 +74,8 @@ export const useBudget = () => {
     mutationFn: ({ id, ...data }: { id: number } & BudgetParams) =>
       updateBudgetId(id.toString(), data),
     onSuccess: () => {
-      navigate({ to: '/budgets' })
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      navigate('/budgets')
       notifications.show({
         withBorder: true,
         radius: 'md',
@@ -76,7 +83,6 @@ export const useBudget = () => {
         title: 'Successful Update',
         message: 'You have successfully updated the budget',
       })
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
     },
     onError: (error: Error) => {
       console.log('error:', error)
@@ -119,6 +125,8 @@ export const useBudget = () => {
   })
 
   return {
+    useBudgetList,
+    useBudgetDetail,
     createBudget,
     updateBudget,
     deleteBudget,

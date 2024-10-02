@@ -2,20 +2,14 @@ import { useCallback } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 
-import { useLocalStorage } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 
 import { postLogin, postRegister } from '@/features/auth/api/auth'
-import { useRouter } from '@tanstack/react-router'
+import { useNavigate } from 'react-router-dom'
+import { removeUser, saveUser } from './useUserLocalStorage'
 
 export const useAuth = () => {
-  const [token, setToken] = useLocalStorage({ key: 'token', defaultValue: null })
-  const [isAuthenticated, setIsAuthenticated] = useLocalStorage({
-    key: 'isAuthenticated',
-    defaultValue: false,
-  })
-  const router = useRouter()
-
+  const navigate = useNavigate()
   const login = useCallback((email: string, password: string) => {
     authLogin.mutate({ email, password })
   }, [])
@@ -35,10 +29,7 @@ export const useAuth = () => {
         return
       }
 
-      setToken(data.token)
-      setIsAuthenticated(true)
-
-      router.invalidate()
+      saveUser(data)
 
       notifications.show({
         withBorder: true,
@@ -47,6 +38,8 @@ export const useAuth = () => {
         title: 'Successful Login',
         message: 'You are now logged in',
       })
+
+      navigate('/')
     },
     onError: (error: Error) => {
       console.log('error:', error)
@@ -86,10 +79,7 @@ export const useAuth = () => {
   })
 
   const logout = () => {
-    setToken(null)
-    setIsAuthenticated(false)
-
-    router.invalidate()
+    removeUser()
 
     notifications.show({
       withBorder: true,
@@ -98,13 +88,13 @@ export const useAuth = () => {
       title: 'Logout',
       message: 'You are now logged out',
     })
+
+    navigate('/auth/login')
   }
 
   return {
     login,
     logout,
     register,
-    isAuthenticated,
-    token,
   }
 }

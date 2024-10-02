@@ -15,11 +15,11 @@ import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '
 import { MonthPickerInput } from '@mantine/dates'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 
-import { budgetDataTransformer } from '@/features/budgets/helpers'
+import { budgetDataTransformer } from '@/features/budgets/helpers/budgetDataTransformer'
 import { useBudget } from '@/features/budgets/hooks/useBudget'
-import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas'
+import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas/budgets'
 
-import { BudgetFormDetails } from '../types'
+import { BudgetFormDetails } from '../types/budgets'
 import classes from './budget-form.module.css'
 
 interface Card {

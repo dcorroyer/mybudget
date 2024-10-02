@@ -1,5 +1,6 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -17,10 +18,9 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { loginFormSchema, loginFormType } from '@/features/auth/schemas/login'
 
-import { Link } from '@tanstack/react-router'
 import classes from './login.module.css'
 
-export const Login = () => {
+const Login: React.FC = () => {
   const { login } = useAuth()
 
   const loginForm = useForm<loginFormType>({
@@ -42,7 +42,7 @@ export const Login = () => {
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>
         Do not have an account yet?{' '}
-        <Anchor size='sm' component={Link} to='/register'>
+        <Anchor size='sm' component={Link} to='/auth/register'>
           Create account
         </Anchor>
       </Text>
@@ -70,3 +70,5 @@ export const Login = () => {
     </Container>
   )
 }
+
+export default Login

@@ -1,4 +1,6 @@
-import { useBudget, useBudgetList } from '@/features/budgets/hooks/useBudget'
+import React, { useState } from 'react'
+
+import { useBudget } from '@/features/budgets/hooks/useBudget'
 import {
   ActionIcon,
   Badge,
@@ -12,14 +14,18 @@ import {
   SimpleGrid,
   Text,
 } from '@mantine/core'
+
 import { useDisclosure } from '@mantine/hooks'
 import { IconEdit, IconTrash } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
-import React, { useState } from 'react'
+
+import { Link } from 'react-router-dom'
+
 import classes from './list.module.css'
 
-export const BudgetList = () => {
-  const { data, isLoading } = useBudgetList()
+const BudgetList: React.FC = () => {
+  const { useBudgetList } = useBudget()
+
+  const { budgetList, isFetching } = useBudgetList()
   const [opened, { open, close }] = useDisclosure(false)
   const { deleteBudget } = useBudget()
   const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
@@ -31,7 +37,9 @@ export const BudgetList = () => {
     }
   }
 
-  const budgets = data?.data.map((budget) => (
+  if (isFetching) return <Loader />
+
+  const budgets = budgetList?.data.map((budget) => (
     <div key={budget.id}>
       <Card radius='lg' pb='xl'>
         <Card.Section inheritPadding py='xs'>
@@ -40,8 +48,7 @@ export const BudgetList = () => {
             <div>
               <ActionIcon
                 component={Link}
-                to={'/budgets/$id'}
-                params={{ id: budget.id.toString() }}
+                to={`/budgets/${budget.id}`}
                 variant='subtle'
                 color='gray'
               >
@@ -88,14 +95,6 @@ export const BudgetList = () => {
     </div>
   ))
 
-  if (isLoading) {
-    return (
-      <Container>
-        <Loader />
-      </Container>
-    )
-  }
-
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
@@ -117,7 +116,7 @@ export const BudgetList = () => {
           centered
         >
           <Center>
-            <Link className={classes.deleteItem} onClick={handleDelete}>
+            <Link className={classes.deleteItem} onClick={handleDelete} to={''}>
               <IconTrash className={classes.deleteIcon} stroke={1.5} />
               <span>Delete</span>
             </Link>
@@ -128,3 +127,5 @@ export const BudgetList = () => {
     </>
   )
 }
+
+export default BudgetList

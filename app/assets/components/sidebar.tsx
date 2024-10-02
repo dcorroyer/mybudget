@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link, useLocation } from 'react-router-dom'
 
 import cx from 'clsx'
 
@@ -63,13 +63,14 @@ export function Sidebar() {
         <Link
           onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
           className={classes.link}
+          to={''}
         >
           <IconSun className={cx(classes.light, classes.linkIcon)} stroke={1.5} />
           <IconMoon className={cx(classes.dark, classes.linkIcon)} stroke={1.5} />
           <span>Change Theme</span>
         </Link>
 
-        <Link onClick={() => logout()} className={classes.link}>
+        <Link onClick={() => logout()} className={classes.link} to={''}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </Link>

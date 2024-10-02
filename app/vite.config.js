@@ -4,17 +4,8 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import symfonyPlugin from 'vite-plugin-symfony'
 
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
-
 export default defineConfig({
-  plugins: [
-    react(),
-    symfonyPlugin(),
-    TanStackRouterVite({
-      routesDirectory: './assets/routes',
-      generatedRouteTree: './assets/routeTree.gen.ts',
-    }),
-  ],
+  plugins: [react(), symfonyPlugin()],
   build: {
     rollupOptions: {
       input: {
@@ -29,9 +20,9 @@ export default defineConfig({
     ],
   },
   server: {
-    watch: {
-      usePolling: true,
-    },
+    // watch: {
+    //   usePolling: true,
+    // },
     host: true,
     port: 5173,
     hmr: {

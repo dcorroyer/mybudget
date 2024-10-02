@@ -20,9 +20,9 @@ export default defineConfig({
     ],
   },
   server: {
-    watch: {
-      usePolling: true,
-    },
+    // watch: {
+    //   usePolling: true,
+    // },
     host: true,
     port: 5173,
     hmr: {

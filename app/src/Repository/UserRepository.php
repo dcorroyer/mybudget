@@ -23,6 +23,7 @@ class UserRepository extends AbstractEntityRepository implements PasswordUpgrade
         return User::class;
     }
 
+    // TODO: to test during improvement user creation task
     #[\Override]
     public function upgradePassword(
         PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,

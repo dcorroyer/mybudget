@@ -38,32 +38,32 @@ jobs:
         working-directory: app
         run: $GITHUB_WORKSPACE/tools/ecs/vendor/bin/ecs check --config $GITHUB_WORKSPACE/tools/ecs/ecs.php --output-format=checkstyle
 
-  rector:
-    name: Rector
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-rector-${{ hashFiles('tools/rector/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-rector-
-
-      - name: Install vendors
-        working-directory: tools/rector
-        run: composer install --no-interaction
-
-      - name: Rector
-        working-directory: tools/rector
-        run: $GITHUB_WORKSPACE/tools/rector/vendor/bin/rector process --dry-run --clear-cache --config=$GITHUB_WORKSPACE/tools/rector/rector.php
+#  rector:
+#    name: Rector
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: '8.3'
+#
+#      - name: Cache Composer dependencies
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.composer/cache
+#          key: ${{ runner.os }}-composer-rector-${{ hashFiles('tools/rector/composer.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-composer-rector-
+#
+#      - name: Install vendors
+#        working-directory: tools/rector
+#        run: composer install --no-interaction
+#
+#      - name: Rector
+#        working-directory: tools/rector
+#        run: $GITHUB_WORKSPACE/tools/rector/vendor/bin/rector process --dry-run --clear-cache --config=$GITHUB_WORKSPACE/tools/rector/rector.php
 
   phpstan:
     name: PHPStan

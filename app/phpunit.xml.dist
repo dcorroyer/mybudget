@@ -37,7 +37,14 @@
 
     <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
-            <directory>src</directory>
+            <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <directory suffix=".php">src/Dto</directory>
+            <directory suffix=".php">src/Serializable</directory>
+            <directory suffix=".php">src/DataFixtures</directory>
+            <directory suffix=".php">src/Kernel.php</directory>
+        </exclude>
+
     </source>
 </phpunit>

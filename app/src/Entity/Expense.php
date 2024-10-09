@@ -45,19 +45,18 @@ class Expense
     #[ORM\Column]
     private float $amount = 0;
 
+    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
+    private ?Budget $budget = null;
+
     #[Serializer\Groups([
         SerializationGroups::BUDGET_GET,
         SerializationGroups::BUDGET_CREATE,
         SerializationGroups::BUDGET_UPDATE,
     ])]
-    #[Assert\NotBlank]
-    #[Assert\Type(Types::STRING)]
-    #[ORM\Column(length: 255)]
-    private string $category = '';
-
-    #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
-    #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
-    private ?Budget $budget = null;
+    #[ORM\ManyToOne(targetEntity: ExpenseCategory::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
+    #[ORM\JoinColumn(name: 'expense_category_id', referencedColumnName: 'id', nullable: false)]
+    private ?ExpenseCategory $expenseCategory = null;
 
     public function getId(): int
     {
@@ -95,18 +94,6 @@ class Expense
         return $this;
     }
 
-    public function getCategory(): string
-    {
-        return $this->category;
-    }
-
-    public function setCategory(string $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     public function getBudget(): ?Budget
     {
         return $this->budget;
@@ -115,6 +102,18 @@ class Expense
     public function setBudget(?Budget $budget): static
     {
         $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function getExpenseCategory(): ?ExpenseCategory
+    {
+        return $this->expenseCategory;
+    }
+
+    public function setExpenseCategory(?ExpenseCategory $expenseCategory): static
+    {
+        $this->expenseCategory = $expenseCategory;
 
         return $this;
     }

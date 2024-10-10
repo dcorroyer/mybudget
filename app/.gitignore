@@ -23,4 +23,5 @@
 /public/build/
 ###< pentatrion/vite-bundle ###
 
+coverage.html/
 .pnpm-store

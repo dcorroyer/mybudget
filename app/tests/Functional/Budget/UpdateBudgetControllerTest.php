@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Budget;
 
 use App\Tests\Common\Factory\BudgetFactory;
+use App\Tests\Common\Factory\ExpenseCategoryFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -35,6 +36,8 @@ final class UpdateBudgetControllerTest extends TestBase
 
         $this->client->loginUser($user);
 
+        $category = ExpenseCategoryFactory::createOne()->_real();
+
         $budgetPayload = [
             'date' => '2024-02',
             'incomes' => [
@@ -51,22 +54,22 @@ final class UpdateBudgetControllerTest extends TestBase
                 [
                     'name' => 'Loyer',
                     'amount' => 1000,
-                    'category' => 'Logement',
+                    'expenseCategoryId' => $category->getId(),
                 ],
                 [
                     'name' => 'Electricité',
                     'amount' => 100,
-                    'category' => 'Logement',
+                    'expenseCategoryId' => $category->getId(),
                 ],
                 [
                     'name' => 'Courses',
                     'amount' => 200,
-                    'category' => 'Alimentation',
+                    'expenseCategoryId' => $category->getId(),
                 ],
                 [
                     'name' => 'Téléphone',
                     'amount' => 20,
-                    'category' => 'Abonnements',
+                    'expenseCategoryId' => $category->getId(),
                 ],
             ],
         ];

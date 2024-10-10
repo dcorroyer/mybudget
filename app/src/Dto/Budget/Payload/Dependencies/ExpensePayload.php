@@ -18,6 +18,6 @@ class ExpensePayload
     public float $amount;
 
     #[Assert\NotBlank]
-    #[Assert\Type(type: Types::STRING)]
-    public string $category;
+    #[Assert\Type(type: Types::INTEGER)]
+    public int $expenseCategoryId;
 }

@@ -57,7 +57,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Budget>
      */
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
     #[ORM\OneToMany(targetEntity: Budget::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $budgets;
 

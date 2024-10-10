@@ -14,6 +14,10 @@ final class SerializationGroups
 
     public const string BUDGET_LIST = 'BUDGET_LIST';
 
+    public const string EXPENSE_CATEGORY_CREATE = 'EXPENSE_CATEGORY_CREATE';
+
+    public const string EXPENSE_CATEGORY_LIST = 'EXPENSE_CATEGORY_LIST';
+
     public const string USER_CREATE = 'USER_CREATE';
 
     public const string USER_GET = 'USER_GET';

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Common\Factory;
 
-use App\Entity\Expense;
+use App\Entity\ExpenseCategory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Expense>
+ * @extends PersistentProxyObjectFactory<ExpenseCategory>
  */
-final class ExpenseFactory extends PersistentProxyObjectFactory
+final class ExpenseCategoryFactory extends PersistentProxyObjectFactory
 {
     #[\Override]
     public static function class(): string
     {
-        return Expense::class;
+        return ExpenseCategory::class;
     }
 
     /**
@@ -25,10 +25,7 @@ final class ExpenseFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'amount' => self::faker()->randomFloat(),
-            'budget' => BudgetFactory::new(),
-            'expenseCategory' => ExpenseCategoryFactory::new(),
-            'name' => self::faker()->text(255),
+            'name' => self::faker()->unique()->text(255),
         ];
     }
 
@@ -39,6 +36,6 @@ final class ExpenseFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this;
-        // ->afterInstantiate(function(Expense $expense): void {})
+        // ->afterInstantiate(function(ExpenseCategory $expenseCategory): void {})
     }
 }

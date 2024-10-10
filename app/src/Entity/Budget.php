@@ -28,7 +28,6 @@ class Budget
         SerializationGroups::BUDGET_LIST,
         SerializationGroups::BUDGET_CREATE,
         SerializationGroups::BUDGET_UPDATE,
-        SerializationGroups::USER_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]

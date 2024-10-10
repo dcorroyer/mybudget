@@ -13,6 +13,7 @@ class ExpenseService
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepository,
+        private readonly ExpenseCategoryService $expenseCategoryService
     ) {
     }
 
@@ -20,9 +21,11 @@ class ExpenseService
     {
         $expense = new Expense();
 
+        $category = $this->expenseCategoryService->get($expensePayload->expenseCategoryId);
+
         $expense->setName($expensePayload->name)
             ->setAmount($expensePayload->amount)
-            ->setCategory($expensePayload->category)
+            ->setExpenseCategory($category)
             ->setBudget($budget)
         ;
 

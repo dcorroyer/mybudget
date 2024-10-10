@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('controller')]
 #[Group('user')]
 #[Group('user-controller')]
-class GetUserControllerTest extends TestBase
+final class GetUserControllerTest extends TestBase
 {
     private const string API_ENDPOINT = '/api/users';
 

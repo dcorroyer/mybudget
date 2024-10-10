@@ -7,8 +7,10 @@ namespace App\Tests\Unit\Service;
 use App\Dto\Budget\Payload\Dependencies\ExpensePayload;
 use App\Entity\Expense;
 use App\Repository\ExpenseRepository;
+use App\Service\ExpenseCategoryService;
 use App\Service\ExpenseService;
 use App\Tests\Common\Factory\BudgetFactory;
+use App\Tests\Common\Factory\ExpenseCategoryFactory;
 use App\Tests\Common\Factory\ExpenseFactory;
 use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use PHPUnit\Framework\Attributes\Group;
@@ -28,9 +30,12 @@ final class ExpenseServiceTest extends TestCase
 {
     use Factories;
     use SerializerTrait;
+
     private ExpenseRepository $expenseRepository;
 
     private ExpenseService $expenseService;
+
+    private ExpenseCategoryService $expenseCategoryService;
 
     #[\Override]
     protected function setUp(): void
@@ -38,8 +43,12 @@ final class ExpenseServiceTest extends TestCase
         parent::setUp();
 
         $this->expenseRepository = $this->createMock(ExpenseRepository::class);
+        $this->expenseCategoryService = $this->createMock(ExpenseCategoryService::class);
 
-        $this->expenseService = new ExpenseService($this->expenseRepository);
+        $this->expenseService = new ExpenseService(
+            expenseRepository: $this->expenseRepository,
+            expenseCategoryService: $this->expenseCategoryService
+        );
     }
 
     #[TestDox('When calling create expense, it should create and return a new expense')]
@@ -51,12 +60,21 @@ final class ExpenseServiceTest extends TestCase
             'id' => 1,
         ]);
 
+        $expenseCategory = ExpenseCategoryFactory::createOne([
+            'id' => 1,
+        ]);
+
         $budget = BudgetFactory::createOne();
 
         $expensePayload = (new ExpensePayload());
         $expensePayload->name = $expense->getName();
         $expensePayload->amount = $expense->getAmount();
-        $expensePayload->category = $expense->getCategory();
+        $expensePayload->expenseCategoryId = $expenseCategory->getId();
+
+        $this->expenseCategoryService->expects($this->once())
+            ->method('get')
+            ->willReturn($expenseCategory)
+        ;
 
         $this->expenseRepository->expects($this->once())
             ->method('save')

@@ -11,7 +11,7 @@ import {
 import { Link, useParams } from 'react-router-dom'
 
 import { BudgetForm } from '../components/budget-form'
-import { reverseExpensesTransformation } from '../helpers/budgetDataTransformer'
+import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
 import classes from './detail.module.css'
@@ -24,8 +24,8 @@ const BudgetDetail: React.FC = () => {
 
   if (isFetching) return <Loader />
 
-  const formattedExpenses = reverseExpensesTransformation(budget?.data.expenses)
-  const updatedBudgetData = { ...budget?.data, expenses: formattedExpenses }
+  const formattedExpenses = groupExpensesByCategory(budget?.data.expenses)
+  const budgetData = { ...budget?.data, expenses: formattedExpenses }
 
   return (
     <>
@@ -94,7 +94,7 @@ const BudgetDetail: React.FC = () => {
       </Container>
 
       <Container size={560} my={40}>
-        <BudgetForm initialValues={updatedBudgetData} />
+        <BudgetForm initialValues={budgetData} />
       </Container>
     </>
   )

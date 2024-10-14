@@ -1,7 +1,7 @@
 const formatDateToYYYYMM = (date: Date | null): string => {
   if (!date) return ''
   const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // getMonth() returns 0-based month
+  const month = String(date.getMonth() + 1).padStart(2, '0')
   return `${year}-${month}`
 }
 
@@ -33,7 +33,7 @@ export const budgetDataTransformer = (data: {
   return newData
 }
 
-export const reverseExpensesTransformation = (
+export const groupExpensesByCategory = (
   expenses: { id: number; name: string; amount: number; category: string }[],
 ) => {
   const groupedExpenses: { [key: string]: { id: number; name: string; amount: number }[] } = {}

@@ -3,13 +3,17 @@ import { z } from 'zod'
 export const incomesFormSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(2, 'Name is required'),
-  amount: z.coerce.number().gt(0, 'Amount is required'),
+  amount: z.coerce
+  .number()
+  .gt(0.01, { message: 'Amount must be greater than 0' }),
 })
 
 export const expenseItemSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(2, 'Name is required'),
-  amount: z.coerce.number().gt(0, 'Amount is required'),
+  amount: z.coerce
+  .number()
+  .gt(0.01, { message: 'Amount must be greater than 0' }),
 })
 
 export const expensesFormSchema = z.object({

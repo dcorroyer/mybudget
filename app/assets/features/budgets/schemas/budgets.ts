@@ -1,11 +1,7 @@
 import { z } from 'zod'
 
 export const budgetFormSchema = z.object({
-  date: z.date({
-    errorMap: () => ({
-      message: 'Date is required',
-    }),
-  }),
+  date: z.date().nullable().optional(),
   incomes: z.array(
     z.object({
       id: z.number().optional(),

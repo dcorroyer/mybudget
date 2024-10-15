@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+
 import {
   Button,
   Card,
@@ -13,30 +15,10 @@ import { MonthPickerInput } from '@mantine/dates'
 import { useForm, UseFormReturnType } from '@mantine/form'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
-import React, { useState } from 'react'
-import { budgetFormSchema } from '../schemas/budgets'
+
+import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
+
 import classes from './budget-form.module.css'
-
-interface Income {
-  name: string
-  amount: number
-}
-
-type ExpenseItem = {
-  name: string
-  amount: number
-}
-
-type Expense = {
-  category: string
-  items: ExpenseItem[]
-}
-
-interface FormInterface {
-  date: Date | null
-  incomes: Income[]
-  expenses: Expense[]
-}
 
 interface Card {
   category: string
@@ -46,7 +28,9 @@ interface Card {
   }[]
 }
 
-const defaultExpense: Expense = {
+const defaultIncome = { name: '', amount: 0 }
+
+const defaultExpense = {
   category: '',
   items: [
     {
@@ -57,15 +41,10 @@ const defaultExpense: Expense = {
 }
 
 export const BudgetForm = () => {
-  const form = useForm<FormInterface>({
+  const form = useForm<createBudgetFormType>({
     initialValues: {
       date: null,
-      incomes: [
-        {
-          name: '',
-          amount: 0,
-        },
-      ],
+      incomes: [defaultIncome],
       expenses: [defaultExpense],
     },
     validate: zodResolver(budgetFormSchema),
@@ -74,7 +53,7 @@ export const BudgetForm = () => {
   const [monthValue, setMonthValue] = useState<Date | null>(null)
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const onSubmit = (values: FormInterface) => {
+  const onSubmit = (values: createBudgetFormType) => {
     console.log('Form submitted:', values)
   }
 
@@ -114,7 +93,7 @@ export const BudgetForm = () => {
   )
 }
 
-const ManageIncomes = ({ form }: { form: UseFormReturnType<FormInterface> }) => {
+const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType> }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
   const fields = form.values.incomes
@@ -168,7 +147,7 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<FormInterface> }) => 
           color='black'
           className={classes.formButton}
           radius='md'
-          onClick={() => form.insertListItem('incomes', { name: '', amount: 0 })}
+          onClick={() => form.insertListItem('incomes', { ...defaultIncome })}
         >
           Add an income <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
         </Button>
@@ -177,26 +156,28 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<FormInterface> }) => 
   )
 }
 
-const ManageExpenses = ({ form }: { form: UseFormReturnType<FormInterface> }) => {
+const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType> }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const cards = form.values.expenses
+  const append = form.insertListItem
+  const remove = form.removeListItem
+  const cards = form.getValues().expenses
 
   const addCard = () => {
-    form.insertListItem('expenses', { ...defaultExpense })
+    append('expenses', { ...defaultExpense })
   }
 
   const removeCard = (cardIndex: number) => {
-    form.removeListItem('expenses', cardIndex)
+    remove('expenses', cardIndex)
   }
 
   const addExpenseItem = (cardIndex: number) => {
-    form.insertListItem(`expenses.${cardIndex}.items`, { name: '', amount: 0 })
+    append(`expenses.${cardIndex}.items`, { name: '', amount: 0 })
   }
 
   const removeExpenseItem = (cardIndex: number, expenseIndex: number) => {
-    form.removeListItem(`expenses.${cardIndex}.items`, expenseIndex)
-    const updatedCards = form.values.expenses
+    remove(`expenses.${cardIndex}.items`, expenseIndex)
+    const updatedCards = form.getValues().expenses
     if (updatedCards[cardIndex].items.length === 0) {
       removeCard(cardIndex)
     }
@@ -221,7 +202,7 @@ const ManageExpenses = ({ form }: { form: UseFormReturnType<FormInterface> }) =>
             </Card.Section>
             <Divider mt='xl' className={classes.divider} />
             <Card.Section inheritPadding mt='lg' px='xl' pb='xs'>
-              {card.items.map((expenseItem: ExpenseItem, expenseIndex: number) => (
+              {card.items.map((expenseItem, expenseIndex) => (
                 <SimpleGrid
                   cols={{ base: 1, sm: 2 }}
                   mb='sm'

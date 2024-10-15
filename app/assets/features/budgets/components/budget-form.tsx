@@ -42,6 +42,7 @@ const defaultExpense = {
 
 export const BudgetForm = () => {
   const form = useForm<createBudgetFormType>({
+    mode: 'uncontrolled',
     initialValues: {
       date: null,
       incomes: [defaultIncome],
@@ -103,29 +104,31 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType>
   return (
     <Card radius='lg' py='xl' mt='sm'>
       <Card.Section inheritPadding px='xl' pb='xs'>
-        {fields.map((income, incomeIndex) => {
-          return (
-            <SimpleGrid
-              cols={{ base: 1, sm: 2 }}
-              mb='sm'
-              className={classes.budgetLine}
-              key={incomeIndex}
-            >
-              <div className={classes.relative}>
-                <TextInput
-                  label='Name'
-                  placeholder='Name'
-                  {...form.getInputProps(`incomes.${incomeIndex}.name`)}
-                  rightSection={'  '}
-                />
-              </div>
-              <div className={classes.relative}>
-                <NumberInput
-                  label='Amount'
-                  {...form.getInputProps(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
-                  rightSection={currency}
-                />
-              </div>
+        {fields.map((income, incomeIndex) => (
+          <SimpleGrid
+            cols={{ base: 1, sm: 3 }}
+            mb='sm'
+            className={classes.budgetLine}
+            key={incomeIndex}
+            style={{ gridTemplateColumns: '2fr 2fr auto' }}
+          >
+            <div className={classes.relative}>
+              <TextInput
+                label='Name'
+                placeholder='Name'
+                {...form.getInputProps(`incomes.${incomeIndex}.name`)}
+                classNames={{ error: classes.error }}
+              />
+            </div>
+            <div className={classes.relative}>
+              <NumberInput
+                label='Amount'
+                {...form.getInputProps(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
+                classNames={{ error: classes.error }}
+                rightSection={currency}
+              />
+            </div>
+            <div className={classes.relative}>
               <IconX
                 onClick={() => form.removeListItem('incomes', incomeIndex)}
                 className={classes.removeBudgetLineIcon}
@@ -138,9 +141,9 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType>
                 }}
                 stroke={1.5}
               />
-            </SimpleGrid>
-          )
-        })}
+            </div>
+          </SimpleGrid>
+        ))}
       </Card.Section>
       <Card.Section inheritPadding mt='sm' px='xl'>
         <Button
@@ -197,7 +200,10 @@ const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType
                     variant='unstyled'
                     placeholder='Expense category name'
                     {...form.getInputProps(`expenses.${cardIndex}.category`)}
-                    className={classes.categoryName}
+                    classNames={{
+                      input: classes.categoryName,
+                      error: classes.errorCategory,
+                    }}
                   />
                 </div>
               </Group>
@@ -210,13 +216,14 @@ const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType
                   mb='sm'
                   className={classes.budgetLine}
                   key={expenseIndex}
+                  style={{ gridTemplateColumns: '2fr 2fr auto' }}
                 >
                   <div className={classes.relative}>
                     <TextInput
                       label='Name'
                       placeholder='Name'
                       {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
-                      rightSection={'  '}
+                      classNames={{ error: classes.error }}
                     />
                   </div>
                   <div className={classes.relative}>
@@ -225,21 +232,24 @@ const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType
                       {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
                         valueAsNumber: true,
                       })}
+                      classNames={{ error: classes.error }}
                       rightSection={currency}
                     />
                   </div>
-                  <IconX
-                    onClick={() => removeExpenseItem(cardIndex, expenseIndex)}
-                    className={classes.removeBudgetLineIcon}
-                    style={{
-                      width: rem(20),
-                      height: rem(20),
-                      cursor: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'pointer',
-                      pointerEvents: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'auto',
-                      color: cardIndex === 0 && expenseIndex === 0 ? 'gray' : 'black',
-                    }}
-                    stroke={1.5}
-                  />
+                  <div className={classes.relative}>
+                    <IconX
+                      onClick={() => removeExpenseItem(cardIndex, expenseIndex)}
+                      className={classes.removeBudgetLineIcon}
+                      style={{
+                        width: rem(20),
+                        height: rem(20),
+                        cursor: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'pointer',
+                        pointerEvents: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'auto',
+                        color: cardIndex === 0 && expenseIndex === 0 ? 'gray' : 'black',
+                      }}
+                      stroke={1.5}
+                    />
+                  </div>
                 </SimpleGrid>
               ))}
             </Card.Section>

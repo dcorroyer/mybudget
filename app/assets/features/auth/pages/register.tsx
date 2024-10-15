@@ -1,8 +1,8 @@
+import { useForm } from '@mantine/form'
 import React from 'react'
-import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from 'mantine-form-zod-resolver'
 
 import {
   Anchor,
@@ -23,15 +23,15 @@ import classes from './register.module.css'
 const Register: React.FC = () => {
   const { register } = useAuth()
 
-  const registerForm = useForm<registerFormType>({
-    resolver: zodResolver(registerFormSchema),
-    defaultValues: {
+  const form = useForm<registerFormType>({
+    initialValues: {
       firstName: '',
       lastName: '',
       email: '',
       password: '',
       repeatPassword: '',
     },
+    validate: zodResolver(registerFormSchema),
   })
 
   const onSubmit = (values: registerFormType) => {
@@ -50,41 +50,41 @@ const Register: React.FC = () => {
         </Anchor>
       </Text>
 
-      <form onSubmit={registerForm.handleSubmit(onSubmit)}>
+      <form onSubmit={form.onSubmit(onSubmit)}>
         <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
           <TextInput
             label='Lastname'
             placeholder='Doe'
             required
-            {...registerForm.register('lastName')}
+            {...form.getInputProps('lastName')}
           />
           <TextInput
             label='Firstname'
             placeholder='John'
             required
             mt='md'
-            {...registerForm.register('firstName')}
+            {...form.getInputProps('firstName')}
           />
           <TextInput
             label='Email'
             placeholder='john.doeuf@mybudget.fr'
             required
             mt='md'
-            {...registerForm.register('email')}
+            {...form.getInputProps('email')}
           />
           <PasswordInput
             label='Password'
             placeholder='Your password'
             required
             mt='md'
-            {...registerForm.register('password')}
+            {...form.getInputProps('password')}
           />
           <PasswordInput
             label='Repeat-password'
             placeholder='Repeat your password'
             required
             mt='md'
-            {...registerForm.register('repeatPassword')}
+            {...form.getInputProps('repeatPassword')}
           />
           <Button type='submit' fullWidth mt='xl'>
             Register

@@ -57,6 +57,8 @@ export const BudgetForm = () => {
     console.log('Form submitted:', values)
   }
 
+  // TODO: manage nullable date or set default value
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <div className={classes.relative}>

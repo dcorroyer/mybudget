@@ -1,8 +1,8 @@
+import { useForm } from '@mantine/form'
 import React from 'react'
-import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from 'mantine-form-zod-resolver'
 
 import {
   Anchor,
@@ -23,12 +23,12 @@ import classes from './login.module.css'
 const Login: React.FC = () => {
   const { login } = useAuth()
 
-  const loginForm = useForm<loginFormType>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
+  const form = useForm<loginFormType>({
+    initialValues: {
       email: '',
       password: '',
     },
+    validate: zodResolver(loginFormSchema),
   })
 
   const onSubmit = (values: loginFormType) => {
@@ -47,20 +47,20 @@ const Login: React.FC = () => {
         </Anchor>
       </Text>
 
-      <form onSubmit={loginForm.handleSubmit(onSubmit)}>
+      <form onSubmit={form.onSubmit(onSubmit)}>
         <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
           <TextInput
             label='Email'
             placeholder='john.doeuf@mybudget.fr'
             required
-            {...loginForm.register('email')}
+            {...form.getInputProps('email')}
           />
           <PasswordInput
             label='Password'
             placeholder='Your password'
             required
             mt='md'
-            {...loginForm.register('password')}
+            {...form.getInputProps('password')}
           />
           <Button type='submit' fullWidth mt='xl'>
             Sign in

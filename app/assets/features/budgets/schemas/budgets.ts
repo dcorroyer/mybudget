@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const budgetFormSchema = z.object({
-  date: z.date().nullable().optional(),
+  date: z.date(),
   incomes: z.array(
     z.object({
       id: z.number().optional(),

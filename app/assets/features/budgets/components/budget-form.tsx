@@ -18,6 +18,8 @@ import { zodResolver } from 'mantine-form-zod-resolver'
 
 import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
 
+import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
+import { useBudget } from '../hooks/useBudget'
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -44,21 +46,23 @@ export const BudgetForm = () => {
   const form = useForm<createBudgetFormType>({
     mode: 'uncontrolled',
     initialValues: {
-      date: null,
+      date: new Date(),
       incomes: [defaultIncome],
       expenses: [defaultExpense],
     },
     validate: zodResolver(budgetFormSchema),
   })
 
-  const [monthValue, setMonthValue] = useState<Date | null>(null)
+  const [monthValue, setMonthValue] = useState<Date>(new Date())
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
-  const onSubmit = (values: createBudgetFormType) => {
-    console.log('Form submitted:', values)
-  }
+  const { createBudget } = useBudget()
 
-  // TODO: manage nullable date or set default value
+  const onSubmit = (values: createBudgetFormType) => {
+    const data = budgetDataTransformer({ ...values, date: values.date })
+
+    createBudget(data)
+  }
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -71,8 +75,8 @@ export const BudgetForm = () => {
           placeholder='Date'
           value={monthValue}
           onChange={(month) => {
-            form.setFieldValue('date', month)
-            setMonthValue(month)
+            form.setFieldValue('date', month!)
+            setMonthValue(month!)
           }}
         />
       </div>

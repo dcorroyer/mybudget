@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Button,
@@ -16,10 +16,11 @@ import { useForm, UseFormReturnType } from '@mantine/form'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 
-import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
-
 import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
+import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
+import { BudgetFormDetails } from '../types/budgets'
+
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -42,10 +43,14 @@ const defaultExpense = {
   ],
 }
 
-export const BudgetForm = () => {
+interface BudgetFormComponentProps {
+  initialValues?: BudgetFormDetails
+}
+
+export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }) => {
   const form = useForm<createBudgetFormType>({
     mode: 'uncontrolled',
-    initialValues: {
+    initialValues: initialValues || {
       date: new Date(),
       incomes: [defaultIncome],
       expenses: [defaultExpense],
@@ -55,13 +60,33 @@ export const BudgetForm = () => {
 
   const [monthValue, setMonthValue] = useState<Date>(new Date())
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+  const [isEditMode, setIsEditMode] = useState<boolean>(false)
 
-  const { createBudget } = useBudget()
+  useEffect(() => {
+    if (initialValues) {
+      const initialDate = initialValues.date ? new Date(initialValues.date) : null
+
+      if (initialDate) {
+        setMonthValue(initialDate)
+        form.setValues({ date: initialDate })
+      }
+
+      setIsEditMode(true)
+    } else {
+      setIsEditMode(false)
+    }
+  }, [initialValues, form.setValues])
+
+  const { createBudget, updateBudget } = useBudget()
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: values.date })
 
-    createBudget(data)
+    if (!isEditMode) {
+      createBudget(data)
+    } else if (initialValues && initialValues.id) {
+      updateBudget(initialValues.id, data)
+    }
   }
 
   return (
@@ -93,7 +118,7 @@ export const BudgetForm = () => {
           <ManageIncomes form={form} />
         </Tabs.Panel>
         <Tabs.Panel value='expenses'>
-          <ManageExpenses form={form} />
+          <ManageExpenses form={form} isEditMode={isEditMode} />
         </Tabs.Panel>
       </Tabs>
     </form>
@@ -165,7 +190,13 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType>
   )
 }
 
-const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType> }) => {
+const ManageExpenses = ({
+  form,
+  isEditMode,
+}: {
+  form: UseFormReturnType<createBudgetFormType>
+  isEditMode: boolean
+}) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
   const append = form.insertListItem
@@ -292,7 +323,7 @@ const ManageExpenses = ({ form }: { form: UseFormReturnType<createBudgetFormType
           mt='sm'
           style={{ float: 'right' }}
         >
-          Create
+          {isEditMode ? 'Update' : 'Create'}{' '}
           <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
         </Button>
       </div>

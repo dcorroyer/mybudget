@@ -1,4 +1,3 @@
-import { Loader } from '@mantine/core'
 import React, { PropsWithChildren } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { useUser } from './features/auth/hooks/useUser'
@@ -16,7 +15,8 @@ const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detai
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
 
-  if (isFetching) return <Loader />
+  if (isFetching) return
+
   if (!user) return <Navigate to='/auth/login' replace />
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <ProtectedRoute>
-        <React.Suspense fallback={<Loader />}>
+        <React.Suspense fallback={null}>
           <NotFoundPage />
         </React.Suspense>
       </ProtectedRoute>
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     path: '/budgets',
     element: (
       <ProtectedRoute>
-        <React.Suspense fallback={<Loader />}>
+        <React.Suspense fallback={null}>
           <BudgetListPage />
         </React.Suspense>
       </ProtectedRoute>
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
     path: '/budgets/create',
     element: (
       <ProtectedRoute>
-        <React.Suspense fallback={<Loader />}>
+        <React.Suspense fallback={null}>
           <BudgetCreatePage />
         </React.Suspense>
       </ProtectedRoute>
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
     path: '/budgets/:id',
     element: (
       <ProtectedRoute>
-        <React.Suspense fallback={<Loader />}>
+        <React.Suspense fallback={null}>
           <BudgetDetailPage />
         </React.Suspense>
       </ProtectedRoute>
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
   {
     path: '/auth/login',
     element: (
-      <React.Suspense fallback={<Loader />}>
+      <React.Suspense fallback={null}>
         <LoginPage />
       </React.Suspense>
     ),
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
   {
     path: '/auth/register',
     element: (
-      <React.Suspense fallback={<Loader />}>
+      <React.Suspense fallback={null}>
         <RegisterPage />
       </React.Suspense>
     ),

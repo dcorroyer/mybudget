@@ -8,21 +8,17 @@ export interface Budget {
 }
 
 export interface BudgetDetails extends Budget {
-  incomes: [
-    {
-      id: number
-      name: string
-      amount: number
-    },
-  ]
-  expenses: [
-    {
-      id: number
-      category: string
-      name: string
-      amount: number
-    },
-  ]
+  incomes: {
+    id: number
+    name: string
+    amount: number
+  }[]
+  expenses: {
+    id: number
+    category: string
+    name: string
+    amount: number
+  }[]
 }
 
 export interface BudgetFormDetails extends Budget {

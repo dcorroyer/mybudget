@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react'
+
 import {
-  Control,
-  Controller,
-  useFieldArray,
-  useForm,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-
-import { Button, Card, Divider, Group, rem, SimpleGrid, Tabs, TextInput } from '@mantine/core'
+  Button,
+  Card,
+  Divider,
+  Group,
+  NumberInput,
+  rem,
+  SimpleGrid,
+  Tabs,
+  TextInput,
+} from '@mantine/core'
 import { MonthPickerInput } from '@mantine/dates'
+import { useForm, UseFormReturnType } from '@mantine/form'
 import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
+import { zodResolver } from 'mantine-form-zod-resolver'
 
-import { budgetDataTransformer } from '@/features/budgets/helpers/budgetDataTransformer'
-import { useBudget } from '@/features/budgets/hooks/useBudget'
-import { budgetFormSchema, createBudgetFormType } from '@/features/budgets/schemas/budgets'
-
+import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
+import { useBudget } from '../hooks/useBudget'
+import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
 import { BudgetFormDetails } from '../types/budgets'
+
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -30,24 +31,7 @@ interface Card {
   }[]
 }
 
-interface BudgetFormProps {
-  budgetForm: {
-    control: Control<createBudgetFormType>
-    register: UseFormRegister<createBudgetFormType>
-    setValue?: UseFormSetValue<createBudgetFormType>
-    watch?: UseFormWatch<createBudgetFormType>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    errors: any
-  }
-  isEditMode?: boolean
-}
-
-interface ExpenseCardProps {
-  cardIndex: number
-  budgetForm: BudgetFormProps['budgetForm']
-  removeCard: (cardIndex: number) => void
-  totalCards: number
-}
+const defaultIncome = { name: '', amount: 0 }
 
 const defaultExpense = {
   category: '',
@@ -64,53 +48,39 @@ interface BudgetFormComponentProps {
 }
 
 export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }) => {
-  const [isEditMode, setIsEditMode] = useState<boolean>(false)
-
-  const budgetForm = useForm<createBudgetFormType>({
-    resolver: zodResolver(budgetFormSchema),
-    defaultValues: initialValues || {
-      incomes: [
-        {
-          name: '',
-          amount: 0,
-        },
-      ],
+  const form = useForm<createBudgetFormType>({
+    mode: 'uncontrolled',
+    initialValues: initialValues || {
+      date: new Date(),
+      incomes: [defaultIncome],
       expenses: [defaultExpense],
     },
+    validate: zodResolver(budgetFormSchema),
   })
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors },
-    reset,
-  } = budgetForm
-
-  const [monthValue, setMonthValue] = useState<Date | null>(null)
+  const [monthValue, setMonthValue] = useState<Date>(new Date())
   const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-
-  const { createBudget, updateBudget } = useBudget()
+  const [isEditMode, setIsEditMode] = useState<boolean>(false)
 
   useEffect(() => {
     if (initialValues) {
       const initialDate = initialValues.date ? new Date(initialValues.date) : null
 
-      reset(initialValues)
-      setMonthValue(initialDate)
-
       if (initialDate) {
-        setValue('date', initialDate)
+        setMonthValue(initialDate)
+        form.setValues({ date: initialDate })
       }
 
       setIsEditMode(true)
     } else {
       setIsEditMode(false)
     }
-  }, [initialValues, reset, setValue])
+  }, [initialValues, form.setValues])
+
+  const { createBudget, updateBudget, isLoading } = useBudget()
 
   const onSubmit = (values: createBudgetFormType) => {
-    const data = budgetDataTransformer({ ...values, date: new Date(values.date) })
+    const data = budgetDataTransformer({ ...values, date: values.date })
 
     if (!isEditMode) {
       createBudget(data)
@@ -120,106 +90,89 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          control={control}
-          name='date'
-          render={({ field }) => (
-            <div className={classes.relative}>
-              <MonthPickerInput
-                {...field}
-                leftSection={icon}
-                leftSectionPointerEvents='none'
-                label='Budget date'
-                placeholder='Date'
-                value={monthValue}
-                onChange={(month) => {
-                  setMonthValue(month)
-                  field.onChange(month)
-                }}
-              />
-              {errors.date && <span className={classes.error}>{errors.date.message}</span>}
-            </div>
-          )}
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <div className={classes.relative}>
+        <MonthPickerInput
+          {...form.getInputProps('date')}
+          leftSection={icon}
+          leftSectionPointerEvents='none'
+          label='Budget date'
+          placeholder='Date'
+          value={monthValue}
+          onChange={(month) => {
+            form.setFieldValue('date', month!)
+            setMonthValue(month!)
+          }}
         />
-        <Tabs defaultValue='incomes' mt='xl'>
-          <Tabs.List>
-            <Tabs.Tab value='incomes' color='green'>
-              Incomes
-            </Tabs.Tab>
-            <Tabs.Tab value='expenses' color='red'>
-              Expenses
-            </Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value='incomes'>
-            <ManageIncomes budgetForm={{ ...budgetForm, errors }} />
-          </Tabs.Panel>
-          <Tabs.Panel value='expenses'>
-            <ManageExpenses budgetForm={{ ...budgetForm, errors }} isEditMode={isEditMode} />
-          </Tabs.Panel>
-        </Tabs>
-      </form>
-    </>
+      </div>
+      <Tabs defaultValue='incomes' mt='xl'>
+        <Tabs.List>
+          <Tabs.Tab value='incomes' color='green'>
+            Incomes
+          </Tabs.Tab>
+          <Tabs.Tab value='expenses' color='red'>
+            Expenses
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value='incomes'>
+          <ManageIncomes form={form} />
+        </Tabs.Panel>
+        <Tabs.Panel value='expenses'>
+          <ManageExpenses form={form} isEditMode={isEditMode} isLoading={isLoading} />
+        </Tabs.Panel>
+      </Tabs>
+    </form>
   )
 }
 
-const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
+const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType> }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-  const { control, register, errors } = budgetForm
-  const { append, remove, fields } = useFieldArray({
-    control,
-    name: 'incomes',
-  })
+
+  const fields = form.values.incomes
 
   return (
     <Card radius='lg' py='xl' mt='sm'>
       <Card.Section inheritPadding px='xl' pb='xs'>
-        {fields.map((income, incomeIndex) => {
-          return (
-            <SimpleGrid
-              cols={{ base: 1, sm: 2 }}
-              mb='sm'
-              className={classes.budgetLine}
-              key={income.id}
-            >
-              <div className={classes.relative}>
-                <TextInput
-                  label='Name'
-                  placeholder='Name'
-                  {...register(`incomes.${incomeIndex}.name`)}
-                  rightSection={'  '}
-                />
-                {errors.incomes?.[incomeIndex]?.name && (
-                  <span className={classes.error}>
-                    {errors.incomes?.[incomeIndex]?.name?.message}
-                  </span>
-                )}
-              </div>
-              <div className={classes.relative}>
-                <TextInput
-                  type='number'
-                  label='Amount'
-                  {...register(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
-                  rightSection={currency}
-                />
-                {errors.incomes?.[incomeIndex]?.amount && (
-                  <span className={classes.error}>
-                    {errors.incomes?.[incomeIndex]?.amount?.message}
-                  </span>
-                )}
-              </div>
+        {fields.map((income, incomeIndex) => (
+          <SimpleGrid
+            cols={{ base: 1, sm: 3 }}
+            mb='sm'
+            className={classes.budgetLine}
+            key={incomeIndex}
+            style={{ gridTemplateColumns: '2fr 2fr auto' }}
+          >
+            <div className={classes.relative}>
+              <TextInput
+                label='Name'
+                placeholder='Name'
+                {...form.getInputProps(`incomes.${incomeIndex}.name`)}
+                classNames={{ error: classes.error }}
+              />
+            </div>
+            <div className={classes.relative}>
+              <NumberInput
+                label='Amount'
+                {...form.getInputProps(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
+                classNames={{ error: classes.error }}
+                rightSection={currency}
+              />
+            </div>
+            <div className={classes.relative}>
               <IconX
-                onClick={() => {
-                  remove(incomeIndex)
-                }}
+                onClick={() => form.removeListItem('incomes', incomeIndex)}
                 className={classes.removeBudgetLineIcon}
-                style={{ width: rem(20), height: rem(20) }}
+                style={{
+                  width: rem(20),
+                  height: rem(20),
+                  cursor: incomeIndex === 0 ? 'none' : 'pointer',
+                  pointerEvents: incomeIndex === 0 ? 'none' : 'auto',
+                  color: incomeIndex === 0 ? 'gray' : 'black',
+                }}
                 stroke={1.5}
               />
-            </SimpleGrid>
-          )
-        })}
+            </div>
+          </SimpleGrid>
+        ))}
       </Card.Section>
       <Card.Section inheritPadding mt='sm' px='xl'>
         <Button
@@ -228,9 +181,7 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
           color='black'
           className={classes.formButton}
           radius='md'
-          onClick={() => {
-            append({ name: '', amount: 0 })
-          }}
+          onClick={() => form.insertListItem('incomes', { ...defaultIncome })}
         >
           Add an income <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
         </Button>
@@ -239,36 +190,119 @@ const ManageIncomes: React.FC<BudgetFormProps> = ({ budgetForm }) => {
   )
 }
 
-const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm, isEditMode }) => {
-  const { setValue, watch, control, errors } = budgetForm
-  const cards = watch ? watch('expenses') : []
-  const { remove } = useFieldArray({
-    control,
-    name: 'expenses',
-  })
+const ManageExpenses = ({
+  form,
+  isEditMode,
+  isLoading,
+}: {
+  form: UseFormReturnType<createBudgetFormType>
+  isEditMode: boolean
+  isLoading: boolean
+}) => {
+  const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+
+  const append = form.insertListItem
+  const remove = form.removeListItem
+  const cards = form.getValues().expenses
 
   const addCard = () => {
-    if (setValue) {
-      const newCard = { ...defaultExpense }
-      setValue('expenses', [...cards, newCard])
-    }
+    append('expenses', { ...defaultExpense })
   }
 
   const removeCard = (cardIndex: number) => {
-    remove(cardIndex)
+    remove('expenses', cardIndex)
+  }
+
+  const addExpenseItem = (cardIndex: number) => {
+    append(`expenses.${cardIndex}.items`, { name: '', amount: 0 })
+  }
+
+  const removeExpenseItem = (cardIndex: number, expenseIndex: number) => {
+    remove(`expenses.${cardIndex}.items`, expenseIndex)
+    const updatedCards = form.getValues().expenses
+    if (updatedCards[cardIndex].items.length === 0) {
+      removeCard(cardIndex)
+    }
   }
 
   return (
     <>
       <div>
         {cards.map((card: Card, cardIndex: number) => (
-          <ExpenseCard
-            key={cardIndex}
-            cardIndex={cardIndex}
-            budgetForm={{ ...budgetForm, errors }}
-            removeCard={removeCard}
-            totalCards={cards.length}
-          />
+          <Card radius='lg' py='xl' mt='sm' key={cardIndex}>
+            <Card.Section inheritPadding>
+              <Group justify='space-between'>
+                <div className={classes.relative}>
+                  <TextInput
+                    variant='unstyled'
+                    placeholder='Expense category name'
+                    {...form.getInputProps(`expenses.${cardIndex}.category`)}
+                    classNames={{
+                      input: classes.categoryName,
+                      error: classes.errorCategory,
+                    }}
+                  />
+                </div>
+              </Group>
+            </Card.Section>
+            <Divider mt='xl' className={classes.divider} />
+            <Card.Section inheritPadding mt='lg' px='xl' pb='xs'>
+              {card.items.map((expenseItem, expenseIndex) => (
+                <SimpleGrid
+                  cols={{ base: 1, sm: 2 }}
+                  mb='sm'
+                  className={classes.budgetLine}
+                  key={expenseIndex}
+                  style={{ gridTemplateColumns: '2fr 2fr auto' }}
+                >
+                  <div className={classes.relative}>
+                    <TextInput
+                      label='Name'
+                      placeholder='Name'
+                      {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
+                      classNames={{ error: classes.error }}
+                    />
+                  </div>
+                  <div className={classes.relative}>
+                    <NumberInput
+                      label='Amount'
+                      {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
+                        valueAsNumber: true,
+                      })}
+                      classNames={{ error: classes.error }}
+                      rightSection={currency}
+                    />
+                  </div>
+                  <div className={classes.relative}>
+                    <IconX
+                      onClick={() => removeExpenseItem(cardIndex, expenseIndex)}
+                      className={classes.removeBudgetLineIcon}
+                      style={{
+                        width: rem(20),
+                        height: rem(20),
+                        cursor: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'pointer',
+                        pointerEvents: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'auto',
+                        color: cardIndex === 0 && expenseIndex === 0 ? 'gray' : 'black',
+                      }}
+                      stroke={1.5}
+                    />
+                  </div>
+                </SimpleGrid>
+              ))}
+            </Card.Section>
+            <Card.Section inheritPadding mt='sm' px='xl'>
+              <Button
+                type='button'
+                variant='white'
+                color='black'
+                className={classes.formButton}
+                radius='md'
+                onClick={() => addExpenseItem(cardIndex)}
+              >
+                Add an expense <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+              </Button>
+            </Card.Section>
+          </Card>
         ))}
         <Button
           type='button'
@@ -290,112 +324,12 @@ const ManageExpenses: React.FC<BudgetFormProps> = ({ budgetForm, isEditMode }) =
           radius='md'
           mt='sm'
           style={{ float: 'right' }}
+          loading={isLoading}
         >
           {isEditMode ? 'Update' : 'Create'}{' '}
           <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
         </Button>
       </div>
     </>
-  )
-}
-
-const ExpenseCard: React.FC<ExpenseCardProps> = ({ cardIndex, budgetForm, removeCard }) => {
-  const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-  const { control, register, errors } = budgetForm
-  const { append, remove, fields } = useFieldArray({
-    control,
-    name: `expenses.${cardIndex}.items`,
-  })
-
-  React.useEffect(() => {
-    if (fields.length === 0) {
-      removeCard(cardIndex)
-    }
-  }, [fields.length, cardIndex, removeCard])
-
-  return (
-    <Card radius='lg' py='xl' mt='sm'>
-      <Card.Section inheritPadding>
-        <Group justify='space-between'>
-          <div className={classes.relative}>
-            <TextInput
-              variant='unstyled'
-              placeholder='Expense category name'
-              {...register(`expenses.${cardIndex}.category`)}
-              className={classes.categoryName}
-            />
-            {errors.expenses?.[cardIndex]?.category && (
-              <span className={classes.errorCategory}>
-                {errors.expenses?.[cardIndex]?.category?.message}
-              </span>
-            )}
-          </div>
-        </Group>
-      </Card.Section>
-      <Divider mt='xl' className={classes.divider} />
-      <Card.Section inheritPadding mt='lg' px='xl' pb='xs'>
-        {fields.map((expense, expenseIndex) => (
-          <SimpleGrid
-            cols={{ base: 1, sm: 2 }}
-            mb='sm'
-            className={classes.budgetLine}
-            key={expense.id}
-          >
-            <div className={classes.relative}>
-              <TextInput
-                label='Name'
-                placeholder='Name'
-                {...register(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
-                rightSection={'  '}
-              />
-              {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.name && (
-                <span className={classes.error}>
-                  {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.name?.message}
-                </span>
-              )}
-            </div>
-            <div className={classes.relative}>
-              <TextInput
-                type='number'
-                label='Amount'
-                {...register(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
-                  valueAsNumber: true,
-                })}
-                rightSection={currency}
-              />
-              {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.amount && (
-                <span className={classes.error}>
-                  {errors.expenses?.[cardIndex]?.items?.[expenseIndex]?.amount?.message}
-                </span>
-              )}
-            </div>
-            <IconX
-              onClick={() => remove(expenseIndex)}
-              className={classes.removeBudgetLineIcon}
-              style={{
-                width: rem(20),
-                height: rem(20),
-                cursor: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'pointer',
-                pointerEvents: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'auto',
-                color: cardIndex === 0 && expenseIndex === 0 ? 'gray' : 'black',
-              }}
-              stroke={1.5}
-            />
-          </SimpleGrid>
-        ))}
-      </Card.Section>
-      <Card.Section inheritPadding mt='sm' px='xl'>
-        <Button
-          type='button'
-          variant='white'
-          color='black'
-          className={classes.formButton}
-          radius='md'
-          onClick={() => append({ name: '', amount: 0 })}
-        >
-          Add an expense <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-        </Button>
-      </Card.Section>
-    </Card>
   )
 }

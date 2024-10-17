@@ -1,11 +1,11 @@
-import { Budget, BudgetDetails, BudgetParams } from '@/features/budgets/types'
+import { Budget, BudgetDetails, BudgetParams } from '../types/budgets'
 
 import { ApiErrorResponse } from '@/utils/ApiErrorResponse'
 import { ApiResponse, ApiResponseList } from '@/utils/ApiResponse'
 import { client } from '@/utils/client'
 
-export async function getBudgetList(): Promise<ApiResponseList<Budget[]>> {
-  const response = await client('/api/budgets', {
+export async function getBudgetList(year: number): Promise<ApiResponseList<Budget[]>> {
+  const response = await client(`/api/budgets?date=${year}`, {
     method: 'GET',
   })
 

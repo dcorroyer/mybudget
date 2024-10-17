@@ -1,17 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { ActionIcon, Card, Container, Group, Loader, SimpleGrid, Text } from '@mantine/core'
+import { ActionIcon, Card, Container, Group, rem, SimpleGrid, Text } from '@mantine/core'
 import {
   IconChevronLeft,
   IconCreditCard,
   IconCreditCardPay,
   IconCreditCardRefund,
+  IconPencil,
+  IconPencilOff,
 } from '@tabler/icons-react'
 
 import { Link, useParams } from 'react-router-dom'
 
-import { BudgetForm } from '../components/budget-form'
-import { reverseExpensesTransformation } from '../helpers/budgetDataTransformer'
+import { CenteredLoader as Loader } from '@/components/centered-loader'
+import { BudgetForm } from '@/features/budgets/components/budget-form'
+import { BudgetTable } from '../components/budget-table'
+import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
 import classes from './detail.module.css'
@@ -19,13 +23,22 @@ import classes from './detail.module.css'
 const BudgetDetail: React.FC = () => {
   const { id } = useParams()
   const { useBudgetDetail } = useBudget()
-
   const { budget, isFetching } = useBudgetDetail(Number(id))
+
+  const [editMode, setEditMode] = useState(false)
 
   if (isFetching) return <Loader />
 
-  const formattedExpenses = reverseExpensesTransformation(budget?.data.expenses)
-  const updatedBudgetData = { ...budget?.data, expenses: formattedExpenses }
+  if (!budget) {
+    return <Text fw={500}>Budget not found.</Text>
+  }
+
+  const formattedExpenses = groupExpensesByCategory(budget.data.expenses)
+  const budgetData = { ...budget?.data, expenses: formattedExpenses }
+
+  const toggleEditMode = () => {
+    setEditMode((prev) => !prev)
+  }
 
   return (
     <>
@@ -34,6 +47,19 @@ const BudgetDetail: React.FC = () => {
           <IconChevronLeft className={classes.title} />
         </ActionIcon>
         {budget?.data.name}
+        <ActionIcon
+          variant='transparent'
+          c='black'
+          onClick={toggleEditMode}
+          ml='sm'
+          className={classes.editModeButton}
+        >
+          {editMode ? (
+            <IconPencilOff style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+          ) : (
+            <IconPencil style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+          )}
+        </ActionIcon>
       </Text>
       <Container>
         <SimpleGrid cols={3}>
@@ -94,7 +120,11 @@ const BudgetDetail: React.FC = () => {
       </Container>
 
       <Container size={560} my={40}>
-        <BudgetForm initialValues={updatedBudgetData} />
+        {editMode ? (
+          <BudgetForm initialValues={budgetData} />
+        ) : (
+          <BudgetTable budgetValues={budgetData} />
+        )}
       </Container>
     </>
   )

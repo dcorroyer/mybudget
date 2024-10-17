@@ -11,16 +11,20 @@ use OpenApi\Attributes as OA;
 
 class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface
 {
-    #[OA\Parameter(name: 'name', description: 'Filter by name')]
-    public ?string $name = null;
+    #[OA\Parameter(name: 'date', description: 'Filter by year')]
+    public ?int $date = null;
 
     #[\Override]
     public function getCriteria(): Criteria
     {
         $criteria = Criteria::create();
 
-        if ($this->name !== null) {
-            $criteria->andWhere(Criteria::expr()->contains('name', ucfirst($this->name)));
+        if ($this->date !== null) {
+            $startDate = (new \DateTimeImmutable("{$this->date}-01-01"))->format('Y-m-d');
+            $endDate = (new \DateTimeImmutable("{$this->date}-12-31"))->format('Y-m-d');
+
+            $criteria->andWhere(Criteria::expr()->gte('date', $startDate));
+            $criteria->andWhere(Criteria::expr()->lte('date', $endDate));
         }
 
         return $criteria;

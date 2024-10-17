@@ -19,10 +19,11 @@ export const useBudget = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const useBudgetList = () => {
+  const useBudgetList = (year: number) => {
     const { data: budgetList, isFetching } = useQuery({
-      queryKey: ['budgets'],
-      queryFn: getBudgetList,
+      queryKey: ['budgets', year],
+      queryFn: () => getBudgetList(year),
+      enabled: !!year,
     })
 
     return { budgetList, isFetching }

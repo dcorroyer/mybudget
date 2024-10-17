@@ -6,7 +6,22 @@ export interface Budget {
   incomesAmount: number
   expensesAmount: number
 }
+
 export interface BudgetDetails extends Budget {
+  incomes: {
+    id: number
+    name: string
+    amount: number
+  }[]
+  expenses: {
+    id: number
+    category: string
+    name: string
+    amount: number
+  }[]
+}
+
+export interface BudgetFormDetails extends Budget {
   incomes: {
     id: number
     name: string

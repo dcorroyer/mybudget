@@ -12,10 +12,10 @@ import {
 
 import { Link, useParams } from 'react-router-dom'
 
-import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
-import { useBudget } from '../hooks/useBudget'
 import { BudgetForm } from '@/features/budgets/components/budget-form'
 import { BudgetTable } from '../components/budget-table'
+import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
+import { useBudget } from '../hooks/useBudget'
 
 import classes from './detail.module.css'
 
@@ -28,7 +28,11 @@ const BudgetDetail: React.FC = () => {
 
   if (isFetching) return <Loader />
 
-  const formattedExpenses = groupExpensesByCategory(budget?.data.expenses)
+  if (!budget) {
+    return <Text fw={500}>Budget not found.</Text>
+  }
+
+  const formattedExpenses = groupExpensesByCategory(budget.data.expenses)
   const budgetData = { ...budget?.data, expenses: formattedExpenses }
 
   const toggleEditMode = () => {

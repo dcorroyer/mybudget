@@ -3,12 +3,12 @@ import React from 'react'
 import { Card, Group, SimpleGrid, Text } from '@mantine/core'
 import { IconCreditCardPay, IconCreditCardRefund } from '@tabler/icons-react'
 
-import { BudgetDetails } from '../types/budgets'
+import { BudgetFormDetails } from '../types/budgets'
 
 import classes from './budget-table.module.css'
 
 interface BudgetTableComponentProps {
-  budgetValues?: BudgetDetails
+  budgetValues?: BudgetFormDetails
 }
 
 export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues }) => {

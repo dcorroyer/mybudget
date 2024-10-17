@@ -1,0 +1,95 @@
+.subTitle {
+  font-size: 0.9rem;
+}
+
+.subTitle span {
+  font-size: 0.9rem;
+  color: var(--mantine-color-gray-6);
+}
+
+.amount {
+  text-align: center;
+}
+
+.deleteButton {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-3);
+  }
+}
+
+[data-mantine-color-scheme='dark'] .expensesBadge {
+  background-color: #db5757;
+  color: #ffe7e7;
+}
+
+[data-mantine-color-scheme='dark'] .incomesBadge {
+  background-color: #3cb371;
+  color: #e7fff5;
+}
+
+[data-mantine-color-scheme='light'] .expensesBadge {
+  background-color: #ffe7e7;
+  color: #db5757;
+}
+
+[data-mantine-color-scheme='light'] .incomesBadge {
+  background-color: #e7fff5;
+  color: #3cb371;
+}
+
+.linkItem {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-blue-light-color);
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  margin-top: var(--mantine-spacing-xs);
+  background-color: var(--mantine-color-blue-light);
+  width: rem(80px);
+  transform: translateY(0.33rem);
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    color: var(--mantine-color-blue-light-color);
+
+    .linkIcon {
+      color: var(--mantine-color-blue-light-color);
+    }
+  }
+}
+
+.linkIcon {
+  color: var(--mantine-color-blue-light-color);
+  padding: rem(2.5);
+}
+
+.deleteItem {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-red-light-color);
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  margin-top: var(--mantine-spacing-xs);
+  background-color: var(--mantine-color-red-light);
+  width: rem(80px);
+  height: rem(35px);
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    color: var(--mantine-color-red-light-color);
+
+    .linkIcon {
+      color: var(--mantine-color-red-light-color);
+    }
+  }
+}
+
+.deleteIcon {
+  color: var(--mantine-color-red-light-color);
+  padding: rem(5px);
+  width: rem(30px);
+  height: rem(30px);
+}

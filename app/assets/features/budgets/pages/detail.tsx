@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { ActionIcon, Card, Container, Group, Loader, rem, SimpleGrid, Text } from '@mantine/core'
+import { ActionIcon, Card, Container, Group, rem, SimpleGrid, Text } from '@mantine/core'
 import {
   IconChevronLeft,
   IconCreditCard,
@@ -12,6 +12,7 @@ import {
 
 import { Link, useParams } from 'react-router-dom'
 
+import { CenteredLoader as Loader } from '@/components/centered-loader'
 import { BudgetForm } from '@/features/budgets/components/budget-form'
 import { BudgetTable } from '../components/budget-table'
 import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'

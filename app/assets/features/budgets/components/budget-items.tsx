@@ -1,44 +1,26 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 
-import {
-  ActionIcon,
-  Badge,
-  Card,
-  Center,
-  Container,
-  Group,
-  Loader,
-  Modal,
-  SimpleGrid,
-  Text,
-  rem,
-} from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { IconChevronLeft, IconChevronRight, IconEdit, IconTrash } from '@tabler/icons-react'
+import { ActionIcon, Badge, Card, Group, SimpleGrid, Text, rem } from '@mantine/core'
+import { IconEye, IconTrash } from '@tabler/icons-react'
 
+import { CenteredLoader as Loader } from '@/components/centered-loader'
 import { useBudget } from '../hooks/useBudget'
 
 import classes from './budget-items.module.css'
 
-export const BudgetItems = () => {
+export const BudgetItems = ({
+  selectedYear,
+  openModal,
+  setBudgetIdToDelete,
+}: {
+  selectedYear: number
+  openModal: () => void
+  setBudgetIdToDelete: (id: string | null) => void
+}) => {
   const { useBudgetList } = useBudget()
 
-  const currentYear = new Date().getFullYear()
-  const [selectedYear, setSelectedYear] = useState(currentYear)
-
   const { budgetList, isFetching } = useBudgetList(selectedYear)
-  const { deleteBudget } = useBudget()
-
-  const [opened, { open, close }] = useDisclosure(false)
-  const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
-
-  const handleDelete = () => {
-    if (budgetIdToDelete) {
-      deleteBudget(budgetIdToDelete)
-      close()
-    }
-  }
 
   if (isFetching) return <Loader />
 
@@ -55,12 +37,12 @@ export const BudgetItems = () => {
                 variant='subtle'
                 color='gray'
               >
-                <IconEdit style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+                <IconEye style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
               </ActionIcon>
               <ActionIcon
                 onClick={() => {
                   setBudgetIdToDelete(budget.id.toString())
-                  open()
+                  openModal()
                 }}
                 variant='subtle'
                 color='red'
@@ -98,45 +80,5 @@ export const BudgetItems = () => {
     </div>
   ))
 
-  return (
-    <>
-      <Container>
-        <Modal
-          opened={opened}
-          onClose={close}
-          radius={12.5}
-          size='sm'
-          title='Are you sure you want to delete this budget?'
-          centered
-        >
-          <Center>
-            <Link className={classes.deleteItem} onClick={handleDelete} to={''}>
-              <IconTrash className={classes.deleteIcon} stroke={1.5} />
-              <span>Delete</span>
-            </Link>
-          </Center>
-        </Modal>
-        <Group justify='center' gap='xl' mb='xl'>
-          <ActionIcon
-            variant='transparent'
-            c='black'
-            onClick={() => setSelectedYear(selectedYear - 1)}
-          >
-            <IconChevronLeft stroke={1.5} />
-          </ActionIcon>
-          <Text fw={500} size='lg' pb='xl' style={{ transform: 'translateY(1rem)' }}>
-            {selectedYear}
-          </Text>
-          <ActionIcon
-            variant='transparent'
-            c='black'
-            onClick={() => setSelectedYear(selectedYear + 1)}
-          >
-            <IconChevronRight stroke={1.5} />
-          </ActionIcon>
-        </Group>
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>
-      </Container>
-    </>
-  )
+  return <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>{budgets}</SimpleGrid>
 }

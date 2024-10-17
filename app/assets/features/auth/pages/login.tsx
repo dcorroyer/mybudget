@@ -21,7 +21,7 @@ import { loginFormSchema, loginFormType } from '@/features/auth/schemas/login'
 import classes from './login.module.css'
 
 const Login: React.FC = () => {
-  const { login } = useAuth()
+  const { login, isLoading } = useAuth()
 
   const form = useForm<loginFormType>({
     initialValues: {
@@ -62,7 +62,7 @@ const Login: React.FC = () => {
             mt='md'
             {...form.getInputProps('password')}
           />
-          <Button type='submit' fullWidth mt='xl'>
+          <Button type='submit' fullWidth mt='xl' loading={isLoading}>
             Sign in
           </Button>
         </Paper>

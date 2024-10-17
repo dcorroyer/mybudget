@@ -96,5 +96,6 @@ export const useAuth = () => {
     login,
     logout,
     register,
+    isLoading: authLogin.isPending || authRegister.isPending,
   }
 }

@@ -77,7 +77,7 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
     }
   }, [initialValues, form.setValues])
 
-  const { createBudget, updateBudget } = useBudget()
+  const { createBudget, updateBudget, isLoading } = useBudget()
 
   const onSubmit = (values: createBudgetFormType) => {
     const data = budgetDataTransformer({ ...values, date: values.date })
@@ -118,7 +118,7 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
           <ManageIncomes form={form} />
         </Tabs.Panel>
         <Tabs.Panel value='expenses'>
-          <ManageExpenses form={form} isEditMode={isEditMode} />
+          <ManageExpenses form={form} isEditMode={isEditMode} isLoading={isLoading} />
         </Tabs.Panel>
       </Tabs>
     </form>
@@ -193,9 +193,11 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType>
 const ManageExpenses = ({
   form,
   isEditMode,
+  isLoading,
 }: {
   form: UseFormReturnType<createBudgetFormType>
   isEditMode: boolean
+  isLoading: boolean
 }) => {
   const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
@@ -322,6 +324,7 @@ const ManageExpenses = ({
           radius='md'
           mt='sm'
           style={{ float: 'right' }}
+          loading={isLoading}
         >
           {isEditMode ? 'Update' : 'Create'}{' '}
           <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />

@@ -22,3 +22,33 @@
   color: var(--mantine-color-blue-light-color);
   padding: rem(2.5);
 }
+
+.deleteItem {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-red-light-color);
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  margin-top: var(--mantine-spacing-xs);
+  background-color: var(--mantine-color-red-light);
+  width: rem(80px);
+  height: rem(35px);
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    color: var(--mantine-color-red-light-color);
+
+    .linkIcon {
+      color: var(--mantine-color-red-light-color);
+    }
+  }
+}
+
+.deleteIcon {
+  color: var(--mantine-color-red-light-color);
+  padding: rem(5px);
+  width: rem(30px);
+  height: rem(30px);
+}

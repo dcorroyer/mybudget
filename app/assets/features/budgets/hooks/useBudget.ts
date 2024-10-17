@@ -131,5 +131,9 @@ export const useBudget = () => {
     createBudget,
     updateBudget,
     deleteBudget,
+    isLoading:
+      createBudgetMutation.isPending ||
+      updateBudgetMutation.isPending ||
+      deleteBudgetMutation.isPending,
   }
 }

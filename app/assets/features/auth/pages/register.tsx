@@ -21,7 +21,7 @@ import { registerFormSchema, registerFormType } from '@/features/auth/schemas/re
 import classes from './register.module.css'
 
 const Register: React.FC = () => {
-  const { register } = useAuth()
+  const { register, isLoading } = useAuth()
 
   const form = useForm<registerFormType>({
     initialValues: {
@@ -86,7 +86,7 @@ const Register: React.FC = () => {
             mt='md'
             {...form.getInputProps('repeatPassword')}
           />
-          <Button type='submit' fullWidth mt='xl'>
+          <Button type='submit' fullWidth mt='xl' loading={isLoading}>
             Register
           </Button>
         </Paper>

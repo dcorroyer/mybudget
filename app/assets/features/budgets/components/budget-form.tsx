@@ -19,7 +19,7 @@ import { zodResolver } from 'mantine-form-zod-resolver'
 import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
-import { BudgetFormDetails } from '../types/budgets'
+import { BudgetDetails } from '../types/budgets'
 
 import classes from './budget-form.module.css'
 
@@ -44,7 +44,7 @@ const defaultExpense = {
 }
 
 interface BudgetFormComponentProps {
-  initialValues?: BudgetFormDetails
+  initialValues?: BudgetDetails
 }
 
 export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }) => {

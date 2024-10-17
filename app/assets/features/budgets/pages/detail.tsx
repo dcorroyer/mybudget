@@ -1,31 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { ActionIcon, Card, Container, Group, Loader, SimpleGrid, Text } from '@mantine/core'
+import { ActionIcon, Card, Container, Group, Loader, rem, SimpleGrid, Text } from '@mantine/core'
 import {
   IconChevronLeft,
   IconCreditCard,
   IconCreditCardPay,
   IconCreditCardRefund,
+  IconPencil,
+  IconPencilOff,
 } from '@tabler/icons-react'
 
 import { Link, useParams } from 'react-router-dom'
 
-import { BudgetForm } from '../components/budget-form'
 import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
+import { BudgetForm } from '@/features/budgets/components/budget-form'
+import { BudgetTable } from '../components/budget-table'
 
 import classes from './detail.module.css'
 
 const BudgetDetail: React.FC = () => {
   const { id } = useParams()
   const { useBudgetDetail } = useBudget()
-
   const { budget, isFetching } = useBudgetDetail(Number(id))
+
+  const [editMode, setEditMode] = useState(false)
 
   if (isFetching) return <Loader />
 
   const formattedExpenses = groupExpensesByCategory(budget?.data.expenses)
   const budgetData = { ...budget?.data, expenses: formattedExpenses }
+
+  const toggleEditMode = () => {
+    setEditMode((prev) => !prev)
+  }
 
   return (
     <>
@@ -34,6 +42,19 @@ const BudgetDetail: React.FC = () => {
           <IconChevronLeft className={classes.title} />
         </ActionIcon>
         {budget?.data.name}
+        <ActionIcon
+          variant='transparent'
+          c='black'
+          onClick={toggleEditMode}
+          ml='sm'
+          className={classes.editModeButton}
+        >
+          {editMode ? (
+            <IconPencilOff style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+          ) : (
+            <IconPencil style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+          )}
+        </ActionIcon>
       </Text>
       <Container>
         <SimpleGrid cols={3}>
@@ -94,7 +115,11 @@ const BudgetDetail: React.FC = () => {
       </Container>
 
       <Container size={560} my={40}>
-        <BudgetForm initialValues={budgetData} />
+        {editMode ? (
+          <BudgetForm initialValues={budgetData} />
+        ) : (
+          <BudgetTable budgetValues={budgetData} />
+        )}
       </Container>
     </>
   )

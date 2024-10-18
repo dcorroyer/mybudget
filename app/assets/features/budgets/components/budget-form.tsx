@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import {
   Button,
   Card,
+  Container,
   Divider,
   Group,
   NumberInput,
@@ -90,38 +91,40 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
   }
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <div className={classes.relative}>
-        <MonthPickerInput
-          {...form.getInputProps('date')}
-          leftSection={icon}
-          leftSectionPointerEvents='none'
-          label='Budget date'
-          placeholder='Date'
-          value={monthValue}
-          onChange={(month) => {
-            form.setFieldValue('date', month!)
-            setMonthValue(month!)
-          }}
-        />
-      </div>
-      <Tabs defaultValue='incomes' mt='xl'>
-        <Tabs.List>
-          <Tabs.Tab value='incomes' color='green'>
-            Incomes
-          </Tabs.Tab>
-          <Tabs.Tab value='expenses' color='red'>
-            Expenses
-          </Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value='incomes'>
-          <ManageIncomes form={form} />
-        </Tabs.Panel>
-        <Tabs.Panel value='expenses'>
-          <ManageExpenses form={form} isEditMode={isEditMode} isLoading={isLoading} />
-        </Tabs.Panel>
-      </Tabs>
-    </form>
+    <Container size={560} my={40}>
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <div className={classes.relative}>
+          <MonthPickerInput
+            {...form.getInputProps('date')}
+            leftSection={icon}
+            leftSectionPointerEvents='none'
+            label='Budget date'
+            placeholder='Date'
+            value={monthValue}
+            onChange={(month) => {
+              form.setFieldValue('date', month!)
+              setMonthValue(month!)
+            }}
+          />
+        </div>
+        <Tabs defaultValue='incomes' mt='xl'>
+          <Tabs.List>
+            <Tabs.Tab value='incomes' color='green'>
+              Incomes
+            </Tabs.Tab>
+            <Tabs.Tab value='expenses' color='red'>
+              Expenses
+            </Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value='incomes'>
+            <ManageIncomes form={form} />
+          </Tabs.Panel>
+          <Tabs.Panel value='expenses'>
+            <ManageExpenses form={form} isEditMode={isEditMode} isLoading={isLoading} />
+          </Tabs.Panel>
+        </Tabs>
+      </form>
+    </Container>
   )
 }
 

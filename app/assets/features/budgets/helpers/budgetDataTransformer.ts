@@ -54,3 +54,27 @@ export const groupExpensesByCategory = (
     items: groupedExpenses[category],
   }))
 }
+
+export const generateSankeyData = (
+  expenses: {
+    category: string
+    items: {
+      id: number
+      name: string
+      amount: number
+    }[]
+  }[],
+) => {
+  const data: (string | number)[][] = [['From', 'To', 'Weight']]
+
+  expenses.forEach((expenseCategory) => {
+    const categoryTotal = expenseCategory.items.reduce((sum, item) => sum + item.amount, 0)
+    data.push(['Total Dépenses', expenseCategory.category, categoryTotal])
+
+    expenseCategory.items.forEach((item) => {
+      data.push([expenseCategory.category, item.name, item.amount])
+    })
+  })
+
+  return data
+}

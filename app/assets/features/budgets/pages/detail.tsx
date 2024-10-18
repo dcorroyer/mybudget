@@ -119,13 +119,11 @@ const BudgetDetail: React.FC = () => {
         </SimpleGrid>
       </Container>
 
-      <Container size={560} my={40}>
-        {editMode ? (
-          <BudgetForm initialValues={budgetData} />
-        ) : (
-          <BudgetTable budgetValues={budgetData} />
-        )}
-      </Container>
+      {editMode ? (
+        <BudgetForm initialValues={budgetData} />
+      ) : (
+        <BudgetTable budgetValues={budgetData} />
+      )}
     </>
   )
 }

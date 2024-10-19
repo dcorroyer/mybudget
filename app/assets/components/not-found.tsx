@@ -16,11 +16,11 @@ const NotFound: React.FC = () => {
         <div className={classes.content}>
           <Title className={classes.title}>Nothing to see here</Title>
           <Text c='dimmed' size='lg' ta='center' className={classes.description}>
-            Page you are trying to open does not exist. The page is in construction.
+            Page you are trying to open does not exist.
           </Text>
           <Group justify='center'>
             <Button size='md' component={Link} to={'/budgets'}>
-              Take me back to budget page
+              Take me back to budget's list page
             </Button>
           </Group>
         </div>

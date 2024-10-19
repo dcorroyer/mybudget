@@ -19,6 +19,7 @@ import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
 import classes from './detail.module.css'
+import NotFound from '@/components/not-found'
 
 const BudgetDetail: React.FC = () => {
   const { id } = useParams()
@@ -28,10 +29,7 @@ const BudgetDetail: React.FC = () => {
   const [editMode, setEditMode] = useState(false)
 
   if (isFetching) return <Loader />
-
-  if (!budget) {
-    return <Text fw={500}>Budget not found.</Text>
-  }
+  if (!budget) return <NotFound />
 
   const formattedExpenses = groupExpensesByCategory(budget.data.expenses)
   const budgetData = { ...budget?.data, expenses: formattedExpenses }

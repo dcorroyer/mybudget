@@ -10,6 +10,8 @@ import {
   getBudgetDetail,
   getBudgetList,
   postBudget,
+  postDuplicateBudget,
+  postDuplicateBudgetId,
   updateBudgetId,
 } from '@/features/budgets/api/budgets'
 
@@ -125,15 +127,77 @@ export const useBudget = () => {
     },
   })
 
+  const duplicateBudget = useCallback((id: string) => {
+    duplicateBudgetMutation.mutate(id)
+  }, [])
+
+  const duplicateBudgetMutation = useMutation({
+    mutationFn: postDuplicateBudgetId,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      navigate('/budgets')
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'blue',
+        title: 'Successful Duplication',
+        message: 'You have successfully duplicated a budget',
+      })
+    },
+    onError: (error: Error) => {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error during the budget duplication process',
+      })
+    },
+  })
+
+  const duplicateLatestBudget = useCallback(() => {
+    duplicateLatestBudgetMutation.mutate()
+  }, [])
+
+  const duplicateLatestBudgetMutation = useMutation({
+    mutationFn: postDuplicateBudget,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      navigate('/budgets')
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'blue',
+        title: 'Successful Duplication',
+        message: 'You have successfully duplicated a budget',
+      })
+    },
+    onError: (error: Error) => {
+      console.log('error:', error)
+      notifications.show({
+        withBorder: true,
+        radius: 'md',
+        color: 'red',
+        title: 'Error',
+        message: 'There was an error during the budget duplication process',
+      })
+    },
+  })
+
   return {
     useBudgetList,
     useBudgetDetail,
     createBudget,
     updateBudget,
     deleteBudget,
+    duplicateBudget,
+    duplicateLatestBudget,
     isLoading:
       createBudgetMutation.isPending ||
       updateBudgetMutation.isPending ||
-      deleteBudgetMutation.isPending,
+      deleteBudgetMutation.isPending ||
+      duplicateBudgetMutation.isPending ||
+      duplicateLatestBudgetMutation.isPending,
   }
 }

@@ -1,8 +1,7 @@
+import { ActionIcon, Badge, Card, Group, SimpleGrid, Text, rem } from '@mantine/core'
+import { IconCopy, IconEye, IconTrash } from '@tabler/icons-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
-
-import { ActionIcon, Badge, Card, Group, SimpleGrid, Text, rem } from '@mantine/core'
-import { IconEye, IconTrash } from '@tabler/icons-react'
 
 import { CenteredLoader as Loader } from '@/components/centered-loader'
 import { useBudget } from '../hooks/useBudget'
@@ -11,12 +10,16 @@ import classes from './budget-items.module.css'
 
 export const BudgetItems = ({
   selectedYear,
-  openModal,
+  openDeleteModal,
+  openDuplicateModal,
   setBudgetIdToDelete,
+  setBudgetIdToDuplicate,
 }: {
   selectedYear: number
-  openModal: () => void
+  openDeleteModal: () => void
+  openDuplicateModal: () => void
   setBudgetIdToDelete: (id: string | null) => void
+  setBudgetIdToDuplicate: (id: string | null) => void
 }) => {
   const { useBudgetList } = useBudget()
 
@@ -32,6 +35,16 @@ export const BudgetItems = ({
             <Text fw={500}>{budget.name}</Text>
             <div>
               <ActionIcon
+                onClick={() => {
+                  setBudgetIdToDuplicate(budget.id.toString())
+                  openDuplicateModal()
+                }}
+                variant='subtle'
+                color='blue'
+              >
+                <IconCopy style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+              </ActionIcon>
+              <ActionIcon
                 component={Link}
                 to={`/budgets/${budget.id}`}
                 variant='subtle'
@@ -42,7 +55,7 @@ export const BudgetItems = ({
               <ActionIcon
                 onClick={() => {
                   setBudgetIdToDelete(budget.id.toString())
-                  openModal()
+                  openDeleteModal()
                 }}
                 variant='subtle'
                 color='red'

@@ -20,7 +20,7 @@ const NotFound: React.FC = () => {
           </Text>
           <Group justify='center'>
             <Button size='md' component={Link} to={'/budgets'}>
-              Take me back to budget's list page
+              Take me back to budget&apos;s list page
             </Button>
           </Group>
         </div>

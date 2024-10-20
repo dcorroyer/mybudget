@@ -50,7 +50,6 @@ class BudgetService
     {
         $this->checkAccess($budget);
 
-        // Clear existing incomes and expenses
         $budget->clearIncomes();
         $budget->clearExpenses();
 
@@ -91,6 +90,49 @@ class BudgetService
         $this->budgetRepository->delete($budget, true);
 
         return $budget;
+    }
+
+    public function duplicate(?int $id = null): Budget
+    {
+        if ($id === null) {
+            $budget = $this->budgetRepository->findLatestByUser($this->security->getUser());
+        } else {
+            $budget = $this->budgetRepository->find($id);
+        }
+
+        if ($budget === null) {
+            throw new NotFoundHttpException('No budget found');
+        }
+
+        $this->checkAccess($budget);
+
+        $newBudget = new Budget();
+
+        $newBudget->setName($budget->getName());
+        $newBudget->setIncomesAmount($budget->getIncomesAmount());
+        $newBudget->setExpensesAmount($budget->getExpensesAmount());
+        $newBudget->setSavingCapacity($budget->getSavingCapacity());
+        $newBudget->setUser($budget->getUser());
+
+        $newDate = $this->budgetRepository->findLatestByUser($budget->getUser())->getDate(); // @phpstan-ignore-line
+        $newDate->modify('+1 month'); // @phpstan-ignore-line
+        $newBudget->setDate($newDate);
+
+        foreach ($budget->getIncomes() as $income) {
+            $newIncome = clone $income;
+            $newIncome->setBudget($newBudget);
+            $newBudget->addIncome($newIncome);
+        }
+
+        foreach ($budget->getExpenses() as $expense) {
+            $newExpense = clone $expense;
+            $newExpense->setBudget($newBudget);
+            $newBudget->addExpense($newExpense);
+        }
+
+        $this->budgetRepository->save($newBudget, true);
+
+        return $newBudget;
     }
 
     /**

@@ -66,3 +66,23 @@ export async function updateBudgetId(
 
   return await response.json()
 }
+
+export async function postDuplicateBudget(): Promise<Response | ApiErrorResponse> {
+  const response = await client('/api/budgets/duplicate', {
+    method: 'POST',
+  })
+
+  if (!response.ok) return Promise.reject('Failed to duplicate budget')
+
+  return await response.json()
+}
+
+export async function postDuplicateBudgetId(id: string): Promise<Response | ApiErrorResponse> {
+  const response = await client(`/api/budgets/duplicate/${id}`, {
+    method: 'POST',
+  })
+
+  if (!response.ok) return Promise.reject('Failed to duplicate budget')
+
+  return await response.json()
+}

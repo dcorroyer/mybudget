@@ -33,7 +33,7 @@ class Budget
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[Serializer\Groups([
         SerializationGroups::BUDGET_GET,
@@ -131,12 +131,12 @@ class Budget
         $this->expenses = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
@@ -155,7 +155,8 @@ class Budget
         return $this;
     }
 
-    #[ORM\PreFlush]
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateName(): void
     {
         $this->name = 'Budget ' . $this->date->format('Y-m');

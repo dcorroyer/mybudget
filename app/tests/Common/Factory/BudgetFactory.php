@@ -27,8 +27,6 @@ final class BudgetFactory extends PersistentProxyObjectFactory
         return [
             'id' => self::faker()->randomNumber(),
             'date' => self::faker()->dateTime(),
-            'name' => self::faker()->text(255),
-            'savingCapacity' => self::faker()->randomFloat(),
             'user' => UserFactory::new(),
         ];
     }

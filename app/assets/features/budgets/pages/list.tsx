@@ -6,7 +6,8 @@ import { useDisclosure } from '@mantine/hooks'
 import {
   IconChevronLeft,
   IconChevronRight,
-  IconSquareRoundedPlus2,
+  IconCopy,
+  IconSquarePlus2,
   IconTrash,
 } from '@tabler/icons-react'
 
@@ -16,18 +17,27 @@ import { useBudget } from '../hooks/useBudget'
 import classes from './list.module.css'
 
 const BudgetList: React.FC = () => {
-  const { deleteBudget } = useBudget()
+  const { deleteBudget, duplicateBudget } = useBudget()
 
   const currentYear = new Date().getFullYear()
   const [selectedYear, setSelectedYear] = useState(currentYear)
 
-  const [opened, { open, close }] = useDisclosure(false)
+  const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false)
+  const [openedDuplicate, { open: openDuplicate, close: closeDuplicate }] = useDisclosure(false)
   const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
+  const [budgetIdToDuplicate, setBudgetIdToDuplicate] = useState<string | null>(null)
 
   const handleDelete = () => {
     if (budgetIdToDelete) {
       deleteBudget(budgetIdToDelete)
-      close()
+      closeDelete()
+    }
+  }
+
+  const handleDuplicate = () => {
+    if (budgetIdToDuplicate) {
+      duplicateBudget(budgetIdToDuplicate)
+      closeDuplicate()
     }
   }
 
@@ -42,26 +52,45 @@ const BudgetList: React.FC = () => {
           component={Link}
           to={'/budgets/create'}
         >
-          <IconSquareRoundedPlus2 className={classes.linkIcon} stroke={1.5} />
+          <IconSquarePlus2 className={classes.linkIcon} stroke={1.5} />
           <span style={{ padding: rem(2.5) }}>Create</span>
         </ActionIcon>
       </Text>
       <Container>
+        {/* Delete Confirmation Modal */}
         <Modal
-          opened={opened}
-          onClose={close}
+          opened={openedDelete}
+          onClose={closeDelete}
           radius={12.5}
           size='sm'
           title='Are you sure you want to delete this budget?'
           centered
         >
           <Center>
-            <Link className={classes.deleteItem} onClick={handleDelete} to={''}>
-              <IconTrash className={classes.deleteIcon} stroke={1.5} />
+            <Link className={classes.modalItem} onClick={handleDelete} to={''}>
+              <IconTrash className={classes.modalIcon} stroke={1.5} />
               <span>Delete</span>
             </Link>
           </Center>
         </Modal>
+
+        {/* Duplicate Confirmation Modal */}
+        <Modal
+          opened={openedDuplicate}
+          onClose={closeDuplicate}
+          radius={12.5}
+          size='sm'
+          title='Are you sure you want to duplicate this budget?'
+          centered
+        >
+          <Center>
+            <Link className={classes.modalItem} onClick={handleDuplicate} to={''}>
+              <IconCopy className={classes.modalIcon} stroke={1.5} />
+              <span>Duplicate</span>
+            </Link>
+          </Center>
+        </Modal>
+
         <Group justify='center' gap='xl' mb='xl'>
           <ActionIcon
             variant='transparent'
@@ -83,8 +112,10 @@ const BudgetList: React.FC = () => {
         </Group>
         <BudgetItems
           selectedYear={selectedYear}
-          openModal={open}
+          openDeleteModal={openDelete}
+          openDuplicateModal={openDuplicate}
           setBudgetIdToDelete={setBudgetIdToDelete}
+          setBudgetIdToDuplicate={setBudgetIdToDuplicate}
         />
       </Container>
     </>

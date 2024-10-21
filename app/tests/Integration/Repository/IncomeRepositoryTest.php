@@ -56,10 +56,10 @@ final class IncomeRepositoryTest extends KernelTestCase
     public function find_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
-        $user = UserFactory::createOne()->_save();
+        $user = UserFactory::createOne()->_real();
         $budget = BudgetFactory::createOne([
             'user' => $user,
-        ])->_save();
+        ])->_real();
         $income = IncomeFactory::createOne([
             'budget' => $budget,
         ])->_real();
@@ -76,10 +76,10 @@ final class IncomeRepositoryTest extends KernelTestCase
     public function save_WhenDataOk_ReturnsIncome(): void
     {
         // ARRANGE
-        $user = UserFactory::createOne()->_save();
+        $user = UserFactory::createOne()->_real();
         $budget = BudgetFactory::createOne([
             'user' => $user,
-        ])->_save();
+        ])->_real();
         $income = IncomeFactory::createOne([
             'budget' => $budget,
         ])->_real();
@@ -96,10 +96,10 @@ final class IncomeRepositoryTest extends KernelTestCase
     public function save_WhenBadData_ReturnsNull(): void
     {
         // ARRANGE
-        $user = UserFactory::createOne()->_save();
+        $user = UserFactory::createOne()->_real();
         $budget = BudgetFactory::createOne([
             'user' => $user,
-        ])->_save();
+        ])->_real();
         $income = IncomeFactory::createOne([
             'budget' => $budget,
         ])->_real();

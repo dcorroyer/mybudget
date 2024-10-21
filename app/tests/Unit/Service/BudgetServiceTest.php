@@ -33,6 +33,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class BudgetServiceTest extends TestCase
 {
     use Factories;
+
     private BudgetRepository $budgetRepository;
 
     private IncomeService $incomeService;
@@ -231,6 +232,45 @@ final class BudgetServiceTest extends TestCase
 
         // ACT
         $this->budgetService->delete($budget);
+    }
+
+    #[TestDox('When calling duplicate budget, it should clone and return the new budget created')]
+    #[Test]
+    public function duplicateBudgetService_WhenDataOk_ReturnsNewBudgetCreated(): void
+    {
+        // ARRANGE
+        $budget = BudgetFactory::createOne([
+            'user' => $this->security->getUser(),
+            'date' => new \DateTime('2023-01-01'),
+        ]);
+
+        $this->budgetRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($budget)
+        ;
+
+        $this->budgetRepository->expects($this->once())
+            ->method('findLatestByUser')
+            ->willReturn($budget)
+        ;
+
+        $this->budgetRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Budget $budget): void {
+                $budget->setId(2)
+                    ->setDate(new \DateTime('2023-02-01'))
+                    ->updateName()
+                ;
+            })
+        ;
+
+        // ACT
+        $budgetResponse = $this->budgetService->duplicate($budget->getId());
+
+        // ASSERT
+        self::assertInstanceOf(Budget::class, $budget);
+        self::assertSame(2, $budgetResponse->getId());
+        self::assertSame('Budget 2023-02', $budgetResponse->getName());
     }
 
     #[TestDox('When you call paginate, it should return the budgets list')]

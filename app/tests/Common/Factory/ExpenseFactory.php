@@ -25,8 +25,7 @@ final class ExpenseFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'amount' => self::faker()->randomFloat(),
-            'budget' => BudgetFactory::new(),
+            'amount' => self::faker()->randomFloat(2, 10, 1000),
             'category' => self::faker()->text(255),
             'name' => self::faker()->text(255),
         ];

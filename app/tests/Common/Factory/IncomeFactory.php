@@ -25,8 +25,7 @@ final class IncomeFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'amount' => self::faker()->randomFloat(),
-            'budget' => BudgetFactory::new(),
+            'amount' => self::faker()->randomFloat(2, 2000, 2500),
             'name' => self::faker()->text(255),
         ];
     }

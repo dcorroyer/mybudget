@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Service;
 
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Entity\Budget;
+use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
 use App\Service\BudgetService;
 use App\Service\ExpenseService;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Zenstruck\Foundry\Test\Factories;
 
 /**
@@ -44,6 +46,8 @@ final class BudgetServiceTest extends TestCase
 
     private BudgetService $budgetService;
 
+    private AuthorizationCheckerInterface $authorizationChecker;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -53,16 +57,18 @@ final class BudgetServiceTest extends TestCase
         $this->incomeService = $this->createMock(IncomeService::class);
         $this->expenseService = $this->createMock(ExpenseService::class);
         $this->security = $this->createMock(Security::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->budgetService = new BudgetService(
             budgetRepository: $this->budgetRepository,
             incomeService: $this->incomeService,
             expenseService: $this->expenseService,
             security: $this->security,
+            authorizationChecker: $this->authorizationChecker
         );
     }
 
-    #[TestDox('When calling create budget, it should update and return the budget created')]
+    #[TestDox('When calling create budget, it should return the budget created')]
     #[Test]
     public function createBudgetService_WhenDataOk_ReturnsBudgetCreated(): void
     {
@@ -72,10 +78,10 @@ final class BudgetServiceTest extends TestCase
             'user' => $this->security->getUser(),
         ]);
 
-        $BudgetPayload = (new BudgetPayload());
-        $BudgetPayload->date = Carbon::parse('2022-03');
-        $BudgetPayload->incomes = [];
-        $BudgetPayload->expenses = [];
+        $budgetPayload = (new BudgetPayload());
+        $budgetPayload->date = Carbon::parse('2022-03');
+        $budgetPayload->incomes = [];
+        $budgetPayload->expenses = [];
 
         $this->budgetRepository->expects($this->once())
             ->method('save')
@@ -88,7 +94,7 @@ final class BudgetServiceTest extends TestCase
         ;
 
         // ACT
-        $budgetResponse = $this->budgetService->create($BudgetPayload);
+        $budgetResponse = $this->budgetService->create($budgetPayload);
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
@@ -110,6 +116,12 @@ final class BudgetServiceTest extends TestCase
         $updateBudgetPayload->date = Carbon::parse('2022-03');
         $updateBudgetPayload->incomes = [];
         $updateBudgetPayload->expenses = [];
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('edit', $budget)
+            ->willReturn(true)
+        ;
 
         $this->budgetRepository->expects($this->once())
             ->method('save')
@@ -136,7 +148,7 @@ final class BudgetServiceTest extends TestCase
     {
         // ASSERT
         $this->expectException(AccessDeniedHttpException::class);
-
+        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
         // ARRANGE
         $budget = BudgetFactory::createOne([
             'id' => 1,
@@ -164,6 +176,12 @@ final class BudgetServiceTest extends TestCase
             ->willReturn($budget)
         ;
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('view', $budget)
+            ->willReturn(true)
+        ;
+
         // ACT
         $budgetResponse = $this->budgetService->get($budget->getId());
 
@@ -179,6 +197,7 @@ final class BudgetServiceTest extends TestCase
     {
         // ASSERT
         $this->expectException(NotFoundHttpException::class);
+        $this->expectExceptionMessage(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
 
         // ACT
         $this->budgetService->get(999);
@@ -190,6 +209,7 @@ final class BudgetServiceTest extends TestCase
     {
         // ASSERT
         $this->expectException(AccessDeniedHttpException::class);
+        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
 
         // ARRANGE
         $budget = BudgetFactory::new()->withoutPersisting()->create();
@@ -197,6 +217,12 @@ final class BudgetServiceTest extends TestCase
         $this->budgetRepository->expects($this->once())
             ->method('find')
             ->willReturn($budget)
+        ;
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('view', $budget)
+            ->willReturn(false)
         ;
 
         // ACT
@@ -212,12 +238,22 @@ final class BudgetServiceTest extends TestCase
             'user' => $this->security->getUser(),
         ]);
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('delete', $budget)
+            ->willReturn(true)
+        ;
+
+        $this->budgetRepository->expects($this->once())
+            ->method('delete')
+            ->with($budget, true)
+        ;
+
         // ACT
-        $budgetResponse = $this->budgetService->delete($budget);
+        $this->budgetService->delete($budget);
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame($budget->getId(), $budgetResponse->getId());
     }
 
     #[TestDox('When calling delete budget with bad user, it should returns access denied exception')]
@@ -226,6 +262,7 @@ final class BudgetServiceTest extends TestCase
     {
         // ASSERT
         $this->expectException(AccessDeniedHttpException::class);
+        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
 
         // ARRANGE
         $budget = BudgetFactory::createOne();
@@ -247,6 +284,12 @@ final class BudgetServiceTest extends TestCase
         $this->budgetRepository->expects($this->once())
             ->method('find')
             ->willReturn($budget)
+        ;
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('view', $budget)
+            ->willReturn(true)
         ;
 
         $this->budgetRepository->expects($this->once())
@@ -290,35 +333,5 @@ final class BudgetServiceTest extends TestCase
 
         // ASSERT
         self::assertCount(20, $budgetsResponse);
-    }
-
-    #[TestDox('When calling checkAccess, it should returns an AccessDeniedException')]
-    #[Test]
-    public function checkAccessBudgetService_WhenBadData_ReturnsAccessDeniedException(): void
-    {
-        // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-
-        // ARRANGE PRIVATE METHOD TEST
-        $budgetService = new BudgetService(
-            $this->budgetRepository,
-            $this->incomeService,
-            $this->expenseService,
-            $this->security
-        );
-        $method = $this->getPrivateMethod(BudgetService::class, 'checkAccess');
-
-        // ARRANGE
-        $budget = BudgetFactory::createOne([
-            'id' => 1,
-        ]);
-
-        // ACT
-        $method->invoke($budgetService, $budget);
-    }
-
-    private function getPrivateMethod(string $className, string $methodName): \ReflectionMethod
-    {
-        return (new \ReflectionClass($className))->getMethod($methodName);
     }
 }

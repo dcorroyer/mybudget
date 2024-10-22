@@ -8,6 +8,7 @@ use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Entity\Budget;
 use App\Entity\User;
+use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
@@ -15,6 +16,7 @@ use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BudgetService
 {
@@ -23,6 +25,7 @@ class BudgetService
         private readonly IncomeService $incomeService,
         private readonly ExpenseService $expenseService,
         private readonly Security $security,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -31,10 +34,12 @@ class BudgetService
         $budget = $this->budgetRepository->find($id);
 
         if ($budget === null) {
-            throw new NotFoundHttpException('Budget not found');
+            throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
         }
 
-        $this->checkAccess($budget);
+        if (! $this->authorizationChecker->isGranted('view', $budget)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
 
         return $budget;
     }
@@ -48,7 +53,9 @@ class BudgetService
 
     public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
     {
-        $this->checkAccess($budget);
+        if (! $this->authorizationChecker->isGranted('edit', $budget)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
 
         $budget->clearIncomes();
         $budget->clearExpenses();
@@ -83,13 +90,13 @@ class BudgetService
         return $budget;
     }
 
-    public function delete(Budget $budget): Budget
+    public function delete(Budget $budget): void
     {
-        $this->checkAccess($budget);
+        if (! $this->authorizationChecker->isGranted('delete', $budget)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
 
         $this->budgetRepository->delete($budget, true);
-
-        return $budget;
     }
 
     public function duplicate(?int $id = null): Budget
@@ -101,10 +108,12 @@ class BudgetService
         }
 
         if ($budget === null) {
-            throw new NotFoundHttpException('No budget found');
+            throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
         }
 
-        $this->checkAccess($budget);
+        if (! $this->authorizationChecker->isGranted('view', $budget)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
 
         $newBudget = new Budget();
 
@@ -150,12 +159,5 @@ class BudgetService
         ;
 
         return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
-    }
-
-    private function checkAccess(Budget $budget): void
-    {
-        if ($this->security->getUser() !== $budget->getUser()) {
-            throw new AccessDeniedHttpException('Access denied');
-        }
     }
 }

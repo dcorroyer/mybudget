@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Budget;
+namespace App\Controller\Account;
 
-use App\Entity\Budget;
-use App\Service\BudgetService;
+use App\Entity\Account;
+use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -16,27 +16,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/budgets')]
-#[OA\Tag(name: 'Budgets')]
-class DeleteBudgetController extends BaseRestController
+#[Route('/accounts')]
+#[OA\Tag(name: 'Accounts')]
+class DeleteAccountController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_DELETE,
-        operationId: 'delete_budget',
-        summary: 'delete budget',
+        operationId: 'delete_account',
+        summary: 'delete account',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Budget::class,
+                responseClassFqcn: Account::class,
                 responseCode: Response::HTTP_NO_CONTENT,
-                description: 'Budget deleted'
+                description: 'Account deleted'
             ),
-            new NotFoundResponse(description: 'Budget not found'),
+            new NotFoundResponse(description: 'Account not found'),
         ],
     )]
-    #[Route('/{id}', name: 'api_budgets_delete', methods: Request::METHOD_DELETE)]
-    public function __invoke(BudgetService $budgetService, Budget $budget): JsonResponse
+    #[Route('/{id}', name: 'api_accounts_delete', methods: Request::METHOD_DELETE)]
+    public function __invoke(AccountService $accountService, Account $account): JsonResponse
     {
-        $budgetService->delete($budget);
+        $accountService->delete($account);
 
         return $this->successResponse(data: [], status: Response::HTTP_NO_CONTENT);
     }

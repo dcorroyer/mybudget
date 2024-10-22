@@ -25,9 +25,11 @@ class GetBudgetController extends BaseRestController
         operationId: 'get_budget',
         summary: 'get budget',
         responses: [
-            new SuccessResponse(responseClassFqcn: Budget::class, groups: [
-                SerializationGroups::BUDGET_GET,
-            ], description: 'Budget get'),
+            new SuccessResponse(
+                responseClassFqcn: Budget::class,
+                groups: [SerializationGroups::BUDGET_GET],
+                description: 'Budget get',
+            ),
             new NotFoundResponse(description: 'Budget not found'),
         ],
     )]

@@ -44,6 +44,8 @@
             <directory suffix=".php">src/Serializable</directory>
             <directory suffix=".php">src/DataFixtures</directory>
             <directory suffix=".php">src/Entity</directory>
+            <directory suffix=".php">src/Enum</directory>
+            <directory suffix=".php">src/Security</directory>
             <file>src/Kernel.php</file>
         </exclude>
 

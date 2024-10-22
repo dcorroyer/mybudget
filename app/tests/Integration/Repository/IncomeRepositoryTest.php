@@ -26,6 +26,7 @@ final class IncomeRepositoryTest extends KernelTestCase
 {
     use Factories;
     use ResetDatabase;
+
     private IncomeRepository $incomeRepository;
 
     #[\Override]

@@ -57,13 +57,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Budget>
      */
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
     #[ORM\OneToMany(targetEntity: Budget::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $budgets;
+
+    /**
+     * @var Collection<int, Account>
+     */
+    #[ORM\OneToMany(targetEntity: Account::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $accounts;
 
     public function __construct()
     {
         $this->budgets = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
     }
 
     public function getId(): int
@@ -171,7 +177,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->budgets;
     }
 
-    public function addBudget(Budget $budget): self
+    public function addBudget(Budget $budget): static
     {
         if (! $this->budgets->contains($budget)) {
             $this->budgets->add($budget);
@@ -181,11 +187,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeBudget(Budget $budget): self
+    public function removeBudget(Budget $budget): static
     {
-        // set the owning side to null (unless already changed)
         if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {
             $budget->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Account>
+     */
+    public function getAccounts(): Collection
+    {
+        return $this->accounts;
+    }
+
+    public function addAccount(Account $account): static
+    {
+        if (! $this->accounts->contains($account)) {
+            $this->accounts->add($account);
+            $account->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccount(Account $account): static
+    {
+        if ($this->accounts->removeElement($account) && $account->getUser() === $this) {
+            $account->setUser(null);
         }
 
         return $this;

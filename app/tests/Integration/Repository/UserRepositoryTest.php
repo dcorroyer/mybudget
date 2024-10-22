@@ -24,6 +24,7 @@ final class UserRepositoryTest extends KernelTestCase
 {
     use Factories;
     use ResetDatabase;
+
     private UserRepository $userRepository;
 
     #[\Override]

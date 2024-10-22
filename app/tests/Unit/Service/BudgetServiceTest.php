@@ -62,7 +62,7 @@ final class BudgetServiceTest extends TestCase
         );
     }
 
-    #[TestDox('When calling create budget, it should update and return the budget created')]
+    #[TestDox('When calling create budget, it should return the budget created')]
     #[Test]
     public function createBudgetService_WhenDataOk_ReturnsBudgetCreated(): void
     {
@@ -72,10 +72,10 @@ final class BudgetServiceTest extends TestCase
             'user' => $this->security->getUser(),
         ]);
 
-        $BudgetPayload = (new BudgetPayload());
-        $BudgetPayload->date = Carbon::parse('2022-03');
-        $BudgetPayload->incomes = [];
-        $BudgetPayload->expenses = [];
+        $budgetPayload = (new BudgetPayload());
+        $budgetPayload->date = Carbon::parse('2022-03');
+        $budgetPayload->incomes = [];
+        $budgetPayload->expenses = [];
 
         $this->budgetRepository->expects($this->once())
             ->method('save')
@@ -88,7 +88,7 @@ final class BudgetServiceTest extends TestCase
         ;
 
         // ACT
-        $budgetResponse = $this->budgetService->create($BudgetPayload);
+        $budgetResponse = $this->budgetService->create($budgetPayload);
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
@@ -212,12 +212,16 @@ final class BudgetServiceTest extends TestCase
             'user' => $this->security->getUser(),
         ]);
 
+        $this->budgetRepository->expects($this->once())
+            ->method('delete')
+            ->with($budget, true)
+        ;
+
         // ACT
-        $budgetResponse = $this->budgetService->delete($budget);
+        $this->budgetService->delete($budget);
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame($budget->getId(), $budgetResponse->getId());
     }
 
     #[TestDox('When calling delete budget with bad user, it should returns access denied exception')]

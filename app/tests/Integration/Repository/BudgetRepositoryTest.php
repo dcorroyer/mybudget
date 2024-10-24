@@ -25,6 +25,7 @@ final class BudgetRepositoryTest extends KernelTestCase
 {
     use Factories;
     use ResetDatabase;
+
     private BudgetRepository $budgetRepository;
 
     #[\Override]

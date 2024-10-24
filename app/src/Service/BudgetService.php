@@ -83,13 +83,11 @@ class BudgetService
         return $budget;
     }
 
-    public function delete(Budget $budget): Budget
+    public function delete(Budget $budget): void
     {
         $this->checkAccess($budget);
 
         $this->budgetRepository->delete($budget, true);
-
-        return $budget;
     }
 
     public function duplicate(?int $id = null): Budget

@@ -1,5 +1,15 @@
-import { ActionIcon, Badge, Card, Group, SimpleGrid, Text, rem } from '@mantine/core'
-import { IconCopy, IconEye, IconTrash } from '@tabler/icons-react'
+import {
+  ActionIcon,
+  Badge,
+  Card,
+  Container,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+  rem,
+} from '@mantine/core'
+import { IconCopy, IconDatabaseOff, IconEye, IconTrash } from '@tabler/icons-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -26,6 +36,19 @@ export const BudgetItems = ({
   const { budgetList, isFetching } = useBudgetList(selectedYear)
 
   if (isFetching) return <Loader />
+
+  if (!budgetList?.data.length) {
+    return (
+      <Container h={100} display='flex'>
+        <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
+          <IconDatabaseOff style={{ width: rem(24), height: rem(24) }} stroke={1.5} color='gray' />
+          <Text size='lg' fw={500} c='gray'>
+            No data
+          </Text>
+        </Stack>
+      </Container>
+    )
+  }
 
   const budgets = budgetList?.data.map((budget) => (
     <div key={budget.id}>

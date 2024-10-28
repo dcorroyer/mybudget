@@ -23,7 +23,7 @@ export const useBudget = () => {
 
   const useBudgetList = (year: number) => {
     const { data: budgetList, isFetching } = useQuery({
-      queryKey: ['budgets', year],
+      queryKey: ['budgets', 'list', year],
       queryFn: () => getBudgetList(year),
       enabled: !!year,
     })
@@ -33,7 +33,7 @@ export const useBudget = () => {
 
   const useBudgetDetail = (id: number) => {
     const { data: budget, isFetching } = useQuery({
-      queryKey: ['budgets', { id: id }],
+      queryKey: ['budgets', 'detail', id],
       queryFn: () => getBudgetDetail(id.toString()),
     })
 
@@ -47,7 +47,10 @@ export const useBudget = () => {
   const createBudgetMutation = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({
+        queryKey: ['budgets', 'list'],
+        refetchType: 'all',
+      })
       navigate('/budgets')
       notifications.show({
         withBorder: true,
@@ -77,7 +80,9 @@ export const useBudget = () => {
     mutationFn: ({ id, ...data }: { id: number } & BudgetParams) =>
       updateBudgetId(id.toString(), data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({
+        queryKey: ['budgets'],
+      })
       navigate('/budgets')
       notifications.show({
         withBorder: true,
@@ -106,7 +111,9 @@ export const useBudget = () => {
   const deleteBudgetMutation = useMutation({
     mutationFn: deleteBudgetId,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({
+        queryKey: ['budgets'],
+      })
       notifications.show({
         withBorder: true,
         radius: 'md',
@@ -134,7 +141,9 @@ export const useBudget = () => {
   const duplicateBudgetMutation = useMutation({
     mutationFn: postDuplicateBudgetId,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({
+        queryKey: ['budgets', 'list'],
+      })
       navigate('/budgets')
       notifications.show({
         withBorder: true,
@@ -163,7 +172,9 @@ export const useBudget = () => {
   const duplicateLatestBudgetMutation = useMutation({
     mutationFn: postDuplicateBudget,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({
+        queryKey: ['budgets', 'list'],
+      })
       navigate('/budgets')
       notifications.show({
         withBorder: true,

@@ -7,7 +7,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconCopy,
-  IconSquarePlus2,
+  IconPencil,
   IconTrash,
 } from '@tabler/icons-react'
 
@@ -52,7 +52,7 @@ const BudgetList: React.FC = () => {
           component={Link}
           to={'/budgets/create'}
         >
-          <IconSquarePlus2 className={classes.linkIcon} stroke={1.5} />
+          <IconPencil className={classes.linkIcon} stroke={1.5} />
           <span style={{ padding: rem(2.5) }}>Create</span>
         </ActionIcon>
       </Text>

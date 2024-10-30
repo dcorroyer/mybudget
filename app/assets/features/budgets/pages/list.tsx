@@ -1,15 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { ActionIcon, Center, Container, Group, Modal, rem, Text } from '@mantine/core'
+import { ActionIcon, Button, Container, Group, Modal, rem, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconCopy,
-  IconPencil,
-  IconTrash,
-} from '@tabler/icons-react'
+import { IconChevronLeft, IconChevronRight, IconPencil } from '@tabler/icons-react'
 
 import { BudgetItems } from '../components/budget-items'
 import { useBudget } from '../hooks/useBudget'
@@ -44,7 +38,7 @@ const BudgetList: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
-        Budget&apos;s List
+        My Budgets
         <ActionIcon
           variant='transparent'
           ml='sm'
@@ -62,16 +56,18 @@ const BudgetList: React.FC = () => {
           opened={openedDelete}
           onClose={closeDelete}
           radius={12.5}
-          size='sm'
-          title='Are you sure you want to delete this budget?'
+          title='Delete Account'
           centered
         >
-          <Center>
-            <Link className={classes.modalItem} onClick={handleDelete} to={''}>
-              <IconTrash className={classes.modalIcon} stroke={1.5} />
-              <span>Delete</span>
-            </Link>
-          </Center>
+          <Text size='sm'>Are you sure you want to delete this account?</Text>
+          <Group justify='flex-end' mt='lg'>
+            <Button variant='subtle' onClick={closeDelete}>
+              Cancel
+            </Button>
+            <Button color='red' onClick={handleDelete}>
+              Delete
+            </Button>
+          </Group>
         </Modal>
 
         {/* Duplicate Confirmation Modal */}
@@ -79,16 +75,18 @@ const BudgetList: React.FC = () => {
           opened={openedDuplicate}
           onClose={closeDuplicate}
           radius={12.5}
-          size='sm'
-          title='Are you sure you want to duplicate this budget?'
+          title='Duplicate Account'
           centered
         >
-          <Center>
-            <Link className={classes.modalItem} onClick={handleDuplicate} to={''}>
-              <IconCopy className={classes.modalIcon} stroke={1.5} />
-              <span>Duplicate</span>
-            </Link>
-          </Center>
+          <Text size='sm'>Are you sure you want to duplicate this account?</Text>
+          <Group justify='flex-end' mt='lg'>
+            <Button variant='subtle' onClick={closeDuplicate}>
+              Cancel
+            </Button>
+            <Button color='blue' onClick={handleDuplicate}>
+              Duplicate
+            </Button>
+          </Group>
         </Modal>
 
         <Group justify='center' gap='xl' mb='xl'>

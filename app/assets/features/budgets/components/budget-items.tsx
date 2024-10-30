@@ -33,7 +33,7 @@ export const BudgetItems = ({
 }) => {
   const { useBudgetList } = useBudget()
 
-  const { budgetList, isFetching } = useBudgetList(selectedYear)
+  const { data: budgetList, isFetching } = useBudgetList(selectedYear)
 
   if (isFetching) return <Loader />
 

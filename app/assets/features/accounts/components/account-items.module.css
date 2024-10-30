@@ -1,0 +1,11 @@
+.amount {
+  text-align: center;
+}
+
+.deleteButton {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-3);
+  }
+}

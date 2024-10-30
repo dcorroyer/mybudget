@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -22,33 +21,25 @@ export const useBudget = () => {
   const navigate = useNavigate()
 
   const useBudgetList = (year: number) => {
-    const { data: budgetList, isFetching } = useQuery({
-      queryKey: ['budgets', 'list', year],
+    return useQuery({
+      queryKey: ['budgets', year],
       queryFn: () => getBudgetList(year),
       enabled: !!year,
     })
-
-    return { budgetList, isFetching }
   }
 
   const useBudgetDetail = (id: number) => {
-    const { data: budget, isFetching } = useQuery({
-      queryKey: ['budgets', 'detail', id],
+    return useQuery({
+      queryKey: ['budgets', id],
       queryFn: () => getBudgetDetail(id.toString()),
     })
-
-    return { budget, isFetching }
   }
 
-  const createBudget = useCallback((data: BudgetParams) => {
-    createBudgetMutation.mutate(data)
-  }, [])
-
-  const createBudgetMutation = useMutation({
+  const { mutate: createBudget, isPending: isCreateLoading } = useMutation({
     mutationFn: postBudget,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['budgets', 'list'],
+        queryKey: ['budgets'],
         refetchType: 'all',
       })
       navigate('/budgets')
@@ -72,11 +63,7 @@ export const useBudget = () => {
     },
   })
 
-  const updateBudget = useCallback((id: number, data: BudgetParams) => {
-    updateBudgetMutation.mutate({ id, ...data })
-  }, [])
-
-  const updateBudgetMutation = useMutation({
+  const { mutate: updateBudget, isPending: isUpdateLoading } = useMutation({
     mutationFn: ({ id, ...data }: { id: number } & BudgetParams) =>
       updateBudgetId(id.toString(), data),
     onSuccess: () => {
@@ -104,11 +91,7 @@ export const useBudget = () => {
     },
   })
 
-  const deleteBudget = useCallback((id: string) => {
-    deleteBudgetMutation.mutate(id)
-  }, [])
-
-  const deleteBudgetMutation = useMutation({
+  const { mutate: deleteBudget, isPending: isDeleteLoading } = useMutation({
     mutationFn: deleteBudgetId,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -134,15 +117,11 @@ export const useBudget = () => {
     },
   })
 
-  const duplicateBudget = useCallback((id: string) => {
-    duplicateBudgetMutation.mutate(id)
-  }, [])
-
-  const duplicateBudgetMutation = useMutation({
+  const { mutate: duplicateBudget, isPending: isDuplicateLoading } = useMutation({
     mutationFn: postDuplicateBudgetId,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['budgets', 'list'],
+        queryKey: ['budgets'],
       })
       navigate('/budgets')
       notifications.show({
@@ -165,15 +144,11 @@ export const useBudget = () => {
     },
   })
 
-  const duplicateLatestBudget = useCallback(() => {
-    duplicateLatestBudgetMutation.mutate()
-  }, [])
-
-  const duplicateLatestBudgetMutation = useMutation({
+  const { mutate: duplicateLatestBudget, isPending: isDuplicateLatestLoading } = useMutation({
     mutationFn: postDuplicateBudget,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['budgets', 'list'],
+        queryKey: ['budgets'],
       })
       navigate('/budgets')
       notifications.show({
@@ -205,10 +180,10 @@ export const useBudget = () => {
     duplicateBudget,
     duplicateLatestBudget,
     isLoading:
-      createBudgetMutation.isPending ||
-      updateBudgetMutation.isPending ||
-      deleteBudgetMutation.isPending ||
-      duplicateBudgetMutation.isPending ||
-      duplicateLatestBudgetMutation.isPending,
+      isCreateLoading ||
+      isUpdateLoading ||
+      isDeleteLoading ||
+      isDuplicateLoading ||
+      isDuplicateLatestLoading,
   }
 }

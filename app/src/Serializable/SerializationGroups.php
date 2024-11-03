@@ -33,4 +33,6 @@ final class SerializationGroups
     public const string USER_CREATE = 'USER_CREATE';
 
     public const string USER_GET = 'USER_GET';
+
+    public const string BALANCE_HISTORY_GET = 'BALANCE_HISTORY_GET';
 }

@@ -21,6 +21,7 @@ class TransactionService
         private readonly TransactionRepository $transactionRepository,
         private readonly AccountService $accountService,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly BalanceHistoryService $balanceHistoryService,
     ) {
     }
 
@@ -57,6 +58,8 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
+        $this->balanceHistoryService->createBalanceHistoryEntry($transaction);
+
         return $transaction;
     }
 
@@ -74,6 +77,8 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
+        $this->balanceHistoryService->updateBalanceHistoryEntry($transaction);
+
         return $transaction;
     }
 
@@ -83,26 +88,46 @@ class TransactionService
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
+        $this->balanceHistoryService->deleteBalanceHistoryEntry($transaction);
+
         $this->transactionRepository->delete($transaction, true);
     }
 
     /**
+     * @param int[]|null $accountIds
+     *
      * @return SlidingPagination<int, Transaction>
      */
-    public function paginate(int $accountId, ?PaginationQueryParams $paginationQueryParams = null): SlidingPagination
-    {
-        $account = $this->accountService->get($accountId);
+    public function paginate(
+        ?array $accountIds = null,
+        ?PaginationQueryParams $paginationQueryParams = null
+    ): SlidingPagination {
+        $criteria = Criteria::create();
 
-        if (! $this->authorizationChecker->isGranted('view', $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        if (! empty($accountIds)) {
+            $accounts = array_map(
+                function (int $accountId) {
+                    $account = $this->accountService->get($accountId);
+                    if (! $this->authorizationChecker->isGranted('view', $account)) {
+                        throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+                    }
+
+                    return $account;
+                },
+                $accountIds
+            );
+        } else {
+            $accounts = $this->accountService->list();
+
+            if (empty($accounts)) {
+                return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
+            }
         }
 
-        $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()->eq('account', $account))
-            ->orderBy([
-                'date' => 'DESC',
-            ])
-        ;
+        $criteria->andWhere(Criteria::expr()->in('account', $accounts));
+        $criteria->orderBy([
+            'date' => 'DESC',
+        ]);
 
         return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
     }

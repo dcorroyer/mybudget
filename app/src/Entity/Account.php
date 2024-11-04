@@ -24,6 +24,8 @@ class Account
         SerializationGroups::ACCOUNT_LIST,
         SerializationGroups::ACCOUNT_CREATE,
         SerializationGroups::ACCOUNT_UPDATE,
+        SerializationGroups::TRANSACTION_LIST,
+        SerializationGroups::TRANSACTION_GET,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,6 +37,8 @@ class Account
         SerializationGroups::ACCOUNT_LIST,
         SerializationGroups::ACCOUNT_CREATE,
         SerializationGroups::ACCOUNT_UPDATE,
+        SerializationGroups::TRANSACTION_LIST,
+        SerializationGroups::TRANSACTION_GET,
     ])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
@@ -57,7 +61,7 @@ class Account
     #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'account', orphanRemoval: true)]
     private Collection $transactions;
 
-    #[ORM\ManyToOne(inversedBy: 'budgets')]
+    #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

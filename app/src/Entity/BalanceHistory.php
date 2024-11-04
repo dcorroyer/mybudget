@@ -9,6 +9,8 @@ use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation as Serializer;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: BalanceHistoryRepository::class)]
 #[ORM\Table(name: '`balance_history`')]
@@ -20,13 +22,20 @@ class BalanceHistory
     #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
+    #[Context([
+        DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+    ])]
     private \DateTimeInterface $date;
 
     #[ORM\Column(type: Types::FLOAT)]
     #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
-    private float $balance = 0.0;
+    private float $balanceBeforeTransaction = 0.0;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
+    private float $balanceAfterTransaction = 0.0;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -60,14 +69,26 @@ class BalanceHistory
         return $this;
     }
 
-    public function getBalance(): float
+    public function getBalanceBeforeTransaction(): float
     {
-        return $this->balance;
+        return $this->balanceBeforeTransaction;
     }
 
-    public function setBalance(float $balance): static
+    public function setBalanceBeforeTransaction(float $balanceBeforeTransaction): static
     {
-        $this->balance = $balance;
+        $this->balanceBeforeTransaction = $balanceBeforeTransaction;
+
+        return $this;
+    }
+
+    public function getBalanceAfterTransaction(): float
+    {
+        return $this->balanceAfterTransaction;
+    }
+
+    public function setBalanceAfterTransaction(float $balanceAfterTransaction): static
+    {
+        $this->balanceAfterTransaction = $balanceAfterTransaction;
 
         return $this;
     }

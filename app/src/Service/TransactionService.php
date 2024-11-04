@@ -8,6 +8,8 @@ use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
+use App\Security\Voter\AccountVoter;
+use App\Security\Voter\TransactionVoter;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -25,15 +27,21 @@ class TransactionService
     ) {
     }
 
-    public function get(int $id): Transaction
+    public function get(int $accountId, int $id): Transaction
     {
+        $account = $this->accountService->get($accountId);
+
+        if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
+
         $transaction = $this->transactionRepository->find($id);
 
         if ($transaction === null) {
             throw new NotFoundHttpException(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted('view', $transaction)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, $transaction)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -44,7 +52,7 @@ class TransactionService
     {
         $account = $this->accountService->get($accountId);
 
-        if (! $this->authorizationChecker->isGranted('create', $account)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::CREATE, $account)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -65,7 +73,7 @@ class TransactionService
 
     public function update(TransactionPayload $transactionPayload, Transaction $transaction): Transaction
     {
-        if (! $this->authorizationChecker->isGranted('edit', $transaction)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, $transaction)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -84,7 +92,7 @@ class TransactionService
 
     public function delete(Transaction $transaction): void
     {
-        if (! $this->authorizationChecker->isGranted('delete', $transaction)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::DELETE, $transaction)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -108,7 +116,7 @@ class TransactionService
             $accounts = array_map(
                 function (int $accountId) {
                     $account = $this->accountService->get($accountId);
-                    if (! $this->authorizationChecker->isGranted('view', $account)) {
+                    if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
                         throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
                     }
 
@@ -124,7 +132,7 @@ class TransactionService
             }
         }
 
-        $criteria->andWhere(Criteria::expr()->in('account', $accounts));
+        $criteria->andWhere(Criteria::expr()?->in('account', $accounts));
         $criteria->orderBy([
             'date' => 'DESC',
         ]);

@@ -10,6 +10,7 @@ use App\Entity\Budget;
 use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
+use App\Security\Voter\BudgetVoter;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
@@ -37,7 +38,7 @@ class BudgetService
             throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted('view', $budget)) {
+        if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -53,7 +54,7 @@ class BudgetService
 
     public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
     {
-        if (! $this->authorizationChecker->isGranted('edit', $budget)) {
+        if (! $this->authorizationChecker->isGranted(BudgetVoter::EDIT, $budget)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -92,7 +93,7 @@ class BudgetService
 
     public function delete(Budget $budget): void
     {
-        if (! $this->authorizationChecker->isGranted('delete', $budget)) {
+        if (! $this->authorizationChecker->isGranted(BudgetVoter::DELETE, $budget)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -111,7 +112,7 @@ class BudgetService
             throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted('view', $budget)) {
+        if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -123,8 +124,8 @@ class BudgetService
         $newBudget->setSavingCapacity($budget->getSavingCapacity());
         $newBudget->setUser($budget->getUser());
 
-        $newDate = $this->budgetRepository->findLatestByUser($budget->getUser())->getDate(); // @phpstan-ignore-line
-        $newDate->modify('+1 month'); // @phpstan-ignore-line
+        $newDate = \DateTime::createFromInterface($this->budgetRepository->findLatestByUser($budget->getUser())->getDate());
+        $newDate->modify('+1 month');
         $newBudget->setDate($newDate);
 
         foreach ($budget->getIncomes() as $income) {
@@ -152,7 +153,7 @@ class BudgetService
         ?BudgetFilterQuery $budgetFilterQuery = null
     ): SlidingPagination {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()))
+        $criteria->andWhere(Criteria::expr()?->eq('user', $this->security->getUser()))
             ->orderBy([
                 'date' => 'DESC',
             ])

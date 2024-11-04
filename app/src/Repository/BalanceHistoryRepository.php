@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
+use App\Enum\PeriodsEnum;
 use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
@@ -22,7 +23,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
     public function findLatestBalance(Account $account): ?float
     {
         $qb = $this->createQueryBuilder('bh')
-            ->select('bh.balance')
+            ->select('bh.balanceAfterTransaction')
             ->where('bh.account = :account')
             ->setParameter('account', $account)
             ->orderBy('bh.date', 'DESC')
@@ -31,13 +32,13 @@ class BalanceHistoryRepository extends AbstractEntityRepository
 
         $result = $qb->getQuery()->getOneOrNullResult();
 
-        return $result['balance'] ?? null;
+        return $result['balanceAfterTransaction'] ?? null;
     }
 
     public function findBalanceAtDate(Account $account, \DateTimeInterface $date): ?float
     {
         $qb = $this->createQueryBuilder('bh')
-            ->select('bh.balance')
+            ->select('bh.balanceAfterTransaction')
             ->where('bh.account = :account')
             ->andWhere('bh.date <= :date')
             ->setParameter('account', $account)
@@ -48,7 +49,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
 
         $result = $qb->getQuery()->getOneOrNullResult();
 
-        return $result['balance'] ?? null;
+        return $result['balanceAfterTransaction'] ?? null;
     }
 
     /**
@@ -70,7 +71,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
     public function findBalanceBeforeDate(Account $account, \DateTimeInterface $date): ?float
     {
         $result = $this->createQueryBuilder('bh')
-            ->select('bh.balance')
+            ->select('bh.balanceAfterTransaction')
             ->where('bh.account = :account')
             ->andWhere('bh.date < :date')
             ->setParameter('account', $account)
@@ -81,24 +82,32 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             ->getOneOrNullResult()
         ;
 
-        return $result['balance'] ?? null;
+        return $result['balanceAfterTransaction'] ?? null;
     }
 
     /**
-     * @return array<array{date: string, balance: float}>
+     * @return array<BalanceHistory>
      */
-    public function findMonthlyBalances(Account $account, \DateTimeInterface $startDate): array
+    public function findBalancesByAccounts(array $accountIds = null, ?PeriodsEnum $period = null): array
     {
-        return $this->createQueryBuilder('bh')
-            ->select('MAX(bh.date) as date', 'MAX(bh.balance) as balance')
-            ->where('bh.account = :account')
-            ->andWhere('bh.date >= :startDate')
-            ->setParameter('account', $account)
-            ->setParameter('startDate', $startDate)
-            ->groupBy('YEAR(bh.date)', 'MONTH(bh.date)')
-            ->orderBy('date', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb = $this->createQueryBuilder('bh')
+            ->select('bh')
+            ->orderBy('bh.date', 'DESC');
+
+        if ($accountIds !== null && count($accountIds) > 0) {
+            $qb->andWhere('bh.account IN (:accountIds)')
+                ->setParameter('accountIds', $accountIds);
+        }
+
+        if ($period !== null) {
+            $date = new \DateTime();
+            $date->modify('-' . $period->value . ' months');
+            $date->setTime(0, 0);
+
+            $qb->andWhere('bh.date >= :startDate')
+                ->setParameter('startDate', $date);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

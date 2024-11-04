@@ -9,10 +9,10 @@ use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
-use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
 use App\Repository\TransactionRepository;
+use App\Security\Voter\AccountVoter;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -29,15 +29,16 @@ class BalanceHistoryService
     public function createBalanceHistoryEntry(Transaction $transaction): void
     {
         $account = $transaction->getAccount();
-        $currentBalance = $this->getLatestBalance($account) ?? 0.0;
-        $newBalance = $currentBalance + $this->calculateBalanceImpact(
+        $balanceBeforeTransaction = $this->getLatestBalance($account) ?? 0.0;
+        $balanceAfterTransaction = $balanceBeforeTransaction + $this->calculateBalanceImpact(
             $transaction->getAmount(),
             $transaction->getType()
         );
 
         $balanceHistory = (new BalanceHistory())
             ->setDate($transaction->getDate())
-            ->setBalance($newBalance)
+            ->setBalanceBeforeTransaction($balanceBeforeTransaction)
+            ->setBalanceAfterTransaction($balanceAfterTransaction)
             ->setAccount($account)
             ->setTransaction($transaction)
         ;
@@ -69,62 +70,65 @@ class BalanceHistoryService
         );
     }
 
-    /**
-     * @return array<array{date: string, balance: float}>
-     */
-    public function getMonthlyBalances(?BalanceHistoryFilterQuery $filter = null): array
+    public function getMonthlyBalanceHistory(?BalanceHistoryFilterQuery $filter = null): array
     {
-        $startDate = match ($filter?->period) {
-            PeriodsEnum::THREE_MONTHS => new \DateTimeImmutable('first day of -3 months'),
-            PeriodsEnum::SIX_MONTHS => new \DateTimeImmutable('first day of -6 months'),
-            PeriodsEnum::TWELVE_MONTHS => new \DateTimeImmutable('first day of -12 months'),
-            default => new \DateTimeImmutable('1970-01-01'),
-        };
+        $accountsInfo = [];
 
-        if (empty($filter->accountIds)) {
-            $accounts = $this->accountService->list();
-        } else {
-            $accounts = array_map(
-                function (int $accountId) {
-                    $account = $this->accountService->get($accountId);
-
-                    if (! $this->authorizationChecker->isGranted('view', $account)) {
-                        throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-                    }
-
-                    return $account;
-                },
-
-                $filter->accountIds
-            );
-        }
-
-        $balancesByMonth = [];
-
-        foreach ($accounts as $account) {
-            $monthlyBalances = $this->balanceHistoryRepository->findMonthlyBalances($account, $startDate);
-
-            foreach ($monthlyBalances as $balance) {
-                $month = (new \DateTimeImmutable($balance['date']))->format('Y-m');
-
-                if (! isset($balancesByMonth[$month])) {
-                    $balancesByMonth[$month] = 0;
+        if ($filter?->getAccountIds() !== null) {
+            foreach ($filter?->getAccountIds() as $accountId) {
+                $account = $this->accountService->get($accountId);
+                
+                if (!$this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
+                    throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
                 }
 
-                $balancesByMonth[$month] += $balance['balance'];
+                $accountsInfo[] = [
+                    'id' => $account->getId(),
+                    'name' => $account->getName()
+                ];
+            }
+
+            $accounts = $filter?->getAccountIds();
+        } else {
+            $accounts = $this->accountService->list();
+            foreach ($accounts as $account) {
+                $accountsInfo[] = [
+                    'id' => $account->getId(),
+                    'name' => $account->getName()
+                ];
             }
         }
 
-        ksort($balancesByMonth);
-
-        return array_map(
-            static fn (string $month, float $balance) => [
-                'date' => $month,
-                'balance' => $balance,
-            ],
-            array_keys($balancesByMonth),
-            array_values($balancesByMonth)
+        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts(
+            $accounts,
+            $filter?->period
         );
+
+        $monthlyBalances = [];
+        foreach ($balanceHistories as $history) {
+            $yearMonth = $history->getDate()->format('Y-m');
+            
+            if (!isset($monthlyBalances[$yearMonth])) {
+                $monthlyBalances[$yearMonth] = 0;
+            }
+            
+            $monthlyBalances[$yearMonth] += $history->getBalanceAfterTransaction();
+        }
+
+        ksort($monthlyBalances);
+
+        return [
+            'accounts' => $accountsInfo,
+            'balances' => array_map(
+                fn($yearMonth, $balance) => [
+                    'date' => $yearMonth,
+                    'formattedDate' => (new \DateTime($yearMonth . '-01'))->format('F Y'),
+                    'balance' => (float) $balance,
+                ],
+                array_keys($monthlyBalances),
+                array_values($monthlyBalances)
+            )
+        ];
     }
 
     private function recalculateBalanceHistory(
@@ -150,16 +154,22 @@ class BalanceHistoryService
         $runningBalance = $previousBalance;
 
         foreach ($transactionsToRecalculate as $transaction) {
-            $runningBalance += $this->calculateBalanceImpact($transaction->getAmount(), $transaction->getType());
+            $balanceBeforeTransaction = $runningBalance;
+            $balanceAfterTransaction = $runningBalance + $this->calculateBalanceImpact(
+                $transaction->getAmount(),
+                $transaction->getType()
+            );
 
             $balanceHistory = (new BalanceHistory())
                 ->setDate($transaction->getDate())
-                ->setBalance($runningBalance)
+                ->setBalanceBeforeTransaction($balanceBeforeTransaction)
+                ->setBalanceAfterTransaction($balanceAfterTransaction)
                 ->setAccount($account)
                 ->setTransaction($transaction)
             ;
 
             $this->balanceHistoryRepository->save($balanceHistory);
+            $runningBalance = $balanceAfterTransaction;
         }
 
         $this->balanceHistoryRepository->flush();

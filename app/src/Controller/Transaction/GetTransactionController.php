@@ -37,7 +37,7 @@ class GetTransactionController extends BaseRestController
     public function __invoke(int $accountId, int $id, TransactionService $transactionService): JsonResponse
     {
         return $this->successResponse(
-            data: $transactionService->get($id),
+            data: $transactionService->get($accountId, $id),
             groups: [SerializationGroups::TRANSACTION_GET]
         );
     }

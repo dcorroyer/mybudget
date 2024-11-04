@@ -16,27 +16,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/accounts/balance-history')]
+#[Route('/accounts/balance-history', priority: 10)]
 #[OA\Tag(name: 'Balance History')]
 class GetMonthlyBalanceHistoryController extends BaseRestController
 {
     #[MyOpenApi(
         httpMethod: Request::METHOD_GET,
-        operationId: 'get_monthly_balance_history',
-        summary: 'Get monthly balance history',
+        operationId: 'get_balance_history',
+        summary: 'Get balance history',
         responses: [
             new SuccessResponse(
                 responseClassFqcn: BalanceHistory::class,
-                description: 'Return the monthly balance history',
+                description: 'Return the balance history',
             ),
         ],
         queryParamsClassFqcn: [BalanceHistoryFilterQuery::class],
     )]
-    #[Route('/monthly', name: 'api_monthly_balance_history', methods: Request::METHOD_GET)]
+    #[Route('', name: 'api_balance_history', methods: Request::METHOD_GET)]
     public function __invoke(
         BalanceHistoryService $balanceHistoryService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->successResponse($balanceHistoryService->getMonthlyBalances($filter));
+        return $this->successResponse($balanceHistoryService->getMonthlyBalanceHistory($filter));
     }
 }

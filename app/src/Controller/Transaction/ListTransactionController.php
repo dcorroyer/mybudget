@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/accounts/transactions')]
+#[Route('/accounts/transactions', priority: 10)]
 #[OA\Tag(name: 'Transactions')]
 class ListTransactionController extends BaseRestController
 {

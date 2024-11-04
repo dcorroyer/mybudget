@@ -14,17 +14,32 @@ class BalanceHistoryFilterQuery
     #[OA\Property(
         description: 'Period for balance history',
         type: 'string',
-        enum: ['3', '6', '12', 'all'],
+        enum: ['3', '6', '12'],
         example: '12'
     )]
-    public ?PeriodsEnum $period = PeriodsEnum::ALL;
+    public ?PeriodsEnum $period = null;
 
-    #[Assert\All([new Assert\Type('integer'), new Assert\Positive()])]
-    #[OA\Property(
-        description: 'Filter by account IDs',
-        type: 'array',
-        items: new OA\Items(type: 'integer'),
+    /**
+     * @var array<int>|null $accountIds
+     */
+    #[OA\Parameter(
+        description: 'List of account IDs',
+        schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'integer'), nullable: true),
         example: [1, 2, 3]
     )]
-    public ?array $accountIds = null;
+    private ?array $accountIds = null;
+
+    public function setAccountIds(?array $accountIds): self
+    {
+        if ($accountIds !== null) {
+            $this->accountIds = array_map('intval', $accountIds);
+        }
+        
+        return $this;
+    }
+
+    public function getAccountIds(): ?array
+    {
+        return $this->accountIds;
+    }
 }

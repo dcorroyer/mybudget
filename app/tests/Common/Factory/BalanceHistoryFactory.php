@@ -26,7 +26,8 @@ final class BalanceHistoryFactory extends PersistentProxyObjectFactory
     {
         return [
             'account' => AccountFactory::new(),
-            'balance' => self::faker()->randomFloat(),
+            'balanceBeforeTransaction' => self::faker()->randomFloat(),
+            'balanceAfterTransaction' => self::faker()->randomFloat(),
             'date' => self::faker()->dateTime(),
             'transaction' => TransactionFactory::new(),
         ];

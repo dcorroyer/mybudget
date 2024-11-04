@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241103094920 extends AbstractMigration
+final class Version20241104125915 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,10 +25,10 @@ final class Version20241103094920 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE "transaction_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE "account" (id INT NOT NULL, user_id INT NOT NULL, name VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_7D3656A4A76ED395 ON "account" (user_id)');
-        $this->addSql('CREATE TABLE "balance_history" (id INT NOT NULL, account_id INT NOT NULL, transaction_id INT NOT NULL, date DATE NOT NULL, balance DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "balance_history" (id INT NOT NULL, account_id INT NOT NULL, transaction_id INT NOT NULL, date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, balance_before_transaction DOUBLE PRECISION NOT NULL, balance_after_transaction DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_135152F19B6B5FBA ON "balance_history" (account_id)');
         $this->addSql('CREATE INDEX IDX_135152F12FC0CB0F ON "balance_history" (transaction_id)');
-        $this->addSql('CREATE TABLE "transaction" (id INT NOT NULL, account_id INT NOT NULL, description VARCHAR(255) NOT NULL, amount DOUBLE PRECISION NOT NULL, type VARCHAR(255) NOT NULL, date DATE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "transaction" (id INT NOT NULL, account_id INT NOT NULL, description VARCHAR(255) NOT NULL, amount DOUBLE PRECISION NOT NULL, type VARCHAR(255) NOT NULL, date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_723705D19B6B5FBA ON "transaction" (account_id)');
         $this->addSql('ALTER TABLE "account" ADD CONSTRAINT FK_7D3656A4A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "balance_history" ADD CONSTRAINT FK_135152F19B6B5FBA FOREIGN KEY (account_id) REFERENCES "account" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');

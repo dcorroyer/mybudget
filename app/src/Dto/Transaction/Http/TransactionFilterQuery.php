@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\Transaction\Http;
 
+use Doctrine\DBAL\Types\Types;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TransactionFilterQuery
 {
     /**
-     * @var int[]|null
+     * @var array<int>|null $accountIds
      */
-    #[Assert\All([new Assert\Type('integer'), new Assert\Positive()])]
-    #[OA\Property(
+    #[OA\Parameter(
         description: 'List of account IDs',
-        type: 'array',
-        items: new OA\Items(type: 'integer'),
+        schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'integer'), nullable: true),
         example: [1, 2, 3]
     )]
     public ?array $accountIds = null;

@@ -62,6 +62,7 @@ class AppFixtures extends Fixture
 
             // Création des transactions
             $transactions = [
+                // Janvier 2024
                 [
                     'description' => 'Dépôt initial',
                     'amount' => 1000.00,
@@ -74,23 +75,115 @@ class AppFixtures extends Fixture
                     'type' => TransactionTypesEnum::CREDIT,
                     'date' => (clone $baseDate)->modify('+15 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
                 ],
+                // Février 2024
                 [
-                    'description' => 'Retrait',
-                    'amount' => 200.00,
-                    'type' => TransactionTypesEnum::DEBIT,
-                    'date' => (clone $baseDate)->modify('+30 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'description' => 'Virement entrant mensuel',
+                    'amount' => 500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+32 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
                 ],
                 [
-                    'description' => 'Virement entrant',
-                    'amount' => 750.00,
-                    'type' => TransactionTypesEnum::CREDIT,
+                    'description' => 'Retrait pour vacances',
+                    'amount' => 300.00,
+                    'type' => TransactionTypesEnum::DEBIT,
                     'date' => (clone $baseDate)->modify('+45 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
                 ],
+                // Mars 2024
                 [
-                    'description' => 'Retrait ATM',
-                    'amount' => 100.00,
-                    'type' => TransactionTypesEnum::DEBIT,
+                    'description' => 'Prime annuelle',
+                    'amount' => 2000.00,
+                    'type' => TransactionTypesEnum::CREDIT,
                     'date' => (clone $baseDate)->modify('+60 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                [
+                    'description' => 'Intérêts trimestriels',
+                    'amount' => 75.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+90 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Avril 2024
+                [
+                    'description' => 'Virement entrant mensuel',
+                    'amount' => 500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+92 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Mai 2024
+                [
+                    'description' => 'Retrait vacances été',
+                    'amount' => 1500.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('+120 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Juin 2024
+                [
+                    'description' => 'Intérêts trimestriels',
+                    'amount' => 80.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+180 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Juillet 2024
+                [
+                    'description' => 'Prime vacances',
+                    'amount' => 800.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+210 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Août 2024
+                [
+                    'description' => 'Virement entrant exceptionnel',
+                    'amount' => 3000.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+240 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Septembre 2024
+                [
+                    'description' => 'Intérêts trimestriels',
+                    'amount' => 95.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+270 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Octobre 2024
+                [
+                    'description' => 'Retrait imprévu',
+                    'amount' => 250.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('+300 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Novembre 2024
+                [
+                    'description' => 'Virement entrant mensuel',
+                    'amount' => 500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+330 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Décembre 2024
+                [
+                    'description' => 'Prime de fin d\'année',
+                    'amount' => 1500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+360 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Janvier 2025
+                [
+                    'description' => 'Intérêts annuels',
+                    'amount' => 450.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+365 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Mars 2025
+                [
+                    'description' => 'Retrait pour projet',
+                    'amount' => 5000.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('+425 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                ],
+                // Juin 2025
+                [
+                    'description' => 'Remboursement prêt',
+                    'amount' => 2500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('+545 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
                 ],
             ];
 

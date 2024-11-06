@@ -11,12 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class BalanceHistoryFilterQuery
 {
     #[Assert\Type(PeriodsEnum::class)]
-    #[OA\Property(
-        description: 'Period for balance history',
-        type: 'string',
-        enum: ['3', '6', '12'],
-        example: '12'
-    )]
+    #[OA\Property(description: 'Period for balance history', type: 'string', enum: ['3', '6', '12'], example: '12')]
     public ?PeriodsEnum $period = null;
 
     /**
@@ -34,7 +29,7 @@ class BalanceHistoryFilterQuery
         if ($accountIds !== null) {
             $this->accountIds = array_map('intval', $accountIds);
         }
-        
+
         return $this;
     }
 

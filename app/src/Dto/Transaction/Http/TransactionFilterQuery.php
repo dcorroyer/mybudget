@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Transaction\Http;
 
-use Doctrine\DBAL\Types\Types;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class TransactionFilterQuery
 {

@@ -124,7 +124,9 @@ class BudgetService
         $newBudget->setSavingCapacity($budget->getSavingCapacity());
         $newBudget->setUser($budget->getUser());
 
-        $newDate = \DateTime::createFromInterface($this->budgetRepository->findLatestByUser($budget->getUser())->getDate());
+        $newDate = \DateTime::createFromInterface(
+            $this->budgetRepository->findLatestByUser($budget->getUser())?->getDate()
+        );
         $newDate->modify('+1 month');
         $newBudget->setDate($newDate);
 

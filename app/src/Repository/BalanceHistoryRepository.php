@@ -35,23 +35,6 @@ class BalanceHistoryRepository extends AbstractEntityRepository
         return $result['balanceAfterTransaction'] ?? null;
     }
 
-    public function findBalanceAtDate(Account $account, \DateTimeInterface $date): ?float
-    {
-        $qb = $this->createQueryBuilder('bh')
-            ->select('bh.balanceAfterTransaction')
-            ->where('bh.account = :account')
-            ->andWhere('bh.date <= :date')
-            ->setParameter('account', $account)
-            ->setParameter('date', $date)
-            ->orderBy('bh.date', 'DESC')
-            ->setMaxResults(1)
-        ;
-
-        $result = $qb->getQuery()->getOneOrNullResult();
-
-        return $result['balanceAfterTransaction'] ?? null;
-    }
-
     /**
      * @return array<BalanceHistory>
      */
@@ -88,15 +71,17 @@ class BalanceHistoryRepository extends AbstractEntityRepository
     /**
      * @return array<BalanceHistory>
      */
-    public function findBalancesByAccounts(array $accountIds = null, ?PeriodsEnum $period = null): array
+    public function findBalancesByAccounts(?array $accountIds = null, ?PeriodsEnum $period = null): array
     {
         $qb = $this->createQueryBuilder('bh')
             ->select('bh')
-            ->orderBy('bh.date', 'DESC');
+            ->orderBy('bh.date', 'DESC')
+        ;
 
-        if ($accountIds !== null && count($accountIds) > 0) {
+        if ($accountIds !== null && \count($accountIds) > 0) {
             $qb->andWhere('bh.account IN (:accountIds)')
-                ->setParameter('accountIds', $accountIds);
+                ->setParameter('accountIds', $accountIds)
+            ;
         }
 
         if ($period !== null) {
@@ -105,9 +90,30 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             $date->setTime(0, 0);
 
             $qb->andWhere('bh.date >= :startDate')
-                ->setParameter('startDate', $date);
+                ->setParameter('startDate', $date)
+            ;
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findBalanceAtEndOfMonth(Account $account, string $yearMonth): ?float
+    {
+        $startDate = new \DateTime($yearMonth . '-01');
+        $endDate = (clone $startDate)->modify('last day of this month')->setTime(23, 59, 59);
+
+        $qb = $this->createQueryBuilder('bh')
+            ->select('bh.balanceAfterTransaction')
+            ->where('bh.account = :account')
+            ->andWhere('bh.date <= :endDate')
+            ->setParameter('account', $account)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('bh.date', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result['balanceAfterTransaction'] ?? null;
     }
 }

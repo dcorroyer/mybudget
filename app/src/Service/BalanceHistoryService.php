@@ -28,7 +28,9 @@ class BalanceHistoryService
 
     public function createBalanceHistoryEntry(Transaction $transaction): void
     {
+        /** @var Account $account */
         $account = $transaction->getAccount();
+
         $balanceBeforeTransaction = $this->getLatestBalance($account) ?? 0.0;
         $balanceAfterTransaction = $balanceBeforeTransaction + $this->calculateBalanceImpact(
             $transaction->getAmount(),
@@ -49,11 +51,6 @@ class BalanceHistoryService
     public function getLatestBalance(Account $account): ?float
     {
         return $this->balanceHistoryRepository->findLatestBalance($account);
-    }
-
-    public function getBalanceAtDate(Account $account, \DateTimeInterface $date): ?float
-    {
-        return $this->balanceHistoryRepository->findBalanceAtDate($account, $date);
     }
 
     public function updateBalanceHistoryEntry(Transaction $transaction): void
@@ -77,14 +74,14 @@ class BalanceHistoryService
         if ($filter?->getAccountIds() !== null) {
             foreach ($filter?->getAccountIds() as $accountId) {
                 $account = $this->accountService->get($accountId);
-                
-                if (!$this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
+
+                if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
                     throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
                 }
 
                 $accountsInfo[] = [
                     'id' => $account->getId(),
-                    'name' => $account->getName()
+                    'name' => $account->getName(),
                 ];
             }
 
@@ -94,25 +91,31 @@ class BalanceHistoryService
             foreach ($accounts as $account) {
                 $accountsInfo[] = [
                     'id' => $account->getId(),
-                    'name' => $account->getName()
+                    'name' => $account->getName(),
                 ];
             }
         }
 
-        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts(
-            $accounts,
-            $filter?->period
-        );
+        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $filter?->period);
 
         $monthlyBalances = [];
+        $processedMonths = [];
+
         foreach ($balanceHistories as $history) {
             $yearMonth = $history->getDate()->format('Y-m');
-            
-            if (!isset($monthlyBalances[$yearMonth])) {
-                $monthlyBalances[$yearMonth] = 0;
+
+            if (! isset($processedMonths[$yearMonth])) {
+                $processedMonths[$yearMonth] = true;
+
+                $endOfMonthBalance = $this->balanceHistoryRepository->findBalanceAtEndOfMonth(
+                    $history->getAccount(),
+                    $yearMonth
+                );
+
+                if ($endOfMonthBalance !== null) {
+                    $monthlyBalances[$yearMonth] = $endOfMonthBalance;
+                }
             }
-            
-            $monthlyBalances[$yearMonth] += $history->getBalanceAfterTransaction();
         }
 
         ksort($monthlyBalances);
@@ -120,14 +123,14 @@ class BalanceHistoryService
         return [
             'accounts' => $accountsInfo,
             'balances' => array_map(
-                fn($yearMonth, $balance) => [
+                static fn ($yearMonth, $balance) => [
                     'date' => $yearMonth,
                     'formattedDate' => (new \DateTime($yearMonth . '-01'))->format('F Y'),
                     'balance' => (float) $balance,
                 ],
                 array_keys($monthlyBalances),
                 array_values($monthlyBalances)
-            )
+            ),
         ];
     }
 

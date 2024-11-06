@@ -77,10 +77,7 @@ class Transaction
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Serializer\Groups([
-        SerializationGroups::TRANSACTION_GET,
-        SerializationGroups::TRANSACTION_LIST,
-    ])]
+    #[Serializer\Groups([SerializationGroups::TRANSACTION_GET, SerializationGroups::TRANSACTION_LIST])]
     private ?Account $account = null;
 
     public function __construct()

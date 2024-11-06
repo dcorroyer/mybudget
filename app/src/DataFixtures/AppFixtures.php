@@ -58,132 +58,142 @@ class AppFixtures extends Fixture
         // Pour chaque compte, création des transactions et historiques de balance
         foreach ($accounts as $account) {
             $balance = 0.0;
-            $baseDate = new \DateTime('2024-01-01');
+            $baseDate = new \DateTime();
 
             // Création des transactions
             $transactions = [
-                // Janvier 2024
+                // Mois -18 (Mai 2023)
                 [
-                    'description' => 'Dépôt initial',
-                    'amount' => 1000.00,
-                    'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+1 day')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                [
-                    'description' => 'Intérêts',
-                    'amount' => 50.00,
-                    'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+15 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Février 2024
-                [
-                    'description' => 'Virement entrant mensuel',
+                    'description' => 'Placement de 500 euros - Virement mensuel',
                     'amount' => 500.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+32 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-18 months'),
                 ],
+                // Mois -17 (Juin 2023)
                 [
-                    'description' => 'Retrait pour vacances',
-                    'amount' => 300.00,
-                    'type' => TransactionTypesEnum::DEBIT,
-                    'date' => (clone $baseDate)->modify('+45 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Mars 2024
-                [
-                    'description' => 'Prime annuelle',
-                    'amount' => 2000.00,
-                    'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+60 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                [
-                    'description' => 'Intérêts trimestriels',
+                    'description' => 'Placement de 75 euros - Intérêts trimestriels',
                     'amount' => 75.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+90 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-17 months'),
                 ],
-                // Avril 2024
+                // Mois -16 (Juillet 2023)
                 [
-                    'description' => 'Virement entrant mensuel',
-                    'amount' => 500.00,
+                    'description' => 'Placement de 1000 euros - Dépôt initial',
+                    'amount' => 1000.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+92 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-16 months'),
                 ],
-                // Mai 2024
+                // Mois -15 (Août 2023)
                 [
-                    'description' => 'Retrait vacances été',
-                    'amount' => 1500.00,
-                    'type' => TransactionTypesEnum::DEBIT,
-                    'date' => (clone $baseDate)->modify('+120 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Juin 2024
-                [
-                    'description' => 'Intérêts trimestriels',
-                    'amount' => 80.00,
-                    'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+180 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Juillet 2024
-                [
-                    'description' => 'Prime vacances',
+                    'description' => 'Placement de 800 euros - Prime vacances',
                     'amount' => 800.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+210 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-15 months'),
                 ],
-                // Août 2024
+                // Mois -14 (Septembre 2023)
                 [
-                    'description' => 'Virement entrant exceptionnel',
-                    'amount' => 3000.00,
-                    'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+240 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Septembre 2024
-                [
-                    'description' => 'Intérêts trimestriels',
+                    'description' => 'Placement de 95 euros - Intérêts trimestriels',
                     'amount' => 95.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+270 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-14 months'),
                 ],
-                // Octobre 2024
+                // Mois -13 (Octobre 2023)
                 [
-                    'description' => 'Retrait imprévu',
-                    'amount' => 250.00,
-                    'type' => TransactionTypesEnum::DEBIT,
-                    'date' => (clone $baseDate)->modify('+300 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Novembre 2024
-                [
-                    'description' => 'Virement entrant mensuel',
+                    'description' => 'Placement de 500 euros - Virement mensuel',
                     'amount' => 500.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+330 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-13 months'),
                 ],
-                // Décembre 2024
+                // Mois -12 (Novembre 2023)
                 [
-                    'description' => 'Prime de fin d\'année',
+                    'description' => 'Achat de 800 euros - Électroménager',
+                    'amount' => 800.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('-12 months'),
+                ],
+                // Mois -11 (Décembre 2023)
+                [
+                    'description' => 'Placement de 1500 euros - Prime fin d\'année',
                     'amount' => 1500.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+360 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-11 months'),
                 ],
-                // Janvier 2025
+                // Mois -10 (Janvier 2024)
                 [
-                    'description' => 'Intérêts annuels',
+                    'description' => 'Placement de 450 euros - Intérêts annuels',
                     'amount' => 450.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+365 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-10 months'),
                 ],
-                // Mars 2025
+                // Mois -9 (Février 2024)
                 [
-                    'description' => 'Retrait pour projet',
-                    'amount' => 5000.00,
-                    'type' => TransactionTypesEnum::DEBIT,
-                    'date' => (clone $baseDate)->modify('+425 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
-                ],
-                // Juin 2025
-                [
-                    'description' => 'Remboursement prêt',
-                    'amount' => 2500.00,
+                    'description' => 'Placement de 500 euros - Virement mensuel',
+                    'amount' => 500.00,
                     'type' => TransactionTypesEnum::CREDIT,
-                    'date' => (clone $baseDate)->modify('+545 days')->setTime(random_int(0, 23), random_int(0, 59), random_int(0, 59)),
+                    'date' => (clone $baseDate)->modify('-9 months'),
+                ],
+                // Mois -8 (Mars 2024)
+                [
+                    'description' => 'Placement de 125 euros - Intérêts trimestriels',
+                    'amount' => 125.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-8 months'),
+                ],
+                // Mois -7 (Avril 2024)
+                [
+                    'description' => 'Placement de 2000 euros - Prime exceptionnelle',
+                    'amount' => 2000.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-7 months'),
+                ],
+                // Mois -6 (Mai 2024)
+                [
+                    'description' => 'Achat de 1200 euros - Mobilier',
+                    'amount' => 1200.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('-6 months'),
+                ],
+                // Mois -5 (Juin 2024)
+                [
+                    'description' => 'Placement de 130 euros - Intérêts trimestriels',
+                    'amount' => 130.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-5 months'),
+                ],
+                // Mois -4 (Juillet 2024)
+                [
+                    'description' => 'Achat de 1500 euros - Vacances été',
+                    'amount' => 1500.00,
+                    'type' => TransactionTypesEnum::DEBIT,
+                    'date' => (clone $baseDate)->modify('-4 months'),
+                ],
+                // Mois -3 (Août 2024)
+                [
+                    'description' => 'Placement de 900 euros - Prime vacances',
+                    'amount' => 900.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-3 months'),
+                ],
+                // Mois -2 (Septembre 2024)
+                [
+                    'description' => 'Placement de 140 euros - Intérêts trimestriels',
+                    'amount' => 140.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-2 months'),
+                ],
+                // Mois -1 (Octobre 2024)
+                [
+                    'description' => 'Placement de 500 euros - Virement mensuel',
+                    'amount' => 500.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-1 month'),
+                ],
+                // Mois en cours (Novembre 2024)
+                [
+                    'description' => 'Placement de 350 euros - Remboursement assurance',
+                    'amount' => 350.00,
+                    'type' => TransactionTypesEnum::CREDIT,
+                    'date' => (clone $baseDate)->modify('-5 days'),
                 ],
             ];
 
@@ -198,8 +208,8 @@ class AppFixtures extends Fixture
 
                 // Mise à jour du solde
                 $balanceBeforeTransaction = $balance;
-                $balance += $transactionData['type'] === TransactionTypesEnum::CREDIT 
-                    ? $transactionData['amount'] 
+                $balance += $transactionData['type'] === TransactionTypesEnum::CREDIT
+                    ? $transactionData['amount']
                     : -$transactionData['amount'];
                 $balanceAfterTransaction = $balance;
 

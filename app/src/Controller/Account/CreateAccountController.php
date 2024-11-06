@@ -6,7 +6,6 @@ namespace App\Controller\Account;
 
 use App\Dto\Account\Payload\AccountPayload;
 use App\Entity\Account;
-use App\Serializable\SerializationGroups;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -29,7 +28,6 @@ class CreateAccountController extends BaseRestController
         responses: [
             new SuccessResponse(
                 responseClassFqcn: Account::class,
-                groups: [SerializationGroups::ACCOUNT_CREATE],
                 responseCode: Response::HTTP_CREATED,
                 description: 'Account creation',
             ),
@@ -43,7 +41,6 @@ class CreateAccountController extends BaseRestController
     ): JsonResponse {
         return $this->successResponse(
             data: $accountService->create($accountPayload),
-            groups: [SerializationGroups::ACCOUNT_CREATE],
             status: Response::HTTP_CREATED,
         );
     }

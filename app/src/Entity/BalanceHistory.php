@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BalanceHistoryRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
@@ -19,22 +17,18 @@ class BalanceHistory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
     ])]
     private \DateTimeInterface $date;
 
     #[ORM\Column(type: Types::FLOAT)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private float $balanceBeforeTransaction = 0.0;
 
     #[ORM\Column(type: Types::FLOAT)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private float $balanceAfterTransaction = 0.0;
 
     #[ORM\ManyToOne]

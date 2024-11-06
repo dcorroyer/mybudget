@@ -6,7 +6,6 @@ namespace App\Controller\Transaction;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Entity\Transaction;
-use App\Serializable\SerializationGroups;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -29,7 +28,6 @@ class CreateTransactionController extends BaseRestController
         responses: [
             new SuccessResponse(
                 responseClassFqcn: Transaction::class,
-                groups: [SerializationGroups::TRANSACTION_CREATE],
                 responseCode: Response::HTTP_CREATED,
                 description: 'Transaction creation',
             ),
@@ -44,7 +42,6 @@ class CreateTransactionController extends BaseRestController
     ): JsonResponse {
         return $this->successResponse(
             data: $transactionService->create($accountId, $transactionPayload),
-            groups: [SerializationGroups::TRANSACTION_CREATE],
             status: Response::HTTP_CREATED,
         );
     }

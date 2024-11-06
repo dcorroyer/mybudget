@@ -6,7 +6,6 @@ namespace App\Controller\Account;
 
 use App\Dto\Account\Payload\AccountPayload;
 use App\Entity\Account;
-use App\Serializable\SerializationGroups;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
@@ -27,11 +26,7 @@ class UpdateAccountController extends BaseRestController
         operationId: 'put_account',
         summary: 'put account',
         responses: [
-            new SuccessResponse(
-                responseClassFqcn: Account::class,
-                groups: [SerializationGroups::ACCOUNT_UPDATE],
-                description: 'Account updated',
-            ),
+            new SuccessResponse(responseClassFqcn: Account::class, description: 'Account updated'),
             new NotFoundResponse(description: 'Account not found'),
         ],
         requestBodyClassFqcn: AccountPayload::class
@@ -42,9 +37,6 @@ class UpdateAccountController extends BaseRestController
         Account $account,
         #[MapRequestPayload] AccountPayload $accountPayload
     ): JsonResponse {
-        return $this->successResponse(
-            data: $accountService->update($accountPayload, $account),
-            groups: [SerializationGroups::ACCOUNT_UPDATE]
-        );
+        return $this->successResponse(data: $accountService->update($accountPayload, $account));
     }
 }

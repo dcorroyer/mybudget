@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BudgetRepository;
-use App\Serializable\SerializationGroups;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,57 +21,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['date'], message: 'This budget already exists.')]
 class Budget
 {
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-        SerializationGroups::USER_GET,
-    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
     private string $name = '';
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
     private float $incomesAmount = 0;
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
     private float $expensesAmount = 0;
 
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
     #[ORM\Column]
@@ -87,12 +54,6 @@ class Budget
             DateTimeNormalizer::FORMAT_KEY => 'Y-m',
         ],
     )]
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_LIST,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Date]
     #[ORM\Column(type: Types::DATE_MUTABLE, unique: true)]
@@ -101,22 +62,12 @@ class Budget
     /**
      * @var Collection<int, Income>
      */
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $incomes;
 
     /**
      * @var Collection<int, Expense>
      */
-    #[Serializer\Groups([
-        SerializationGroups::BUDGET_GET,
-        SerializationGroups::BUDGET_CREATE,
-        SerializationGroups::BUDGET_UPDATE,
-    ])]
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'budget', cascade: ['persist'], orphanRemoval: true)]
     private Collection $expenses;
 

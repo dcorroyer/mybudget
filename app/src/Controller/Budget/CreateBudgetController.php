@@ -6,7 +6,6 @@ namespace App\Controller\Budget;
 
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Entity\Budget;
-use App\Serializable\SerializationGroups;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -29,7 +28,6 @@ class CreateBudgetController extends BaseRestController
         responses: [
             new SuccessResponse(
                 responseClassFqcn: Budget::class,
-                groups: [SerializationGroups::BUDGET_CREATE],
                 responseCode: Response::HTTP_CREATED,
                 description: 'Budget creation',
             ),
@@ -43,7 +41,6 @@ class CreateBudgetController extends BaseRestController
     ): JsonResponse {
         return $this->successResponse(
             data: $budgetService->create($budgetPayload),
-            groups: [SerializationGroups::BUDGET_CREATE],
             status: Response::HTTP_CREATED,
         );
     }

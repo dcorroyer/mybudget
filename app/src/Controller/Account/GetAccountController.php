@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Account;
 
 use App\Entity\Account;
-use App\Serializable\SerializationGroups;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
@@ -25,17 +24,13 @@ class GetAccountController extends BaseRestController
         operationId: 'get_account',
         summary: 'get account',
         responses: [
-            new SuccessResponse(
-                responseClassFqcn: Account::class,
-                groups: [SerializationGroups::ACCOUNT_GET],
-                description: 'Account get',
-            ),
+            new SuccessResponse(responseClassFqcn: Account::class, description: 'Account get'),
             new NotFoundResponse(description: 'Account not found'),
         ],
     )]
     #[Route('/{id}', name: 'api_accounts_get', methods: Request::METHOD_GET)]
     public function __invoke(int $id, AccountService $accountService): JsonResponse
     {
-        return $this->successResponse(data: $accountService->get($id), groups: [SerializationGroups::ACCOUNT_GET]);
+        return $this->successResponse(data: $accountService->get($id));
     }
 }

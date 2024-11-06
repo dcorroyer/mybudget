@@ -61,28 +61,23 @@ class Transaction
     ])]
     private TransactionTypesEnum $type = TransactionTypesEnum::CREDIT;
 
-    #[Context(
-        normalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-        denormalizationContext: [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
-        ],
-    )]
     #[Assert\NotBlank]
-    #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\DateTime]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Serializer\Groups([
         SerializationGroups::TRANSACTION_GET,
         SerializationGroups::TRANSACTION_LIST,
         SerializationGroups::TRANSACTION_CREATE,
         SerializationGroups::TRANSACTION_UPDATE,
     ])]
+    #[Context([
+        DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+    ])]
     private \DateTimeInterface $date;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Serializer\Groups([SerializationGroups::TRANSACTION_GET])]
+    #[Serializer\Groups([SerializationGroups::TRANSACTION_GET, SerializationGroups::TRANSACTION_LIST])]
     private ?Account $account = null;
 
     public function __construct()

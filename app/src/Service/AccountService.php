@@ -9,6 +9,7 @@ use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\AccountRepository;
+use App\Security\Voter\AccountVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -31,7 +32,7 @@ class AccountService
             throw new NotFoundHttpException(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted('view', $account)) {
+        if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -56,7 +57,7 @@ class AccountService
 
     public function update(AccountPayload $accountPayload, Account $account): Account
     {
-        if (! $this->authorizationChecker->isGranted('edit', $account)) {
+        if (! $this->authorizationChecker->isGranted(AccountVoter::EDIT, $account)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -69,7 +70,7 @@ class AccountService
 
     public function delete(Account $account): void
     {
-        if (! $this->authorizationChecker->isGranted('delete', $account)) {
+        if (! $this->authorizationChecker->isGranted(AccountVoter::DELETE, $account)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 

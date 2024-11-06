@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Transaction;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class CreateTransactionController extends BaseRestController
         summary: 'post transaction',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Transaction::class,
+                responseClassFqcn: TransactionResponse::class,
                 responseCode: Response::HTTP_CREATED,
                 description: 'Transaction creation',
             ),

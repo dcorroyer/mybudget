@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Transaction;
 
-use App\Entity\Transaction;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +24,7 @@ class GetTransactionController extends BaseRestController
         operationId: 'get_transaction',
         summary: 'get transaction',
         responses: [
-            new SuccessResponse(responseClassFqcn: Transaction::class, description: 'Transaction get'),
+            new SuccessResponse(responseClassFqcn: TransactionResponse::class, description: 'Transaction get'),
             new NotFoundResponse(description: 'Transaction not found'),
         ],
     )]

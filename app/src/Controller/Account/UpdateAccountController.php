@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Account;
 
 use App\Dto\Account\Payload\AccountPayload;
+use App\Dto\Account\Response\AccountResponse;
 use App\Entity\Account;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ class UpdateAccountController extends BaseRestController
         operationId: 'put_account',
         summary: 'put account',
         responses: [
-            new SuccessResponse(responseClassFqcn: Account::class, description: 'Account updated'),
+            new SuccessResponse(responseClassFqcn: AccountResponse::class, description: 'Account updated'),
             new NotFoundResponse(description: 'Account not found'),
         ],
         requestBodyClassFqcn: AccountPayload::class

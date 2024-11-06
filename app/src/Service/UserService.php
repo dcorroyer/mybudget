@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\User\Payload\RegisterPayload;
+use App\Dto\User\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,7 +19,7 @@ class UserService
     ) {
     }
 
-    public function create(RegisterPayload $registerPayload): User
+    public function create(RegisterPayload $registerPayload): UserResponse
     {
         $user = new User();
 
@@ -33,10 +34,15 @@ class UserService
 
         $this->userRepository->save($user, true);
 
-        return $user;
+        return new UserResponse(
+            id: $user->getId(),
+            email: $user->getEmail(),
+            firstName: $user->getFirstName(),
+            lastName: $user->getLastName(),
+        );
     }
 
-    public function get(string $userIdentifier): User
+    public function get(string $userIdentifier): UserResponse
     {
         $user = $this->userRepository->findOneBy([
             'email' => $userIdentifier,
@@ -46,6 +52,11 @@ class UserService
             throw new NotFoundHttpException("User {$userIdentifier} not found");
         }
 
-        return $user;
+        return new UserResponse(
+            id: $user->getId(),
+            email: $user->getEmail(),
+            firstName: $user->getFirstName(),
+            lastName: $user->getLastName(),
+        );
     }
 }

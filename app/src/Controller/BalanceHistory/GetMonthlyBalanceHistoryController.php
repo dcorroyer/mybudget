@@ -9,7 +9,7 @@ use App\Entity\BalanceHistory;
 use App\Service\BalanceHistoryService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class GetMonthlyBalanceHistoryController extends BaseRestController
         summary: 'Get balance history',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: BalanceHistory::class,
+                responseClassFqcn: BalanceHistoryResponse::class,
                 description: 'Return the balance history',
             ),
         ],
@@ -37,6 +37,6 @@ class GetMonthlyBalanceHistoryController extends BaseRestController
         BalanceHistoryService $balanceHistoryService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->successResponse($balanceHistoryService->getMonthlyBalanceHistory($filter));
+        return $this->successResponse(data: $balanceHistoryService->getMonthlyBalanceHistory($filter));
     }
 }

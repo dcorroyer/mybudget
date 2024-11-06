@@ -5,23 +5,21 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
+use App\Dto\BalanceHistory\Response\BalanceHistoryAccountResponse;
+use App\Dto\BalanceHistory\Response\BalanceHistoryBalanceResponse;
+use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Entity\Transaction;
-use App\Enum\ErrorMessagesEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
 use App\Repository\TransactionRepository;
-use App\Security\Voter\AccountVoter;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BalanceHistoryService
 {
     public function __construct(
         private readonly BalanceHistoryRepository $balanceHistoryRepository,
         private readonly TransactionRepository $transactionRepository,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly AccountService $accountService,
     ) {
     }
@@ -67,71 +65,85 @@ class BalanceHistoryService
         );
     }
 
-    public function getMonthlyBalanceHistory(?BalanceHistoryFilterQuery $filter = null): array
+    public function getMonthlyBalanceHistory(?BalanceHistoryFilterQuery $filter = null): BalanceHistoryResponse
     {
+        // DEBUT récupération des comptes
         $accountsInfo = [];
 
         if ($filter?->getAccountIds() !== null) {
             foreach ($filter?->getAccountIds() as $accountId) {
                 $account = $this->accountService->get($accountId);
 
-                if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-                    throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-                }
-
-                $accountsInfo[] = [
-                    'id' => $account->getId(),
-                    'name' => $account->getName(),
-                ];
+                $accountsInfo[] = new BalanceHistoryAccountResponse(
+                    $account->getId(),
+                    $account->getName()
+                );
             }
 
             $accounts = $filter?->getAccountIds();
         } else {
             $accounts = $this->accountService->list();
+            
             foreach ($accounts as $account) {
-                $accountsInfo[] = [
-                    'id' => $account->getId(),
-                    'name' => $account->getName(),
-                ];
+                $accountsInfo[] = new BalanceHistoryAccountResponse(
+                    $account->getId(),
+                    $account->getName()
+                );
             }
         }
+        // FIN récupération des comptes
 
+        // DEBUT récupération manipulation et tri des balances
         $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $filter?->period);
 
         $monthlyBalances = [];
-        $processedMonths = [];
+        $allMonths = [];
 
         foreach ($balanceHistories as $history) {
             $yearMonth = $history->getDate()->format('Y-m');
+            $allMonths[$yearMonth] = true;
+        }
+        
+        ksort($allMonths);
+        $allMonths = array_keys($allMonths);
 
-            if (! isset($processedMonths[$yearMonth])) {
-                $processedMonths[$yearMonth] = true;
+        foreach ($accounts as $accountId) {
+            $account = $this->accountService->get($accountId);
+            $lastKnownBalance = null;
+
+            foreach ($allMonths as $yearMonth) {
+                if (!isset($monthlyBalances[$yearMonth])) {
+                    $monthlyBalances[$yearMonth] = 0;
+                }
 
                 $endOfMonthBalance = $this->balanceHistoryRepository->findBalanceAtEndOfMonth(
-                    $history->getAccount(),
+                    $account,
                     $yearMonth
                 );
 
                 if ($endOfMonthBalance !== null) {
-                    $monthlyBalances[$yearMonth] = $endOfMonthBalance;
+                    $lastKnownBalance = $endOfMonthBalance;
+                    $monthlyBalances[$yearMonth] += $endOfMonthBalance;
+                } elseif ($lastKnownBalance !== null) {
+                    $monthlyBalances[$yearMonth] += $lastKnownBalance;
                 }
             }
         }
 
         ksort($monthlyBalances);
+        // FIN récupération manipulation et tri des balances
+        
+        $balancesInfo = [];
 
-        return [
-            'accounts' => $accountsInfo,
-            'balances' => array_map(
-                static fn ($yearMonth, $balance) => [
-                    'date' => $yearMonth,
-                    'formattedDate' => (new \DateTime($yearMonth . '-01'))->format('F Y'),
-                    'balance' => (float) $balance,
-                ],
-                array_keys($monthlyBalances),
-                array_values($monthlyBalances)
-            ),
-        ];
+        foreach ($monthlyBalances as $yearMonth => $balance) {
+            $balancesInfo[] = new BalanceHistoryBalanceResponse(
+                $yearMonth,
+                (new \DateTime($yearMonth . '-01'))->format('F Y'),
+                $balance
+            );
+        }
+
+        return new BalanceHistoryResponse($accountsInfo, $balancesInfo);
     }
 
     private function recalculateBalanceHistory(

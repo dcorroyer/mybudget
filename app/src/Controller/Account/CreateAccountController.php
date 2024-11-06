@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Account;
 
 use App\Dto\Account\Payload\AccountPayload;
-use App\Entity\Account;
+use App\Dto\Account\Response\AccountResponse;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +27,7 @@ class CreateAccountController extends BaseRestController
         summary: 'post account',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Account::class,
+                responseClassFqcn: AccountResponse::class,
                 responseCode: Response::HTTP_CREATED,
                 description: 'Account creation',
             ),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Account\Payload\AccountPayload;
+use App\Dto\Account\Response\AccountResponse;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
@@ -24,6 +25,26 @@ class AccountService
     ) {
     }
 
+    public function getExternal(int $id): AccountResponse
+    {
+        $account = $this->accountRepository->find($id);
+
+        if ($account === null) {
+            throw new NotFoundHttpException(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
+        }
+
+        if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
+            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+        }
+
+        return new AccountResponse(
+            id: $account->getId(),
+            name: $account->getName(),
+            type: $account->getType()->value,
+            balance: $account->getBalance()
+        );
+    }
+
     public function get(int $id): Account
     {
         $account = $this->accountRepository->find($id);
@@ -39,7 +60,7 @@ class AccountService
         return $account;
     }
 
-    public function create(AccountPayload $accountPayload): Account
+    public function create(AccountPayload $accountPayload): AccountResponse
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -52,10 +73,15 @@ class AccountService
 
         $this->accountRepository->save($account, true);
 
-        return $account;
+        return new AccountResponse(
+            id: $account->getId(),
+            name: $account->getName(),
+            type: $account->getType()->value,
+            balance: $account->getBalance()
+        );
     }
 
-    public function update(AccountPayload $accountPayload, Account $account): Account
+    public function update(AccountPayload $accountPayload, Account $account): AccountResponse
     {
         if (! $this->authorizationChecker->isGranted(AccountVoter::EDIT, $account)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
@@ -65,7 +91,12 @@ class AccountService
 
         $this->accountRepository->save($account, true);
 
-        return $account;
+        return new AccountResponse(
+            id: $account->getId(),
+            name: $account->getName(),
+            type: $account->getType()->value,
+            balance: $account->getBalance()
+        );
     }
 
     public function delete(Account $account): void
@@ -75,6 +106,29 @@ class AccountService
         }
 
         $this->accountRepository->delete($account, true);
+    }
+
+    /**
+     * @return list<AccountResponse>
+     */
+    public function listExternal(): iterable
+    {
+        $accounts = $this->accountRepository->findBy([
+            'user' => $this->security->getUser(),
+        ]);
+
+        $accountResponses = [];
+
+        foreach ($accounts as $account) {
+            $accountResponses[] = new AccountResponse(
+                id: $account->getId(),
+                name: $account->getName(),
+                type: $account->getType()->value,
+                balance: $account->getBalance()
+            );
+        }
+
+        return $accountResponses;
     }
 
     /**

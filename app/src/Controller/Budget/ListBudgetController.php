@@ -9,7 +9,7 @@ use App\Entity\Budget;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Controller\BaseRestController;
 use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +39,6 @@ class ListBudgetController extends BaseRestController
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?BudgetFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginateResponse($budgetService->paginate($paginationQueryParams, $filter));
+        return $this->paginatedResponse($budgetService->paginate($paginationQueryParams, $filter));
     }
 }

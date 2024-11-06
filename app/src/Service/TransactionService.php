@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Account\Response\AccountPartialResponse;
+use App\Dto\Common\PaginatedResponseDto;
+use App\Dto\Common\PaginationMetaDto;
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
-use App\Security\Voter\AccountVoter;
 use App\Security\Voter\TransactionVoter;
 use Doctrine\Common\Collections\Criteria;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,18 +32,16 @@ class TransactionService
     public function get(int $accountId, int $id): Transaction
     {
         $account = $this->accountService->get($accountId);
-
-        if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-        }
-
         $transaction = $this->transactionRepository->find($id);
 
         if ($transaction === null) {
             throw new NotFoundHttpException(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, $transaction)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -51,10 +51,6 @@ class TransactionService
     public function create(int $accountId, TransactionPayload $transactionPayload): Transaction
     {
         $account = $this->accountService->get($accountId);
-
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::CREATE, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-        }
 
         $transaction = (new Transaction())
             ->setDescription($transactionPayload->description)
@@ -71,9 +67,14 @@ class TransactionService
         return $transaction;
     }
 
-    public function update(TransactionPayload $transactionPayload, Transaction $transaction): Transaction
+    public function update(int $accountId, TransactionPayload $transactionPayload, Transaction $transaction): Transaction
     {
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, $transaction)) {
+        $account = $this->accountService->get($accountId);
+
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -90,9 +91,14 @@ class TransactionService
         return $transaction;
     }
 
-    public function delete(Transaction $transaction): void
+    public function delete(int $accountId, Transaction $transaction): void
     {
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::DELETE, $transaction)) {
+        $account = $this->accountService->get($accountId);
+
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -103,33 +109,27 @@ class TransactionService
 
     /**
      * @param int[]|null $accountIds
+     * @param PaginationQueryParams|null $paginationQueryParams
      *
-     * @return SlidingPagination<int, Transaction>
+     * @return PaginatedResponseDto
+     *
+     * @throws \Exception
      */
     public function paginate(
         ?array $accountIds = null,
         ?PaginationQueryParams $paginationQueryParams = null
-    ): SlidingPagination {
+    ): PaginatedResponseDto {
         $criteria = Criteria::create();
 
         if (! empty($accountIds)) {
             $accounts = array_map(
                 function (int $accountId) {
-                    $account = $this->accountService->get($accountId);
-                    if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-                        throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-                    }
-
-                    return $account;
+                    return $this->accountService->get($accountId);
                 },
                 $accountIds
             );
         } else {
             $accounts = $this->accountService->list();
-
-            if (empty($accounts)) {
-                return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
-            }
         }
 
         $criteria->andWhere(Criteria::expr()?->in('account', $accounts));
@@ -137,6 +137,31 @@ class TransactionService
             'date' => 'DESC',
         ]);
 
-        return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
+        $paginated = $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
+
+        $transactions = [];
+
+        foreach ($paginated->getItems() as $transaction) {
+            $transactions[] = new TransactionResponse(
+                id: $transaction->getId(),
+                description: $transaction->getDescription(),
+                amount: $transaction->getAmount(),
+                type: $transaction->getType(),
+                date: $transaction->getDate(),
+                account: new AccountPartialResponse(
+                    id: $transaction->getAccount()->getId(),
+                    name: $transaction->getAccount()->getName(),
+                ),
+            );
+        }
+
+        return new PaginatedResponseDto(
+            data: $transactions,
+            meta: new PaginationMetaDto(
+                total: $paginated->getTotalItemCount(),
+                page: $paginated->getCurrentPageNumber(),
+                limit: $paginated->getItemNumberPerPage(),
+            ),
+        );
     }
 }

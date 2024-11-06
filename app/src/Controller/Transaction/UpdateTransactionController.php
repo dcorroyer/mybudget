@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Transaction;
 
+use App\Controller\BaseRestController;
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ class UpdateTransactionController extends BaseRestController
         operationId: 'patch_transaction',
         summary: 'patch transaction',
         responses: [
-            new SuccessResponse(responseClassFqcn: Transaction::class, description: 'Transaction updated'),
+            new SuccessResponse(responseClassFqcn: TransactionResponse::class, description: 'Transaction updated'),
             new NotFoundResponse(description: 'Transaction not found'),
         ],
         requestBodyClassFqcn: TransactionPayload::class
@@ -38,6 +39,6 @@ class UpdateTransactionController extends BaseRestController
         Transaction $transaction,
         #[MapRequestPayload] TransactionPayload $transactionPayload
     ): JsonResponse {
-        return $this->successResponse(data: $transactionService->update($transactionPayload, $transaction));
+        return $this->successResponse(data: $transactionService->update($accountId, $transactionPayload, $transaction));
     }
 }

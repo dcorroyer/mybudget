@@ -6,18 +6,22 @@ namespace App\Service;
 
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
+use App\Dto\Common\PaginatedResponseDto;
+use App\Dto\Common\PaginationMetaDto;
 use App\Entity\Budget;
 use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
 use App\Security\Voter\BudgetVoter;
 use Doctrine\Common\Collections\Criteria;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use App\Dto\Budget\Response\BudgetResponse;
+use App\Dto\Budget\Response\IncomeResponse;
+use App\Dto\Budget\Response\ExpenseResponse;
 
 class BudgetService
 {
@@ -30,7 +34,7 @@ class BudgetService
     ) {
     }
 
-    public function get(int $id): Budget
+    public function get(int $id): BudgetResponse
     {
         $budget = $this->budgetRepository->find($id);
 
@@ -42,17 +46,17 @@ class BudgetService
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
-        return $budget;
+        return $this->createBudgetResponse($budget);
     }
 
-    public function create(BudgetPayload $budgetPayload): Budget
+    public function create(BudgetPayload $budgetPayload): BudgetResponse
     {
         $budget = new Budget();
 
         return $this->createOrUpdateBudget($budgetPayload, $budget);
     }
 
-    public function update(BudgetPayload $budgetPayload, Budget $budget): Budget
+    public function update(BudgetPayload $budgetPayload, Budget $budget): BudgetResponse
     {
         if (! $this->authorizationChecker->isGranted(BudgetVoter::EDIT, $budget)) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
@@ -64,7 +68,7 @@ class BudgetService
         return $this->createOrUpdateBudget($budgetPayload, $budget);
     }
 
-    private function createOrUpdateBudget(BudgetPayload $budgetPayload, Budget $budget): Budget
+    private function createOrUpdateBudget(BudgetPayload $budgetPayload, Budget $budget): BudgetResponse
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -88,7 +92,7 @@ class BudgetService
 
         $this->budgetRepository->save($budget, true);
 
-        return $budget;
+        return $this->createBudgetResponse($budget);
     }
 
     public function delete(Budget $budget): void
@@ -100,7 +104,7 @@ class BudgetService
         $this->budgetRepository->delete($budget, true);
     }
 
-    public function duplicate(?int $id = null): Budget
+    public function duplicate(?int $id = null): BudgetResponse
     {
         if ($id === null) {
             $budget = $this->budgetRepository->findLatestByUser($this->security->getUser());
@@ -144,16 +148,16 @@ class BudgetService
 
         $this->budgetRepository->save($newBudget, true);
 
-        return $newBudget;
+        return $this->createBudgetResponse($newBudget);
     }
 
     /**
-     * @return SlidingPagination<int, Budget>
+     * @return PaginatedResponseDto
      */
     public function paginate(
         ?PaginationQueryParams $paginationQueryParams = null,
         ?BudgetFilterQuery $budgetFilterQuery = null
-    ): SlidingPagination {
+    ): PaginatedResponseDto {
         $criteria = Criteria::create();
         $criteria->andWhere(Criteria::expr()?->eq('user', $this->security->getUser()))
             ->orderBy([
@@ -161,6 +165,47 @@ class BudgetService
             ])
         ;
 
-        return $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
+        $paginated = $this->budgetRepository->paginate($paginationQueryParams, $budgetFilterQuery, $criteria);
+
+        $budgets = [];
+
+        foreach ($paginated->getItems() as $budget) {
+            $budgets[] = $this->createBudgetResponse($budget);
+        }
+
+        return new PaginatedResponseDto(
+            data: $budgets,
+            meta: new PaginationMetaDto(
+                total: $paginated->getTotalItemCount(),
+                page: $paginated->getCurrentPageNumber(),
+                limit: $paginated->getItemNumberPerPage(),
+            ),
+        );
+    }
+
+    private function createBudgetResponse(Budget $budget): BudgetResponse
+    {
+        $incomes = array_map(fn($income) => new IncomeResponse(
+            id: $income->getId(),
+            name: $income->getName(),
+            amount: $income->getAmount()
+        ), $budget->getIncomes()->toArray());
+
+        $expenses = array_map(fn($expense) => new ExpenseResponse(
+            id: $expense->getId(),
+            name: $expense->getName(),
+            amount: $expense->getAmount(),
+            category: $expense->getCategory()
+        ), $budget->getExpenses()->toArray());
+
+        return new BudgetResponse(
+            id: $budget->getId(),
+            name: $budget->getName(),
+            incomesAmount: $budget->getIncomesAmount(),
+            expensesAmount: $budget->getExpensesAmount(),
+            date: $budget->getDate(),
+            incomes: $incomes,
+            expenses: $expenses
+        );
     }
 }

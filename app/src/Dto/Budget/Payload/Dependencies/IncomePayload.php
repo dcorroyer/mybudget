@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Dto\Budget\Payload\Dependencies;
 
 use Doctrine\DBAL\Types\Types;
+use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class IncomePayload
+class IncomePayload implements PayloadInterface
 {
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::STRING)]

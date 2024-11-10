@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Dto\Transaction\Payload;
 
 use App\Enum\TransactionTypesEnum;
+use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class TransactionPayload
+class TransactionPayload implements PayloadInterface
 {
     #[Assert\NotBlank]
     #[Assert\Type('string')]

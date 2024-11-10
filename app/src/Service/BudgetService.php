@@ -6,22 +6,22 @@ namespace App\Service;
 
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
-use App\Dto\Common\PaginatedResponseDto;
-use App\Dto\Common\PaginationMetaDto;
+use App\Dto\Budget\Response\BudgetResponse;
+use App\Dto\Budget\Response\ExpenseResponse;
+use App\Dto\Budget\Response\IncomeResponse;
 use App\Entity\Budget;
 use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
 use App\Security\Voter\BudgetVoter;
 use Doctrine\Common\Collections\Criteria;
+use My\RestBundle\Dto\PaginatedResponseDto;
+use My\RestBundle\Dto\PaginationMetaDto;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use App\Dto\Budget\Response\BudgetResponse;
-use App\Dto\Budget\Response\IncomeResponse;
-use App\Dto\Budget\Response\ExpenseResponse;
 
 class BudgetService
 {
@@ -151,14 +151,6 @@ class BudgetService
         return $this->createBudgetResponse($newBudget);
     }
 
-    /**
-     * @param PaginationQueryParams|null $paginationQueryParams
-     * @param BudgetFilterQuery|null $budgetFilterQuery
-     *
-     * @return PaginatedResponseDto
-     *
-     * @throws \Exception
-     */
     public function paginate(
         ?PaginationQueryParams $paginationQueryParams = null,
         ?BudgetFilterQuery $budgetFilterQuery = null
@@ -219,5 +211,4 @@ class BudgetService
             expenses: $expenses
         );
     }
-
 }

@@ -14,7 +14,7 @@ final class Version20241104125915 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'create savings history tables';
     }
 
     public function up(Schema $schema): void

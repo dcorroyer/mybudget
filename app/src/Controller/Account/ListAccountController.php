@@ -8,7 +8,7 @@ use App\Dto\Account\Response\AccountResponse;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use App\Controller\BaseRestController;
+use My\RestBundle\Controller\BaseRestController;
 use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;

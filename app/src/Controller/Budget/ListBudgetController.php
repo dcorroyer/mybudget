@@ -9,7 +9,7 @@ use App\Entity\Budget;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
-use App\Controller\BaseRestController;
+use My\RestBundle\Controller\BaseRestController;
 use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;

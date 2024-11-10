@@ -6,11 +6,10 @@ namespace App\Controller\Transaction;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Dto\Transaction\Response\TransactionResponse;
-use App\Entity\Transaction;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use App\Controller\BaseRestController;
+use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

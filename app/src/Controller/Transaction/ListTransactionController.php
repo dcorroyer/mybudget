@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Transaction;
 
-use App\Controller\BaseRestController;
 use App\Dto\Transaction\Http\TransactionFilterQuery;
 use App\Dto\Transaction\Response\TransactionResponse;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
+use My\RestBundle\Controller\BaseRestController;
 use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +39,8 @@ class ListTransactionController extends BaseRestController
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?TransactionFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginatedResponse(pagination: $transactionService->paginate($filter?->accountIds, $paginationQueryParams));
+        return $this->paginatedResponse(
+            pagination: $transactionService->paginate($filter?->accountIds, $paginationQueryParams)
+        );
     }
 }

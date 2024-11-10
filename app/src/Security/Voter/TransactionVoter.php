@@ -26,8 +26,8 @@ class TransactionVoter extends Voter
             return $subject instanceof Account;
         }
 
-        if (is_array($subject)) {
-            return isset($subject['transaction']) 
+        if (\is_array($subject)) {
+            return isset($subject['transaction'])
                 && $subject['transaction'] instanceof Transaction;
         }
 
@@ -46,10 +46,10 @@ class TransactionVoter extends Voter
             return $this->canCreate($subject, $user);
         }
 
-        $transaction = is_array($subject) ? $subject['transaction'] : $subject;
-        $account = is_array($subject) ? ($subject['account'] ?? null) : null;
+        $transaction = \is_array($subject) ? $subject['transaction'] : $subject;
+        $account = \is_array($subject) ? ($subject['account'] ?? null) : null;
 
-        if (!$transaction instanceof Transaction) {
+        if (! $transaction instanceof Transaction) {
             return false;
         }
 

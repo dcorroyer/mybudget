@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Account\Response\AccountPartialResponse;
-use App\Dto\Common\PaginatedResponseDto;
-use App\Dto\Common\PaginationMetaDto;
 use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
@@ -14,6 +12,8 @@ use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
 use App\Security\Voter\TransactionVoter;
 use Doctrine\Common\Collections\Criteria;
+use My\RestBundle\Dto\PaginatedResponseDto;
+use My\RestBundle\Dto\PaginationMetaDto;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -67,8 +67,11 @@ class TransactionService
         return $transaction;
     }
 
-    public function update(int $accountId, TransactionPayload $transactionPayload, Transaction $transaction): Transaction
-    {
+    public function update(
+        int $accountId,
+        TransactionPayload $transactionPayload,
+        Transaction $transaction
+    ): Transaction {
         $account = $this->accountService->get($accountId);
 
         if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, [
@@ -109,11 +112,6 @@ class TransactionService
 
     /**
      * @param int[]|null $accountIds
-     * @param PaginationQueryParams|null $paginationQueryParams
-     *
-     * @return PaginatedResponseDto
-     *
-     * @throws \Exception
      */
     public function paginate(
         ?array $accountIds = null,

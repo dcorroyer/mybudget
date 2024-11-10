@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\Budget\Response;
 
-class ExpenseResponse
+use My\RestBundle\Contract\ResponseInterface;
+
+class ExpenseResponse implements ResponseInterface
 {
     public function __construct(
         public readonly int $id,
@@ -13,4 +15,4 @@ class ExpenseResponse
         public readonly string $category,
     ) {
     }
-} 
+}

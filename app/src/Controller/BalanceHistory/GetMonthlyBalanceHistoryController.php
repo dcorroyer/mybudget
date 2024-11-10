@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\BalanceHistory;
 
 use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
-use App\Entity\BalanceHistory;
+use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Service\BalanceHistoryService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use App\Controller\BaseRestController;
+use My\RestBundle\Controller\BaseRestController;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

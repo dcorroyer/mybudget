@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\BalanceHistory\Response;
 
-class BalanceHistoryBalanceResponse
+class BalanceResponse
 {
     public function __construct(
         public readonly string $date,

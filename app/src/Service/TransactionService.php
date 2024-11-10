@@ -122,12 +122,10 @@ class TransactionService
         $criteria = Criteria::create();
 
         if (! empty($accountIds)) {
-            $accounts = array_map(
-                function (int $accountId) {
-                    return $this->accountService->get($accountId);
-                },
-                $accountIds
-            );
+            $accounts = [];
+            foreach ($accountIds as $accountId) {
+                $accounts[] = $this->accountService->get($accountId);
+            }
         } else {
             $accounts = $this->accountService->list();
         }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Account\Response\AccountPartialResponse;
 use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
 use App\Dto\BalanceHistory\Response\BalanceHistoryAccountResponse;
-use App\Dto\BalanceHistory\Response\BalanceHistoryBalanceResponse;
+use App\Dto\BalanceHistory\Response\BalanceResponse;
 use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
@@ -74,7 +75,7 @@ class BalanceHistoryService
             foreach ($filter?->getAccountIds() as $accountId) {
                 $account = $this->accountService->get($accountId);
 
-                $accountsInfo[] = new BalanceHistoryAccountResponse(
+                $accountsInfo[] = new AccountPartialResponse(
                     $account->getId(),
                     $account->getName()
                 );
@@ -85,7 +86,7 @@ class BalanceHistoryService
             $accounts = $this->accountService->list();
             
             foreach ($accounts as $account) {
-                $accountsInfo[] = new BalanceHistoryAccountResponse(
+                $accountsInfo[] = new AccountPartialResponse(
                     $account->getId(),
                     $account->getName()
                 );
@@ -97,35 +98,35 @@ class BalanceHistoryService
         $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $filter?->period);
 
         $monthlyBalances = [];
-        $allMonths = [];
+        $dates = [];
 
         foreach ($balanceHistories as $history) {
-            $yearMonth = $history->getDate()->format('Y-m');
-            $allMonths[$yearMonth] = true;
+            $period = $history->getDate()->format('Y-m');
+            $dates[$period] = true;
         }
         
-        ksort($allMonths);
-        $allMonths = array_keys($allMonths);
+        ksort($dates);
+        $dates = array_keys($dates);
 
         foreach ($accounts as $accountId) {
             $account = $this->accountService->get($accountId);
             $lastKnownBalance = null;
 
-            foreach ($allMonths as $yearMonth) {
-                if (!isset($monthlyBalances[$yearMonth])) {
-                    $monthlyBalances[$yearMonth] = 0;
+            foreach ($dates as $period) {
+                if (!isset($monthlyBalances[$period])) {
+                    $monthlyBalances[$period] = 0;
                 }
 
                 $endOfMonthBalance = $this->balanceHistoryRepository->findBalanceAtEndOfMonth(
                     $account,
-                    $yearMonth
+                    $period
                 );
 
                 if ($endOfMonthBalance !== null) {
                     $lastKnownBalance = $endOfMonthBalance;
-                    $monthlyBalances[$yearMonth] += $endOfMonthBalance;
+                    $monthlyBalances[$period] += $endOfMonthBalance;
                 } elseif ($lastKnownBalance !== null) {
-                    $monthlyBalances[$yearMonth] += $lastKnownBalance;
+                    $monthlyBalances[$period] += $lastKnownBalance;
                 }
             }
         }
@@ -136,7 +137,7 @@ class BalanceHistoryService
         $balancesInfo = [];
 
         foreach ($monthlyBalances as $yearMonth => $balance) {
-            $balancesInfo[] = new BalanceHistoryBalanceResponse(
+            $balancesInfo[] = new BalanceResponse(
                 $yearMonth,
                 (new \DateTime($yearMonth . '-01'))->format('F Y'),
                 $balance

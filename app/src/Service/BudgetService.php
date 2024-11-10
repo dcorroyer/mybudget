@@ -152,7 +152,12 @@ class BudgetService
     }
 
     /**
+     * @param PaginationQueryParams|null $paginationQueryParams
+     * @param BudgetFilterQuery|null $budgetFilterQuery
+     *
      * @return PaginatedResponseDto
+     *
+     * @throws \Exception
      */
     public function paginate(
         ?PaginationQueryParams $paginationQueryParams = null,
@@ -185,18 +190,24 @@ class BudgetService
 
     private function createBudgetResponse(Budget $budget): BudgetResponse
     {
-        $incomes = array_map(fn($income) => new IncomeResponse(
-            id: $income->getId(),
-            name: $income->getName(),
-            amount: $income->getAmount()
-        ), $budget->getIncomes()->toArray());
+        $incomes = [];
+        foreach ($budget->getIncomes() as $income) {
+            $incomes[] = new IncomeResponse(
+                id: $income->getId(),
+                name: $income->getName(),
+                amount: $income->getAmount()
+            );
+        }
 
-        $expenses = array_map(fn($expense) => new ExpenseResponse(
-            id: $expense->getId(),
-            name: $expense->getName(),
-            amount: $expense->getAmount(),
-            category: $expense->getCategory()
-        ), $budget->getExpenses()->toArray());
+        $expenses = [];
+        foreach ($budget->getExpenses() as $expense) {
+            $expenses[] = new ExpenseResponse(
+                id: $expense->getId(),
+                name: $expense->getName(),
+                amount: $expense->getAmount(),
+                category: $expense->getCategory()
+            );
+        }
 
         return new BudgetResponse(
             id: $budget->getId(),
@@ -208,4 +219,5 @@ class BudgetService
             expenses: $expenses
         );
     }
+
 }

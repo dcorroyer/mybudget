@@ -24,6 +24,7 @@ class TransactionRepository extends AbstractEntityRepository
      */
     public function findAllTransactionsFromDate(Account $account, \DateTimeInterface $date): array
     {
+        /** @var array<Transaction> */
         return $this->createQueryBuilder('t')
             ->where('t.account = :account')
             ->andWhere('t.date >= :date')
@@ -43,6 +44,7 @@ class TransactionRepository extends AbstractEntityRepository
         \DateTimeInterface $date,
         int $excludedId
     ): array {
+        /** @var array<Transaction> */
         return $this->createQueryBuilder('t')
             ->where('t.account = :account')
             ->andWhere('t.date >= :date')

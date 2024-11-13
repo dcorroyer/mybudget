@@ -37,6 +37,8 @@ class GetMonthlyBalanceHistoryController extends BaseRestController
         BalanceHistoryService $balanceHistoryService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->successResponse(data: $balanceHistoryService->getMonthlyBalanceHistory($filter));
+        return $this->successResponse(
+            data: $balanceHistoryService->getMonthlyBalanceHistory($filter?->getAccountIds(), $filter?->getPeriod())
+        );
     }
 }

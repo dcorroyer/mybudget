@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Enum\PeriodsEnum;
+use Carbon\Carbon;
 use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
@@ -28,11 +29,12 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             ->setParameter('account', $account)
             ->orderBy('bh.date', 'DESC')
             ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
 
-        $result = $qb->getQuery()->getOneOrNullResult();
-
-        return $result['balanceAfterTransaction'] ?? null;
+        /** @var array{balanceAfterTransaction: float}|null $qb */
+        return $qb['balanceAfterTransaction'] ?? null;
     }
 
     /**
@@ -40,6 +42,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
      */
     public function findEntriesFromDate(Account $account, \DateTimeInterface $date): array
     {
+        /** @var array<BalanceHistory> */
         return $this->createQueryBuilder('bh')
             ->where('bh.account = :account')
             ->andWhere('bh.date >= :date')
@@ -53,7 +56,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
 
     public function findBalanceBeforeDate(Account $account, \DateTimeInterface $date): ?float
     {
-        $result = $this->createQueryBuilder('bh')
+        $qb = $this->createQueryBuilder('bh')
             ->select('bh.balanceAfterTransaction')
             ->where('bh.account = :account')
             ->andWhere('bh.date < :date')
@@ -65,10 +68,13 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             ->getOneOrNullResult()
         ;
 
-        return $result['balanceAfterTransaction'] ?? null;
+        /** @var array{balanceAfterTransaction: float}|null $qb */
+        return $qb['balanceAfterTransaction'] ?? null;
     }
 
     /**
+     * @param array<int>|null $accountIds
+     *
      * @return array<BalanceHistory>
      */
     public function findBalancesByAccounts(?array $accountIds = null, ?PeriodsEnum $period = null): array
@@ -85,7 +91,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
         }
 
         if ($period !== null) {
-            $date = new \DateTime();
+            $date = Carbon::now();
             $date->modify('-' . $period->value . ' months');
             $date->setTime(0, 0);
 
@@ -94,6 +100,7 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             ;
         }
 
+        /** @var array<BalanceHistory> */
         return $qb->getQuery()->getResult();
     }
 
@@ -110,10 +117,11 @@ class BalanceHistoryRepository extends AbstractEntityRepository
             ->setParameter('endDate', $endDate)
             ->orderBy('bh.date', 'DESC')
             ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
 
-        $result = $qb->getQuery()->getOneOrNullResult();
-
-        return $result['balanceAfterTransaction'] ?? null;
+        /** @var array{balanceAfterTransaction: float}|null $qb */
+        return $qb['balanceAfterTransaction'] ?? null;
     }
 }

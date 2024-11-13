@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\Account\Response\AccountPartialResponse;
-use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
 use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Dto\BalanceHistory\Response\BalanceResponse;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Entity\Transaction;
+use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
 use App\Repository\TransactionRepository;
+use Carbon\Carbon;
 
 class BalanceHistoryService
 {
@@ -53,53 +54,61 @@ class BalanceHistoryService
 
     public function updateBalanceHistoryEntry(Transaction $transaction): void
     {
-        $this->recalculateBalanceHistory($transaction->getAccount(), $transaction->getDate());
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+
+        $this->recalculateBalanceHistory($account, $transaction->getDate());
     }
 
     public function deleteBalanceHistoryEntry(Transaction $transaction): void
     {
-        $this->recalculateBalanceHistory(
-            $transaction->getAccount(),
-            $transaction->getDate(),
-            $transaction->getId()
-        );
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+
+        $this->recalculateBalanceHistory($account, $transaction->getDate(), $transaction->getId());
     }
 
-    public function getMonthlyBalanceHistory(?BalanceHistoryFilterQuery $filter = null): BalanceHistoryResponse
-    {
+    /**
+     * @param array<int>|null $accountIds
+     */
+    public function getMonthlyBalanceHistory(
+        ?array $accountIds = null,
+        ?PeriodsEnum $periodFilter = null
+    ): BalanceHistoryResponse {
         // DEBUT récupération des comptes
         $accountsInfo = [];
 
-        if ($filter?->getAccountIds() !== null) {
-            foreach ($filter?->getAccountIds() as $accountId) {
+        if ($accountIds !== null) {
+            foreach ($accountIds as $accountId) {
                 $account = $this->accountService->get($accountId);
 
                 $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
             }
-
-            $accounts = $filter?->getAccountIds();
         } else {
-            $accounts = $this->accountService->list();
+            $userAccounts = $this->accountService->list();
 
-            foreach ($accounts as $account) {
+            foreach ($userAccounts as $account) {
                 $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
+                $accountIds[] = $account->getId();
             }
         }
+
+        $accounts = $accountIds ?? [];
         // FIN récupération des comptes
 
         // DEBUT récupération manipulation et tri des balances
-        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $filter?->period);
+        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $periodFilter);
 
         $monthlyBalances = [];
-        $dates = [];
+        $dateMap = [];
 
         foreach ($balanceHistories as $history) {
             $period = $history->getDate()->format('Y-m');
-            $dates[$period] = true;
+            $dateMap[$period] = true;
         }
 
-        ksort($dates);
-        $dates = array_keys($dates);
+        ksort($dateMap);
+        $dates = array_keys($dateMap);
 
         foreach ($accounts as $accountId) {
             $account = $this->accountService->get($accountId);
@@ -129,7 +138,7 @@ class BalanceHistoryService
         foreach ($monthlyBalances as $yearMonth => $balance) {
             $balancesInfo[] = new BalanceResponse(
                 $yearMonth,
-                (new \DateTime($yearMonth . '-01'))->format('F Y'),
+                Carbon::parse($yearMonth . '-01')->format('Y-m'),
                 $balance
             );
         }

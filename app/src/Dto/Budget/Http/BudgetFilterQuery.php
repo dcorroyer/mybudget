@@ -23,8 +23,8 @@ class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface
             $startDate = (new \DateTimeImmutable("{$this->date}-01-01"))->format('Y-m-d');
             $endDate = (new \DateTimeImmutable("{$this->date}-12-31"))->format('Y-m-d');
 
-            $criteria->andWhere(Criteria::expr()?->gte('date', $startDate));
-            $criteria->andWhere(Criteria::expr()?->lte('date', $endDate));
+            $criteria->andWhere(Criteria::expr()->gte('date', $startDate));
+            $criteria->andWhere(Criteria::expr()->lte('date', $endDate));
         }
 
         return $criteria;

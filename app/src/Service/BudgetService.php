@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\BudgetRepository;
 use App\Security\Voter\BudgetVoter;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\Criteria;
 use My\RestBundle\Dto\PaginatedResponseDto;
 use My\RestBundle\Dto\PaginationMetaDto;
@@ -128,9 +129,7 @@ class BudgetService
         $newBudget->setSavingCapacity($budget->getSavingCapacity());
         $newBudget->setUser($budget->getUser());
 
-        $newDate = \DateTime::createFromInterface(
-            $this->budgetRepository->findLatestByUser($budget->getUser())?->getDate()
-        );
+        $newDate = Carbon::parse($this->budgetRepository->findLatestByUser($budget->getUser())?->getDate());
         $newDate->modify('+1 month');
         $newBudget->setDate($newDate);
 
@@ -156,7 +155,7 @@ class BudgetService
         ?BudgetFilterQuery $budgetFilterQuery = null
     ): PaginatedResponseDto {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()?->eq('user', $this->security->getUser()))
+        $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()))
             ->orderBy([
                 'date' => 'DESC',
             ])
@@ -167,6 +166,7 @@ class BudgetService
         $budgets = [];
 
         foreach ($paginated->getItems() as $budget) {
+            /** @var Budget $budget */
             $budgets[] = $this->createBudgetResponse($budget);
         }
 

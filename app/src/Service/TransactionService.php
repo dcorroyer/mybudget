@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Dto\Account\Response\AccountPartialResponse;
 use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Dto\Transaction\Response\TransactionResponse;
+use App\Entity\Account;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
@@ -128,7 +129,7 @@ class TransactionService
             $accounts = $this->accountService->list();
         }
 
-        $criteria->andWhere(Criteria::expr()?->in('account', $accounts));
+        $criteria->andWhere(Criteria::expr()->in('account', $accounts));
         $criteria->orderBy([
             'date' => 'DESC',
         ]);
@@ -137,17 +138,18 @@ class TransactionService
 
         $transactions = [];
 
+        /** @var Transaction $transaction */
         foreach ($paginated->getItems() as $transaction) {
+            /** @var Account $account */
+            $account = $transaction->getAccount();
+
             $transactions[] = new TransactionResponse(
                 id: $transaction->getId(),
                 description: $transaction->getDescription(),
                 amount: $transaction->getAmount(),
                 type: $transaction->getType(),
                 date: $transaction->getDate(),
-                account: new AccountPartialResponse(
-                    id: $transaction->getAccount()->getId(),
-                    name: $transaction->getAccount()->getName(),
-                ),
+                account: new AccountPartialResponse(id: $account->getId(), name: $account->getName()),
             );
         }
 

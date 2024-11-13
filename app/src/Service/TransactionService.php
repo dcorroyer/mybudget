@@ -99,7 +99,7 @@ class TransactionService
     {
         $account = $this->accountService->get($accountId);
 
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::DELETE, [
             'transaction' => $transaction,
             'account' => $account,
         ])) {

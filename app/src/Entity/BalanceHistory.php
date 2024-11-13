@@ -18,7 +18,7 @@ class BalanceHistory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context([
@@ -45,12 +45,12 @@ class BalanceHistory
         $this->date = Carbon::now();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 

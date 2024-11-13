@@ -17,5 +17,26 @@ class TransactionFilterQuery implements QueryFilterInterface
         schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'integer'), nullable: true),
         example: [1, 2, 3]
     )]
-    public ?array $accountIds = null;
+    private ?array $accountIds = null;
+
+    /**
+     * @return array<int>|null
+     */
+    public function getAccountIds(): ?array
+    {
+        return $this->accountIds;
+    }
+
+    /**
+     * @param array<int|string>|null $accountIds
+     */
+    public function setAccountIds(?array $accountIds): void
+    {
+        if ($accountIds === null) {
+            $this->accountIds = null;
+            return;
+        }
+
+        $this->accountIds = array_map(static fn (int|string $value): int => (int) $value, $accountIds);
+    }
 }

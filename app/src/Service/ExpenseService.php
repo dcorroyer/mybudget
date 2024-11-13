@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\Budget\Payload\Dependencies\ExpensePayload;
+use App\Dto\Budget\Payload\ExpensePayload;
 use App\Entity\Budget;
 use App\Entity\Expense;
 use App\Repository\ExpenseRepository;

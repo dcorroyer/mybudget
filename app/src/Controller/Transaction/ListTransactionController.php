@@ -40,7 +40,7 @@ class ListTransactionController extends BaseRestController
         #[MapQueryString] ?TransactionFilterQuery $filter = null,
     ): JsonResponse {
         return $this->paginatedResponse(
-            pagination: $transactionService->paginate($filter?->accountIds, $paginationQueryParams)
+            pagination: $transactionService->paginate($filter?->getAccountIds(), $paginationQueryParams)
         );
     }
 }

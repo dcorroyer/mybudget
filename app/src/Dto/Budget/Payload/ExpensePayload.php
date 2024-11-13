@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Budget\Payload\Dependencies;
+namespace App\Dto\Budget\Payload;
 
 use Doctrine\DBAL\Types\Types;
 use My\RestBundle\Contract\PayloadInterface;

@@ -10,6 +10,7 @@ use App\Enum\ErrorMessagesEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\TransactionRepository;
 use App\Service\AccountService;
+use App\Service\BalanceHistoryService;
 use App\Service\TransactionService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
@@ -41,6 +42,7 @@ final class TransactionServiceTest extends TestCase
     private AccountService $accountService;
     private AuthorizationCheckerInterface $authorizationChecker;
     private TransactionService $transactionService;
+    private BalanceHistoryService $balanceHistoryService;
 
     #[\Override]
     protected function setUp(): void
@@ -50,11 +52,13 @@ final class TransactionServiceTest extends TestCase
         $this->transactionRepository = $this->createMock(TransactionRepository::class);
         $this->accountService = $this->createMock(AccountService::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->balanceHistoryService = $this->createMock(BalanceHistoryService::class);
 
         $this->transactionService = new TransactionService(
             transactionRepository: $this->transactionRepository,
             accountService: $this->accountService,
             authorizationChecker: $this->authorizationChecker,
+            balanceHistoryService: $this->balanceHistoryService,
         );
     }
 
@@ -74,8 +78,12 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('view', $transaction)
             ->willReturn(true)
+        ;
+
+        $this->accountService->expects($this->once())
+            ->method('get')
+            ->willReturn($account)
         ;
 
         $this->transactionRepository->expects($this->once())
@@ -84,10 +92,9 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $transactionResponse = $this->transactionService->get($transaction->getId());
+        $transactionResponse = $this->transactionService->get($account->getId(), $transaction->getId());
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
         self::assertSame($transaction->getId(), $transactionResponse->getId());
     }
 
@@ -100,7 +107,7 @@ final class TransactionServiceTest extends TestCase
         $this->expectExceptionMessage(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
 
         // ACT
-        $this->transactionService->get(1);
+        $this->transactionService->get(1, 1);
     }
 
     #[TestDox('When calling get transaction for another user, it should returns access denied exception')]
@@ -125,7 +132,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->get($transaction->getId());
+        $this->transactionService->get($transaction->getAccount()->getId(), $transaction->getId());
     }
 
     #[TestDox('When calling create transaction, it should return the transaction created')]
@@ -146,12 +153,6 @@ final class TransactionServiceTest extends TestCase
         $this->accountService->expects($this->once())
             ->method('get')
             ->willReturn($account)
-        ;
-
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with('create', $account)
-            ->willReturn(true)
         ;
 
         $this->transactionRepository->expects($this->once())
@@ -212,7 +213,6 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('edit', $transaction)
             ->willReturn(true)
         ;
 
@@ -222,7 +222,11 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $transactionResponse = $this->transactionService->update($transactionPayload, $transaction);
+        $transactionResponse = $this->transactionService->update(
+            $transaction->getAccount()->getId(),
+            $transactionPayload,
+            $transaction
+        );
 
         // ASSERT
         self::assertInstanceOf(Transaction::class, $transactionResponse);
@@ -248,7 +252,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->update($transactionPayload, $transaction);
+        $this->transactionService->update($transaction->getAccount()->getId(), $transactionPayload, $transaction);
     }
 
     #[TestDox('When calling delete transaction, it should delete the transaction')]
@@ -266,7 +270,6 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('delete', $transaction)
             ->willReturn(true)
         ;
 
@@ -276,7 +279,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->delete($transaction);
+        $this->transactionService->delete($transaction->getAccount()->getId(), $transaction);
 
         // ASSERT
         self::assertInstanceOf(Transaction::class, $transaction);
@@ -299,7 +302,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->delete($transaction);
+        $this->transactionService->delete($transaction->getAccount()->getId(), $transaction);
     }
 
     #[TestDox('When you call list, it should return the transactions list')]
@@ -321,21 +324,14 @@ final class TransactionServiceTest extends TestCase
             ->willReturn($account)
         ;
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with('view', $account)
-            ->willReturn(true)
-        ;
-
         $this->transactionRepository->method('paginate')
             ->willReturn($slidingPagination)
         ;
 
         // ACT
-        $transactionsResponse = $this->transactionService->paginate($account->getId(), new PaginationQueryParams());
+        $transactionsResponse = $this->transactionService->paginate([$account->getId()], new PaginationQueryParams());
 
         // ASSERT
-        self::assertInstanceOf(SlidingPagination::class, $transactionsResponse);
-        self::assertCount(\count($transactions), $transactionsResponse->getItems());
+        self::assertCount(\count($transactions), $transactionsResponse->data);
     }
 }

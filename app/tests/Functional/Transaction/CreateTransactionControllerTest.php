@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @internal
  */
-#[Group('integration')]
+#[Group('functional')]
 #[Group('controller')]
 #[Group('transaction')]
 #[Group('transaction-controller')]

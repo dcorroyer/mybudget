@@ -206,6 +206,7 @@ class BudgetService
             name: $budget->getName(),
             incomesAmount: $budget->getIncomesAmount(),
             expensesAmount: $budget->getExpensesAmount(),
+            savingCapacity: $budget->getSavingCapacity(),
             date: $budget->getDate(),
             incomes: $incomes,
             expenses: $expenses

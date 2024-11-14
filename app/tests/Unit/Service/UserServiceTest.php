@@ -80,8 +80,8 @@ final class UserServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(User::class, $user);
-        self::assertSame($user->getId(), $userResponse->getId());
-        self::assertSame($user->getEmail(), $userResponse->getEmail());
+        self::assertSame($user->getId(), $userResponse->id);
+        self::assertSame($user->getEmail(), $userResponse->email);
     }
 
     #[TestDox('When calling get user, it should returns the connected user')]
@@ -104,8 +104,8 @@ final class UserServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(User::class, $user);
-        self::assertSame($user->getId(), $userResponse->getId());
-        self::assertSame($user->getEmail(), $userResponse->getEmail());
+        self::assertSame($user->getId(), $userResponse->id);
+        self::assertSame($user->getEmail(), $userResponse->email);
     }
 
     #[TestDox('When calling get user with a bad email, it should returns NotFoundHttpException')]

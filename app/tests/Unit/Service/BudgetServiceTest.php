@@ -98,8 +98,8 @@ final class BudgetServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame($budget->getId(), $budgetResponse->getId());
-        self::assertSame('Budget 2022-03', $budgetResponse->getName());
+        self::assertSame($budget->getId(), $budgetResponse->id);
+        self::assertSame('Budget 2022-03', $budgetResponse->name);
     }
 
     #[TestDox('When calling update budget, it should update and return the budget updated')]
@@ -138,8 +138,8 @@ final class BudgetServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame($budget->getId(), $budgetResponse->getId());
-        self::assertSame('Budget 2022-03', $budgetResponse->getName());
+        self::assertSame($budget->getId(), $budgetResponse->id);
+        self::assertSame('Budget 2022-03', $budgetResponse->name);
     }
 
     #[TestDox('When calling update budget with bad user, it should returns access denied exception')]
@@ -187,8 +187,8 @@ final class BudgetServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame($budget->getId(), $budgetResponse->getId());
-        self::assertSame('Budget 2022-01', $budgetResponse->getName());
+        self::assertSame($budget->getId(), $budgetResponse->id);
+        self::assertSame('Budget 2022-01', $budgetResponse->name);
     }
 
     #[TestDox('When calling get budget with bad id, it should throw not found exception')]
@@ -312,8 +312,8 @@ final class BudgetServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(Budget::class, $budget);
-        self::assertSame(2, $budgetResponse->getId());
-        self::assertSame('Budget 2023-02', $budgetResponse->getName());
+        self::assertSame(2, $budgetResponse->id);
+        self::assertSame('Budget 2023-02', $budgetResponse->name);
     }
 
     #[TestDox('When you call paginate, it should return the budgets list')]
@@ -332,6 +332,6 @@ final class BudgetServiceTest extends TestCase
         $budgetsResponse = $this->budgetService->paginate(new PaginationQueryParams());
 
         // ASSERT
-        self::assertCount(20, $budgetsResponse);
+        self::assertCount(20, $budgetsResponse->data);
     }
 }

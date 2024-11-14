@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\Account\Payload\AccountPayload;
+use App\Dto\Account\Response\AccountResponse;
 use App\Entity\Account;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\AccountRepository;
@@ -81,8 +82,8 @@ final class AccountServiceTest extends TestCase
 
         // ASSERT
         self::assertInstanceOf(Account::class, $account);
-        self::assertSame($account->getId(), $accountResponse->getId());
-        self::assertSame('Livret', $accountResponse->getName());
+        self::assertSame($account->getId(), $accountResponse->id);
+        self::assertSame('Livret', $accountResponse->name);
     }
 
     #[TestDox('When calling update account, it should update and return the account updated')]
@@ -124,9 +125,9 @@ final class AccountServiceTest extends TestCase
         $accountResponse = $this->accountService->update($accountPayload, $account);
 
         // ASSERT
-        self::assertInstanceOf(Account::class, $accountResponse);
-        self::assertSame($account->getId(), $accountResponse->getId());
-        self::assertSame('Livret updated', $accountResponse->getName());
+        self::assertInstanceOf(AccountResponse::class, $accountResponse);
+        self::assertSame($account->getId(), $accountResponse->id);
+        self::assertSame('Livret updated', $accountResponse->name);
     }
 
     #[TestDox('When calling update account with bad user, it should returns access denied exception')]

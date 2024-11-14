@@ -34,6 +34,7 @@ class TransactionFilterQuery implements QueryFilterInterface
     {
         if ($accountIds === null) {
             $this->accountIds = null;
+
             return;
         }
 

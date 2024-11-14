@@ -13,6 +13,7 @@ class BudgetResponse implements ResponseInterface
         public readonly string $name,
         public readonly float $incomesAmount,
         public readonly float $expensesAmount,
+        public readonly float $savingCapacity,
         public readonly \DateTimeInterface $date,
         /** @var IncomeResponse[] */
         public readonly array $incomes,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Enum\TransactionTypesEnum;
@@ -95,7 +96,8 @@ final class TransactionServiceTest extends TestCase
         $transactionResponse = $this->transactionService->get($account->getId(), $transaction->getId());
 
         // ASSERT
-        self::assertSame($transaction->getId(), $transactionResponse->getId());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame($transaction->getId(), $transactionResponse->id);
     }
 
     #[TestDox('When calling get transaction with bad id, it should returns not found exception')]
@@ -166,9 +168,9 @@ final class TransactionServiceTest extends TestCase
         $transactionResponse = $this->transactionService->create($account->getId(), $transactionPayload);
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
-        self::assertSame(1, $transactionResponse->getId());
-        self::assertSame('Test transaction', $transactionResponse->getDescription());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame(1, $transactionResponse->id);
+        self::assertSame('Test transaction', $transactionResponse->description);
     }
 
     #[TestDox('When calling create transaction with non-existent account, it should throw not found exception')]
@@ -229,9 +231,9 @@ final class TransactionServiceTest extends TestCase
         );
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
-        self::assertSame('Updated transaction', $transactionResponse->getDescription());
-        self::assertSame(200.00, $transactionResponse->getAmount());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame('Updated transaction', $transactionResponse->description);
+        self::assertSame(200.00, $transactionResponse->amount);
     }
 
     #[TestDox('When calling update transaction with bad user, it should return access denied exception')]

@@ -30,7 +30,7 @@ class TransactionService
     ) {
     }
 
-    public function get(int $accountId, int $id): Transaction
+    public function get(int $accountId, int $id): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
         $transaction = $this->transactionRepository->find($id);
@@ -46,10 +46,10 @@ class TransactionService
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
-    public function create(int $accountId, TransactionPayload $transactionPayload): Transaction
+    public function create(int $accountId, TransactionPayload $transactionPayload): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
 
@@ -65,14 +65,14 @@ class TransactionService
 
         $this->balanceHistoryService->createBalanceHistoryEntry($transaction);
 
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
     public function update(
         int $accountId,
         TransactionPayload $transactionPayload,
         Transaction $transaction
-    ): Transaction {
+    ): TransactionResponse {
         $account = $this->accountService->get($accountId);
 
         if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, [
@@ -92,7 +92,7 @@ class TransactionService
 
         $this->balanceHistoryService->updateBalanceHistoryEntry($transaction);
 
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
     public function delete(int $accountId, Transaction $transaction): void
@@ -140,17 +140,7 @@ class TransactionService
 
         /** @var Transaction $transaction */
         foreach ($paginated->getItems() as $transaction) {
-            /** @var Account $account */
-            $account = $transaction->getAccount();
-
-            $transactions[] = new TransactionResponse(
-                id: $transaction->getId(),
-                description: $transaction->getDescription(),
-                amount: $transaction->getAmount(),
-                type: $transaction->getType(),
-                date: $transaction->getDate(),
-                account: new AccountPartialResponse(id: $account->getId(), name: $account->getName()),
-            );
+            $transactions[] = $this->createTransactionResponse($transaction);
         }
 
         return new PaginatedResponseDto(
@@ -159,6 +149,41 @@ class TransactionService
                 total: $paginated->getTotalItemCount(),
                 page: $paginated->getCurrentPageNumber(),
                 limit: $paginated->getItemNumberPerPage(),
+            ),
+        );
+    }
+
+    public function getAllTransactionsFromDate(Account $account, \DateTimeInterface $fromDate): array
+    {
+        return $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+    }
+
+    public function getAllTransactionsFromDateExcept(
+        Account $account,
+        \DateTimeInterface $fromDate,
+        int $excludedTransactionId
+    ): array {
+        return $this->transactionRepository->findAllTransactionsFromDateExcept(
+            $account,
+            $fromDate,
+            $excludedTransactionId
+        );
+    }
+
+    private function createTransactionResponse(Transaction $transaction): TransactionResponse
+    {
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+        
+        return new TransactionResponse(
+            id: $transaction->getId(),
+            description: $transaction->getDescription(),
+            amount: $transaction->getAmount(),
+            type: $transaction->getType(),
+            date: $transaction->getDate(),
+            account: new AccountPartialResponse(
+                id: $account->getId(),
+                name: $account->getName()
             ),
         );
     }

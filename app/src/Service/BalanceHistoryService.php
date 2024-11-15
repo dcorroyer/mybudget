@@ -13,14 +13,13 @@ use App\Entity\Transaction;
 use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
-use App\Repository\TransactionRepository;
 use Carbon\Carbon;
 
 class BalanceHistoryService
 {
     public function __construct(
         private readonly BalanceHistoryRepository $balanceHistoryRepository,
-        private readonly TransactionRepository $transactionRepository,
+        private readonly TransactionService $transactionService,
         private readonly AccountService $accountService,
     ) {
     }
@@ -159,12 +158,12 @@ class BalanceHistoryService
         }
 
         $transactionsToRecalculate = $excludedTransactionId !== null
-            ? $this->transactionRepository->findAllTransactionsFromDateExcept(
+            ? $this->transactionService->getAllTransactionsFromDateExcept(
                 $account,
                 $fromDate,
                 $excludedTransactionId
             )
-            : $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+            : $this->transactionService->getAllTransactionsFromDate($account, $fromDate);
 
         $runningBalance = $previousBalance;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\BalanceHistory;
 
+use App\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\TransactionFactory;
@@ -41,12 +42,14 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 1000.0,
+            'type' => TransactionTypesEnum::CREDIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
         $transaction2 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 500.0,
+            'type' => TransactionTypesEnum::CREDIT,
             'date' => new \DateTime('2024-02-15'),
         ])->_real();
 
@@ -117,6 +120,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account1,
             'amount' => 1001.10,
+            'type' => TransactionTypesEnum::CREDIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
@@ -124,7 +128,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
             'account' => $account1,
             'transaction' => $transaction1,
             'balanceBeforeTransaction' => 0.0,
-            'balanceAfterTransaction' => 1001.17,
+            'balanceAfterTransaction' => 1001.10,
             'date' => new \DateTime('2024-01-15'),
         ]);
 
@@ -132,6 +136,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction2 = TransactionFactory::createOne([
             'account' => $account2,
             'amount' => 500.0,
+            'type' => TransactionTypesEnum::CREDIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
@@ -162,6 +167,6 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         // Vérification des balances
         self::assertCount(1, $responseData['balances']);
         self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1001.17, $responseData['balances'][0]['balance']);
+        self::assertSame(1001.10, $responseData['balances'][0]['balance']);
     }
 }

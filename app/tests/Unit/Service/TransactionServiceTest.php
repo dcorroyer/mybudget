@@ -42,7 +42,6 @@ final class TransactionServiceTest extends TestCase
     private AccountService $accountService;
     private AuthorizationCheckerInterface $authorizationChecker;
     private TransactionService $transactionService;
-    private BalanceHistoryService $balanceHistoryService;
 
     #[\Override]
     protected function setUp(): void
@@ -52,13 +51,11 @@ final class TransactionServiceTest extends TestCase
         $this->transactionRepository = $this->createMock(TransactionRepository::class);
         $this->accountService = $this->createMock(AccountService::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->balanceHistoryService = $this->createMock(BalanceHistoryService::class);
 
         $this->transactionService = new TransactionService(
             transactionRepository: $this->transactionRepository,
             accountService: $this->accountService,
             authorizationChecker: $this->authorizationChecker,
-            balanceHistoryService: $this->balanceHistoryService,
         );
     }
 

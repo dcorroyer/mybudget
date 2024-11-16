@@ -39,6 +39,8 @@ final class AccountServiceTest extends TestCase
 
     private AccountService $accountService;
 
+    private AuthorizationCheckerInterface $authorizationChecker;
+
     #[\Override]
     protected function setUp(): void
     {

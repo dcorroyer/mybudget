@@ -16,7 +16,6 @@ use App\Service\TransactionService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;

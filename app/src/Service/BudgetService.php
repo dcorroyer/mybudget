@@ -129,8 +129,10 @@ class BudgetService
         $newBudget->setSavingCapacity($budget->getSavingCapacity());
         $newBudget->setUser($budget->getUser());
 
-        $newDate = Carbon::parse($this->budgetRepository->findLatestByUser($budget->getUser())?->getDate());
-        $newDate->modify('+1 month');
+        $newDate = Carbon::parse($this->budgetRepository->findLatestByUser($budget->getUser())?->getDate())
+            ->startOfMonth()
+            ->addMonth()
+        ;
         $newBudget->setDate($newDate);
 
         foreach ($budget->getIncomes() as $income) {

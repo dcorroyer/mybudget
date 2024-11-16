@@ -23,9 +23,9 @@ use Symfony\Component\HttpFoundation\Response;
 #[Group('transaction-controller')]
 final class ListTransactionControllerTest extends TestBase
 {
-    private const string API_BASE_ENDPOINT = '/api/accounts/';
+    private const string API_BASE_ENDPOINT = '/api/accounts';
 
-    #[TestDox('When you call GET /api/accounts/{id}/transactions, it should return a list of transactions')]
+    #[TestDox('When you call GET /api/accounts/transactions?accountIds[]=1, it should return a list of transactions')]
     #[Test]
     public function listTransactionsController_WhenDataOk_ReturnsTransactionsList(): void
     {
@@ -42,7 +42,7 @@ final class ListTransactionControllerTest extends TestBase
         // ACT
         $response = $this->clientRequest(
             Request::METHOD_GET,
-            self::API_BASE_ENDPOINT . $account->getId() . '/transactions'
+            self::API_BASE_ENDPOINT . '/transactions?accountIds[]=' . $account->getId(),
         );
         $responseData = $response['data'] ?? [];
 

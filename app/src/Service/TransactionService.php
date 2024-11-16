@@ -153,38 +153,18 @@ class TransactionService
         );
     }
 
-    public function getAllTransactionsFromDate(Account $account, \DateTimeInterface $fromDate): array
-    {
-        return $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
-    }
-
-    public function getAllTransactionsFromDateExcept(
-        Account $account,
-        \DateTimeInterface $fromDate,
-        int $excludedTransactionId
-    ): array {
-        return $this->transactionRepository->findAllTransactionsFromDateExcept(
-            $account,
-            $fromDate,
-            $excludedTransactionId
-        );
-    }
-
     private function createTransactionResponse(Transaction $transaction): TransactionResponse
     {
         /** @var Account $account */
         $account = $transaction->getAccount();
-        
+
         return new TransactionResponse(
             id: $transaction->getId(),
             description: $transaction->getDescription(),
             amount: $transaction->getAmount(),
             type: $transaction->getType(),
             date: $transaction->getDate(),
-            account: new AccountPartialResponse(
-                id: $account->getId(),
-                name: $account->getName()
-            ),
+            account: new AccountPartialResponse(id: $account->getId(), name: $account->getName()),
         );
     }
 }

@@ -71,7 +71,7 @@ final class TransactionRepositoryTest extends KernelTestCase
 
         // ASSERT
         self::assertCount(2, $transactions);
-        $transactionIds = array_map(fn($transaction) => $transaction->getId(), $transactions);
+        $transactionIds = array_map(static fn ($transaction) => $transaction->getId(), $transactions);
         self::assertContains($transaction1->_real()->getId(), $transactionIds);
         self::assertContains($transaction2->_real()->getId(), $transactionIds);
     }
@@ -200,4 +200,4 @@ final class TransactionRepositoryTest extends KernelTestCase
         // ASSERT
         self::assertEmpty($transactions);
     }
-} 
+}

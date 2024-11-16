@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Budget;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -35,8 +36,11 @@ final class DuplicateBudgetControllerTest extends TestBase
             'user' => $user,
         ])->_real();
 
-        $expectedDate = clone $budget->getDate();
-        $expectedDate->modify('+1 month');
+        $expectedDate = Carbon::parse($budget->getDate())
+            ->startOfMonth()
+            ->addMonth()
+            ->format('Y-m-d\TH:i:sP')
+        ;
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT . '/' . $budget->getId());
@@ -45,6 +49,6 @@ final class DuplicateBudgetControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame($expectedDate->format('Y-m'), $responseData['date']);
+        self::assertSame($expectedDate, $responseData['date']);
     }
 }

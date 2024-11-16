@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
+use App\Enum\PeriodsEnum;
 use App\Repository\BalanceHistoryRepository;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\UserFactory;
-use App\Enum\PeriodsEnum;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -102,7 +102,9 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         self::assertCount(2, $entries);
     }
 
-    #[TestDox('When you find balance before a date for an account, it should return the last balance before that date')]
+    #[TestDox(
+        'When you find balance before a date for an account, it should return the last balance before that date'
+    )]
     #[Test]
     public function findBalanceBeforeDate_WhenDataOk_ReturnsBalance(): void
     {
@@ -163,7 +165,9 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         self::assertSame($recentHistory->getId(), $histories[0]->getId());
     }
 
-    #[TestDox('When you find balance at end of month for an account, it should return the last balance of that month')]
+    #[TestDox(
+        'When you find balance at end of month for an account, it should return the last balance of that month'
+    )]
     #[Test]
     public function findBalanceAtEndOfMonth_WhenDataOk_ReturnsBalance(): void
     {
@@ -192,7 +196,9 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         self::assertSame($lastBalance->getBalanceAfterTransaction(), $balance);
     }
 
-    #[TestDox('When you find balances by multiple accounts with period filter, it should return all filtered balance histories')]
+    #[TestDox(
+        'When you find balances by multiple accounts with period filter, it should return all filtered balance histories'
+    )]
     #[Test]
     public function findBalancesByAccounts_WithMultipleAccounts_ReturnsAllBalanceHistories(): void
     {
@@ -201,7 +207,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         $account1 = AccountFactory::createOne([
             'user' => $user,
         ])->_real();
-        
+
         $account2 = AccountFactory::createOne([
             'user' => $user,
         ])->_real();
@@ -211,7 +217,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
             'account' => $account1,
             'date' => Carbon::now()->subMonths(7),
         ]);
-        
+
         BalanceHistoryFactory::createOne([
             'account' => $account2,
             'date' => Carbon::now()->subMonths(8),
@@ -222,7 +228,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
             'account' => $account1,
             'date' => Carbon::now()->subMonths(2),
         ]);
-        
+
         $recentHistory2 = BalanceHistoryFactory::createOne([
             'account' => $account2,
             'date' => Carbon::now()->subMonths(3),
@@ -236,7 +242,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
 
         // ASSERT
         self::assertCount(2, $histories);
-        $historyIds = array_map(fn($history) => $history->getId(), $histories);
+        $historyIds = array_map(static fn ($history) => $history->getId(), $histories);
         self::assertContains($recentHistory1->_real()->getId(), $historyIds);
         self::assertContains($recentHistory2->_real()->getId(), $historyIds);
     }

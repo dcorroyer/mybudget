@@ -26,7 +26,6 @@ class TransactionService
         private readonly TransactionRepository $transactionRepository,
         private readonly AccountService $accountService,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly BalanceHistoryService $balanceHistoryService,
     ) {
     }
 
@@ -49,6 +48,9 @@ class TransactionService
         return $this->createTransactionResponse($transaction);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function create(int $accountId, TransactionPayload $transactionPayload): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
@@ -63,11 +65,12 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
-        $this->balanceHistoryService->createBalanceHistoryEntry($transaction);
-
         return $this->createTransactionResponse($transaction);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function update(
         int $accountId,
         TransactionPayload $transactionPayload,
@@ -90,11 +93,12 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
-        $this->balanceHistoryService->updateBalanceHistoryEntry($transaction);
-
         return $this->createTransactionResponse($transaction);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function delete(int $accountId, Transaction $transaction): void
     {
         $account = $this->accountService->get($accountId);
@@ -105,8 +109,6 @@ class TransactionService
         ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
-
-        $this->balanceHistoryService->deleteBalanceHistoryEntry($transaction);
 
         $this->transactionRepository->delete($transaction, true);
     }

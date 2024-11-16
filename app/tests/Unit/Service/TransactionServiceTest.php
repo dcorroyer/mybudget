@@ -11,7 +11,6 @@ use App\Enum\ErrorMessagesEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\TransactionRepository;
 use App\Service\AccountService;
-use App\Service\BalanceHistoryService;
 use App\Service\TransactionService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
@@ -331,5 +330,70 @@ final class TransactionServiceTest extends TestCase
 
         // ASSERT
         self::assertCount(\count($transactions), $transactionsResponse->data);
+    }
+
+    #[TestDox('When calling getAllTransactionsFromDate, it should return transactions from the given date')]
+    #[Test]
+    public function getAllTransactionsFromDate_WhenDataOk_ReturnsTransactions(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $account = AccountFactory::createOne([
+            'user' => $user,
+        ]);
+        $fromDate = new \DateTime('2024-01-01');
+        $expectedTransactions = TransactionFactory::createMany(3, [
+            'account' => $account,
+            'date' => $fromDate,
+        ]);
+
+        $this->transactionRepository->expects($this->once())
+            ->method('findAllTransactionsFromDate')
+            ->with($account, $fromDate)
+            ->willReturn($expectedTransactions)
+        ;
+
+        // ACT
+        $transactions = $this->transactionService->getAllTransactionsFromDate($account, $fromDate);
+
+        // ASSERT
+        self::assertCount(3, $transactions);
+        self::assertSame($expectedTransactions, $transactions);
+    }
+
+    #[TestDox(
+        'When calling getAllTransactionsFromDateExcept, it should return transactions excluding the specified one'
+    )]
+    #[Test]
+    public function getAllTransactionsFromDateExcept_WhenDataOk_ReturnsTransactionsWithoutExcluded(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $account = AccountFactory::createOne([
+            'user' => $user,
+        ]);
+        $fromDate = new \DateTime('2024-01-01');
+        $excludedTransactionId = 1;
+        $expectedTransactions = TransactionFactory::createMany(2, [
+            'account' => $account,
+            'date' => $fromDate,
+        ]);
+
+        $this->transactionRepository->expects($this->once())
+            ->method('findAllTransactionsFromDateExcept')
+            ->with($account, $fromDate, $excludedTransactionId)
+            ->willReturn($expectedTransactions)
+        ;
+
+        // ACT
+        $transactions = $this->transactionService->getAllTransactionsFromDateExcept(
+            $account,
+            $fromDate,
+            $excludedTransactionId
+        );
+
+        // ASSERT
+        self::assertCount(2, $transactions);
+        self::assertSame($expectedTransactions, $transactions);
     }
 }

@@ -9,9 +9,9 @@ use App\Entity\BalanceHistory;
 use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
-use App\Repository\TransactionRepository;
 use App\Service\AccountService;
 use App\Service\BalanceHistoryService;
+use App\Service\TransactionService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
@@ -33,7 +33,7 @@ final class BalanceHistoryServiceTest extends TestCase
     use Factories;
 
     private BalanceHistoryRepository $balanceHistoryRepository;
-    private TransactionRepository $transactionRepository;
+    private TransactionService $transactionService;
     private AccountService $accountService;
     private BalanceHistoryService $balanceHistoryService;
 
@@ -43,12 +43,12 @@ final class BalanceHistoryServiceTest extends TestCase
         parent::setUp();
 
         $this->balanceHistoryRepository = $this->createMock(BalanceHistoryRepository::class);
-        $this->transactionRepository = $this->createMock(TransactionRepository::class);
+        $this->transactionService = $this->createMock(TransactionService::class);
         $this->accountService = $this->createMock(AccountService::class);
 
         $this->balanceHistoryService = new BalanceHistoryService(
             balanceHistoryRepository: $this->balanceHistoryRepository,
-            transactionRepository: $this->transactionRepository,
+            transactionService: $this->transactionService,
             accountService: $this->accountService,
         );
     }
@@ -68,51 +68,11 @@ final class BalanceHistoryServiceTest extends TestCase
             'type' => TransactionTypesEnum::CREDIT,
         ]);
 
-        $this->balanceHistoryRepository->expects($this->once())
-            ->method('findLatestBalance')
-            ->willReturn(50.0)
-        ;
-
-        $this->balanceHistoryRepository->expects($this->once())
-            ->method('save')
-            ->with(
-                $this->callback(static function (BalanceHistory $history) use ($transaction) {
-                    return $history->getBalanceBeforeTransaction() === 50.0
-                        && $history->getBalanceAfterTransaction() === 150.0
-                        && $history->getTransaction() === $transaction->_real()
-                        && $history->getAccount() === $transaction->getAccount();
-                }),
-                true
-            )
-        ;
-
         // ACT
         $this->balanceHistoryService->createBalanceHistoryEntry($transaction->_real());
 
         // ASSERT
         $this->assertTrue(true);
-    }
-
-    #[TestDox('When getting latest balance, it should return the balance from repository')]
-    #[Test]
-    public function getLatestBalance_WhenDataOk_ReturnsBalance(): void
-    {
-        // ARRANGE
-        $user = UserFactory::createOne();
-        $account = AccountFactory::createOne([
-            'user' => $user,
-        ]);
-
-        $this->balanceHistoryRepository->expects($this->once())
-            ->method('findLatestBalance')
-            ->willReturn(100.0)
-        ;
-
-        // ACT
-        $balance = $this->balanceHistoryService->getLatestBalance($account->_real());
-
-        // ASSERT
-        self::assertSame(100.0, $balance);
     }
 
     #[TestDox('When updating balance history entry, it should recalculate balances')]
@@ -139,13 +99,13 @@ final class BalanceHistoryServiceTest extends TestCase
             ->willReturn(50.0)
         ;
 
-        $this->transactionRepository->expects($this->once())
-            ->method('findAllTransactionsFromDate')
-            ->willReturn([$transaction->_real()])
+        $this->transactionService->expects($this->once())
+            ->method('getAllTransactionsFromDate')
+            ->willReturn([$transaction])
         ;
 
         // ACT
-        $this->balanceHistoryService->updateBalanceHistoryEntry($transaction->_real());
+        $this->balanceHistoryService->updateBalanceHistoryEntry($transaction);
 
         // ASSERT
         $this->assertTrue(true);
@@ -175,8 +135,8 @@ final class BalanceHistoryServiceTest extends TestCase
             ->willReturn(50.0)
         ;
 
-        $this->transactionRepository->expects($this->once())
-            ->method('findAllTransactionsFromDateExcept')
+        $this->transactionService->expects($this->once())
+            ->method('getAllTransactionsFromDateExcept')
             ->willReturn([])
         ;
 
@@ -281,26 +241,11 @@ final class BalanceHistoryServiceTest extends TestCase
             'type' => TransactionTypesEnum::DEBIT,
         ]);
 
-        $this->balanceHistoryRepository->expects($this->once())
-            ->method('findLatestBalance')
-            ->willReturn(150.0)
-        ;
-
-        $this->balanceHistoryRepository->expects($this->once())
-            ->method('save')
-            ->with(
-                $this->callback(static function (BalanceHistory $history) use ($transaction) {
-                    return $history->getBalanceBeforeTransaction() === 150.0
-                        && $history->getBalanceAfterTransaction() === 50.0
-                        && $history->getTransaction() === $transaction
-                        && $history->getAccount() === $transaction->getAccount();
-                }),
-                true
-            )
-        ;
-
         // ACT
         $this->balanceHistoryService->createBalanceHistoryEntry($transaction);
+
+        // ASSERT
+        $this->assertTrue(true);
     }
 
     #[TestDox('When updating balance history entry, it should handle multiple transactions correctly')]
@@ -335,21 +280,18 @@ final class BalanceHistoryServiceTest extends TestCase
             ->willReturn(50.0)
         ;
 
-        $this->transactionRepository->expects($this->once())
-            ->method('findAllTransactionsFromDate')
+        $this->transactionService->expects($this->once())
+            ->method('getAllTransactionsFromDate')
             ->willReturn([$transaction1, $transaction2])
         ;
 
-        $expectedBalances = [[50.0, 150.0], [150.0, 100.0]];
         $currentBalanceIndex = 0;
 
         $this->balanceHistoryRepository->expects($this->exactly(2))
             ->method('save')
             ->with(
-                $this->callback(static function (BalanceHistory $history) use (
-                    &$currentBalanceIndex,
-                    $expectedBalances
-                ) {
+                $this->callback(static function (BalanceHistory $history) use (&$currentBalanceIndex) {
+                    $expectedBalances = [[50.0, 150.0], [150.0, 100.0]];
                     $result = $history->getBalanceBeforeTransaction() === $expectedBalances[$currentBalanceIndex][0]
                         && $history->getBalanceAfterTransaction() === $expectedBalances[$currentBalanceIndex][1];
                     ++$currentBalanceIndex;

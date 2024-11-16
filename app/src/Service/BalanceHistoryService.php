@@ -13,14 +13,13 @@ use App\Entity\Transaction;
 use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
-use App\Repository\TransactionRepository;
 use Carbon\Carbon;
 
 class BalanceHistoryService
 {
     public function __construct(
         private readonly BalanceHistoryRepository $balanceHistoryRepository,
-        private readonly TransactionRepository $transactionRepository,
+        private readonly TransactionService $transactionService,
         private readonly AccountService $accountService,
     ) {
     }
@@ -30,26 +29,7 @@ class BalanceHistoryService
         /** @var Account $account */
         $account = $transaction->getAccount();
 
-        $balanceBeforeTransaction = $this->getLatestBalance($account) ?? 0.0;
-        $balanceAfterTransaction = $balanceBeforeTransaction + $this->calculateBalanceImpact(
-            $transaction->getAmount(),
-            $transaction->getType()
-        );
-
-        $balanceHistory = (new BalanceHistory())
-            ->setDate($transaction->getDate())
-            ->setBalanceBeforeTransaction($balanceBeforeTransaction)
-            ->setBalanceAfterTransaction($balanceAfterTransaction)
-            ->setAccount($account)
-            ->setTransaction($transaction)
-        ;
-
-        $this->balanceHistoryRepository->save($balanceHistory, true);
-    }
-
-    public function getLatestBalance(Account $account): ?float
-    {
-        return $this->balanceHistoryRepository->findLatestBalance($account);
+        $this->updateBalanceHistory($account, $transaction->getDate());
     }
 
     public function updateBalanceHistoryEntry(Transaction $transaction): void
@@ -57,7 +37,7 @@ class BalanceHistoryService
         /** @var Account $account */
         $account = $transaction->getAccount();
 
-        $this->recalculateBalanceHistory($account, $transaction->getDate());
+        $this->updateBalanceHistory($account, $transaction->getDate());
     }
 
     public function deleteBalanceHistoryEntry(Transaction $transaction): void
@@ -65,7 +45,7 @@ class BalanceHistoryService
         /** @var Account $account */
         $account = $transaction->getAccount();
 
-        $this->recalculateBalanceHistory($account, $transaction->getDate(), $transaction->getId());
+        $this->updateBalanceHistory($account, $transaction->getDate(), $transaction->getId());
     }
 
     /**
@@ -75,17 +55,16 @@ class BalanceHistoryService
         ?array $accountIds = null,
         ?PeriodsEnum $periodFilter = null
     ): BalanceHistoryResponse {
-        // DEBUT récupération des comptes
         $accountsInfo = [];
 
         if ($accountIds !== null) {
             foreach ($accountIds as $accountId) {
                 $account = $this->accountService->get($accountId);
-
                 $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
             }
         } else {
             $userAccounts = $this->accountService->list();
+            $accountIds = [];
 
             foreach ($userAccounts as $account) {
                 $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
@@ -93,22 +72,19 @@ class BalanceHistoryService
             }
         }
 
-        $accounts = $accountIds ?? [];
-        // FIN récupération des comptes
+        $accounts = $accountIds;
 
-        // DEBUT récupération manipulation et tri des balances
         $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $periodFilter);
-
         $monthlyBalances = [];
-        $dateMap = [];
+        $uniquePeriods = [];
 
         foreach ($balanceHistories as $history) {
             $period = $history->getDate()->format('Y-m');
-            $dateMap[$period] = true;
+            $uniquePeriods[$period] = true;
         }
 
-        ksort($dateMap);
-        $dates = array_keys($dateMap);
+        ksort($uniquePeriods);
+        $dates = array_keys($uniquePeriods);
 
         foreach ($accounts as $accountId) {
             $account = $this->accountService->get($accountId);
@@ -131,7 +107,6 @@ class BalanceHistoryService
         }
 
         ksort($monthlyBalances);
-        // FIN récupération manipulation et tri des balances
 
         $balancesInfo = [];
 
@@ -146,52 +121,42 @@ class BalanceHistoryService
         return new BalanceHistoryResponse($accountsInfo, $balancesInfo);
     }
 
-    private function recalculateBalanceHistory(
+    private function updateBalanceHistory(
         Account $account,
         \DateTimeInterface $fromDate,
         ?int $excludedTransactionId = null
     ): void {
-        $balanceHistoryEntriesToDelete = $this->balanceHistoryRepository->findEntriesFromDate($account, $fromDate);
-        $previousBalance = $this->balanceHistoryRepository->findBalanceBeforeDate($account, $fromDate) ?? 0.0;
-
-        foreach ($balanceHistoryEntriesToDelete as $historyEntry) {
-            $this->balanceHistoryRepository->delete($historyEntry);
+        $entriesToDelete = $this->balanceHistoryRepository->findEntriesFromDate($account, $fromDate);
+        foreach ($entriesToDelete as $entry) {
+            $this->balanceHistoryRepository->delete($entry);
         }
 
-        $transactionsToRecalculate = $excludedTransactionId !== null
-            ? $this->transactionRepository->findAllTransactionsFromDateExcept(
-                $account,
-                $fromDate,
-                $excludedTransactionId
-            )
-            : $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+        $initialBalance = $this->balanceHistoryRepository->findBalanceBeforeDate($account, $fromDate) ?? 0.0;
 
-        $runningBalance = $previousBalance;
+        $transactions = $excludedTransactionId !== null
+            ? $this->transactionService->getAllTransactionsFromDateExcept($account, $fromDate, $excludedTransactionId)
+            : $this->transactionService->getAllTransactionsFromDate($account, $fromDate);
 
-        foreach ($transactionsToRecalculate as $transaction) {
-            $balanceBeforeTransaction = $runningBalance;
-            $balanceAfterTransaction = $runningBalance + $this->calculateBalanceImpact(
-                $transaction->getAmount(),
-                $transaction->getType()
-            );
+        $currentBalance = $initialBalance;
+
+        /** @var Transaction $transaction */
+        foreach ($transactions as $transaction) {
+            $previousBalance = $currentBalance;
+            $amount = $transaction->getAmount();
+
+            $currentBalance += $transaction->getType() === TransactionTypesEnum::CREDIT ? $amount : -$amount;
 
             $balanceHistory = (new BalanceHistory())
                 ->setDate($transaction->getDate())
-                ->setBalanceBeforeTransaction($balanceBeforeTransaction)
-                ->setBalanceAfterTransaction($balanceAfterTransaction)
+                ->setBalanceBeforeTransaction($previousBalance)
+                ->setBalanceAfterTransaction($currentBalance)
                 ->setAccount($account)
                 ->setTransaction($transaction)
             ;
 
             $this->balanceHistoryRepository->save($balanceHistory);
-            $runningBalance = $balanceAfterTransaction;
         }
 
         $this->balanceHistoryRepository->flush();
-    }
-
-    private function calculateBalanceImpact(float $amount, TransactionTypesEnum $type): float
-    {
-        return $type === TransactionTypesEnum::CREDIT ? $amount : -$amount;
     }
 }

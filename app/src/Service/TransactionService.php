@@ -48,9 +48,6 @@ class TransactionService
         return $this->createTransactionResponse($transaction);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function create(int $accountId, TransactionPayload $transactionPayload): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
@@ -68,9 +65,6 @@ class TransactionService
         return $this->createTransactionResponse($transaction);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function update(
         int $accountId,
         TransactionPayload $transactionPayload,
@@ -96,9 +90,6 @@ class TransactionService
         return $this->createTransactionResponse($transaction);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function delete(int $accountId, Transaction $transaction): void
     {
         $account = $this->accountService->get($accountId);
@@ -111,6 +102,29 @@ class TransactionService
         }
 
         $this->transactionRepository->delete($transaction, true);
+    }
+
+    /**
+     * @return array<Transaction> $transactions
+     */
+    public function getAllTransactionsFromDate(Account $account, \DateTimeInterface $fromDate): array
+    {
+        return $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+    }
+
+    /**
+     * @return array<Transaction> $transactions
+     */
+    public function getAllTransactionsFromDateExcept(
+        Account $account,
+        \DateTimeInterface $fromDate,
+        int $excludedTransactionId
+    ): array {
+        return $this->transactionRepository->findAllTransactionsFromDateExcept(
+            $account,
+            $fromDate,
+            $excludedTransactionId
+        );
     }
 
     /**

@@ -14,7 +14,7 @@ class BudgetResponse implements ResponseInterface
         public readonly float $incomesAmount,
         public readonly float $expensesAmount,
         public readonly float $savingCapacity,
-        public readonly \DateTimeInterface $date,
+        public readonly string $date,
         /** @var IncomeResponse[] */
         public readonly array $incomes,
         /** @var ExpenseResponse[] */

@@ -209,7 +209,7 @@ class BudgetService
             incomesAmount: $budget->getIncomesAmount(),
             expensesAmount: $budget->getExpensesAmount(),
             savingCapacity: $budget->getSavingCapacity(),
-            date: $budget->getDate(),
+            date: $budget->getDate()->format('Y-m'),
             incomes: $incomes,
             expenses: $expenses
         );

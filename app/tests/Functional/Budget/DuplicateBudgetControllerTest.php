@@ -39,7 +39,6 @@ final class DuplicateBudgetControllerTest extends TestBase
         $expectedDate = Carbon::parse($budget->getDate())
             ->startOfMonth()
             ->addMonth()
-            ->format('Y-m-d\TH:i:sP')
         ;
 
         // ACT
@@ -49,6 +48,6 @@ final class DuplicateBudgetControllerTest extends TestBase
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame($expectedDate, $responseData['date']);
+        self::assertSame($expectedDate->format('Y-m'), $responseData['date']);
     }
 }

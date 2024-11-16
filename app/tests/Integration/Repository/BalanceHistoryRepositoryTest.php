@@ -136,7 +136,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
 
     #[TestDox('When you find balances by accounts with period filter, it should return filtered balance histories')]
     #[Test]
-    public function findBalancesByAccounts_WhenDataOk_ReturnsBalanceHistories(): void
+    public function findBalancesByAccountsAndByPeriods_WhenDataOk_ReturnsBalanceHistories(): void
     {
         // ARRANGE
         $user = UserFactory::createOne()->_real();
@@ -155,7 +155,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         ]);
 
         // ACT
-        $histories = $this->balanceHistoryRepository->findBalancesByAccounts(
+        $histories = $this->balanceHistoryRepository->findBalancesByAccountsAndByPeriods(
             [$account->getId()],
             PeriodsEnum::SIX_MONTHS
         );
@@ -200,7 +200,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         'When you find balances by multiple accounts with period filter, it should return all filtered balance histories'
     )]
     #[Test]
-    public function findBalancesByAccounts_WithMultipleAccounts_ReturnsAllBalanceHistories(): void
+    public function findBalancesByAccountsAndByPeriods_WithMultipleAccounts_ReturnsAllBalanceHistories(): void
     {
         // ARRANGE
         $user = UserFactory::createOne()->_real();
@@ -235,7 +235,7 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
         ]);
 
         // ACT
-        $histories = $this->balanceHistoryRepository->findBalancesByAccounts(
+        $histories = $this->balanceHistoryRepository->findBalancesByAccountsAndByPeriods(
             [$account1->getId(), $account2->getId()],
             PeriodsEnum::SIX_MONTHS
         );
@@ -266,13 +266,13 @@ final class BalanceHistoryRepositoryTest extends KernelTestCase
 
     #[TestDox('When finding balances by accounts with empty account ids array, it should return empty array')]
     #[Test]
-    public function findBalancesByAccounts_WithEmptyAccountIds_ReturnsEmptyArray(): void
+    public function findBalancesByAccountsAndByPeriods_WithEmptyAccountIds_ReturnsEmptyArray(): void
     {
         // ARRANGE
         $emptyAccountIds = [];
 
         // ACT
-        $histories = $this->balanceHistoryRepository->findBalancesByAccounts($emptyAccountIds);
+        $histories = $this->balanceHistoryRepository->findBalancesByAccountsAndByPeriods($emptyAccountIds);
 
         // ASSERT
         self::assertEmpty($histories);

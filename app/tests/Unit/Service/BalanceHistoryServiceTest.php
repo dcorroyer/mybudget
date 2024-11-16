@@ -166,7 +166,7 @@ final class BalanceHistoryServiceTest extends TestCase
         $balanceHistory->setDate(new \DateTime('2024-01-15'));
 
         $this->balanceHistoryRepository->expects($this->once())
-            ->method('findBalancesByAccounts')
+            ->method('findBalancesByAccountsAndByPeriods')
             ->with([$account1->getId(), $account2->getId()], PeriodsEnum::SIX_MONTHS)
             ->willReturn([$balanceHistory])
         ;
@@ -208,7 +208,7 @@ final class BalanceHistoryServiceTest extends TestCase
         $balanceHistory->setDate(new \DateTime('2024-01-15'));
 
         $this->balanceHistoryRepository->expects($this->once())
-            ->method('findBalancesByAccounts')
+            ->method('findBalancesByAccountsAndByPeriods')
             ->willReturn([$balanceHistory])
         ;
 
@@ -321,7 +321,7 @@ final class BalanceHistoryServiceTest extends TestCase
         ;
 
         $this->balanceHistoryRepository->expects($this->once())
-            ->method('findBalancesByAccounts')
+            ->method('findBalancesByAccountsAndByPeriods')
             ->willReturn([])
         ;
 

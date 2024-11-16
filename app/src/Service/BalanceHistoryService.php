@@ -14,6 +14,8 @@ use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
 use Carbon\Carbon;
+use loophp\collection\Collection;
+use loophp\collection\Contract\Operation\Sortable;
 
 class BalanceHistoryService
 {
@@ -74,17 +76,19 @@ class BalanceHistoryService
 
         $accounts = $accountIds;
 
-        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $periodFilter);
+        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccountsAndByPeriods(
+            $accounts,
+            $periodFilter
+        );
+
+        $dates = Collection::fromIterable($balanceHistories)
+            ->map(static fn (BalanceHistory $history) => $history->getDate()->format('Y-m'))
+            ->distinct()
+            ->sort()
+            ->all()
+        ;
+
         $monthlyBalances = [];
-        $uniquePeriods = [];
-
-        foreach ($balanceHistories as $history) {
-            $period = $history->getDate()->format('Y-m');
-            $uniquePeriods[$period] = true;
-        }
-
-        ksort($uniquePeriods);
-        $dates = array_keys($uniquePeriods);
 
         foreach ($accounts as $accountId) {
             $account = $this->accountService->get($accountId);
@@ -106,17 +110,19 @@ class BalanceHistoryService
             }
         }
 
-        ksort($monthlyBalances);
-
-        $balancesInfo = [];
-
-        foreach ($monthlyBalances as $yearMonth => $balance) {
-            $balancesInfo[] = new BalanceResponse(
+        $balancesInfo = Collection::fromIterable($monthlyBalances)
+            ->map(static fn (float $balance, string $yearMonth) => new BalanceResponse(
                 $yearMonth,
+                // @phpstan-ignore-next-line
                 Carbon::parse($yearMonth . '-01')->format('Y-m'),
                 $balance
-            );
-        }
+            ))
+            ->sort(
+                Sortable::BY_VALUES,
+                static fn (BalanceResponse $a, BalanceResponse $b): int => $b->date <=> $a->date
+            )
+            ->all()
+        ;
 
         return new BalanceHistoryResponse($accountsInfo, $balancesInfo);
     }
@@ -139,7 +145,6 @@ class BalanceHistoryService
 
         $currentBalance = $initialBalance;
 
-        /** @var Transaction $transaction */
         foreach ($transactions as $transaction) {
             $previousBalance = $currentBalance;
             $amount = $transaction->getAmount();

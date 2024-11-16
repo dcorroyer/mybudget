@@ -72,12 +72,33 @@ class BalanceHistoryRepository extends AbstractEntityRepository
         return $qb['balanceAfterTransaction'] ?? null;
     }
 
+    public function findBalanceAtEndOfMonth(Account $account, string $yearMonth): ?float
+    {
+        $startDate = new \DateTime($yearMonth . '-01');
+        $endDate = (clone $startDate)->modify('last day of this month')->setTime(23, 59, 59);
+
+        $qb = $this->createQueryBuilder('bh')
+            ->select('bh.balanceAfterTransaction')
+            ->where('bh.account = :account')
+            ->andWhere('bh.date <= :endDate')
+            ->setParameter('account', $account)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('bh.date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        /** @var array{balanceAfterTransaction: float}|null $qb */
+        return $qb['balanceAfterTransaction'] ?? null;
+    }
+
     /**
      * @param array<int>|null $accountIds
      *
      * @return array<BalanceHistory>
      */
-    public function findBalancesByAccounts(?array $accountIds = null, ?PeriodsEnum $period = null): array
+    public function findBalancesByAccountsAndByPeriods(?array $accountIds = null, ?PeriodsEnum $period = null): array
     {
         $qb = $this->createQueryBuilder('bh')
             ->select('bh')
@@ -102,26 +123,5 @@ class BalanceHistoryRepository extends AbstractEntityRepository
 
         /** @var array<BalanceHistory> */
         return $qb->getQuery()->getResult();
-    }
-
-    public function findBalanceAtEndOfMonth(Account $account, string $yearMonth): ?float
-    {
-        $startDate = new \DateTime($yearMonth . '-01');
-        $endDate = (clone $startDate)->modify('last day of this month')->setTime(23, 59, 59);
-
-        $qb = $this->createQueryBuilder('bh')
-            ->select('bh.balanceAfterTransaction')
-            ->where('bh.account = :account')
-            ->andWhere('bh.date <= :endDate')
-            ->setParameter('account', $account)
-            ->setParameter('endDate', $endDate)
-            ->orderBy('bh.date', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-
-        /** @var array{balanceAfterTransaction: float}|null $qb */
-        return $qb['balanceAfterTransaction'] ?? null;
     }
 }

@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
+use App\Dto\Account\Response\AccountPartialResponse;
+use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
+use App\Dto\BalanceHistory\Response\BalanceResponse;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Entity\Transaction;
-use App\Enum\ErrorMessagesEnum;
+use App\Enum\PeriodsEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\BalanceHistoryRepository;
-use App\Repository\TransactionRepository;
-use App\Security\Voter\AccountVoter;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Carbon\Carbon;
+use loophp\collection\Collection;
+use loophp\collection\Contract\Operation\Sortable;
 
 class BalanceHistoryService
 {
     public function __construct(
         private readonly BalanceHistoryRepository $balanceHistoryRepository,
-        private readonly TransactionRepository $transactionRepository,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TransactionService $transactionService,
         private readonly AccountService $accountService,
     ) {
     }
@@ -31,155 +31,137 @@ class BalanceHistoryService
         /** @var Account $account */
         $account = $transaction->getAccount();
 
-        $balanceBeforeTransaction = $this->getLatestBalance($account) ?? 0.0;
-        $balanceAfterTransaction = $balanceBeforeTransaction + $this->calculateBalanceImpact(
-            $transaction->getAmount(),
-            $transaction->getType()
-        );
-
-        $balanceHistory = (new BalanceHistory())
-            ->setDate($transaction->getDate())
-            ->setBalanceBeforeTransaction($balanceBeforeTransaction)
-            ->setBalanceAfterTransaction($balanceAfterTransaction)
-            ->setAccount($account)
-            ->setTransaction($transaction)
-        ;
-
-        $this->balanceHistoryRepository->save($balanceHistory, true);
-    }
-
-    public function getLatestBalance(Account $account): ?float
-    {
-        return $this->balanceHistoryRepository->findLatestBalance($account);
+        $this->updateBalanceHistory($account, $transaction->getDate());
     }
 
     public function updateBalanceHistoryEntry(Transaction $transaction): void
     {
-        $this->recalculateBalanceHistory($transaction->getAccount(), $transaction->getDate());
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+
+        $this->updateBalanceHistory($account, $transaction->getDate());
     }
 
     public function deleteBalanceHistoryEntry(Transaction $transaction): void
     {
-        $this->recalculateBalanceHistory(
-            $transaction->getAccount(),
-            $transaction->getDate(),
-            $transaction->getId()
-        );
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+
+        $this->updateBalanceHistory($account, $transaction->getDate(), $transaction->getId());
     }
 
-    public function getMonthlyBalanceHistory(?BalanceHistoryFilterQuery $filter = null): array
-    {
+    /**
+     * @param array<int>|null $accountIds
+     */
+    public function getMonthlyBalanceHistory(
+        ?array $accountIds = null,
+        ?PeriodsEnum $periodFilter = null
+    ): BalanceHistoryResponse {
         $accountsInfo = [];
 
-        if ($filter?->getAccountIds() !== null) {
-            foreach ($filter?->getAccountIds() as $accountId) {
+        if ($accountIds !== null) {
+            foreach ($accountIds as $accountId) {
                 $account = $this->accountService->get($accountId);
-
-                if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-                    throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-                }
-
-                $accountsInfo[] = [
-                    'id' => $account->getId(),
-                    'name' => $account->getName(),
-                ];
+                $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
             }
-
-            $accounts = $filter?->getAccountIds();
         } else {
-            $accounts = $this->accountService->list();
-            foreach ($accounts as $account) {
-                $accountsInfo[] = [
-                    'id' => $account->getId(),
-                    'name' => $account->getName(),
-                ];
+            $userAccounts = $this->accountService->list();
+            $accountIds = [];
+
+            foreach ($userAccounts as $account) {
+                $accountsInfo[] = new AccountPartialResponse($account->getId(), $account->getName());
+                $accountIds[] = $account->getId();
             }
         }
 
-        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccounts($accounts, $filter?->period);
+        $accounts = $accountIds;
+
+        $balanceHistories = $this->balanceHistoryRepository->findBalancesByAccountsAndByPeriods(
+            $accounts,
+            $periodFilter
+        );
+
+        $dates = Collection::fromIterable($balanceHistories)
+            ->map(static fn (BalanceHistory $history) => $history->getDate()->format('Y-m'))
+            ->distinct()
+            ->sort()
+            ->all()
+        ;
 
         $monthlyBalances = [];
-        $processedMonths = [];
 
-        foreach ($balanceHistories as $history) {
-            $yearMonth = $history->getDate()->format('Y-m');
+        foreach ($accounts as $accountId) {
+            $account = $this->accountService->get($accountId);
+            $lastKnownBalance = null;
 
-            if (! isset($processedMonths[$yearMonth])) {
-                $processedMonths[$yearMonth] = true;
+            foreach ($dates as $period) {
+                if (! isset($monthlyBalances[$period])) {
+                    $monthlyBalances[$period] = 0;
+                }
 
-                $endOfMonthBalance = $this->balanceHistoryRepository->findBalanceAtEndOfMonth(
-                    $history->getAccount(),
-                    $yearMonth
-                );
+                $endOfMonthBalance = $this->balanceHistoryRepository->findBalanceAtEndOfMonth($account, $period);
 
                 if ($endOfMonthBalance !== null) {
-                    $monthlyBalances[$yearMonth] = $endOfMonthBalance;
+                    $lastKnownBalance = $endOfMonthBalance;
+                    $monthlyBalances[$period] += $endOfMonthBalance;
+                } elseif ($lastKnownBalance !== null) {
+                    $monthlyBalances[$period] += $lastKnownBalance;
                 }
             }
         }
 
-        ksort($monthlyBalances);
+        $balancesInfo = Collection::fromIterable($monthlyBalances)
+            ->map(static fn (float $balance, string $yearMonth) => new BalanceResponse(
+                $yearMonth,
+                // @phpstan-ignore-next-line
+                Carbon::parse($yearMonth . '-01')->format('Y-m'),
+                $balance
+            ))
+            ->sort(
+                Sortable::BY_VALUES,
+                static fn (BalanceResponse $a, BalanceResponse $b): int => $b->date <=> $a->date
+            )
+            ->all()
+        ;
 
-        return [
-            'accounts' => $accountsInfo,
-            'balances' => array_map(
-                static fn ($yearMonth, $balance) => [
-                    'date' => $yearMonth,
-                    'formattedDate' => (new \DateTime($yearMonth . '-01'))->format('F Y'),
-                    'balance' => (float) $balance,
-                ],
-                array_keys($monthlyBalances),
-                array_values($monthlyBalances)
-            ),
-        ];
+        return new BalanceHistoryResponse($accountsInfo, $balancesInfo);
     }
 
-    private function recalculateBalanceHistory(
+    private function updateBalanceHistory(
         Account $account,
         \DateTimeInterface $fromDate,
         ?int $excludedTransactionId = null
     ): void {
-        $balanceHistoryEntriesToDelete = $this->balanceHistoryRepository->findEntriesFromDate($account, $fromDate);
-        $previousBalance = $this->balanceHistoryRepository->findBalanceBeforeDate($account, $fromDate) ?? 0.0;
-
-        foreach ($balanceHistoryEntriesToDelete as $historyEntry) {
-            $this->balanceHistoryRepository->delete($historyEntry);
+        $entriesToDelete = $this->balanceHistoryRepository->findEntriesFromDate($account, $fromDate);
+        foreach ($entriesToDelete as $entry) {
+            $this->balanceHistoryRepository->delete($entry);
         }
 
-        $transactionsToRecalculate = $excludedTransactionId !== null
-            ? $this->transactionRepository->findAllTransactionsFromDateExcept(
-                $account,
-                $fromDate,
-                $excludedTransactionId
-            )
-            : $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+        $initialBalance = $this->balanceHistoryRepository->findBalanceBeforeDate($account, $fromDate) ?? 0.0;
 
-        $runningBalance = $previousBalance;
+        $transactions = $excludedTransactionId !== null
+            ? $this->transactionService->getAllTransactionsFromDateExcept($account, $fromDate, $excludedTransactionId)
+            : $this->transactionService->getAllTransactionsFromDate($account, $fromDate);
 
-        foreach ($transactionsToRecalculate as $transaction) {
-            $balanceBeforeTransaction = $runningBalance;
-            $balanceAfterTransaction = $runningBalance + $this->calculateBalanceImpact(
-                $transaction->getAmount(),
-                $transaction->getType()
-            );
+        $currentBalance = $initialBalance;
+
+        foreach ($transactions as $transaction) {
+            $previousBalance = $currentBalance;
+            $amount = $transaction->getAmount();
+
+            $currentBalance += $transaction->getType() === TransactionTypesEnum::CREDIT ? $amount : -$amount;
 
             $balanceHistory = (new BalanceHistory())
                 ->setDate($transaction->getDate())
-                ->setBalanceBeforeTransaction($balanceBeforeTransaction)
-                ->setBalanceAfterTransaction($balanceAfterTransaction)
+                ->setBalanceBeforeTransaction($previousBalance)
+                ->setBalanceAfterTransaction($currentBalance)
                 ->setAccount($account)
                 ->setTransaction($transaction)
             ;
 
             $this->balanceHistoryRepository->save($balanceHistory);
-            $runningBalance = $balanceAfterTransaction;
         }
 
         $this->balanceHistoryRepository->flush();
-    }
-
-    private function calculateBalanceImpact(float $amount, TransactionTypesEnum $type): float
-    {
-        return $type === TransactionTypesEnum::CREDIT ? $amount : -$amount;
     }
 }

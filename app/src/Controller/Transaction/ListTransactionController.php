@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Transaction;
 
 use App\Dto\Transaction\Http\TransactionFilterQuery;
-use App\Entity\Transaction;
-use App\Serializable\SerializationGroups;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
@@ -28,8 +27,7 @@ class ListTransactionController extends BaseRestController
         summary: 'list transactions',
         responses: [
             new PaginatedSuccessResponse(
-                responseClassFqcn: Transaction::class,
-                groups: [SerializationGroups::TRANSACTION_LIST],
+                responseClassFqcn: TransactionResponse::class,
                 description: 'Return the list of transactions'
             ),
         ],
@@ -41,9 +39,8 @@ class ListTransactionController extends BaseRestController
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?TransactionFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginateResponse(
-            $transactionService->paginate($filter?->accountIds, $paginationQueryParams),
-            [SerializationGroups::TRANSACTION_LIST]
+        return $this->paginatedResponse(
+            pagination: $transactionService->paginate($filter?->getAccountIds(), $paginationQueryParams)
         );
     }
 }

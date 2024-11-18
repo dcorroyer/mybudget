@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Enum\TransactionTypesEnum;
@@ -14,7 +15,6 @@ use App\Service\TransactionService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
@@ -74,8 +74,12 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('view', $transaction)
             ->willReturn(true)
+        ;
+
+        $this->accountService->expects($this->once())
+            ->method('get')
+            ->willReturn($account)
         ;
 
         $this->transactionRepository->expects($this->once())
@@ -84,11 +88,11 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $transactionResponse = $this->transactionService->get($transaction->getId());
+        $transactionResponse = $this->transactionService->get($account->getId(), $transaction->getId());
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
-        self::assertSame($transaction->getId(), $transactionResponse->getId());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame($transaction->getId(), $transactionResponse->id);
     }
 
     #[TestDox('When calling get transaction with bad id, it should returns not found exception')]
@@ -100,7 +104,7 @@ final class TransactionServiceTest extends TestCase
         $this->expectExceptionMessage(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
 
         // ACT
-        $this->transactionService->get(1);
+        $this->transactionService->get(1, 1);
     }
 
     #[TestDox('When calling get transaction for another user, it should returns access denied exception')]
@@ -125,7 +129,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->get($transaction->getId());
+        $this->transactionService->get($transaction->getAccount()->getId(), $transaction->getId());
     }
 
     #[TestDox('When calling create transaction, it should return the transaction created')]
@@ -148,12 +152,6 @@ final class TransactionServiceTest extends TestCase
             ->willReturn($account)
         ;
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with('create', $account)
-            ->willReturn(true)
-        ;
-
         $this->transactionRepository->expects($this->once())
             ->method('save')
             ->willReturnCallback(static function (Transaction $transaction) {
@@ -165,9 +163,9 @@ final class TransactionServiceTest extends TestCase
         $transactionResponse = $this->transactionService->create($account->getId(), $transactionPayload);
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
-        self::assertSame(1, $transactionResponse->getId());
-        self::assertSame('Test transaction', $transactionResponse->getDescription());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame(1, $transactionResponse->id);
+        self::assertSame('Test transaction', $transactionResponse->description);
     }
 
     #[TestDox('When calling create transaction with non-existent account, it should throw not found exception')]
@@ -212,7 +210,6 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('edit', $transaction)
             ->willReturn(true)
         ;
 
@@ -222,12 +219,16 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $transactionResponse = $this->transactionService->update($transactionPayload, $transaction);
+        $transactionResponse = $this->transactionService->update(
+            $transaction->getAccount()->getId(),
+            $transactionPayload,
+            $transaction
+        );
 
         // ASSERT
-        self::assertInstanceOf(Transaction::class, $transactionResponse);
-        self::assertSame('Updated transaction', $transactionResponse->getDescription());
-        self::assertSame(200.00, $transactionResponse->getAmount());
+        self::assertInstanceOf(TransactionResponse::class, $transactionResponse);
+        self::assertSame('Updated transaction', $transactionResponse->description);
+        self::assertSame(200.00, $transactionResponse->amount);
     }
 
     #[TestDox('When calling update transaction with bad user, it should return access denied exception')]
@@ -248,7 +249,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->update($transactionPayload, $transaction);
+        $this->transactionService->update($transaction->getAccount()->getId(), $transactionPayload, $transaction);
     }
 
     #[TestDox('When calling delete transaction, it should delete the transaction')]
@@ -266,7 +267,6 @@ final class TransactionServiceTest extends TestCase
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with('delete', $transaction)
             ->willReturn(true)
         ;
 
@@ -276,7 +276,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->delete($transaction);
+        $this->transactionService->delete($transaction->getAccount()->getId(), $transaction);
 
         // ASSERT
         self::assertInstanceOf(Transaction::class, $transaction);
@@ -299,7 +299,7 @@ final class TransactionServiceTest extends TestCase
         ;
 
         // ACT
-        $this->transactionService->delete($transaction);
+        $this->transactionService->delete($transaction->getAccount()->getId(), $transaction);
     }
 
     #[TestDox('When you call list, it should return the transactions list')]
@@ -321,21 +321,79 @@ final class TransactionServiceTest extends TestCase
             ->willReturn($account)
         ;
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with('view', $account)
-            ->willReturn(true)
-        ;
-
         $this->transactionRepository->method('paginate')
             ->willReturn($slidingPagination)
         ;
 
         // ACT
-        $transactionsResponse = $this->transactionService->paginate($account->getId(), new PaginationQueryParams());
+        $transactionsResponse = $this->transactionService->paginate([$account->getId()], new PaginationQueryParams());
 
         // ASSERT
-        self::assertInstanceOf(SlidingPagination::class, $transactionsResponse);
-        self::assertCount(\count($transactions), $transactionsResponse->getItems());
+        self::assertCount(\count($transactions), $transactionsResponse->data);
+    }
+
+    #[TestDox('When calling getAllTransactionsFromDate, it should return transactions from the given date')]
+    #[Test]
+    public function getAllTransactionsFromDate_WhenDataOk_ReturnsTransactions(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $account = AccountFactory::createOne([
+            'user' => $user,
+        ]);
+        $fromDate = new \DateTime('2024-01-01');
+        $expectedTransactions = TransactionFactory::createMany(3, [
+            'account' => $account,
+            'date' => $fromDate,
+        ]);
+
+        $this->transactionRepository->expects($this->once())
+            ->method('findAllTransactionsFromDate')
+            ->with($account, $fromDate)
+            ->willReturn($expectedTransactions)
+        ;
+
+        // ACT
+        $transactions = $this->transactionService->getAllTransactionsFromDate($account, $fromDate);
+
+        // ASSERT
+        self::assertCount(3, $transactions);
+        self::assertSame($expectedTransactions, $transactions);
+    }
+
+    #[TestDox(
+        'When calling getAllTransactionsFromDateExcept, it should return transactions excluding the specified one'
+    )]
+    #[Test]
+    public function getAllTransactionsFromDateExcept_WhenDataOk_ReturnsTransactionsWithoutExcluded(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $account = AccountFactory::createOne([
+            'user' => $user,
+        ]);
+        $fromDate = new \DateTime('2024-01-01');
+        $excludedTransactionId = 1;
+        $expectedTransactions = TransactionFactory::createMany(2, [
+            'account' => $account,
+            'date' => $fromDate,
+        ]);
+
+        $this->transactionRepository->expects($this->once())
+            ->method('findAllTransactionsFromDateExcept')
+            ->with($account, $fromDate, $excludedTransactionId)
+            ->willReturn($expectedTransactions)
+        ;
+
+        // ACT
+        $transactions = $this->transactionService->getAllTransactionsFromDateExcept(
+            $account,
+            $fromDate,
+            $excludedTransactionId
+        );
+
+        // ASSERT
+        self::assertCount(2, $transactions);
+        self::assertSame($expectedTransactions, $transactions);
     }
 }

@@ -11,6 +11,7 @@ use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
+use Carbon\Carbon;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -58,7 +59,7 @@ class AppFixtures extends Fixture
         // Pour chaque compte, création des transactions et historiques de balance
         foreach ($accounts as $account) {
             $balance = 0.0;
-            $baseDate = new \DateTime();
+            $baseDate = Carbon::now();
 
             // Création des transactions
             $transactions = [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Account;
 
+use App\Dto\Account\Response\AccountResponse;
 use App\Entity\Account;
 use App\Service\AccountService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
@@ -26,7 +27,7 @@ class DeleteAccountController extends BaseRestController
         summary: 'delete account',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Account::class,
+                responseClassFqcn: AccountResponse::class,
                 responseCode: Response::HTTP_NO_CONTENT,
                 description: 'Account deleted'
             ),

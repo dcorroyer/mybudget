@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\BalanceHistory;
 
 use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
-use App\Entity\BalanceHistory;
+use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Service\BalanceHistoryService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -26,7 +26,7 @@ class GetMonthlyBalanceHistoryController extends BaseRestController
         summary: 'Get balance history',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: BalanceHistory::class,
+                responseClassFqcn: BalanceHistoryResponse::class,
                 description: 'Return the balance history',
             ),
         ],
@@ -37,6 +37,8 @@ class GetMonthlyBalanceHistoryController extends BaseRestController
         BalanceHistoryService $balanceHistoryService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->successResponse($balanceHistoryService->getMonthlyBalanceHistory($filter));
+        return $this->successResponse(
+            data: $balanceHistoryService->getMonthlyBalanceHistory($filter?->getAccountIds(), $filter?->getPeriod())
+        );
     }
 }

@@ -6,7 +6,6 @@ namespace App\Controller\Authentication;
 
 use App\Dto\User\Payload\RegisterPayload;
 use App\Entity\User;
-use App\Serializable\SerializationGroups;
 use App\Service\UserService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -28,7 +27,6 @@ class RegisterController extends BaseRestController
         responses: [
             new SuccessResponse(
                 responseClassFqcn: User::class,
-                groups: [SerializationGroups::USER_CREATE],
                 responseCode: Response::HTTP_CREATED,
                 description: 'register user',
             ),
@@ -38,10 +36,6 @@ class RegisterController extends BaseRestController
     #[Route('/register', name: 'api_register', methods: Request::METHOD_POST)]
     public function __invoke(UserService $userService, #[MapRequestPayload] RegisterPayload $payload): JsonResponse
     {
-        return $this->successResponse(
-            data: $userService->create($payload),
-            groups: [SerializationGroups::USER_CREATE],
-            status: Response::HTTP_CREATED
-        );
+        return $this->successResponse(data: $userService->create($payload), status: Response::HTTP_CREATED);
     }
 }

@@ -6,7 +6,6 @@ namespace App\Controller\Budget;
 
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Entity\Budget;
-use App\Serializable\SerializationGroups;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
@@ -27,9 +26,7 @@ class UpdateBudgetController extends BaseRestController
         operationId: 'put_budget',
         summary: 'put budget',
         responses: [
-            new SuccessResponse(responseClassFqcn: Budget::class, groups: [
-                SerializationGroups::BUDGET_UPDATE,
-            ], description: 'Budget updated'),
+            new SuccessResponse(responseClassFqcn: Budget::class, description: 'Budget updated'),
             new NotFoundResponse(description: 'Budget not found'),
         ],
         requestBodyClassFqcn: BudgetPayload::class
@@ -40,9 +37,6 @@ class UpdateBudgetController extends BaseRestController
         Budget $budget,
         #[MapRequestPayload] BudgetPayload $budgetPayload
     ): JsonResponse {
-        return $this->successResponse(
-            data: $budgetService->update($budgetPayload, $budget),
-            groups: [SerializationGroups::BUDGET_UPDATE]
-        );
+        return $this->successResponse(data: $budgetService->update($budgetPayload, $budget));
     }
 }

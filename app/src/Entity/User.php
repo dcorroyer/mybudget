@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -20,23 +18,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $email = '';
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $firstName = '';
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $lastName = '';

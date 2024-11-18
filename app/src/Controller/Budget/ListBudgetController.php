@@ -6,7 +6,6 @@ namespace App\Controller\Budget;
 
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Entity\Budget;
-use App\Serializable\SerializationGroups;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
@@ -29,7 +28,6 @@ class ListBudgetController extends BaseRestController
         responses: [
             new PaginatedSuccessResponse(
                 responseClassFqcn: Budget::class,
-                groups: [SerializationGroups::BUDGET_LIST],
                 description: 'Return the paginated list of budgets'
             ),
         ],
@@ -41,9 +39,6 @@ class ListBudgetController extends BaseRestController
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?BudgetFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginateResponse(
-            $budgetService->paginate($paginationQueryParams, $filter),
-            [SerializationGroups::BUDGET_LIST]
-        );
+        return $this->paginatedResponse($budgetService->paginate($paginationQueryParams, $filter));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Transaction;
 
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
@@ -26,7 +27,7 @@ class DeleteTransactionController extends BaseRestController
         summary: 'delete transaction',
         responses: [
             new SuccessResponse(
-                responseClassFqcn: Transaction::class,
+                responseClassFqcn: TransactionResponse::class,
                 responseCode: Response::HTTP_NO_CONTENT,
                 description: 'Transaction deleted'
             ),
@@ -39,7 +40,7 @@ class DeleteTransactionController extends BaseRestController
         int $accountId,
         Transaction $transaction
     ): JsonResponse {
-        $transactionService->delete($transaction);
+        $transactionService->delete($accountId, $transaction);
 
         return $this->successResponse(data: [], status: Response::HTTP_NO_CONTENT);
     }

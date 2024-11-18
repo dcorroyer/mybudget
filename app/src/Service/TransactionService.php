@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Account\Response\AccountPartialResponse;
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
+use App\Entity\Account;
 use App\Entity\Transaction;
 use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
-use App\Security\Voter\AccountVoter;
 use App\Security\Voter\TransactionVoter;
 use Doctrine\Common\Collections\Criteria;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use My\RestBundle\Dto\PaginatedResponseDto;
+use My\RestBundle\Dto\PaginationMetaDto;
 use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,38 +26,31 @@ class TransactionService
         private readonly TransactionRepository $transactionRepository,
         private readonly AccountService $accountService,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly BalanceHistoryService $balanceHistoryService,
     ) {
     }
 
-    public function get(int $accountId, int $id): Transaction
+    public function get(int $accountId, int $id): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
-
-        if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-        }
-
         $transaction = $this->transactionRepository->find($id);
 
         if ($transaction === null) {
             throw new NotFoundHttpException(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
         }
 
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, $transaction)) {
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
-    public function create(int $accountId, TransactionPayload $transactionPayload): Transaction
+    public function create(int $accountId, TransactionPayload $transactionPayload): TransactionResponse
     {
         $account = $this->accountService->get($accountId);
-
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::CREATE, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-        }
 
         $transaction = (new Transaction())
             ->setDescription($transactionPayload->description)
@@ -66,14 +62,20 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
-        $this->balanceHistoryService->createBalanceHistoryEntry($transaction);
-
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
-    public function update(TransactionPayload $transactionPayload, Transaction $transaction): Transaction
-    {
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, $transaction)) {
+    public function update(
+        int $accountId,
+        TransactionPayload $transactionPayload,
+        Transaction $transaction
+    ): TransactionResponse {
+        $account = $this->accountService->get($accountId);
+
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::EDIT, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
 
@@ -85,58 +87,100 @@ class TransactionService
 
         $this->transactionRepository->save($transaction, true);
 
-        $this->balanceHistoryService->updateBalanceHistoryEntry($transaction);
-
-        return $transaction;
+        return $this->createTransactionResponse($transaction);
     }
 
-    public function delete(Transaction $transaction): void
+    public function delete(int $accountId, Transaction $transaction): void
     {
-        if (! $this->authorizationChecker->isGranted(TransactionVoter::DELETE, $transaction)) {
+        $account = $this->accountService->get($accountId);
+
+        if (! $this->authorizationChecker->isGranted(TransactionVoter::DELETE, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ])) {
             throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
         }
-
-        $this->balanceHistoryService->deleteBalanceHistoryEntry($transaction);
 
         $this->transactionRepository->delete($transaction, true);
     }
 
     /**
+     * @return array<Transaction> $transactions
+     */
+    public function getAllTransactionsFromDate(Account $account, \DateTimeInterface $fromDate): array
+    {
+        return $this->transactionRepository->findAllTransactionsFromDate($account, $fromDate);
+    }
+
+    /**
+     * @return array<Transaction> $transactions
+     */
+    public function getAllTransactionsFromDateExcept(
+        Account $account,
+        \DateTimeInterface $fromDate,
+        int $excludedTransactionId
+    ): array {
+        return $this->transactionRepository->findAllTransactionsFromDateExcept(
+            $account,
+            $fromDate,
+            $excludedTransactionId
+        );
+    }
+
+    /**
      * @param int[]|null $accountIds
-     *
-     * @return SlidingPagination<int, Transaction>
      */
     public function paginate(
         ?array $accountIds = null,
         ?PaginationQueryParams $paginationQueryParams = null
-    ): SlidingPagination {
+    ): PaginatedResponseDto {
         $criteria = Criteria::create();
 
         if (! empty($accountIds)) {
-            $accounts = array_map(
-                function (int $accountId) {
-                    $account = $this->accountService->get($accountId);
-                    if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-                        throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
-                    }
-
-                    return $account;
-                },
-                $accountIds
-            );
+            $accounts = [];
+            foreach ($accountIds as $accountId) {
+                $accounts[] = $this->accountService->get($accountId);
+            }
         } else {
             $accounts = $this->accountService->list();
-
-            if (empty($accounts)) {
-                return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
-            }
         }
 
-        $criteria->andWhere(Criteria::expr()?->in('account', $accounts));
+        $criteria->andWhere(Criteria::expr()->in('account', $accounts));
         $criteria->orderBy([
             'date' => 'DESC',
         ]);
 
-        return $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
+        $paginated = $this->transactionRepository->paginate($paginationQueryParams, null, $criteria);
+
+        $transactions = [];
+
+        /** @var Transaction $transaction */
+        foreach ($paginated->getItems() as $transaction) {
+            $transactions[] = $this->createTransactionResponse($transaction);
+        }
+
+        return new PaginatedResponseDto(
+            data: $transactions,
+            meta: new PaginationMetaDto(
+                total: $paginated->getTotalItemCount(),
+                page: $paginated->getCurrentPageNumber(),
+                limit: $paginated->getItemNumberPerPage(),
+            ),
+        );
+    }
+
+    private function createTransactionResponse(Transaction $transaction): TransactionResponse
+    {
+        /** @var Account $account */
+        $account = $transaction->getAccount();
+
+        return new TransactionResponse(
+            id: $transaction->getId(),
+            description: $transaction->getDescription(),
+            amount: $transaction->getAmount(),
+            type: $transaction->getType(),
+            date: $transaction->getDate(),
+            account: new AccountPartialResponse(id: $account->getId(), name: $account->getName()),
+        );
     }
 }

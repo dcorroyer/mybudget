@@ -7,57 +7,32 @@ namespace App\Entity;
 use App\Enum\AccountTypesEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Repository\AccountRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\Table(name: '`account`')]
 class Account
 {
-    #[Serializer\Groups([
-        SerializationGroups::ACCOUNT_GET,
-        SerializationGroups::ACCOUNT_LIST,
-        SerializationGroups::ACCOUNT_CREATE,
-        SerializationGroups::ACCOUNT_UPDATE,
-        SerializationGroups::TRANSACTION_LIST,
-        SerializationGroups::TRANSACTION_GET,
-    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
-    #[Serializer\Groups([
-        SerializationGroups::ACCOUNT_GET,
-        SerializationGroups::ACCOUNT_LIST,
-        SerializationGroups::ACCOUNT_CREATE,
-        SerializationGroups::ACCOUNT_UPDATE,
-        SerializationGroups::TRANSACTION_LIST,
-        SerializationGroups::TRANSACTION_GET,
-    ])]
     #[Assert\NotBlank]
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
     private string $name = '';
 
-    #[Serializer\Groups([
-        SerializationGroups::ACCOUNT_GET,
-        SerializationGroups::ACCOUNT_LIST,
-        SerializationGroups::ACCOUNT_CREATE,
-        SerializationGroups::ACCOUNT_UPDATE,
-    ])]
     #[ORM\Column(type: Types::STRING, enumType: AccountTypesEnum::class)]
     private AccountTypesEnum $type = AccountTypesEnum::SAVINGS;
 
     /**
      * @var Collection<int, Transaction>
      */
-    #[Serializer\Groups([SerializationGroups::ACCOUNT_GET])]
     #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'account', orphanRemoval: true)]
     private Collection $transactions;
 
@@ -70,12 +45,12 @@ class Account
         $this->transactions = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -106,7 +81,6 @@ class Account
         );
     }
 
-    #[Serializer\Groups([SerializationGroups::ACCOUNT_GET, SerializationGroups::ACCOUNT_LIST])]
     public function getBalance(): float
     {
         return $this->calculateBalance();

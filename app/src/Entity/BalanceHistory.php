@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BalanceHistoryRepository;
-use App\Serializable\SerializationGroups;
+use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
@@ -19,38 +18,39 @@ class BalanceHistory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
     ])]
     private \DateTimeInterface $date;
 
     #[ORM\Column(type: Types::FLOAT)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private float $balanceBeforeTransaction = 0.0;
 
     #[ORM\Column(type: Types::FLOAT)]
-    #[Serializer\Groups([SerializationGroups::BALANCE_HISTORY_GET])]
     private float $balanceAfterTransaction = 0.0;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private Account $account;
+    private ?Account $account = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private Transaction $transaction;
+    private ?Transaction $transaction = null;
 
-    public function getId(): ?int
+    public function __construct()
+    {
+        $this->date = Carbon::now();
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -93,24 +93,24 @@ class BalanceHistory
         return $this;
     }
 
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
 
-    public function setAccount(Account $account): static
+    public function setAccount(?Account $account): static
     {
         $this->account = $account;
 
         return $this;
     }
 
-    public function getTransaction(): Transaction
+    public function getTransaction(): ?Transaction
     {
         return $this->transaction;
     }
 
-    public function setTransaction(Transaction $transaction): static
+    public function setTransaction(?Transaction $transaction): static
     {
         $this->transaction = $transaction;
 

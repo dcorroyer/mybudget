@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Transaction;
 
 use App\Dto\Transaction\Payload\TransactionPayload;
+use App\Dto\Transaction\Response\TransactionResponse;
 use App\Entity\Transaction;
-use App\Serializable\SerializationGroups;
 use App\Service\TransactionService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\NotFoundResponse;
@@ -27,11 +27,7 @@ class UpdateTransactionController extends BaseRestController
         operationId: 'patch_transaction',
         summary: 'patch transaction',
         responses: [
-            new SuccessResponse(
-                responseClassFqcn: Transaction::class,
-                groups: [SerializationGroups::TRANSACTION_UPDATE],
-                description: 'Transaction updated',
-            ),
+            new SuccessResponse(responseClassFqcn: TransactionResponse::class, description: 'Transaction updated'),
             new NotFoundResponse(description: 'Transaction not found'),
         ],
         requestBodyClassFqcn: TransactionPayload::class
@@ -43,9 +39,6 @@ class UpdateTransactionController extends BaseRestController
         Transaction $transaction,
         #[MapRequestPayload] TransactionPayload $transactionPayload
     ): JsonResponse {
-        return $this->successResponse(
-            data: $transactionService->update($transactionPayload, $transaction),
-            groups: [SerializationGroups::TRANSACTION_UPDATE]
-        );
+        return $this->successResponse(data: $transactionService->update($accountId, $transactionPayload, $transaction));
     }
 }

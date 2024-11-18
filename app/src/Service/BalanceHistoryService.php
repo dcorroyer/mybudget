@@ -119,7 +119,7 @@ class BalanceHistoryService
             ))
             ->sort(
                 Sortable::BY_VALUES,
-                static fn (BalanceResponse $a, BalanceResponse $b): int => $b->date <=> $a->date
+                static fn (BalanceResponse $a, BalanceResponse $b): int => $a->date <=> $b->date
             )
             ->all()
         ;

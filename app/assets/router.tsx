@@ -16,6 +16,8 @@ const AccountListPage = React.lazy(() => import('./features/accounts/pages/list'
 const AccountCreatePage = React.lazy(() => import('./features/accounts/pages/create'))
 const AccountDetailPage = React.lazy(() => import('./features/accounts/pages/detail'))
 
+const SavingsPage = React.lazy(() => import('./features/savings/pages/list'))
+
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
 
@@ -94,6 +96,17 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <React.Suspense fallback={null}>
           <AccountDetailPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: '/savings',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={null}>
+          <SavingsPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

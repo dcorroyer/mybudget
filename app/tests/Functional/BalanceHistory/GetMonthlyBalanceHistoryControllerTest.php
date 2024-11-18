@@ -87,12 +87,12 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         self::assertCount(2, $responseData['balances']);
 
         // Vérification de la balance de janvier
-        self::assertSame('2024-01', $responseData['balances'][1]['date']);
-        self::assertSame(1000, $responseData['balances'][1]['balance']);
+        self::assertSame('2024-01', $responseData['balances'][0]['date']);
+        self::assertSame(1000, $responseData['balances'][0]['balance']);
 
         // Vérification de la balance de février
-        self::assertSame('2024-02', $responseData['balances'][0]['date']);
-        self::assertSame(1500, $responseData['balances'][0]['balance']);
+        self::assertSame('2024-02', $responseData['balances'][1]['date']);
+        self::assertSame(1500, $responseData['balances'][1]['balance']);
     }
 
     #[TestDox(

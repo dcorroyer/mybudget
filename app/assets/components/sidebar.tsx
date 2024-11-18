@@ -12,6 +12,7 @@ import {
   IconHome2,
   IconLogout,
   IconMoon,
+  IconReceipt,
   IconSun,
   IconWallet,
 } from '@tabler/icons-react'
@@ -24,6 +25,7 @@ import classes from './sidebar.module.css'
 const data = [
   { icon: IconHome2, label: 'Dashboard', path: '/' },
   { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
+  { icon: IconReceipt, label: 'Transactions', path: '/transactions' },
   { icon: IconChartLine, label: 'Savings', path: '/savings' },
   { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]

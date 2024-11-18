@@ -69,7 +69,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
     path: '/accounts',
     element: (
@@ -100,7 +99,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
     path: '/savings',
     element: (

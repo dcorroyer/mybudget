@@ -9,6 +9,9 @@ use App\Enum\AccountTypesEnum;
 use App\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
+use App\Tests\Common\Factory\BudgetFactory;
+use App\Tests\Common\Factory\ExpenseFactory;
+use App\Tests\Common\Factory\IncomeFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
 use Carbon\Carbon;
@@ -36,6 +39,50 @@ class AppFixtures extends Fixture
             'email' => 'john.doe@admin.local',
             'password' => $hashedPassword,
         ])->create();
+
+        // Création des budgets prévisionnels
+        $baseDate = Carbon::now();
+
+        for ($i = -5; $i <= 3; ++$i) {
+            $date = (clone $baseDate)->startOfMonth()->addMonths($i);
+
+            BudgetFactory::new([
+                'user' => $user,
+                'date' => $date,
+                'incomes' => [
+                    IncomeFactory::new([
+                        'name' => 'Salaire',
+                        'amount' => 2500.00,
+                    ]),
+                    IncomeFactory::new([
+                        'name' => 'Autres revenus',
+                        'amount' => 500.00,
+                    ]),
+                ],
+                'expenses' => [
+                    ExpenseFactory::new([
+                        'name' => 'Loyer',
+                        'category' => 'Habitation',
+                        'amount' => 800.00,
+                    ]),
+                    ExpenseFactory::new([
+                        'name' => 'Électricité',
+                        'category' => 'Habitation',
+                        'amount' => 150.00,
+                    ]),
+                    ExpenseFactory::new([
+                        'name' => 'Assurance habitation',
+                        'category' => 'Abonnements',
+                        'amount' => 150.00,
+                    ]),
+                    ExpenseFactory::new([
+                        'name' => 'Assurance voiture',
+                        'category' => 'Abonnements',
+                        'amount' => 100.00,
+                    ]),
+                ],
+            ])->create();
+        }
 
         // Création des comptes
         $accounts = [

@@ -14,7 +14,7 @@ export interface TransactionParams {
   description: string
   amount: number
   type: 'CREDIT' | 'DEBIT'
-  date: string
+  date: Date
 }
 
 export interface TransactionFilterParams {

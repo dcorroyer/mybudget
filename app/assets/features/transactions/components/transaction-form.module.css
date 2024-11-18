@@ -1,0 +1,16 @@
+.error {
+  position: absolute;
+  color: #f87171;
+  top: 100%;
+  left: 0;
+  font-size: 0.75rem;
+}
+
+.formButton {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.formButton:hover {
+  background-color: var(--mantine-color-gray-1);
+}

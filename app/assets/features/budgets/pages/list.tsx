@@ -38,7 +38,7 @@ const BudgetList: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
-        My Budgets
+        Budgets
         <ActionIcon
           variant='transparent'
           ml='sm'
@@ -55,7 +55,7 @@ const BudgetList: React.FC = () => {
         <Modal
           opened={openedDelete}
           onClose={closeDelete}
-          radius={12.5}
+          radius='lg'
           title='Delete Account'
           centered
         >
@@ -69,12 +69,11 @@ const BudgetList: React.FC = () => {
             </Button>
           </Group>
         </Modal>
-
         {/* Duplicate Confirmation Modal */}
         <Modal
           opened={openedDuplicate}
           onClose={closeDuplicate}
-          radius={12.5}
+          radius='lg'
           title='Duplicate Account'
           centered
         >
@@ -88,7 +87,6 @@ const BudgetList: React.FC = () => {
             </Button>
           </Group>
         </Modal>
-
         <Group justify='center' gap='xl' mb='xl'>
           <ActionIcon
             variant='transparent'

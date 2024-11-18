@@ -18,6 +18,10 @@ const AccountDetailPage = React.lazy(() => import('./features/accounts/pages/det
 
 const SavingsPage = React.lazy(() => import('./features/savings/pages/list'))
 
+const TransactionListPage = React.lazy(() => import('./features/transactions/pages/list'))
+const TransactionCreatePage = React.lazy(() => import('./features/transactions/pages/create'))
+const TransactionDetailPage = React.lazy(() => import('./features/transactions/pages/detail'))
+
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
 
@@ -100,11 +104,41 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/accounts/:accountId/transactions/:id',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={null}>
+          <TransactionDetailPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/savings',
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
           <SavingsPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/transactions',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={null}>
+          <TransactionListPage />
+        </React.Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/transactions/create',
+    element: (
+      <ProtectedRoute>
+        <React.Suspense fallback={null}>
+          <TransactionCreatePage />
         </React.Suspense>
       </ProtectedRoute>
     ),

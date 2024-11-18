@@ -3,14 +3,14 @@ import { client } from '@/utils/client'
 import { SavingsFilterParams, SavingsResponse } from '../types/savings'
 
 export async function getBalanceHistory(
-  filters?: SavingsFilterParams
+  filters?: SavingsFilterParams,
 ): Promise<ApiResponse<SavingsResponse>> {
   const searchParams = new URLSearchParams()
-  
+
   if (filters?.accountIds) {
-    filters.accountIds.forEach(id => searchParams.append('accountIds[]', id.toString()))
+    filters.accountIds.forEach((id) => searchParams.append('accountIds[]', id.toString()))
   }
-  
+
   if (filters?.period) {
     searchParams.append('period', filters.period)
   }
@@ -22,4 +22,4 @@ export async function getBalanceHistory(
   if (!response.ok) return Promise.reject('Failed to get balance history')
 
   return await response.json()
-} 
+}

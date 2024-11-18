@@ -12,4 +12,4 @@ export const useTransactions = () => {
   return {
     useTransactionList,
   }
-} 
+}

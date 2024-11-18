@@ -16,4 +16,4 @@ export interface SavingsResponse {
 export interface SavingsFilterParams {
   accountIds?: number[]
   period?: '3' | '6' | '12'
-} 
+}

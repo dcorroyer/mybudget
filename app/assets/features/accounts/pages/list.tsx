@@ -24,7 +24,7 @@ const AccountList: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
-        My Accounts
+        Accounts
         <ActionIcon
           variant='transparent'
           ml='sm'
@@ -36,11 +36,11 @@ const AccountList: React.FC = () => {
           <span style={{ padding: rem(2.5) }}>Create</span>
         </ActionIcon>
       </Text>
-      <Container fluid mt='md'>
+      <Container mt='md'>
         <AccountItems openDeleteModal={open} setAccountIdToDelete={setAccountIdToDelete} />
       </Container>
 
-      <Modal opened={opened} onClose={close} radius={12.5} title='Delete Account' centered>
+      <Modal opened={opened} onClose={close} radius='lg' title='Delete Account' centered>
         <Text size='sm'>Are you sure you want to delete this account?</Text>
         <Group justify='flex-end' mt='lg'>
           <Button variant='light' onClick={close}>

@@ -5,11 +5,12 @@ import { Link, useParams } from 'react-router-dom'
 
 import { CenteredLoader as Loader } from '@/components/centered-loader'
 import { AccountForm } from '../components/account-form'
-import { TransactionList } from '../components/transaction-list'
+import { TransactionTable } from '@/features/transactions/components/transaction-table'
 import { useAccount } from '../hooks/useAccount'
 import { useTransactions } from '../hooks/useTransactions'
 
 import NotFound from '@/components/not-found'
+
 import classes from './detail.module.css'
 
 const AccountDetail: React.FC = () => {
@@ -49,8 +50,7 @@ const AccountDetail: React.FC = () => {
           )}
         </ActionIcon>
       </Text>
-
-      <Container size={560} my={40}>
+      <Container>
         {editMode ? (
           <AccountForm
             initialValues={{
@@ -59,7 +59,7 @@ const AccountDetail: React.FC = () => {
             }}
           />
         ) : (
-          <Card radius='lg' pb='xl'>
+          <Card radius='lg' pb='xl' mb='lg'>
             <Card.Section inheritPadding py='xs'>
               <Group justify='space-between'>
                 <Text fw={500}>Account Details</Text>
@@ -70,8 +70,7 @@ const AccountDetail: React.FC = () => {
             </Card.Section>
           </Card>
         )}
-
-        {!editMode && transactions && <TransactionList transactions={transactions.data} />}
+        {!editMode && transactions && <TransactionTable transactions={transactions.data} />}
       </Container>
     </>
   )

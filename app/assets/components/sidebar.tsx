@@ -6,7 +6,16 @@ import cx from 'clsx'
 
 import { Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconHome2, IconLogout, IconMoon, IconSun, IconWallet } from '@tabler/icons-react'
+import {
+  IconChartLine,
+  IconCreditCard,
+  IconHome2,
+  IconLogout,
+  IconMoon,
+  IconReceipt,
+  IconSun,
+  IconWallet,
+} from '@tabler/icons-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
@@ -16,6 +25,9 @@ import classes from './sidebar.module.css'
 const data = [
   { icon: IconHome2, label: 'Dashboard', path: '/' },
   { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
+  { icon: IconReceipt, label: 'Transactions', path: '/transactions' },
+  { icon: IconChartLine, label: 'Savings', path: '/savings' },
+  { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]
 
 export function Sidebar() {

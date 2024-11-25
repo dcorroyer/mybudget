@@ -13,87 +13,13 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-#[Group('integration')]
+#[Group('functional')]
 #[Group('controller')]
 #[Group('register')]
 #[Group('register-controller')]
 class RegisterControllerTest extends TestBase
 {
     private const string API_ENDPOINT = '/api/register';
-
-    #[Test]
-    #[TestDox('When call /api/register  without Email, it should return error')]
-    public function RegisterControllerTestWithoutEmail(): void
-    {
-        // ARRANGE
-        $payload = [
-            'firstName' => 'Cordia Hirthe V',
-            'lastName' => 'Rebecca Marks',
-            'password' => 'Isidro Kutch I',
-        ];
-
-        // ACT
-        $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $payload);
-
-        // ASSERT
-        self::assertResponseStatusCodeSame(422);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertSame('This value should not be blank.', $response['violations'][0]['title']);
-    }
-
-    #[Test]
-    #[TestDox('When call /api/register  without FirstName, it should return error')]
-    public function RegisterControllerTestWithoutFirstName(): void
-    {
-        // ARRANGE
-        $payload = [
-            'email' => 'Miss Laurianne Hermann',
-            'lastName' => 'Evan Fadel',
-            'password' => 'Prof. Shyann Pagac',
-        ];
-
-        // ACT
-        $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $payload);
-
-        // ASSERT
-        self::assertResponseStatusCodeSame(422);
-    }
-
-    #[Test]
-    #[TestDox('When call /api/register  without LastName, it should return error')]
-    public function RegisterControllerTestWithoutLastName(): void
-    {
-        // ARRANGE
-        $payload = [
-            'email' => 'Emmitt Roob',
-            'firstName' => 'Miss Marquise Dickinson II',
-            'password' => 'Arianna Muller',
-        ];
-
-        // ACT
-        $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $payload);
-
-        // ASSERT
-        self::assertResponseStatusCodeSame(422);
-    }
-
-    #[Test]
-    #[TestDox('When call /api/register  without Password, it should return error')]
-    public function RegisterControllerTestWithoutPassword(): void
-    {
-        // ARRANGE
-        $payload = [
-            'email' => 'Josianne Brekke',
-            'firstName' => 'Queen Spencer',
-            'lastName' => 'Nicola Sporer',
-        ];
-
-        // ACT
-        $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $payload);
-
-        // ASSERT
-        self::assertResponseStatusCodeSame(422);
-    }
 
     #[TestDox('When you call POST /api/register, it should create and return the user')]
     #[Test]

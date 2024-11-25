@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\Dependencies\IncomePayload;
+use App\Dto\Budget\Payload\IncomePayload;
 use App\Entity\Income;
 use App\Repository\IncomeRepository;
 use App\Service\IncomeService;

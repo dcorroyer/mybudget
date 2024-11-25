@@ -18,13 +18,13 @@ import { BudgetTable } from '../components/budget-table'
 import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
-import classes from './detail.module.css'
 import NotFound from '@/components/not-found'
+import classes from './detail.module.css'
 
 const BudgetDetail: React.FC = () => {
   const { id } = useParams()
   const { useBudgetDetail } = useBudget()
-  const { budget, isFetching } = useBudgetDetail(Number(id))
+  const { data: budget, isFetching } = useBudgetDetail(Number(id))
 
   const [editMode, setEditMode] = useState(false)
 

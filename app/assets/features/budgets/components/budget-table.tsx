@@ -30,56 +30,6 @@ export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues 
   return (
     <>
       <Container my={20}>
-        <Card radius='lg' py='xl' mt='sm'>
-          <Card.Section inheritPadding px='xl' pb='xs'>
-            <Group justify='space-between' gap='xl' mt='xs'>
-              <div className={classes.divIconBlue}>
-                <IconChartLine className={classes.iconBlue} stroke={1.5} />
-                <Text className={classes.resourceName} ml='xs'>
-                  Graph
-                </Text>
-              </div>
-              <Tooltip label='Open in full screen ?' position='top' withArrow>
-                <div
-                  onClick={openModal}
-                  className={classes.divIconBlue}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <IconEye className={classes.iconBlue} stroke={1.5} />
-                </div>
-              </Tooltip>
-            </Group>
-          </Card.Section>
-          <Card.Section inheritPadding mt='md' px='xl' pb='xs'>
-            <Chart
-              chartType='Sankey'
-              width='100%'
-              height='100%'
-              data={graphData}
-              options={graphOptions}
-            />
-          </Card.Section>
-        </Card>
-      </Container>
-
-      <Modal
-        opened={opened}
-        onClose={closeModal}
-        radius={12.5}
-        size='100%'
-        title='Expenses chart'
-        centered
-      >
-        <Chart
-          chartType='Sankey'
-          width='100%'
-          height='500px'
-          data={graphData}
-          options={graphOptions}
-        />
-      </Modal>
-
-      <Container size={560}>
         <Card radius='lg'>
           <Text ta='center'>Budget Summary</Text>
         </Card>
@@ -149,6 +99,56 @@ export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues 
             })}
           </Card.Section>
         </Card>
+
+        {/* TODO: After summary and before graph, add a section with pourcentage of incomes and expenses and savings capacity */}
+
+        <Card radius='lg' py='xl' my='sm'>
+          <Card.Section inheritPadding px='xl' pb='xs'>
+            <Group justify='space-between' gap='xl' mt='xs'>
+              <div className={classes.divIconBlue}>
+                <IconChartLine className={classes.iconBlue} stroke={1.5} />
+                <Text className={classes.resourceName} ml='xs'>
+                  Graph
+                </Text>
+              </div>
+              <Tooltip label='Open in full screen ?' position='top' withArrow>
+                <div
+                  onClick={openModal}
+                  className={classes.divIconBlue}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <IconEye className={classes.iconBlue} stroke={1.5} />
+                </div>
+              </Tooltip>
+            </Group>
+          </Card.Section>
+          <Card.Section inheritPadding mt='md' px='xl' pb='xs'>
+            <Chart
+              chartType='Sankey'
+              width='100%'
+              height='100%'
+              data={graphData}
+              options={graphOptions}
+            />
+          </Card.Section>
+        </Card>
+
+        <Modal
+          opened={opened}
+          onClose={closeModal}
+          radius={12.5}
+          size='100%'
+          title='Expenses chart'
+          centered
+        >
+          <Chart
+            chartType='Sankey'
+            width='100%'
+            height='500px'
+            data={graphData}
+            options={graphOptions}
+          />
+        </Modal>
       </Container>
     </>
   )

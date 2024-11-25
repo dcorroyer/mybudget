@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Budget;
 
 use App\Entity\Budget;
-use App\Serializable\SerializationGroups;
 use App\Service\BudgetService;
 use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
 use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
@@ -27,7 +26,6 @@ class DuplicateBudgetController extends BaseRestController
         responses: [
             new SuccessResponse(
                 responseClassFqcn: Budget::class,
-                groups: [SerializationGroups::BUDGET_CREATE],
                 responseCode: Response::HTTP_CREATED,
                 description: 'Budget duplication',
             ),
@@ -36,10 +34,6 @@ class DuplicateBudgetController extends BaseRestController
     #[Route('/duplicate/{id}', name: 'api_budgets_duplicate', methods: Request::METHOD_POST)]
     public function __invoke(BudgetService $budgetService, ?int $id = null): JsonResponse
     {
-        return $this->successResponse(
-            data: $budgetService->duplicate($id),
-            groups: [SerializationGroups::BUDGET_CREATE],
-            status: Response::HTTP_CREATED,
-        );
+        return $this->successResponse(data: $budgetService->duplicate($id), status: Response::HTTP_CREATED);
     }
 }

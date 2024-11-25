@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use App\Serializable\SerializationGroups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -20,23 +18,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $email = '';
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $firstName = '';
 
-    #[Serializer\Groups([SerializationGroups::USER_GET, SerializationGroups::USER_CREATE])]
     #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $lastName = '';
@@ -57,13 +51,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Budget>
      */
-    #[Serializer\Groups([SerializationGroups::USER_GET])]
     #[ORM\OneToMany(targetEntity: Budget::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $budgets;
+
+    /**
+     * @var Collection<int, Account>
+     */
+    #[ORM\OneToMany(targetEntity: Account::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $accounts;
 
     public function __construct()
     {
         $this->budgets = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
     }
 
     public function getId(): int
@@ -171,7 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->budgets;
     }
 
-    public function addBudget(Budget $budget): self
+    public function addBudget(Budget $budget): static
     {
         if (! $this->budgets->contains($budget)) {
             $this->budgets->add($budget);
@@ -181,11 +181,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeBudget(Budget $budget): self
+    public function removeBudget(Budget $budget): static
     {
-        // set the owning side to null (unless already changed)
         if ($this->budgets->removeElement($budget) && $budget->getUser() === $this) {
             $budget->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Account>
+     */
+    public function getAccounts(): Collection
+    {
+        return $this->accounts;
+    }
+
+    public function addAccount(Account $account): static
+    {
+        if (! $this->accounts->contains($account)) {
+            $this->accounts->add($account);
+            $account->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccount(Account $account): static
+    {
+        if ($this->accounts->removeElement($account) && $account->getUser() === $this) {
+            $account->setUser(null);
         }
 
         return $this;

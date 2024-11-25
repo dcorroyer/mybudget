@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-#[Group('integration')]
+#[Group('functional')]
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]

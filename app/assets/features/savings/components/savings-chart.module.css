@@ -1,0 +1,19 @@
+.divIconBlue {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.iconBlue {
+  color: var(--mantine-color-blue-light-color);
+  background-color: var(--mantine-color-blue-light);
+  padding: rem(5px);
+  border-radius: 5px;
+  width: rem(30px);
+  height: rem(30px);
+}
+
+.resourceName {
+  font-weight: 500;
+}

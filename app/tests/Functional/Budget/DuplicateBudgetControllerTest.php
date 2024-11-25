@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Budget;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-#[Group('integration')]
+#[Group('functional')]
 #[Group('controller')]
 #[Group('budget')]
 #[Group('budget-controller')]
@@ -35,8 +36,10 @@ final class DuplicateBudgetControllerTest extends TestBase
             'user' => $user,
         ])->_real();
 
-        $expectedDate = clone $budget->getDate();
-        $expectedDate->modify('+1 month');
+        $expectedDate = Carbon::parse($budget->getDate())
+            ->startOfMonth()
+            ->addMonth()
+        ;
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT . '/' . $budget->getId());

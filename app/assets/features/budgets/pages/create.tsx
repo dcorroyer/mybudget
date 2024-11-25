@@ -4,7 +4,7 @@ import { ActionIcon, Container, Text } from '@mantine/core'
 import { IconChevronLeft } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
 
-import { BudgetForm } from '@/features/budgets/components/budget-form'
+import { BudgetForm } from '../components/budget-form'
 
 import classes from './create.module.css'
 

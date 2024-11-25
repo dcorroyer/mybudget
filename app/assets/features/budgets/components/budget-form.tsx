@@ -86,7 +86,7 @@ export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }
     if (!isEditMode) {
       createBudget(data)
     } else if (initialValues && initialValues.id) {
-      updateBudget(initialValues.id, data)
+      updateBudget({ id: initialValues.id, ...data })
     }
   }
 

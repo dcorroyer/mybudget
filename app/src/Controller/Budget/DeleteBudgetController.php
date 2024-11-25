@@ -36,6 +36,8 @@ class DeleteBudgetController extends BaseRestController
     #[Route('/{id}', name: 'api_budgets_delete', methods: Request::METHOD_DELETE)]
     public function __invoke(BudgetService $budgetService, Budget $budget): JsonResponse
     {
-        return $this->successResponse(data: $budgetService->delete($budget), status: Response::HTTP_NO_CONTENT);
+        $budgetService->delete($budget);
+
+        return $this->successResponse(data: [], status: Response::HTTP_NO_CONTENT);
     }
 }

@@ -21,7 +21,7 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
   }
 
   return (
-    <Card radius='lg' py='xl' mt='sm'>
+    <Card radius='lg' py='xl' mt='sm' shadow='sm'>
       <Card.Section inheritPadding px='xl' pb='xs'>
         <Group justify='space-between' gap='xl' mt='xs'>
           <div className={classes.divIconBlue}>

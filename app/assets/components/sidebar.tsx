@@ -7,7 +7,6 @@ import { useMediaQuery } from '@mantine/hooks'
 import {
   IconChartLine,
   IconCreditCard,
-  IconHome2,
   IconLogout,
   IconReceipt,
   IconWallet,
@@ -19,10 +18,9 @@ import Logo from './logo'
 import classes from './sidebar.module.css'
 
 const data = [
-  { icon: IconHome2, label: 'Dashboard', path: '/' },
+  { icon: IconChartLine, label: 'Dashboard', path: '/' },
   { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
   { icon: IconReceipt, label: 'Transactions', path: '/transactions' },
-  { icon: IconChartLine, label: 'Savings', path: '/savings' },
   { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]
 

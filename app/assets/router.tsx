@@ -3,8 +3,6 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { useUser } from './features/auth/hooks/useUser'
 import AuthenticatedLayout from './layouts/authenticated-layout'
 
-const NotFoundPage = React.lazy(() => import('./components/not-found'))
-
 const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
 const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
 
@@ -16,7 +14,7 @@ const AccountListPage = React.lazy(() => import('./features/accounts/pages/list'
 const AccountCreatePage = React.lazy(() => import('./features/accounts/pages/create'))
 const AccountDetailPage = React.lazy(() => import('./features/accounts/pages/detail'))
 
-const SavingsPage = React.lazy(() => import('./features/savings/pages/list'))
+const DashboardPage = React.lazy(() => import('./features/savings/pages/list'))
 
 const TransactionListPage = React.lazy(() => import('./features/transactions/pages/list'))
 const TransactionCreatePage = React.lazy(() => import('./features/transactions/pages/create'))
@@ -38,7 +36,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <NotFoundPage />
+          <DashboardPage />
         </React.Suspense>
       </ProtectedRoute>
     ),
@@ -109,16 +107,6 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <React.Suspense fallback={null}>
           <TransactionDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/savings',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <SavingsPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

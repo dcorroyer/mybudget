@@ -1,6 +1,6 @@
 import { Button, Card, NumberInput, rem, Select, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconCheck } from '@tabler/icons-react'
+import { IconCheck, IconCurrencyEuro } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React, { useEffect, useState } from 'react'
 
@@ -39,6 +39,7 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initi
   const [dateValue, setDateValue] = useState<Date>(new Date())
   const [accountIdValue, setAccountIdValue] = useState<number>(0)
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
+  const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
 
   useEffect(() => {
     if (initialValues) {
@@ -71,11 +72,23 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initi
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Card radius='lg' py='xl'>
+      <DatePickerInput
+        label='Transaction date'
+        mb='md'
+        {...form.getInputProps('date')}
+        classNames={{ error: classes.error }}
+        mt='md'
+        value={dateValue}
+        onChange={(date) => {
+          form.setFieldValue('date', date!)
+          setDateValue(date!)
+        }}
+      />
+      <Card radius='lg' py='xl' shadow='sm'>
         <Card.Section inheritPadding px='xl' pb='xs'>
           <TextInput
             label='Description'
-            placeholder='Transaction description'
+            placeholder='e.g. Savings, Buy...'
             {...form.getInputProps('description')}
             classNames={{ error: classes.error }}
           />
@@ -87,6 +100,7 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initi
             {...form.getInputProps('amount')}
             classNames={{ error: classes.error }}
             mt='md'
+            rightSection={currency}
           />
 
           <Select
@@ -122,18 +136,6 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initi
             {...form.getInputProps('type')}
             classNames={{ error: classes.error }}
             mt='md'
-          />
-
-          <DatePickerInput
-            label='Date'
-            {...form.getInputProps('date')}
-            classNames={{ error: classes.error }}
-            mt='md'
-            value={dateValue}
-            onChange={(date) => {
-              form.setFieldValue('date', date!)
-              setDateValue(date!)
-            }}
           />
         </Card.Section>
 

@@ -28,7 +28,7 @@ const SavingsList: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl' mt='md'>
-        Savings
+        Dashboard
       </Text>
       <Container>
         <Group align='flex-end' mb='xl'>

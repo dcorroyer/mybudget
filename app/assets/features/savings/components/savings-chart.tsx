@@ -1,7 +1,8 @@
+import { LineChart } from '@mantine/charts'
 import { Card, Group, Text } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { IconChartLine } from '@tabler/icons-react'
 import React from 'react'
-import { Chart } from 'react-google-charts'
 import { SavingsResponse } from '../types/savings'
 import classes from './savings-chart.module.css'
 
@@ -10,15 +11,12 @@ interface SavingsChartProps {
 }
 
 export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
-  const chartData = [
-    ['Date', 'Balance'],
-    ...data.balances.map((balance) => [balance.date, balance.balance]),
-  ]
+  const isMobile = useMediaQuery('(max-width: 48em)')
 
-  const options = {
-    curveType: 'function',
-    legend: 'none',
-  }
+  const chartData = data.balances.map((balance) => ({
+    date: balance.date,
+    balance: balance.balance,
+  }))
 
   return (
     <Card radius='lg' py='xl' mt='sm' shadow='sm'>
@@ -32,13 +30,17 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
           </div>
         </Group>
       </Card.Section>
-      <Card.Section inheritPadding px='xl' pb='xs'>
-        <Chart
-          chartType='LineChart'
-          width='100%'
-          height='400px'
+      <Card.Section inheritPadding px='xl' mt='sm'>
+        <LineChart
+          h={isMobile ? 200 : 300}
           data={chartData}
-          options={options}
+          dataKey='date'
+          series={[{ name: 'balance', color: 'blue' }]}
+          curveType='natural'
+          withYAxis={false}
+          xAxisProps={{ padding: { left: isMobile ? 5 : 30, right: isMobile ? 5 : 30 } }}
+          withPointLabels
+          withTooltip={false}
         />
       </Card.Section>
     </Card>

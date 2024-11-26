@@ -5,7 +5,7 @@ import { SavingsChart } from '../components/savings-chart'
 import { useSavings } from '../hooks/useSavings'
 
 const SavingsList: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('12')
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('6')
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([])
 
   const { useAccountList } = useAccount()
@@ -28,7 +28,7 @@ const SavingsList: React.FC = () => {
   return (
     <>
       <Text fw={500} size='lg' pb='xl' mt='md'>
-        Dashboard
+        Savings
       </Text>
       <Container>
         <Group align='flex-end' mb='xl'>

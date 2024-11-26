@@ -29,7 +29,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar withBorder={false}>
-        <Sidebar />
+        <Sidebar onNavigate={toggle} />
       </AppShell.Navbar>
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>

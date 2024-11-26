@@ -43,10 +43,10 @@ const AccountList: React.FC = () => {
       <Modal opened={opened} onClose={close} radius='lg' title='Delete Account' centered>
         <Text size='sm'>Are you sure you want to delete this account?</Text>
         <Group justify='flex-end' mt='lg'>
-          <Button variant='light' onClick={close}>
+          <Button variant='subtle' radius='md' onClick={close}>
             Cancel
           </Button>
-          <Button color='red' onClick={handleDelete}>
+          <Button color='red' radius='md' onClick={handleDelete}>
             Delete
           </Button>
         </Group>

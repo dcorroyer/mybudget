@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { ActionIcon, Card, Container, Group, rem, SimpleGrid, Text } from '@mantine/core'
+import { ActionIcon, Container, rem, SimpleGrid, Text } from '@mantine/core'
 import {
   IconChevronLeft,
   IconCreditCard,
@@ -19,6 +19,7 @@ import { groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
 import NotFound from '@/components/not-found'
+import { BudgetSummaryCards } from '../components/budget-summary-cards'
 import classes from './detail.module.css'
 
 const BudgetDetail: React.FC = () => {
@@ -60,60 +61,25 @@ const BudgetDetail: React.FC = () => {
         </ActionIcon>
       </Text>
       <Container>
-        <SimpleGrid cols={3}>
-          <Card radius='lg' pb='xl'>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='left' gap='xl' mt='xs'>
-                <div className={classes.divIconBlue}>
-                  <IconCreditCard className={classes.iconBlue} stroke={1.5} />
-                </div>
-              </Group>
-            </Card.Section>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='space-between'>
-                <Text fw={500}>Saving Capacity</Text>
-              </Group>
-              <Text fw={500} c='blue'>
-                {budget?.data.savingCapacity} €
-              </Text>
-            </Card.Section>
-          </Card>
-
-          <Card radius='lg' pb='xl'>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='left' gap='xl' mt='xs'>
-                <div className={classes.divIconGreen}>
-                  <IconCreditCardRefund className={classes.iconGreen} stroke={1.5} />
-                </div>
-              </Group>
-            </Card.Section>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='space-between'>
-                <Text fw={500}>Total Incomes</Text>
-              </Group>
-              <Text fw={500} c='green'>
-                {budget?.data.incomesAmount} €
-              </Text>
-            </Card.Section>
-          </Card>
-
-          <Card radius='lg' pb='xl'>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='left' gap='xl' mt='xs'>
-                <div className={classes.divIconRed}>
-                  <IconCreditCardPay className={classes.iconRed} stroke={1.5} />
-                </div>
-              </Group>
-            </Card.Section>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='space-between'>
-                <Text fw={500}>Total Expenses</Text>
-              </Group>
-              <Text fw={500} c='red'>
-                {budget?.data.expensesAmount} €
-              </Text>
-            </Card.Section>
-          </Card>
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+          <BudgetSummaryCards
+            icon={IconCreditCard}
+            color='blue'
+            title='Saving Capacity'
+            amount={budget?.data.savingCapacity}
+          />
+          <BudgetSummaryCards
+            icon={IconCreditCardRefund}
+            color='green'
+            title='Total Incomes'
+            amount={budget?.data.incomesAmount}
+          />
+          <BudgetSummaryCards
+            icon={IconCreditCardPay}
+            color='red'
+            title='Total Expenses'
+            amount={budget?.data.expensesAmount}
+          />
         </SimpleGrid>
       </Container>
 

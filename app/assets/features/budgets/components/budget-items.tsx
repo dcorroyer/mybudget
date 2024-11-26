@@ -52,7 +52,7 @@ export const BudgetItems = ({
 
   const budgets = budgetList?.data.map((budget) => (
     <div key={budget.id}>
-      <Card radius='lg' pb='xl'>
+      <Card radius='lg' pb='xl' shadow='sm'>
         <Card.Section inheritPadding py='xs'>
           <Group justify='space-between'>
             <Text fw={500}>{budget.name}</Text>

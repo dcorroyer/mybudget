@@ -61,10 +61,10 @@ const BudgetList: React.FC = () => {
         >
           <Text size='sm'>Are you sure you want to delete this account?</Text>
           <Group justify='flex-end' mt='lg'>
-            <Button variant='subtle' onClick={closeDelete}>
+            <Button variant='subtle' radius='md' onClick={closeDelete}>
               Cancel
             </Button>
-            <Button color='red' onClick={handleDelete}>
+            <Button color='red' radius='md' onClick={handleDelete}>
               Delete
             </Button>
           </Group>
@@ -79,10 +79,10 @@ const BudgetList: React.FC = () => {
         >
           <Text size='sm'>Are you sure you want to duplicate this account?</Text>
           <Group justify='flex-end' mt='lg'>
-            <Button variant='subtle' onClick={closeDuplicate}>
+            <Button variant='subtle' radius='md' onClick={closeDuplicate}>
               Cancel
             </Button>
-            <Button color='blue' onClick={handleDuplicate}>
+            <Button color='blue' radius='md' onClick={handleDuplicate}>
               Duplicate
             </Button>
           </Group>
@@ -90,8 +90,8 @@ const BudgetList: React.FC = () => {
         <Group justify='center' gap='xl' mb='xl'>
           <ActionIcon
             variant='transparent'
-            c='black'
             onClick={() => setSelectedYear(selectedYear - 1)}
+            className={classes.chevron}
           >
             <IconChevronLeft stroke={1.5} />
           </ActionIcon>
@@ -100,8 +100,8 @@ const BudgetList: React.FC = () => {
           </Text>
           <ActionIcon
             variant='transparent'
-            c='black'
             onClick={() => setSelectedYear(selectedYear + 1)}
+            className={classes.chevron}
           >
             <IconChevronRight stroke={1.5} />
           </ActionIcon>

@@ -1,16 +1,41 @@
-.resourceName {
-  font-size: 1rem;
-  font-weight: 600;
+.divIconBlue {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: var(--mantine-font-size-sm);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    color: var(--mantine-color-blue-light-color);
+
+    .iconBlue {
+      color: var(--mantine-color-blue-light-color);
+    }
+  }
+
+  &[data-active] {
+    &,
+    &:hover {
+      background-color: var(--mantine-color-blue-light);
+      color: var(--mantine-color-blue-light-color);
+
+      .iconBlue {
+        color: var(--mantine-color-blue-light-color);
+      }
+    }
+  }
 }
 
-.categoryBlock {
-  background-color: var(--mantine-color-gray-1);
-  border-radius: rem(10px);
-}
-
-.categoryName {
-  padding: 0.5rem;
-  border-radius: 4px;
+.iconBlue {
+  color: var(--mantine-color-blue-light-color);
+  background-color: var(--mantine-color-blue-light);
+  padding: rem(5px);
+  border-radius: 5px;
+  width: rem(30px);
+  height: rem(30px);
 }
 
 .divIconGreen {
@@ -87,46 +112,6 @@
 .iconRed {
   color: var(--mantine-color-red-light-color);
   background-color: var(--mantine-color-red-light);
-  padding: rem(5px);
-  border-radius: 5px;
-  width: rem(30px);
-  height: rem(30px);
-}
-
-.divIconBlue {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-  border-radius: var(--mantine-radius-md);
-  font-weight: 500;
-
-  @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-    color: var(--mantine-color-blue-light-color);
-
-    .iconBlue {
-      color: var(--mantine-color-blue-light-color);
-    }
-  }
-
-  &[data-active] {
-    &,
-    &:hover {
-      background-color: var(--mantine-color-blue-light);
-      color: var(--mantine-color-blue-light-color);
-
-      .iconBlue {
-        color: var(--mantine-color-blue-light-color);
-      }
-    }
-  }
-}
-
-.iconBlue {
-  color: var(--mantine-color-blue-light-color);
-  background-color: var(--mantine-color-blue-light);
   padding: rem(5px);
   border-radius: 5px;
   width: rem(30px);

@@ -16,10 +16,6 @@
   background-color: var(--mantine-color-white); /* Couleur de fond pour le mode clair */
 }
 
-.navbarMain {
-  flex: 1;
-}
-
 .header {
   padding-bottom: var(--mantine-spacing-md);
   margin-bottom: calc(var(--mantine-spacing-md) * 4);

@@ -18,8 +18,6 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { registerFormSchema, registerFormType } from '@/features/auth/schemas/register'
 
-import classes from './register.module.css'
-
 const Register: React.FC = () => {
   const { register, isLoading } = useAuth()
 
@@ -40,7 +38,7 @@ const Register: React.FC = () => {
 
   return (
     <Container size={460} my={40}>
-      <Title ta='center' className={classes.title}>
+      <Title ta='center' fw={900}>
         Register Page
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>

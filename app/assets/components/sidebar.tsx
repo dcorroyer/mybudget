@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 import cx from 'clsx'
 
-import { Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
+import { em, Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
   IconChartLine,
@@ -30,10 +30,14 @@ const data = [
   { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
   const { logout } = useAuth()
 
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
 
   const { setColorScheme } = useMantineColorScheme()
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true })
@@ -52,6 +56,9 @@ export function Sidebar() {
         key={item.label}
         onClick={() => {
           setActive(item.path)
+          if (isMobile && onNavigate) {
+            onNavigate()
+          }
         }}
       >
         <item.icon className={classes.linkIcon} stroke={1.5} />
@@ -62,7 +69,7 @@ export function Sidebar() {
 
   return (
     <nav className={classes.navbar}>
-      <div className={classes.navbarMain}>
+      <div style={{ flex: '1' }}>
         {!isMobile && (
           <Group className={classes.header} justify='space-between'>
             <Logo />

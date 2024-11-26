@@ -1,7 +1,7 @@
 import { useAccount } from '@/features/accounts/hooks/useAccount'
 import { TransactionTable } from '@/features/transactions/components/transaction-table'
-import { ActionIcon, Container, Loader, MultiSelect, rem, Text } from '@mantine/core'
-import { IconPencil } from '@tabler/icons-react'
+import { ActionIcon, Container, Loader, MultiSelect, rem, Stack, Text } from '@mantine/core'
+import { IconDatabaseOff, IconPencil } from '@tabler/icons-react'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransactions } from '../hooks/useTransactions'
@@ -42,19 +42,34 @@ const TransactionList: React.FC = () => {
           <span style={{ padding: rem(2.5) }}>Create</span>
         </ActionIcon>
       </Text>
-      <Container>
-        <MultiSelect
-          label='Filter by Accounts'
-          placeholder={selectedAccounts.length === 0 ? 'All accounts' : ''}
-          data={accountOptions}
-          value={selectedAccounts}
-          onChange={setSelectedAccounts}
-          searchable
-          clearable
-          mb='xl'
-        />
-        {transactions && <TransactionTable transactions={transactions.data} />}
-      </Container>
+      {!transactions?.data.length ? (
+        <Container h={100} display='flex'>
+          <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
+            <IconDatabaseOff
+              style={{ width: rem(24), height: rem(24) }}
+              stroke={1.5}
+              color='gray'
+            />
+            <Text size='lg' fw={500} c='gray'>
+              No transactions found
+            </Text>
+          </Stack>
+        </Container>
+      ) : (
+        <Container>
+          <MultiSelect
+            label='Filter by Accounts'
+            placeholder={selectedAccounts.length === 0 ? 'All accounts' : ''}
+            data={accountOptions}
+            value={selectedAccounts}
+            onChange={setSelectedAccounts}
+            searchable
+            clearable
+            mb='xl'
+          />
+          {transactions && <TransactionTable transactions={transactions.data} />}
+        </Container>
+      )}
     </>
   )
 }

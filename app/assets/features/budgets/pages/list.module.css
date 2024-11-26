@@ -11,7 +11,7 @@
   transform: translateY(0.33rem);
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    background-color: var(--mantine-color-gray-2);
     color: var(--mantine-color-blue-light-color);
 
     .linkIcon {
@@ -23,12 +23,4 @@
 .linkIcon {
   color: var(--mantine-color-blue-light-color);
   padding: rem(2.5);
-}
-
-[data-mantine-color-scheme='dark'] .chevron {
-  color: var(--mantine-color-light-6);
-}
-
-[data-mantine-color-scheme='light'] .chevron {
-  color: var(--mantine-color-dark-6);
 }

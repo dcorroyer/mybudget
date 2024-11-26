@@ -2,18 +2,14 @@ import React, { useState } from 'react'
 
 import { Link, useLocation } from 'react-router-dom'
 
-import cx from 'clsx'
-
-import { em, Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
+import { em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
   IconChartLine,
   IconCreditCard,
   IconHome2,
   IconLogout,
-  IconMoon,
   IconReceipt,
-  IconSun,
   IconWallet,
 } from '@tabler/icons-react'
 
@@ -38,9 +34,6 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   const { logout } = useAuth()
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
-
-  const { setColorScheme } = useMantineColorScheme()
-  const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true })
 
   const { pathname } = useLocation()
   const [active, setActive] = useState(pathname)
@@ -79,16 +72,6 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       </div>
 
       <div className={classes.footer}>
-        <Link
-          onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
-          className={classes.link}
-          to={''}
-        >
-          <IconSun className={cx(classes.light, classes.linkIcon)} stroke={1.5} />
-          <IconMoon className={cx(classes.dark, classes.linkIcon)} stroke={1.5} />
-          <span>Change Theme</span>
-        </Link>
-
         <Link onClick={() => logout()} className={classes.link} to={''}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>

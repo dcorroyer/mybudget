@@ -90,8 +90,8 @@ const BudgetList: React.FC = () => {
         <Group justify='center' gap='xl' mb='xl'>
           <ActionIcon
             variant='transparent'
+            c='black'
             onClick={() => setSelectedYear(selectedYear - 1)}
-            className={classes.chevron}
           >
             <IconChevronLeft stroke={1.5} />
           </ActionIcon>
@@ -100,8 +100,8 @@ const BudgetList: React.FC = () => {
           </Text>
           <ActionIcon
             variant='transparent'
+            c='black'
             onClick={() => setSelectedYear(selectedYear + 1)}
-            className={classes.chevron}
           >
             <IconChevronRight stroke={1.5} />
           </ActionIcon>

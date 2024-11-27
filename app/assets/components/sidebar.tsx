@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { Link, useLocation } from 'react-router-dom'
 
-import { em, Group } from '@mantine/core'
+import { Divider, em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
   IconChartLine,
@@ -67,9 +67,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           </Group>
         )}
         {links}
-      </div>
 
-      <div className={classes.footer}>
+        <Divider mt='md' className={classes.divider} />
+
         <Link onClick={() => logout()} className={classes.link} to={''}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>

@@ -1,5 +1,5 @@
 import { LineChart } from '@mantine/charts'
-import { Card, Group, Text } from '@mantine/core'
+import { Card, em, Group, Text } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconChartLine } from '@tabler/icons-react'
 import React from 'react'
@@ -11,7 +11,7 @@ interface SavingsChartProps {
 }
 
 export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
-  const isMobile = useMediaQuery('(max-width: 48em)')
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
 
   const chartData = data.balances.map((balance) => ({
     date: balance.date,

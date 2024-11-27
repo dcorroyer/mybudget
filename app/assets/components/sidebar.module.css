@@ -14,11 +14,6 @@
   margin-bottom: calc(var(--mantine-spacing-md) * 4);
 }
 
-.footer {
-  padding-top: var(--mantine-spacing-md);
-  margin-top: var(--mantine-spacing-md);
-}
-
 .link {
   display: flex;
   align-items: center;

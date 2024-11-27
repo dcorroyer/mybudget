@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 
-import { AppShell, Burger, Group } from '@mantine/core'
+import { AppShell, Burger, em, Group } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 
 import Logo from '@/components/logo'
@@ -9,7 +9,7 @@ import { Sidebar } from '@/components/sidebar'
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure()
 
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
   const height = isMobile ? 60 : 0
 
   return (

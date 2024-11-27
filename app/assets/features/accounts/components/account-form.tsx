@@ -38,7 +38,7 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   return (
     <Container size={560} my={40}>
       <form onSubmit={form.onSubmit(onSubmit)}>
-        <Card radius='lg' py='xl'>
+        <Card radius='lg' py='xl' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
             <TextInput
               label='Name'

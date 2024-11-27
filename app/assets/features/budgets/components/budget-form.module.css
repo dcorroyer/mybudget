@@ -2,7 +2,7 @@
   width: 100vh;
   left: 0;
   position: absolute;
-  color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  color: var(--mantine-color-gray-0);
 }
 
 .categoryName {
@@ -48,4 +48,12 @@
 
 .removeBudgetLineIcon:hover {
   color: #f87171;
+}
+
+.shadowButton {
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.formButton:hover {
+  background-color: var(--mantine-color-gray-1);
 }

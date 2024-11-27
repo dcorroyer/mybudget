@@ -43,7 +43,7 @@ export const BudgetItems = ({
         <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
           <IconDatabaseOff style={{ width: rem(24), height: rem(24) }} stroke={1.5} color='gray' />
           <Text size='lg' fw={500} c='gray'>
-            No data
+            No budgets found
           </Text>
         </Stack>
       </Container>
@@ -52,7 +52,7 @@ export const BudgetItems = ({
 
   const budgets = budgetList?.data.map((budget) => (
     <div key={budget.id}>
-      <Card radius='lg' pb='xl'>
+      <Card radius='lg' pb='xl' shadow='sm'>
         <Card.Section inheritPadding py='xs'>
           <Group justify='space-between'>
             <Text fw={500}>{budget.name}</Text>

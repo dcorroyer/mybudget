@@ -1,6 +1,7 @@
-import { Card, Container, Group, Modal, SimpleGrid, Text, Tooltip } from '@mantine/core'
+import { Card, Container, em, Group, Modal, SimpleGrid, Text, Tooltip } from '@mantine/core'
 import {
   IconChartLine,
+  IconCreditCard,
   IconCreditCardPay,
   IconCreditCardRefund,
   IconEye,
@@ -9,6 +10,8 @@ import React, { useState } from 'react'
 import { Chart } from 'react-google-charts'
 import { generateSankeyData } from '../helpers/budgetDataTransformer'
 import { BudgetFormDetails } from '../types/budgets'
+
+import { useMediaQuery } from '@mantine/hooks'
 import classes from './budget-table.module.css'
 
 interface BudgetTableComponentProps {
@@ -18,6 +21,8 @@ interface BudgetTableComponentProps {
 export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues }) => {
   const incomes = budgetValues?.incomes ?? []
   const expenses = budgetValues?.expenses ?? []
+
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
 
   const [opened, setOpened] = useState(false)
 
@@ -30,11 +35,11 @@ export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues 
   return (
     <>
       <Container my={20}>
-        <Card radius='lg'>
+        <Card radius='lg' shadow='sm'>
           <Text ta='center'>Budget Summary</Text>
         </Card>
 
-        <Card radius='lg' py='xl' mt='sm'>
+        <Card radius='lg' py='xl' mt='lg' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
             <Group justify='left' gap='xl' mt='xs'>
               <div className={classes.divIconGreen}>
@@ -61,7 +66,7 @@ export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues 
           </Card.Section>
         </Card>
 
-        <Card radius='lg' py='xl' mt='sm'>
+        <Card radius='lg' py='xl' mt='sm' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
             <Group justify='left' gap='xl' mt='xs'>
               <div className={classes.divIconRed}>
@@ -100,55 +105,118 @@ export const BudgetTable: React.FC<BudgetTableComponentProps> = ({ budgetValues 
           </Card.Section>
         </Card>
 
-        {/* TODO: After summary and before graph, add a section with pourcentage of incomes and expenses and savings capacity */}
-
-        <Card radius='lg' py='xl' my='sm'>
+        <Card radius='lg' py='xl' mt='sm' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
-            <Group justify='space-between' gap='xl' mt='xs'>
+            <Group justify='left' gap='xl' mt='xs'>
               <div className={classes.divIconBlue}>
-                <IconChartLine className={classes.iconBlue} stroke={1.5} />
+                <IconCreditCard className={classes.iconBlue} stroke={1.5} />
                 <Text className={classes.resourceName} ml='xs'>
-                  Graph
+                  Summary
                 </Text>
               </div>
-              <Tooltip label='Open in full screen ?' position='top' withArrow>
-                <div
-                  onClick={openModal}
-                  className={classes.divIconBlue}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <IconEye className={classes.iconBlue} stroke={1.5} />
-                </div>
-              </Tooltip>
             </Group>
           </Card.Section>
-          <Card.Section inheritPadding mt='md' px='xl' pb='xs'>
-            <Chart
-              chartType='Sankey'
-              width='100%'
-              height='100%'
-              data={graphData}
-              options={graphOptions}
-            />
+          <Card.Section inheritPadding mt='sm' px='xl' pb='xs'>
+            {isMobile ? (
+              <Text className={classes.summaryText}>
+                Vous avez un revenu total de <strong>{budgetValues?.incomesAmount} €</strong>.{' '}
+                <br />
+                Vous dépensez <strong>{budgetValues?.expensesAmount} €</strong>
+                {budgetValues?.incomesAmount && (
+                  <span>
+                    {'. '}(
+                    {Math.round((budgetValues.expensesAmount / budgetValues.incomesAmount) * 100)}%)
+                  </span>
+                )}
+                <br />
+                Il vous reste <strong>{budgetValues?.savingCapacity} €</strong>
+                {budgetValues?.incomesAmount && (
+                  <span>
+                    {'. '}(
+                    {Math.round((budgetValues.savingCapacity / budgetValues.incomesAmount) * 100)}%)
+                  </span>
+                )}
+              </Text>
+            ) : (
+              <Group justify='center'>
+                <Text>
+                  Vous avez un revenu total de <strong>{budgetValues?.incomesAmount} €</strong>.{' '}
+                  Vous dépensez <strong>{budgetValues?.expensesAmount} €</strong>
+                  {budgetValues?.incomesAmount && (
+                    <span>
+                      {' '}
+                      (
+                      {Math.round((budgetValues.expensesAmount / budgetValues.incomesAmount) * 100)}
+                      %)
+                    </span>
+                  )}
+                  . Il vous reste <strong>{budgetValues?.savingCapacity} €</strong>
+                  {budgetValues?.incomesAmount && (
+                    <span>
+                      {' '}
+                      (
+                      {Math.round((budgetValues.savingCapacity / budgetValues.incomesAmount) * 100)}
+                      %)
+                    </span>
+                  )}
+                  .
+                </Text>
+              </Group>
+            )}
           </Card.Section>
         </Card>
 
-        <Modal
-          opened={opened}
-          onClose={closeModal}
-          radius={12.5}
-          size='100%'
-          title='Expenses chart'
-          centered
-        >
-          <Chart
-            chartType='Sankey'
-            width='100%'
-            height='500px'
-            data={graphData}
-            options={graphOptions}
-          />
-        </Modal>
+        {!isMobile && (
+          <>
+            <Card radius='lg' py='xl' my='sm' shadow='sm'>
+              <Card.Section inheritPadding px='xl' pb='xs'>
+                <Group justify='space-between' gap='xl' mt='xs'>
+                  <div className={classes.divIconBlue}>
+                    <IconChartLine className={classes.iconBlue} stroke={1.5} />
+                    <Text className={classes.resourceName} ml='xs'>
+                      Graph
+                    </Text>
+                  </div>
+                  <Tooltip label='Open in full screen ?' position='top' withArrow>
+                    <div
+                      onClick={openModal}
+                      className={classes.divIconBlue}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <IconEye className={classes.iconBlue} stroke={1.5} />
+                    </div>
+                  </Tooltip>
+                </Group>
+              </Card.Section>
+              <Card.Section inheritPadding mt='md' px='xl' pb='xs'>
+                <Chart
+                  chartType='Sankey'
+                  width='100%'
+                  height='100%'
+                  data={graphData}
+                  options={graphOptions}
+                />
+              </Card.Section>
+            </Card>
+
+            <Modal
+              opened={opened}
+              onClose={closeModal}
+              radius={12.5}
+              size='100%'
+              title='Expenses chart'
+              centered
+            >
+              <Chart
+                chartType='Sankey'
+                width='100%'
+                height='500px'
+                data={graphData}
+                options={graphOptions}
+              />
+            </Modal>
+          </>
+        )}
       </Container>
     </>
   )

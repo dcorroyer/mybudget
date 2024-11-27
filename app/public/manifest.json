@@ -1,0 +1,22 @@
+{
+  "short_name": "MyBudget",
+  "name": "MyBudget",
+  "description": "Budgetting app",
+  "icons": [
+    {
+      "src": "icon/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "id": "/",
+  "display": "fullscreen",
+  "theme_color": "#228BE6",
+  "background_color": "#228BE6"
+}

@@ -2,18 +2,13 @@ import React, { useState } from 'react'
 
 import { Link, useLocation } from 'react-router-dom'
 
-import cx from 'clsx'
-
-import { Group, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
+import { Divider, em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
   IconChartLine,
   IconCreditCard,
-  IconHome2,
   IconLogout,
-  IconMoon,
   IconReceipt,
-  IconSun,
   IconWallet,
 } from '@tabler/icons-react'
 
@@ -23,20 +18,20 @@ import Logo from './logo'
 import classes from './sidebar.module.css'
 
 const data = [
-  { icon: IconHome2, label: 'Dashboard', path: '/' },
+  { icon: IconChartLine, label: 'Dashboard', path: '/' },
   { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
   { icon: IconReceipt, label: 'Transactions', path: '/transactions' },
-  { icon: IconChartLine, label: 'Savings', path: '/savings' },
   { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
   const { logout } = useAuth()
 
-  const isMobile = useMediaQuery('(max-width: 768px)')
-
-  const { setColorScheme } = useMantineColorScheme()
-  const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true })
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
 
   const { pathname } = useLocation()
   const [active, setActive] = useState(pathname)
@@ -52,6 +47,9 @@ export function Sidebar() {
         key={item.label}
         onClick={() => {
           setActive(item.path)
+          if (isMobile && onNavigate) {
+            onNavigate()
+          }
         }}
       >
         <item.icon className={classes.linkIcon} stroke={1.5} />
@@ -62,25 +60,15 @@ export function Sidebar() {
 
   return (
     <nav className={classes.navbar}>
-      <div className={classes.navbarMain}>
+      <div style={{ flex: '1' }}>
         {!isMobile && (
           <Group className={classes.header} justify='space-between'>
             <Logo />
           </Group>
         )}
         {links}
-      </div>
 
-      <div className={classes.footer}>
-        <Link
-          onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
-          className={classes.link}
-          to={''}
-        >
-          <IconSun className={cx(classes.light, classes.linkIcon)} stroke={1.5} />
-          <IconMoon className={cx(classes.dark, classes.linkIcon)} stroke={1.5} />
-          <span>Change Theme</span>
-        </Link>
+        <Divider mt='md' className={classes.divider} />
 
         <Link onClick={() => logout()} className={classes.link} to={''}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />

@@ -18,8 +18,6 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { loginFormSchema, loginFormType } from '@/features/auth/schemas/login'
 
-import classes from './login.module.css'
-
 const Login: React.FC = () => {
   const { login, isLoading } = useAuth()
 
@@ -37,7 +35,7 @@ const Login: React.FC = () => {
 
   return (
     <Container size={420} my={40}>
-      <Title ta='center' className={classes.title}>
+      <Title ta='center' fw={900}>
         Login Page
       </Title>
       <Text c='dimmed' size='sm' ta='center' mt={5}>

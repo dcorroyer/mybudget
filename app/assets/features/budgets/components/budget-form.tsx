@@ -22,6 +22,8 @@ import { useBudget } from '../hooks/useBudget'
 import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
 import { BudgetFormDetails } from '../types/budgets'
 
+import cx from 'clsx'
+
 import classes from './budget-form.module.css'
 
 interface Card {
@@ -134,7 +136,7 @@ const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType>
   const fields = form.values.incomes
 
   return (
-    <Card radius='lg' py='xl' mt='sm'>
+    <Card radius='lg' py='xl' mt='sm' shadow='sm'>
       <Card.Section inheritPadding px='xl' pb='xs'>
         {fields.map((income, incomeIndex) => (
           <SimpleGrid
@@ -232,7 +234,7 @@ const ManageExpenses = ({
     <>
       <div>
         {cards.map((card: Card, cardIndex: number) => (
-          <Card radius='lg' py='xl' mt='sm' key={cardIndex}>
+          <Card radius='lg' py='xl' mt='sm' key={cardIndex} shadow='sm'>
             <Card.Section inheritPadding>
               <Group justify='space-between'>
                 <div className={classes.relative}>
@@ -298,8 +300,8 @@ const ManageExpenses = ({
                 type='button'
                 variant='white'
                 color='black'
-                className={classes.formButton}
                 radius='md'
+                className={classes.formButton}
                 onClick={() => addExpenseItem(cardIndex)}
               >
                 Add an expense <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
@@ -311,7 +313,7 @@ const ManageExpenses = ({
           type='button'
           variant='white'
           color='black'
-          className={classes.formButton}
+          className={cx(classes.formButton, classes.shadowButton)}
           radius='md'
           onClick={addCard}
           mt='sm'
@@ -323,7 +325,7 @@ const ManageExpenses = ({
           type='submit'
           variant='white'
           color='black'
-          className={classes.formButton}
+          className={cx(classes.formButton, classes.shadowButton)}
           radius='md'
           mt='sm'
           style={{ float: 'right' }}

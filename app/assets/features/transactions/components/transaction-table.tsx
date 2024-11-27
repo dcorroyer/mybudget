@@ -40,16 +40,16 @@ export const TransactionTable: React.FC<TransactionListProps> = ({ transactions 
       >
         <Text size='sm'>Are you sure you want to delete this account?</Text>
         <Group justify='flex-end' mt='lg'>
-          <Button variant='subtle' onClick={closeDelete}>
+          <Button variant='subtle' radius='md' onClick={closeDelete}>
             Cancel
           </Button>
-          <Button color='red' onClick={handleDelete}>
+          <Button color='red' radius='md' onClick={handleDelete}>
             Delete
           </Button>
         </Group>
       </Modal>
       {transactions.map((transaction) => (
-        <Card key={transaction.id} radius='lg' mb='md'>
+        <Card key={transaction.id} radius='lg' mb='md' shadow='sm'>
           <Group justify='space-between'>
             <div>
               <Text fw={500}>{transaction.description}</Text>

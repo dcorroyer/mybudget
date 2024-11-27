@@ -1,11 +1,11 @@
-import { ActionIcon, Card, Container, Group, Text } from '@mantine/core'
+import { ActionIcon, Card, Container, Divider, Group, Text } from '@mantine/core'
 import { IconChevronLeft, IconPencil, IconPencilOff } from '@tabler/icons-react'
 import React, { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { CenteredLoader as Loader } from '@/components/centered-loader'
-import { AccountForm } from '../components/account-form'
 import { TransactionTable } from '@/features/transactions/components/transaction-table'
+import { AccountForm } from '../components/account-form'
 import { useAccount } from '../hooks/useAccount'
 import { useTransactions } from '../hooks/useTransactions'
 
@@ -35,7 +35,7 @@ const AccountDetail: React.FC = () => {
         <ActionIcon variant='transparent' c='black' component={Link} to='/accounts'>
           <IconChevronLeft className={classes.title} />
         </ActionIcon>
-        {account.data.name}
+        Account Details
         <ActionIcon
           variant='transparent'
           c='black'
@@ -59,16 +59,19 @@ const AccountDetail: React.FC = () => {
             }}
           />
         ) : (
-          <Card radius='lg' pb='xl' mb='lg'>
-            <Card.Section inheritPadding py='xs'>
-              <Group justify='space-between'>
-                <Text fw={500}>Account Details</Text>
-              </Group>
-              <Text fw={500} c='dimmed' size='sm' mt='xs'>
-                Balance: {account.data.balance} €
-              </Text>
-            </Card.Section>
-          </Card>
+          <>
+            <Card radius='lg' pb='xl' mb='md' shadow='sm'>
+              <Card.Section inheritPadding py='xs'>
+                <Group justify='space-between'>
+                  <Text fw={500}>{account.data.name}</Text>
+                </Group>
+                <Text fw={500} c='dimmed' size='sm' mt='xs'>
+                  Balance: {account.data.balance} €
+                </Text>
+              </Card.Section>
+            </Card>
+            <Divider mb='md' />
+          </>
         )}
         {!editMode && transactions && <TransactionTable transactions={transactions.data} />}
       </Container>

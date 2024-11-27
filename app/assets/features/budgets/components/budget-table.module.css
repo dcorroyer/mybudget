@@ -5,6 +5,7 @@
 
 .categoryBlock {
   background-color: var(--mantine-color-gray-1);
+  border-radius: rem(10px);
 }
 
 .categoryName {
@@ -17,12 +18,12 @@
   align-items: center;
   text-decoration: none;
   font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  color: var(--mantine-color-gray-7);
   border-radius: var(--mantine-radius-md);
   font-weight: 500;
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    background-color: var(--mantine-color-gray-0);
     color: var(--mantine-color-green-light-color);
 
     .iconGreen {
@@ -57,12 +58,12 @@
   align-items: center;
   text-decoration: none;
   font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  color: var(--mantine-color-gray-7);
   border-radius: var(--mantine-radius-md);
   font-weight: 500;
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    background-color: var(--mantine-color-gray-0);
     color: var(--mantine-color-red-light-color);
 
     .iconRed {
@@ -97,12 +98,12 @@
   align-items: center;
   text-decoration: none;
   font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  color: var(--mantine-color-gray-7);
   border-radius: var(--mantine-radius-md);
   font-weight: 500;
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    background-color: var(--mantine-color-gray-0);
     color: var(--mantine-color-blue-light-color);
 
     .iconBlue {

@@ -19,22 +19,12 @@
   }
 }
 
-[data-mantine-color-scheme='dark'] .expensesBadge {
-  background-color: #db5757;
-  color: #ffe7e7;
-}
-
-[data-mantine-color-scheme='dark'] .incomesBadge {
-  background-color: #3cb371;
-  color: #e7fff5;
-}
-
-[data-mantine-color-scheme='light'] .expensesBadge {
+.expensesBadge {
   background-color: #ffe7e7;
   color: #db5757;
 }
 
-[data-mantine-color-scheme='light'] .incomesBadge {
+.incomesBadge {
   background-color: #e7fff5;
   color: #3cb371;
 }
@@ -50,7 +40,7 @@
   transform: translateY(0.33rem);
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    background-color: var(--mantine-color-gray-2);
     color: var(--mantine-color-blue-light-color);
 
     .linkIcon {

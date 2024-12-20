@@ -5,40 +5,28 @@ declare(strict_types=1);
 namespace App\Controller\Budget;
 
 use App\Dto\Budget\Http\BudgetFilterQuery;
-use App\Entity\Budget;
+use App\Dto\Budget\Response\BudgetResponse;
 use App\Service\BudgetService;
-use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
-use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Shared\Api\AbstractApiController;
+use App\Shared\Api\Nelmio\Attribute\SuccessResponse;
 use My\RestBundle\Dto\PaginationQueryParams;
-use OpenApi\Attributes as OA;
+use OpenApi\Attributes\Tag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/budgets')]
-#[OA\Tag(name: 'Budgets')]
-class ListBudgetController extends BaseRestController
+#[Tag(name: 'Budgets')]
+class ListBudgetController extends AbstractApiController
 {
-    #[MyOpenApi(
-        httpMethod: Request::METHOD_GET,
-        operationId: 'list_budget',
-        summary: 'list budget',
-        responses: [
-            new PaginatedSuccessResponse(
-                responseClassFqcn: Budget::class,
-                description: 'Return the paginated list of budgets'
-            ),
-        ],
-        queryParamsClassFqcn: [BudgetFilterQuery::class, PaginationQueryParams::class],
-    )]
-    #[Route('', name: 'api_budgets_list', methods: Request::METHOD_GET)]
+    #[SuccessResponse(dataFqcn: BudgetResponse::class, description: 'Get the budgets list', paginated: true)]
+    #[Route('', name: __METHOD__, methods: Request::METHOD_GET)]
     public function __invoke(
         BudgetService $budgetService,
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?BudgetFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginatedResponse($budgetService->paginate($paginationQueryParams, $filter));
+        return $this->successResponse(data: $budgetService->paginate($paginationQueryParams, $filter));
     }
 }

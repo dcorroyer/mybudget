@@ -48,13 +48,12 @@ final class CreateTransactionControllerTest extends TestBase
             self::API_BASE_ENDPOINT . $account->getId() . '/transactions',
             $transactionPayload
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        self::assertArrayHasKey('id', $responseData);
-        self::assertSame($transactionPayload['description'], $responseData['description']);
-        self::assertSame($transactionPayload['amount'], $responseData['amount']);
-        self::assertSame($transactionPayload['type'], $responseData['type']);
+        self::assertArrayHasKey('id', $response);
+        self::assertSame($transactionPayload['description'], $response['description']);
+        self::assertSame($transactionPayload['amount'], $response['amount']);
+        self::assertSame($transactionPayload['type'], $response['type']);
     }
 }

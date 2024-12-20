@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Budget;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
+use App\Shared\Doctrine\Repository\AbstractEntityRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**

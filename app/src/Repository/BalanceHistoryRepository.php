@@ -7,8 +7,8 @@ namespace App\Repository;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Enum\PeriodsEnum;
+use App\Shared\Doctrine\Repository\AbstractEntityRepository;
 use Carbon\Carbon;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<BalanceHistory>

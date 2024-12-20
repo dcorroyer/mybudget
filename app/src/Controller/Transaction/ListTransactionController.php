@@ -7,9 +7,8 @@ namespace App\Controller\Transaction;
 use App\Dto\Transaction\Http\TransactionFilterQuery;
 use App\Dto\Transaction\Response\TransactionResponse;
 use App\Service\TransactionService;
-use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
-use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Shared\Api\AbstractApiController;
+use App\Shared\Api\Nelmio\Attribute\SuccessResponse;
 use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,28 +18,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/accounts/transactions', priority: 10)]
 #[OA\Tag(name: 'Transactions')]
-class ListTransactionController extends BaseRestController
+class ListTransactionController extends AbstractApiController
 {
-    #[MyOpenApi(
-        httpMethod: Request::METHOD_GET,
-        operationId: 'list_transaction',
-        summary: 'list transactions',
-        responses: [
-            new PaginatedSuccessResponse(
-                responseClassFqcn: TransactionResponse::class,
-                description: 'Return the list of transactions'
-            ),
-        ],
-        queryParamsClassFqcn: [PaginationQueryParams::class, TransactionFilterQuery::class],
-    )]
-    #[Route('', name: 'api_transactions_list', methods: Request::METHOD_GET)]
+    #[SuccessResponse(dataFqcn: TransactionResponse::class, description: 'Get transactions list', paginated: true)]
+    #[Route('', name: __METHOD__, methods: Request::METHOD_GET)]
     public function __invoke(
         TransactionService $transactionService,
         #[MapQueryString] ?PaginationQueryParams $paginationQueryParams = null,
         #[MapQueryString] ?TransactionFilterQuery $filter = null,
     ): JsonResponse {
-        return $this->paginatedResponse(
-            pagination: $transactionService->paginate($filter?->getAccountIds(), $paginationQueryParams)
+        return $this->successResponse(
+            data: $transactionService->paginate($filter?->getAccountIds(), $paginationQueryParams)
         );
     }
 }

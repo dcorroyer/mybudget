@@ -6,7 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use App\Entity\Transaction;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
+use App\Shared\Doctrine\Repository\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<Transaction>

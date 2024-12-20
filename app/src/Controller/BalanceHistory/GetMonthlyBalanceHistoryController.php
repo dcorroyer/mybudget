@@ -7,9 +7,8 @@ namespace App\Controller\BalanceHistory;
 use App\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
 use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
 use App\Service\BalanceHistoryService;
-use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
-use My\RestBundle\Attribute\MyOpenApi\Response\SuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
+use App\Shared\Api\AbstractApiController;
+use App\Shared\Api\Nelmio\Attribute\SuccessResponse;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,21 +17,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/accounts/balance-history', priority: 10)]
 #[OA\Tag(name: 'Balance History')]
-class GetMonthlyBalanceHistoryController extends BaseRestController
+class GetMonthlyBalanceHistoryController extends AbstractApiController
 {
-    #[MyOpenApi(
-        httpMethod: Request::METHOD_GET,
-        operationId: 'get_balance_history',
-        summary: 'Get balance history',
-        responses: [
-            new SuccessResponse(
-                responseClassFqcn: BalanceHistoryResponse::class,
-                description: 'Return the balance history',
-            ),
-        ],
-        queryParamsClassFqcn: [BalanceHistoryFilterQuery::class],
-    )]
-    #[Route('', name: 'api_balance_history', methods: Request::METHOD_GET)]
+    #[SuccessResponse(dataFqcn: BalanceHistoryResponse::class, description: 'Get monthly balance history')]
+    #[Route('', name: __METHOD__, methods: Request::METHOD_GET)]
     public function __invoke(
         BalanceHistoryService $balanceHistoryService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,

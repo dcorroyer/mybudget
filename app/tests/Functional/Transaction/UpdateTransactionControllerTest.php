@@ -53,12 +53,11 @@ final class UpdateTransactionControllerTest extends TestBase
             self::API_BASE_ENDPOINT . $account->getId() . '/transactions/' . $transaction->getId(),
             $updatePayload
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSame($transaction->getId(), $responseData['id']);
-        self::assertSame($updatePayload['description'], $responseData['description']);
-        self::assertSame($updatePayload['amount'], $responseData['amount']);
+        self::assertSame($transaction->getId(), $response['id']);
+        self::assertSame($updatePayload['description'], $response['description']);
+        self::assertSame($updatePayload['amount'], $response['amount']);
     }
 }

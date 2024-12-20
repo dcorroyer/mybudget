@@ -35,11 +35,10 @@ class RegisterControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $payload);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame($payload['email'], $responseData['email']);
+        self::assertSame($payload['email'], $response['email']);
     }
 }

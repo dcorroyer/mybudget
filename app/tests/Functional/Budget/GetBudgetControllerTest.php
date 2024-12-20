@@ -37,10 +37,9 @@ final class GetBudgetControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/' . $budget->getId());
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        self::assertSame($budget->getId(), $responseData['id']);
+        self::assertSame($budget->getId(), $response['id']);
     }
 }

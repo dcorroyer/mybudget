@@ -33,13 +33,12 @@ class GetUserControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/me');
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame($user->getId(), $responseData['id']);
-        self::assertSame($user->getEmail(), $responseData['email']);
+        self::assertSame($user->getId(), $response['id']);
+        self::assertSame($user->getEmail(), $response['email']);
     }
 
     #[TestDox('When you call GET /api/users/me, it should return unauthorized')]

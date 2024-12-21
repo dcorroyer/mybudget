@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Transaction\Dto\Payload;
 
+use App\Shared\Api\Dto\Contract\PayloadInterface;
 use App\Transaction\Enum\TransactionTypesEnum;
-use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TransactionPayload implements PayloadInterface

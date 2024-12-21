@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Savings\Dto\Http;
 
 use App\Savings\Enum\PeriodsEnum;
-use My\RestBundle\Contract\QueryFilterInterface;
+use App\Shared\Api\Dto\Contract\QueryFilterInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 

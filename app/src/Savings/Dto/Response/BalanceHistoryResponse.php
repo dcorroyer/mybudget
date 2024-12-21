@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Savings\Dto\Response;
 
 use App\Account\Dto\Response\AccountPartialResponse;
-use My\RestBundle\Contract\ResponseInterface;
+use App\Shared\Api\Dto\Contract\ResponseInterface;
 
 class BalanceHistoryResponse implements ResponseInterface
 {

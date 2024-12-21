@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Shared\Doctrine\Repository;
 
+use App\Shared\Api\Dto\Contract\ORMFilterInterface;
+use App\Shared\Api\Dto\Pagination\PaginationQueryParams;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository as BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
-use My\RestBundle\Contract\ORMFilterInterface;
-use My\RestBundle\Dto\PaginationQueryParams;
 
 /**
  * @template T of object

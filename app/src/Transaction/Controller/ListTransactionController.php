@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Transaction\Controller;
 
 use App\Shared\Api\AbstractApiController;
+use App\Shared\Api\Dto\Pagination\PaginationQueryParams;
 use App\Shared\Api\Nelmio\Attribute\SuccessResponse;
 use App\Transaction\Dto\Http\TransactionFilterQuery;
 use App\Transaction\Dto\Response\TransactionResponse;
 use App\Transaction\Service\TransactionService;
-use My\RestBundle\Dto\PaginationQueryParams;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

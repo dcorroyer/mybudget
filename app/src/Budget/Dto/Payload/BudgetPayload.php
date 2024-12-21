@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Payload;
 
-use My\RestBundle\Contract\PayloadInterface;
+use App\Shared\Api\Dto\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class BudgetPayload implements PayloadInterface

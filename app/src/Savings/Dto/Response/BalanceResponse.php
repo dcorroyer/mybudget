@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Savings\Dto\Response;
 
-use My\RestBundle\Contract\ResponseInterface;
+use App\Shared\Api\Dto\Contract\ResponseInterface;
 
 class BalanceResponse implements ResponseInterface
 {

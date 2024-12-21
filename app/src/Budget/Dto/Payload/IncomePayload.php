@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Payload;
 
+use App\Shared\Api\Dto\Contract\PayloadInterface;
 use Doctrine\DBAL\Types\Types;
-use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class IncomePayload implements PayloadInterface

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Transaction\Dto\Http;
 
-use My\RestBundle\Contract\QueryFilterInterface;
+use App\Shared\Api\Dto\Contract\QueryFilterInterface;
 use OpenApi\Attributes as OA;
 
 class TransactionFilterQuery implements QueryFilterInterface

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Account\Service\AccountService;
+use App\Shared\Api\Dto\Pagination\PaginationQueryParams;
 use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Test\Helper\PaginationTestHelper;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
@@ -15,8 +17,6 @@ use App\Transaction\Entity\Transaction;
 use App\Transaction\Enum\TransactionTypesEnum;
 use App\Transaction\Repository\TransactionRepository;
 use App\Transaction\Service\TransactionService;
-use My\RestBundle\Dto\PaginationQueryParams;
-use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

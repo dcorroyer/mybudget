@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Http;
 
+use App\Shared\Api\Dto\Contract\ORMFilterInterface;
+use App\Shared\Api\Dto\Contract\QueryFilterInterface;
 use Doctrine\Common\Collections\Criteria;
-use My\RestBundle\Contract\ORMFilterInterface;
-use My\RestBundle\Contract\QueryFilterInterface;
 use OpenApi\Attributes as OA;
 
 class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface

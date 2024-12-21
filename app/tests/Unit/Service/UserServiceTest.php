@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Shared\Test\Common\Trait\SerializerTrait;
 use App\Tests\Common\Factory\UserFactory;
 use App\User\Dto\Payload\RegisterPayload;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserService;
-use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

@@ -24,3 +24,4 @@
 ###< pentatrion/vite-bundle ###
 
 .pnpm-store
+.DS_Store

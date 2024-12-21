@@ -37,10 +37,9 @@ final class GetAccountControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT . '/' . $account->getId());
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        self::assertSame($account->getId(), $responseData['id']);
+        self::assertSame($account->getId(), $response['id']);
     }
 }

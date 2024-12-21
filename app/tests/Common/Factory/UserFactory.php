@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Common\Factory;
 
-use App\Entity\User;
+use App\User\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

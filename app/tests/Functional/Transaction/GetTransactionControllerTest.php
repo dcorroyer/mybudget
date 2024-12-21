@@ -44,11 +44,10 @@ final class GetTransactionControllerTest extends TestBase
             Request::METHOD_GET,
             self::API_BASE_ENDPOINT . $account->getId() . '/transactions/' . $transaction->getId()
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSame($transaction->getId(), $responseData['id']);
-        self::assertSame($transaction->getDescription(), $responseData['description']);
+        self::assertSame($transaction->getId(), $response['id']);
+        self::assertSame($transaction->getDescription(), $response['description']);
     }
 }

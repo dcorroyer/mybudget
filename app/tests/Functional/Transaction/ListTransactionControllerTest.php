@@ -44,10 +44,9 @@ final class ListTransactionControllerTest extends TestBase
             Request::METHOD_GET,
             self::API_BASE_ENDPOINT . '/transactions?accountIds[]=' . $account->getId(),
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertCount(3, $responseData);
+        self::assertCount(3, $response['data']);
     }
 }

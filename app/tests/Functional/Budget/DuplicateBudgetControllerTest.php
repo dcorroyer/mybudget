@@ -43,11 +43,10 @@ final class DuplicateBudgetControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT . '/' . $budget->getId());
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame($expectedDate->format('Y-m'), $responseData['date']);
+        self::assertSame($expectedDate->format('Y-m'), $response['date']);
     }
 }

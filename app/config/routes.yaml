@@ -1,7 +1,39 @@
-controllers:
+accounts_controllers:
   resource:
-    path: ../src/Controller/
-    namespace: App\Controller
+    path: ../src/Account/Controller/
+    namespace: App\Account\Controller
+  type: attribute
+  format: json
+  prefix: /api
+
+transactions_controllers:
+  resource:
+    path: ../src/Transaction/Controller/
+    namespace: App\Transaction\Controller
+  type: attribute
+  format: json
+  prefix: /api
+
+user_controllers:
+  resource:
+    path: ../src/User/Controller/
+    namespace: App\User\Controller
+  type: attribute
+  format: json
+  prefix: /api
+
+budgets_controllers:
+  resource:
+    path: ../src/Budget/Controller/
+    namespace: App\Budget\Controller
+  type: attribute
+  format: json
+  prefix: /api
+
+savings_controllers:
+  resource:
+    path: ../src/Savings/Controller/
+    namespace: App\Savings\Controller
   type: attribute
   format: json
   prefix: /api
@@ -20,4 +52,4 @@ app_default:
   defaults:
     template: base.html.twig
   requirements:
-    path: "^(?!api/).*$"
+    path: '^(?!api/).*$'

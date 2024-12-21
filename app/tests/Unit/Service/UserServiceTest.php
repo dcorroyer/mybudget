@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\User\Payload\RegisterPayload;
-use App\Entity\User;
-use App\Repository\UserRepository;
-use App\Service\UserService;
+use App\Shared\Test\Common\Trait\SerializerTrait;
 use App\Tests\Common\Factory\UserFactory;
-use My\RestBundle\Test\Common\Trait\SerializerTrait;
+use App\User\Dto\Payload\RegisterPayload;
+use App\User\Entity\User;
+use App\User\Repository\UserRepository;
+use App\User\Service\UserService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -55,7 +55,7 @@ final class UserServiceTest extends TestCase
             'id' => 1,
         ]);
 
-        $registerPayload = (new RegisterPayload());
+        $registerPayload = new RegisterPayload();
         $registerPayload->email = $user->getEmail();
         $registerPayload->firstName = $user->getFirstName();
         $registerPayload->lastName = $user->getLastName();

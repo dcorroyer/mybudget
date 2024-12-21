@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
-use App\Repository\IncomeRepository;
+use App\Budget\Repository\IncomeRepository;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Factory\IncomeFactory;
 use App\Tests\Common\Factory\UserFactory;

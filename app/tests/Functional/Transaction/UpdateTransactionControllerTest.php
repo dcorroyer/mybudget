@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Transaction;
 
-use App\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
+use App\Transaction\Enum\TransactionTypesEnum;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -53,12 +53,11 @@ final class UpdateTransactionControllerTest extends TestBase
             self::API_BASE_ENDPOINT . $account->getId() . '/transactions/' . $transaction->getId(),
             $updatePayload
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSame($transaction->getId(), $responseData['id']);
-        self::assertSame($updatePayload['description'], $responseData['description']);
-        self::assertSame($updatePayload['amount'], $responseData['amount']);
+        self::assertSame($transaction->getId(), $response['id']);
+        self::assertSame($updatePayload['description'], $response['description']);
+        self::assertSame($updatePayload['amount'], $response['amount']);
     }
 }

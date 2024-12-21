@@ -37,10 +37,9 @@ final class ListAccountControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        self::assertCount(\count($accounts), $responseData);
+        self::assertCount(\count($accounts), $response);
     }
 }

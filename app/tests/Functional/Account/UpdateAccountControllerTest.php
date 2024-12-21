@@ -45,11 +45,10 @@ final class UpdateAccountControllerTest extends TestBase
             self::API_ENDPOINT . '/' . $account->getId(),
             $accountPayload
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame('Livret', $responseData['name']);
+        self::assertSame('Livret', $response['name']);
     }
 }

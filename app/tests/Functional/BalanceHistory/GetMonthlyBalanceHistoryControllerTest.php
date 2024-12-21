@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\BalanceHistory;
 
-use App\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
+use App\Transaction\Enum\TransactionTypesEnum;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -72,27 +72,26 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
 
         // Vérification des comptes
-        self::assertCount(1, $responseData['accounts']);
-        self::assertSame($account->getId(), $responseData['accounts'][0]['id']);
-        self::assertSame('Compte test', $responseData['accounts'][0]['name']);
+        self::assertCount(1, $response['accounts']);
+        self::assertSame($account->getId(), $response['accounts'][0]['id']);
+        self::assertSame('Compte test', $response['accounts'][0]['name']);
 
         // Vérification des balances
-        self::assertCount(2, $responseData['balances']);
+        self::assertCount(2, $response['balances']);
 
         // Vérification de la balance de janvier
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1000, $responseData['balances'][0]['balance']);
+        self::assertSame('2024-01', $response['balances'][0]['date']);
+        self::assertSame(1000, $response['balances'][0]['balance']);
 
         // Vérification de la balance de février
-        self::assertSame('2024-02', $responseData['balances'][1]['date']);
-        self::assertSame(1500, $responseData['balances'][1]['balance']);
+        self::assertSame('2024-02', $response['balances'][1]['date']);
+        self::assertSame(1500, $response['balances'][1]['balance']);
     }
 
     #[TestDox(
@@ -153,20 +152,19 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
             Request::METHOD_GET,
             self::API_ENDPOINT . '?accountIds[]=' . $account1->getId()
         );
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
 
         // Vérification des comptes (seulement compte 1)
-        self::assertCount(1, $responseData['accounts']);
-        self::assertSame($account1->getId(), $responseData['accounts'][0]['id']);
-        self::assertSame('Compte 1', $responseData['accounts'][0]['name']);
+        self::assertCount(1, $response['accounts']);
+        self::assertSame($account1->getId(), $response['accounts'][0]['id']);
+        self::assertSame('Compte 1', $response['accounts'][0]['name']);
 
         // Vérification des balances
-        self::assertCount(1, $responseData['balances']);
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1001.10, $responseData['balances'][0]['balance']);
+        self::assertCount(1, $response['balances']);
+        self::assertSame('2024-01', $response['balances'][0]['date']);
+        self::assertSame(1001.10, $response['balances'][0]['balance']);
     }
 }

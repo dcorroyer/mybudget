@@ -68,12 +68,11 @@ final class CreateBudgetControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $budgetPayload);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame('Budget 2024-02', $responseData['name']);
-        self::assertSame(1680, $responseData['savingCapacity']);
+        self::assertSame('Budget 2024-02', $response['name']);
+        self::assertSame(1680, $response['savingCapacity']);
     }
 }

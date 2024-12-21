@@ -37,10 +37,9 @@ final class ListBudgetControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
-        self::assertCount(\count($budgets), $responseData);
+        self::assertCount(\count($budgets), $response['data']);
     }
 }

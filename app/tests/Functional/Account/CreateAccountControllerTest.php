@@ -36,11 +36,10 @@ final class CreateAccountControllerTest extends TestBase
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_POST, self::API_ENDPOINT, $accountPayload);
-        $responseData = $response['data'] ?? [];
 
         // ASSERT
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
-        self::assertSame('Livret', $responseData['name']);
+        self::assertSame('Livret', $response['name']);
     }
 }

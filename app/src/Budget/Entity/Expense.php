@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Entity;
 
-use App\Repository\ExpenseRepository;
+use App\Budget\Repository\ExpenseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;

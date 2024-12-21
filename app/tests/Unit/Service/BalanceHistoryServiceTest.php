@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
-use App\Entity\BalanceHistory;
-use App\Enum\PeriodsEnum;
-use App\Enum\TransactionTypesEnum;
-use App\Repository\BalanceHistoryRepository;
-use App\Service\AccountService;
-use App\Service\BalanceHistoryService;
-use App\Service\TransactionService;
+use App\Account\Service\AccountService;
+use App\Savings\Dto\Response\BalanceHistoryResponse;
+use App\Savings\Entity\BalanceHistory;
+use App\Savings\Enum\PeriodsEnum;
+use App\Savings\Repository\BalanceHistoryRepository;
+use App\Savings\Service\BalanceHistoryService;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
+use App\Transaction\Enum\TransactionTypesEnum;
+use App\Transaction\Service\TransactionService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

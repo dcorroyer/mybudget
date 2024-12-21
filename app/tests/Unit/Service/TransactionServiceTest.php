@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Transaction\Payload\TransactionPayload;
-use App\Dto\Transaction\Response\TransactionResponse;
-use App\Entity\Transaction;
-use App\Enum\ErrorMessagesEnum;
-use App\Enum\TransactionTypesEnum;
-use App\Repository\TransactionRepository;
-use App\Service\AccountService;
-use App\Service\TransactionService;
+use App\Account\Service\AccountService;
+use App\Shared\Enum\ErrorMessagesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
+use App\Transaction\Dto\Payload\TransactionPayload;
+use App\Transaction\Dto\Response\TransactionResponse;
+use App\Transaction\Entity\Transaction;
+use App\Transaction\Enum\TransactionTypesEnum;
+use App\Transaction\Repository\TransactionRepository;
+use App\Transaction\Service\TransactionService;
 use My\RestBundle\Dto\PaginationQueryParams;
 use My\RestBundle\Test\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Account\Payload\AccountPayload;
-use App\Dto\Account\Response\AccountResponse;
-use App\Entity\Account;
-use App\Enum\ErrorMessagesEnum;
-use App\Repository\AccountRepository;
-use App\Service\AccountService;
+use App\Account\Dto\Payload\AccountPayload;
+use App\Account\Dto\Response\AccountResponse;
+use App\Account\Entity\Account;
+use App\Account\Repository\AccountRepository;
+use App\Account\Service\AccountService;
+use App\Shared\Enum\ErrorMessagesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Group;

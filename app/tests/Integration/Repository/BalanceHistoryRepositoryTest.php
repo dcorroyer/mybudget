@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
-use App\Enum\PeriodsEnum;
-use App\Repository\BalanceHistoryRepository;
+use App\Savings\Enum\PeriodsEnum;
+use App\Savings\Repository\BalanceHistoryRepository;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\UserFactory;

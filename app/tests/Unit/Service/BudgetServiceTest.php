@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\BudgetPayload;
-use App\Entity\Budget;
-use App\Enum\ErrorMessagesEnum;
-use App\Repository\BudgetRepository;
-use App\Service\BudgetService;
-use App\Service\ExpenseService;
-use App\Service\IncomeService;
+use App\Budget\Dto\Payload\BudgetPayload;
+use App\Budget\Entity\Budget;
+use App\Budget\Repository\BudgetRepository;
+use App\Budget\Service\BudgetService;
+use App\Budget\Service\ExpenseService;
+use App\Budget\Service\IncomeService;
+use App\Shared\Enum\ErrorMessagesEnum;
 use App\Tests\Common\Factory\BudgetFactory;
 use Carbon\Carbon;
 use My\RestBundle\Dto\PaginationQueryParams;

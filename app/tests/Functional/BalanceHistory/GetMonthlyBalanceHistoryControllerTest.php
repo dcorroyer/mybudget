@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\BalanceHistory;
 
-use App\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
+use App\Transaction\Enum\TransactionTypesEnum;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;

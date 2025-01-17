@@ -1,15 +1,26 @@
-controllers:
+budgets_controllers:
   resource:
-    path: ../src/Controller/
-    namespace: App\Controller
+    path: ../src/Budget/Controller/
+    namespace: App\Budget\Controller
   type: attribute
   format: json
   prefix: /api
 
-api.swagger_ui:
-  path: /api/docs
-  methods: GET
-  defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+savings_controllers:
+  resource:
+    path: ../src/Savings/Controller/
+    namespace: App\Savings\Controller
+  type: attribute
+  format: json
+  prefix: /api
+
+shared_controllers:
+  resource:
+    path: ../src/Shared/Controller/
+    namespace: App\Shared\Controller
+  type: attribute
+  format: json
+  prefix: /api
 
 api_login_check:
   path: /api/login

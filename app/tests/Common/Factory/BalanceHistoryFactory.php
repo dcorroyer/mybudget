@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Common\Factory;
 
-use App\Entity\BalanceHistory;
+use App\Savings\Entity\BalanceHistory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\BalanceHistory\Response\BalanceHistoryResponse;
-use App\Entity\BalanceHistory;
-use App\Enum\PeriodsEnum;
-use App\Enum\TransactionTypesEnum;
-use App\Repository\BalanceHistoryRepository;
-use App\Service\AccountService;
-use App\Service\BalanceHistoryService;
-use App\Service\TransactionService;
+use App\Savings\Dto\BalanceHistory\Response\BalanceHistoryResponse;
+use App\Savings\Entity\BalanceHistory;
+use App\Savings\Repository\BalanceHistoryRepository;
+use App\Savings\Service\AccountService;
+use App\Savings\Service\BalanceHistoryService;
+use App\Savings\Service\TransactionService;
+use App\Shared\Enum\PeriodsEnum;
+use App\Shared\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;

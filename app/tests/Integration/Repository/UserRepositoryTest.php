@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Repository;
 
-use App\Repository\UserRepository;
+use App\Shared\Repository\UserRepository;
 use App\Tests\Common\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;

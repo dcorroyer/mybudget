@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Common\Factory;
 
-use App\Entity\Transaction;
-use App\Enum\TransactionTypesEnum;
+use App\Savings\Entity\Transaction;
+use App\Shared\Enum\TransactionTypesEnum;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

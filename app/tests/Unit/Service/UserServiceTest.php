@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\User\Payload\RegisterPayload;
-use App\Entity\User;
-use App\Repository\UserRepository;
-use App\Service\UserService;
+use App\Shared\Dto\User\Payload\RegisterPayload;
+use App\Shared\Entity\User;
+use App\Shared\Repository\UserRepository;
+use App\Shared\Service\UserService;
 use App\Tests\Common\Factory\UserFactory;
-use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -28,7 +27,6 @@ use Zenstruck\Foundry\Test\Factories;
 final class UserServiceTest extends TestCase
 {
     use Factories;
-    use SerializerTrait;
     private UserService $userService;
 
     private UserRepository $userRepository;

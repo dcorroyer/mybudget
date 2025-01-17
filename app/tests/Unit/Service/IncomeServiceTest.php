@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\IncomePayload;
-use App\Entity\Income;
-use App\Repository\IncomeRepository;
-use App\Service\IncomeService;
+use App\Budget\Dto\Payload\IncomePayload;
+use App\Budget\Entity\Income;
+use App\Budget\Repository\IncomeRepository;
+use App\Budget\Service\IncomeService;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Factory\IncomeFactory;
-use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -27,7 +26,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class IncomeServiceTest extends TestCase
 {
     use Factories;
-    use SerializerTrait;
+
     private IncomeRepository $incomeRepository;
 
     private IncomeService $incomeService;

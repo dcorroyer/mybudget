@@ -16,11 +16,23 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
-            App:
+            Shared:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
+                dir: '%kernel.project_dir%/src/Shared/Entity'
+                prefix: 'App\Shared\Entity'
+                alias: App
+            Budget:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Budget/Entity'
+                prefix: 'App\Budget\Entity'
+                alias: App
+            Savings:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Savings/Entity'
+                prefix: 'App\Savings\Entity'
                 alias: App
         controller_resolver:
             auto_mapping: false

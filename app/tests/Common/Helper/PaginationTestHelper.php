@@ -22,7 +22,7 @@ class PaginationTestHelper
         $pagination->setItems(FoundryArrayHelper::convertProxyToObject($items));
         $pagination->setPaginatorOptions([]);
         $pagination->setCustomParameters([]);
-        $pagination->setTotalItemCount(count($items));
+        $pagination->setTotalItemCount(\count($items));
         $pagination->setCurrentPageNumber($currentPageNumber);
         $pagination->setItemNumberPerPage($numberItemsPerPage);
 
@@ -36,8 +36,8 @@ class PaginationTestHelper
         $page = $pagination->getCurrentPageNumber();
         $itemsPerPage = $pagination->getItemNumberPerPage();
         $total = $pagination->getTotalItemCount();
-        $firstItem = count($data) > 0 ? ($page - 1) * $itemsPerPage + 1 : 0;
-        $lastItem = count($data) > 0 ? $firstItem + count($data) - 1 : 0;
+        $firstItem = \count($data) > 0 ? ($page - 1) * $itemsPerPage + 1 : 0;
+        $lastItem = \count($data) > 0 ? $firstItem + \count($data) - 1 : 0;
         $hasMore = $itemsPerPage !== -1 && $total > ($itemsPerPage * $page);
 
         return [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Core\Dto\PaginationQueryParams;
 use App\Savings\Dto\Transaction\Payload\TransactionPayload;
 use App\Savings\Dto\Transaction\Response\TransactionResponse;
 use App\Savings\Entity\Transaction;
@@ -15,7 +16,6 @@ use App\Shared\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
-use App\Core\Dto\PaginationQueryParams;
 use App\Tests\Common\Helper\PaginationTestHelper;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;

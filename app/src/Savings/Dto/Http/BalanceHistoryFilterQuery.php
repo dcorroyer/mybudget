@@ -5,23 +5,16 @@ declare(strict_types=1);
 namespace App\Savings\Dto\Http;
 
 use App\Shared\Enum\PeriodsEnum;
-use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class BalanceHistoryFilterQuery
 {
     #[Assert\Type(PeriodsEnum::class)]
-    #[OA\Property(description: 'Period for balance history', type: 'string', enum: ['3', '6', '12'], example: '12')]
     private ?PeriodsEnum $period = null;
 
     /**
      * @var array<int>|null
      */
-    #[OA\Parameter(
-        description: 'List of account IDs',
-        schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'integer'), nullable: true),
-        example: [1, 2, 3]
-    )]
     private ?array $accountIds = null;
 
     /**

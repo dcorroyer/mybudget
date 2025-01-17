@@ -6,11 +6,9 @@ namespace App\Budget\Dto\Http;
 
 use App\Core\Contract\ORMFilterInterface;
 use Doctrine\Common\Collections\Criteria;
-use OpenApi\Attributes as OA;
 
 class BudgetFilterQuery implements ORMFilterInterface
 {
-    #[OA\Parameter(name: 'date', description: 'Filter by year')]
     public ?int $date = null;
 
     #[\Override]

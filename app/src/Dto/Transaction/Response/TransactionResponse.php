@@ -6,9 +6,8 @@ namespace App\Dto\Transaction\Response;
 
 use App\Dto\Account\Response\AccountPartialResponse;
 use App\Enum\TransactionTypesEnum;
-use My\RestBundle\Contract\ResponseInterface;
 
-class TransactionResponse implements ResponseInterface
+class TransactionResponse
 {
     public function __construct(
         public readonly int $id,

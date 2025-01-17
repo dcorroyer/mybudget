@@ -4,35 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Transaction;
 
+use App\Core\Api\AbstractApiController;
+use App\Core\Dto\PaginationQueryParams;
 use App\Dto\Transaction\Http\TransactionFilterQuery;
-use App\Dto\Transaction\Response\TransactionResponse;
 use App\Service\TransactionService;
-use My\RestBundle\Attribute\MyOpenApi\MyOpenApi;
-use My\RestBundle\Attribute\MyOpenApi\Response\PaginatedSuccessResponse;
-use My\RestBundle\Controller\BaseRestController;
-use My\RestBundle\Dto\PaginationQueryParams;
-use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/accounts/transactions', priority: 10)]
-#[OA\Tag(name: 'Transactions')]
-class ListTransactionController extends BaseRestController
+class ListTransactionController extends AbstractApiController
 {
-    #[MyOpenApi(
-        httpMethod: Request::METHOD_GET,
-        operationId: 'list_transaction',
-        summary: 'list transactions',
-        responses: [
-            new PaginatedSuccessResponse(
-                responseClassFqcn: TransactionResponse::class,
-                description: 'Return the list of transactions'
-            ),
-        ],
-        queryParamsClassFqcn: [PaginationQueryParams::class, TransactionFilterQuery::class],
-    )]
     #[Route('', name: 'api_transactions_list', methods: Request::METHOD_GET)]
     public function __invoke(
         TransactionService $transactionService,

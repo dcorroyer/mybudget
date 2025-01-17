@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Dto\BalanceHistory\Response;
 
 use App\Dto\Account\Response\AccountPartialResponse;
-use My\RestBundle\Contract\ResponseInterface;
 
-class BalanceHistoryResponse implements ResponseInterface
+class BalanceHistoryResponse
 {
     /**
      * @param array<AccountPartialResponse> $accounts

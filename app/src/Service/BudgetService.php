@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Core\Dto\PaginatedResponseDto;
+use App\Core\Dto\PaginationMetaDto;
+use App\Core\Dto\PaginationQueryParams;
 use App\Dto\Budget\Http\BudgetFilterQuery;
 use App\Dto\Budget\Payload\BudgetPayload;
 use App\Dto\Budget\Response\BudgetResponse;
@@ -16,9 +19,6 @@ use App\Repository\BudgetRepository;
 use App\Security\Voter\BudgetVoter;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Criteria;
-use My\RestBundle\Dto\PaginatedResponseDto;
-use My\RestBundle\Dto\PaginationMetaDto;
-use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

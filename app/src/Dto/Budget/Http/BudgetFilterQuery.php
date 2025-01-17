@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto\Budget\Http;
 
+use App\Core\Contract\ORMFilterInterface;
 use Doctrine\Common\Collections\Criteria;
-use My\RestBundle\Contract\ORMFilterInterface;
-use My\RestBundle\Contract\QueryFilterInterface;
 use OpenApi\Attributes as OA;
 
-class BudgetFilterQuery implements QueryFilterInterface, ORMFilterInterface
+class BudgetFilterQuery implements ORMFilterInterface
 {
     #[OA\Parameter(name: 'date', description: 'Filter by year')]
     public ?int $date = null;

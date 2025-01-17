@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\Transaction\Http;
 
-use My\RestBundle\Contract\QueryFilterInterface;
 use OpenApi\Attributes as OA;
 
-class TransactionFilterQuery implements QueryFilterInterface
+class TransactionFilterQuery
 {
     /**
      * @var array<int>|null $accountIds

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Core\Dto\PaginatedResponseDto;
+use App\Core\Dto\PaginationMetaDto;
+use App\Core\Dto\PaginationQueryParams;
 use App\Dto\Account\Response\AccountPartialResponse;
 use App\Dto\Transaction\Payload\TransactionPayload;
 use App\Dto\Transaction\Response\TransactionResponse;
@@ -13,9 +16,6 @@ use App\Enum\ErrorMessagesEnum;
 use App\Repository\TransactionRepository;
 use App\Security\Voter\TransactionVoter;
 use Doctrine\Common\Collections\Criteria;
-use My\RestBundle\Dto\PaginatedResponseDto;
-use My\RestBundle\Dto\PaginationMetaDto;
-use My\RestBundle\Dto\PaginationQueryParams;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

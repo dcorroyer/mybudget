@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Core\Repository\AbstractEntityRepository;
 use App\Entity\Account;
 use App\Entity\Transaction;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<Transaction>

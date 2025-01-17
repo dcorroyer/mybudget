@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Core\Repository\AbstractEntityRepository;
 use App\Entity\Expense;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<Expense>

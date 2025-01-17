@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Core\Repository\AbstractEntityRepository;
 use App\Entity\Account;
 use App\Entity\BalanceHistory;
 use App\Enum\PeriodsEnum;
 use Carbon\Carbon;
-use My\RestBundle\Repository\Common\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<BalanceHistory>

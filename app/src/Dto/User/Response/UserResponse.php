@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\User\Response;
 
-use My\RestBundle\Contract\ResponseInterface;
-
-class UserResponse implements ResponseInterface
+class UserResponse
 {
     public function __construct(
         public readonly int $id,

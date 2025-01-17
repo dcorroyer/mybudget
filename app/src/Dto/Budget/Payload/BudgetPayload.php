@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\Budget\Payload;
 
-use My\RestBundle\Contract\PayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class BudgetPayload implements PayloadInterface
+class BudgetPayload
 {
     #[Assert\NotBlank]
     public \DateTimeInterface $date;

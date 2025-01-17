@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Savings\Dto\Account\Payload\AccountPayload;
-use App\Savings\Dto\Account\Response\AccountResponse;
+use App\Savings\Dto\Payload\AccountPayload;
+use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
 use App\Savings\Repository\AccountRepository;
 use App\Savings\Service\AccountService;

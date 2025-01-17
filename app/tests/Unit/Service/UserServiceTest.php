@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Shared\Dto\User\Payload\RegisterPayload;
+use App\Shared\Dto\Payload\RegisterPayload;
 use App\Shared\Entity\User;
 use App\Shared\Repository\UserRepository;
 use App\Shared\Service\UserService;

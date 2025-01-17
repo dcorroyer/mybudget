@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Core\Dto\PaginationQueryParams;
-use App\Savings\Dto\Transaction\Payload\TransactionPayload;
-use App\Savings\Dto\Transaction\Response\TransactionResponse;
+use App\Savings\Dto\Payload\TransactionPayload;
+use App\Savings\Dto\Response\TransactionResponse;
 use App\Savings\Entity\Transaction;
 use App\Savings\Repository\TransactionRepository;
 use App\Savings\Service\AccountService;

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\BalanceHistory\Response;
-
-use App\Savings\Dto\Account\Response\AccountPartialResponse;
+namespace App\Savings\Dto\Response;
 
 class BalanceHistoryResponse
 {

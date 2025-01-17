@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
 
 final class PaginatedListMetadata
 {
-    public const DEFAULT_PER_PAGE = 20;
+    public const int DEFAULT_PER_PAGE = 20;
 
     #[Serializer\Groups([ApiSerializationGroups::PAGINATED_LIST])]
     private int $total = 0;

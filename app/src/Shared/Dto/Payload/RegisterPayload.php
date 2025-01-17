@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Dto\User\Payload;
+namespace App\Shared\Dto\Payload;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -2,14 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\Transaction\Http;
+namespace App\Savings\Dto\Http;
 
+use App\Shared\Enum\PeriodsEnum;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class TransactionFilterQuery
+class BalanceHistoryFilterQuery
 {
+    #[Assert\Type(PeriodsEnum::class)]
+    #[OA\Property(description: 'Period for balance history', type: 'string', enum: ['3', '6', '12'], example: '12')]
+    private ?PeriodsEnum $period = null;
+
     /**
-     * @var array<int>|null $accountIds
+     * @var array<int>|null
      */
     #[OA\Parameter(
         description: 'List of account IDs',
@@ -38,5 +44,15 @@ class TransactionFilterQuery
         }
 
         $this->accountIds = array_map(static fn (int|string $value): int => (int) $value, $accountIds);
+    }
+
+    public function getPeriod(): ?PeriodsEnum
+    {
+        return $this->period;
+    }
+
+    public function setPeriod(?PeriodsEnum $period): void
+    {
+        $this->period = $period;
     }
 }

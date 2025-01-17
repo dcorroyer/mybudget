@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Service;
 
-use App\Shared\Dto\User\Payload\RegisterPayload;
-use App\Shared\Dto\User\Response\UserResponse;
+use App\Shared\Dto\Payload\RegisterPayload;
+use App\Shared\Dto\Response\UserResponse;
 use App\Shared\Entity\User;
 use App\Shared\Repository\UserRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\Account\Payload;
+namespace App\Savings\Dto\Payload;
 
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;

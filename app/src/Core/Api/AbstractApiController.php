@@ -13,9 +13,6 @@ use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuild
 
 class AbstractApiController extends AbstractController
 {
-    /**
-     * @param array<string> $groups
-     */
     protected function successResponse(
         mixed $data,
         mixed $meta = null,

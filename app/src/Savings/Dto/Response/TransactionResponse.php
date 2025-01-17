@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\Transaction\Response;
+namespace App\Savings\Dto\Response;
 
-use App\Savings\Dto\Account\Response\AccountPartialResponse;
 use App\Shared\Enum\TransactionTypesEnum;
 
 class TransactionResponse

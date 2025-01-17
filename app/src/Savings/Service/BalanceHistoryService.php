@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Savings\Service;
 
-use App\Savings\Dto\Account\Response\AccountPartialResponse;
-use App\Savings\Dto\BalanceHistory\Response\BalanceHistoryResponse;
-use App\Savings\Dto\BalanceHistory\Response\BalanceResponse;
+use App\Savings\Dto\Response\AccountPartialResponse;
+use App\Savings\Dto\Response\BalanceHistoryResponse;
+use App\Savings\Dto\Response\BalanceResponse;
 use App\Savings\Entity\Account;
 use App\Savings\Entity\BalanceHistory;
 use App\Savings\Entity\Transaction;

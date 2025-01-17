@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Controller\Authentication;
 
 use App\Core\Api\AbstractApiController;
-use App\Shared\Dto\User\Payload\RegisterPayload;
+use App\Shared\Dto\Payload\RegisterPayload;
 use App\Shared\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

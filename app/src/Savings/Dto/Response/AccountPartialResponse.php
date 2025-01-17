@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\Account\Response;
+namespace App\Savings\Dto\Response;
 
-class AccountResponse
+class AccountPartialResponse
 {
     public function __construct(
         public readonly int $id,
         public readonly string $name,
-        public readonly string $type,
-        public readonly float $balance,
     ) {
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Savings\Dto\BalanceHistory\Response;
+namespace App\Savings\Dto\Response;
 
 class BalanceResponse
 {

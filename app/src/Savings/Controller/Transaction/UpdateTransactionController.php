@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Savings\Controller\Transaction;
 
 use App\Core\Api\AbstractApiController;
-use App\Savings\Dto\Transaction\Payload\TransactionPayload;
+use App\Savings\Dto\Payload\TransactionPayload;
 use App\Savings\Entity\Transaction;
 use App\Savings\Service\TransactionService;
 use Symfony\Component\HttpFoundation\JsonResponse;

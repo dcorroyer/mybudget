@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Savings\Controller\BalanceHistory;
 
 use App\Core\Api\AbstractApiController;
-use App\Savings\Dto\BalanceHistory\Http\BalanceHistoryFilterQuery;
+use App\Savings\Dto\Http\BalanceHistoryFilterQuery;
 use App\Savings\Service\BalanceHistoryService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

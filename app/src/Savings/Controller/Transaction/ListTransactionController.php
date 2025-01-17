@@ -6,7 +6,7 @@ namespace App\Savings\Controller\Transaction;
 
 use App\Core\Api\AbstractApiController;
 use App\Core\Dto\PaginationQueryParams;
-use App\Savings\Dto\Transaction\Http\TransactionFilterQuery;
+use App\Savings\Dto\Http\TransactionFilterQuery;
 use App\Savings\Service\TransactionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

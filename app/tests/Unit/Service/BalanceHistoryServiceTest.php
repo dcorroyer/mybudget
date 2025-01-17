@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Savings\Dto\BalanceHistory\Response\BalanceHistoryResponse;
+use App\Savings\Dto\Response\BalanceHistoryResponse;
 use App\Savings\Entity\BalanceHistory;
 use App\Savings\Repository\BalanceHistoryRepository;
 use App\Savings\Service\AccountService;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Dto\User\Response;
+namespace App\Shared\Dto\Response;
 
 class UserResponse
 {

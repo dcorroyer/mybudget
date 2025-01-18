@@ -10,6 +10,8 @@ includes:
 parameters:
     level: max
     errorFormat: ticketswap
+    excludePaths:
+        - %currentWorkingDirectory%/src/Core/*
     paths:
         - %currentWorkingDirectory%/src
 #        - %currentWorkingDirectory%/tests
@@ -71,10 +73,10 @@ parameters:
             identifier: method.childParameterType
         -
             identifier: property.uninitialized
-            path: %currentWorkingDirectory%/src/Dto/*
+            path: %currentWorkingDirectory%/src/*/Dto/*
         -
             identifier: doctrine.associationType
-            path: %currentWorkingDirectory%/src/Entity/*
+            path: %currentWorkingDirectory%/src/*/Entity/*
     type_perfect:
         no_mixed: true
         null_over_false: true

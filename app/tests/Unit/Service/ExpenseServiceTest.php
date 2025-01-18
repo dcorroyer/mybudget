@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Dto\Budget\Payload\ExpensePayload;
-use App\Entity\Expense;
-use App\Repository\ExpenseRepository;
-use App\Service\ExpenseService;
+use App\Budget\Dto\Payload\ExpensePayload;
+use App\Budget\Entity\Expense;
+use App\Budget\Repository\ExpenseRepository;
+use App\Budget\Service\ExpenseService;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Factory\ExpenseFactory;
-use My\RestBundle\Test\Common\Trait\SerializerTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -27,7 +26,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class ExpenseServiceTest extends TestCase
 {
     use Factories;
-    use SerializerTrait;
+
     private ExpenseRepository $expenseRepository;
 
     private ExpenseService $expenseService;

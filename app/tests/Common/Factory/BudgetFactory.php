@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Common\Factory;
 
-use App\Entity\Budget;
+use App\Budget\Entity\Budget;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

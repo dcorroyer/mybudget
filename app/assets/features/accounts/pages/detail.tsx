@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { CenteredLoader as Loader } from '@/components/centered-loader'
-import { TransactionTable } from '@/features/transactions/components/transaction-table'
+import { TransactionTable } from '@/features/savings/components/transaction-table'
 import { AccountForm } from '../components/account-form'
 import { useAccount } from '../hooks/useAccount'
 import { useTransactions } from '../hooks/useTransactions'

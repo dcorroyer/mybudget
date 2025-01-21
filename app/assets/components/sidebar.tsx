@@ -4,13 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 import { Divider, em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import {
-  IconChartLine,
-  IconCreditCard,
-  IconLogout,
-  IconReceipt,
-  IconWallet,
-} from '@tabler/icons-react'
+import { IconChartLine, IconCreditCard, IconLogout, IconWallet } from '@tabler/icons-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
@@ -18,9 +12,8 @@ import Logo from './logo'
 import classes from './sidebar.module.css'
 
 const data = [
-  { icon: IconChartLine, label: 'Dashboard', path: '/' },
+  { icon: IconChartLine, label: 'Savings', path: '/' },
   { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
-  { icon: IconReceipt, label: 'Transactions', path: '/transactions' },
   { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
 ]
 

@@ -1,6 +1,7 @@
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { TransactionFilterParams, TransactionParams } from '../types/transactions'
 import {
   deleteTransactionId,
   getTransactionId,
@@ -8,7 +9,6 @@ import {
   postTransaction,
   updateTransactionId,
 } from '../api/transactions'
-import { TransactionFilterParams, TransactionParams } from '../types/transactions'
 
 export function useTransactions() {
   const navigate = useNavigate()

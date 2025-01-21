@@ -20,8 +20,8 @@ import {
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import { IconDatabaseOff, IconEdit, IconPlus, IconReceipt, IconTrash } from '@tabler/icons-react'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { SavingsChart } from '../components/savings-chart'
+import { TransactionForm } from '../components/transaction-form'
 import { useSavings } from '../hooks/useSavings'
 import { useTransactions } from '../hooks/useTransactions'
 
@@ -33,6 +33,9 @@ const SavingsList = () => {
     number | null
   >(null)
   const [transactionIdToDelete, setTransactionIdToDelete] = useState<number | null>(null)
+  const [openedEdit, { open: openEdit, close: closeEdit }] = useDisclosure(false)
+  const [openedCreate, { open: openCreate, close: closeCreate }] = useDisclosure(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null)
 
   const { useAccountList } = useAccount()
   const { useBalanceHistory } = useSavings()
@@ -68,6 +71,11 @@ const SavingsList = () => {
     }
   }
 
+  const handleEdit = (transaction: any) => {
+    setSelectedTransaction(transaction)
+    openEdit()
+  }
+
   const TransactionList = () => (
     <Stack gap='md'>
       {transactions?.data.map((transaction) => (
@@ -93,11 +101,10 @@ const SavingsList = () => {
               </Stack>
               <Group gap='xs'>
                 <ActionIcon
-                  component={Link}
-                  to={`/accounts/${transaction.account.id}/transactions/${transaction.id}`}
                   variant='light'
                   color='blue'
                   size='sm'
+                  onClick={() => handleEdit(transaction)}
                 >
                   <IconEdit style={{ width: rem(16) }} />
                 </ActionIcon>
@@ -143,6 +150,36 @@ const SavingsList = () => {
             </Button>
           </Group>
         </Modal>
+        <Modal
+          opened={openedEdit}
+          onClose={closeEdit}
+          radius='lg'
+          title='Modifier la transaction'
+          size='lg'
+          centered
+        >
+          <TransactionForm
+            initialValues={selectedTransaction}
+            onSuccess={() => {
+              closeEdit()
+              setSelectedTransaction(null)
+            }}
+          />
+        </Modal>
+        <Modal
+          opened={openedCreate}
+          onClose={closeCreate}
+          radius='lg'
+          title='Nouvelle transaction'
+          size='lg'
+          centered
+        >
+          <TransactionForm
+            onSuccess={() => {
+              closeCreate()
+            }}
+          />
+        </Modal>
         <Group justify='space-between' align='flex-end'>
           <Stack gap={0}>
             <Title order={1} size='h2' fw={600} c='blue.7'>
@@ -152,12 +189,7 @@ const SavingsList = () => {
               Visualisez l'évolution de vos économies
             </Text>
           </Stack>
-          <Button
-            component={Link}
-            to='/transactions/create'
-            leftSection={<IconPlus size={16} />}
-            variant='light'
-          >
+          <Button onClick={openCreate} leftSection={<IconPlus size={16} />} variant='light'>
             Nouvelle transaction
           </Button>
         </Group>
@@ -257,11 +289,10 @@ const SavingsList = () => {
                           <Table.Td>
                             <Group gap='xs'>
                               <ActionIcon
-                                component={Link}
-                                to={`/accounts/${transaction.account.id}/transactions/${transaction.id}`}
                                 variant='light'
                                 color='blue'
                                 size='sm'
+                                onClick={() => handleEdit(transaction)}
                               >
                                 <IconEdit style={{ width: rem(16) }} />
                               </ActionIcon>

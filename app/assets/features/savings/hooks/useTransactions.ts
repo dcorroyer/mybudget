@@ -1,7 +1,6 @@
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { TransactionFilterParams, TransactionParams } from '../types/transactions'
 import {
   deleteTransactionId,
   getTransactionId,
@@ -9,6 +8,7 @@ import {
   postTransaction,
   updateTransactionId,
 } from '../api/transactions'
+import { TransactionFilterParams, TransactionParams } from '../types/transactions'
 
 export function useTransactions() {
   const navigate = useNavigate()
@@ -41,7 +41,7 @@ export function useTransactions() {
         queryKey: ['transactions'],
         refetchType: 'all',
       })
-      navigate('/transactions')
+      navigate('/')
     },
     onError: () => {
       notifications.show({
@@ -62,7 +62,6 @@ export function useTransactions() {
         color: 'green',
       })
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
-      navigate('/transactions')
     },
     onError: () => {
       notifications.show({

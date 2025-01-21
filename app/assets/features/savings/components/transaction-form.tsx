@@ -16,9 +16,13 @@ import classes from './transaction-form.module.css'
 interface TransactionFormComponentProps {
   initialValues?: Transaction
   isLoading?: boolean
+  onSuccess?: () => void
 }
 
-export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initialValues }) => {
+export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
+  initialValues,
+  onSuccess,
+}) => {
   const { useAccountList } = useAccount()
   const { data: accountList, isFetching } = useAccountList()
 
@@ -68,6 +72,11 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({ initi
         values: values,
       })
     }
+    handleSuccess()
+  }
+
+  const handleSuccess = () => {
+    onSuccess?.()
   }
 
   return (

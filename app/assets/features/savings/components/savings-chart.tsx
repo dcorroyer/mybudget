@@ -1,10 +1,9 @@
 import { LineChart } from '@mantine/charts'
-import { Card, em, Group, Text } from '@mantine/core'
+import { Badge, Card, em, Group, Text } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconChartLine } from '@tabler/icons-react'
 import React from 'react'
 import { SavingsResponse } from '../types/savings'
-import classes from './savings-chart.module.css'
 
 interface SavingsChartProps {
   data: SavingsResponse
@@ -21,13 +20,16 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
   return (
     <Card radius='lg' py='xl' mt='sm' shadow='sm'>
       <Card.Section inheritPadding px='xl' pb='xs'>
-        <Group justify='space-between' gap='xl' mt='xs'>
-          <div className={classes.divIconBlue}>
-            <IconChartLine className={classes.iconBlue} stroke={1.5} />
-            <Text className={classes.resourceName} ml='xs'>
-              Savings Evolution
+        <Group justify='space-between' my='md'>
+          <Group gap='xs'>
+            <IconChartLine size={20} style={{ color: 'var(--mantine-color-blue-6)' }} />
+            <Text fw={500} size='md'>
+              Évolution de l'épargne
             </Text>
-          </div>
+          </Group>
+          <Badge size='lg' variant='light'>
+            Total: {chartData[chartData.length - 1]?.balance.toLocaleString()} €
+          </Badge>
         </Group>
       </Card.Section>
       <Card.Section inheritPadding px='xl' mt='sm'>

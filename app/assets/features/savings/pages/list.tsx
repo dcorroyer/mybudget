@@ -10,12 +10,13 @@ import {
   Loader,
   Modal,
   MultiSelect,
+  rem,
   SegmentedControl,
+  Skeleton,
   Stack,
   Table,
   Text,
   Title,
-  rem,
 } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import { IconDatabaseOff, IconEdit, IconPlus, IconReceipt, IconTrash } from '@tabler/icons-react'
@@ -128,7 +129,140 @@ const SavingsList = () => {
     </Stack>
   )
 
-  if (isFetching || isTransactionsFetching) return <Loader />
+  const SavingsChartSection = ({
+    selectedPeriod,
+    selectedAccounts,
+  }: {
+    selectedPeriod: string
+    selectedAccounts: string[]
+  }) => {
+    const { useBalanceHistory } = useSavings()
+    const { data: savingsData, isFetching } = useBalanceHistory({
+      ...(selectedPeriod && { period: selectedPeriod as '3' | '6' | '12' }),
+      ...(selectedAccounts.length > 0 && {
+        accountIds: selectedAccounts.map((id) => parseInt(id)),
+      }),
+    })
+
+    if (isFetching) {
+      return (
+        <Card radius='lg' py='xl' mt='sm' shadow='sm'>
+          <Card.Section inheritPadding px='xl' mt='sm'>
+            <Skeleton height={300} radius='md' animate={true} />
+          </Card.Section>
+        </Card>
+      )
+    }
+
+    return savingsData ? <SavingsChart data={savingsData.data} /> : null
+  }
+
+  const TransactionsSection = ({ selectedAccounts }: { selectedAccounts: string[] }) => {
+    const { useTransactionList } = useTransactions()
+    const { data: transactions, isFetching } = useTransactionList({
+      accountIds: selectedAccounts.map((id) => parseInt(id)),
+    })
+
+    if (isFetching) return <Loader />
+
+    if (!transactions?.data.length) {
+      return (
+        <Container h={100} display='flex'>
+          <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
+            <IconDatabaseOff
+              style={{ width: rem(24), height: rem(24) }}
+              stroke={1.5}
+              color='gray'
+            />
+            <Text size='lg' fw={500} c='gray'>
+              Aucune transaction trouvée
+            </Text>
+          </Stack>
+        </Container>
+      )
+    }
+
+    return (
+      <Card radius='lg' py='xl' mt='sm' shadow='sm'>
+        <Card.Section inheritPadding px='xl' pb='xs'>
+          <Group justify='space-between' mt='md'>
+            <Group gap='xs'>
+              <IconReceipt size={20} style={{ color: 'var(--mantine-color-blue-6)' }} />
+              <Text fw={500} size='md'>
+                Transactions récentes
+              </Text>
+            </Group>
+          </Group>
+        </Card.Section>
+        <Card.Section inheritPadding px='xl' mt='sm'>
+          {isMobile ? (
+            <TransactionList />
+          ) : (
+            <Table.ScrollContainer minWidth={800}>
+              <Table verticalSpacing='sm' horizontalSpacing='lg'>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Description</Table.Th>
+                    <Table.Th>Compte</Table.Th>
+                    <Table.Th>Date</Table.Th>
+                    <Table.Th>Montant</Table.Th>
+                    <Table.Th>Actions</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {transactions.data.map((transaction) => (
+                    <Table.Tr key={transaction.id}>
+                      <Table.Td>
+                        <Text fw={400} size='sm'>
+                          {transaction.description}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Badge variant='light' color='blue'>
+                          {transaction.account.name}
+                        </Badge>
+                      </Table.Td>
+                      <Table.Td>{new Date(transaction.date).toLocaleDateString('fr-FR')}</Table.Td>
+                      <Table.Td>
+                        <Text c={transaction.type === 'CREDIT' ? 'teal' : 'red'} fw={500}>
+                          {transaction.type === 'CREDIT' ? '+' : '-'}
+                          {Math.abs(transaction.amount).toLocaleString('fr-FR')} €
+                        </Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Group gap='xs'>
+                          <ActionIcon
+                            variant='light'
+                            color='blue'
+                            size='sm'
+                            onClick={() => handleEdit(transaction)}
+                          >
+                            <IconEdit style={{ width: rem(16) }} />
+                          </ActionIcon>
+                          <ActionIcon
+                            variant='light'
+                            color='red'
+                            size='sm'
+                            onClick={() => {
+                              setAccountIdOfTransactionToDelete(transaction.account.id)
+                              setTransactionIdToDelete(transaction.id)
+                              openDelete()
+                            }}
+                          >
+                            <IconTrash style={{ width: rem(16) }} />
+                          </ActionIcon>
+                        </Group>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
+          )}
+        </Card.Section>
+      </Card>
+    )
+  }
 
   return (
     <Container size='xl' py='xl'>
@@ -235,103 +369,9 @@ const SavingsList = () => {
           </Grid.Col>
         </Grid>
 
-        {savingsData && <SavingsChart data={savingsData.data} />}
+        <SavingsChartSection selectedPeriod={selectedPeriod} selectedAccounts={selectedAccounts} />
 
-        {transactions && transactions.data.length > 0 ? (
-          <Card radius='lg' py='xl' mt='sm' shadow='sm'>
-            <Card.Section inheritPadding px='xl' pb='xs'>
-              <Group justify='space-between' mt='md'>
-                <Group gap='xs'>
-                  <IconReceipt size={20} style={{ color: 'var(--mantine-color-blue-6)' }} />
-                  <Text fw={500} size='md'>
-                    Transactions récentes
-                  </Text>
-                </Group>
-              </Group>
-            </Card.Section>
-            <Card.Section inheritPadding px='xl' mt='sm'>
-              {isMobile ? (
-                <TransactionList />
-              ) : (
-                <Table.ScrollContainer minWidth={800}>
-                  <Table verticalSpacing='sm' horizontalSpacing='lg'>
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th>Description</Table.Th>
-                        <Table.Th>Compte</Table.Th>
-                        <Table.Th>Date</Table.Th>
-                        <Table.Th>Montant</Table.Th>
-                        <Table.Th>Actions</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {transactions.data.map((transaction) => (
-                        <Table.Tr key={transaction.id}>
-                          <Table.Td>
-                            <Text fw={400} size='sm'>
-                              {transaction.description}
-                            </Text>
-                          </Table.Td>
-                          <Table.Td>
-                            <Badge variant='light' color='blue'>
-                              {transaction.account.name}
-                            </Badge>
-                          </Table.Td>
-                          <Table.Td>
-                            {new Date(transaction.date).toLocaleDateString('fr-FR')}
-                          </Table.Td>
-                          <Table.Td>
-                            <Text c={transaction.type === 'CREDIT' ? 'teal' : 'red'} fw={500}>
-                              {transaction.type === 'CREDIT' ? '+' : '-'}
-                              {Math.abs(transaction.amount).toLocaleString('fr-FR')} €
-                            </Text>
-                          </Table.Td>
-                          <Table.Td>
-                            <Group gap='xs'>
-                              <ActionIcon
-                                variant='light'
-                                color='blue'
-                                size='sm'
-                                onClick={() => handleEdit(transaction)}
-                              >
-                                <IconEdit style={{ width: rem(16) }} />
-                              </ActionIcon>
-                              <ActionIcon
-                                variant='light'
-                                color='red'
-                                size='sm'
-                                onClick={() => {
-                                  setAccountIdOfTransactionToDelete(transaction.account.id)
-                                  setTransactionIdToDelete(transaction.id)
-                                  openDelete()
-                                }}
-                              >
-                                <IconTrash style={{ width: rem(16) }} />
-                              </ActionIcon>
-                            </Group>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
-                </Table.ScrollContainer>
-              )}
-            </Card.Section>
-          </Card>
-        ) : (
-          <Container h={100} display='flex'>
-            <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
-              <IconDatabaseOff
-                style={{ width: rem(24), height: rem(24) }}
-                stroke={1.5}
-                color='gray'
-              />
-              <Text size='lg' fw={500} c='gray'>
-                Aucune transaction trouvée
-              </Text>
-            </Stack>
-          </Container>
-        )}
+        <TransactionsSection selectedAccounts={selectedAccounts} />
       </Stack>
     </Container>
   )

@@ -1,6 +1,7 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { ActionIcon, Container, Text } from '@mantine/core'
+import { ActionIcon, Text } from '@mantine/core'
 import { IconChevronLeft } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
 
@@ -9,6 +10,8 @@ import { BudgetForm } from '../components/budget-form'
 import classes from './create.module.css'
 
 const BudgetCreate: React.FC = () => {
+  const navigate = useNavigate()
+
   return (
     <>
       <Text fw={500} size='lg' pb='xl'>
@@ -17,9 +20,7 @@ const BudgetCreate: React.FC = () => {
         </ActionIcon>
         New Budget
       </Text>
-      <Container size={560} my={40}>
-        <BudgetForm />
-      </Container>
+      <BudgetForm onClose={() => navigate('/budgets')} />
     </>
   )
 }

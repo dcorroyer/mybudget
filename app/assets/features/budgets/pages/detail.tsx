@@ -80,7 +80,7 @@ const BudgetDetail: React.FC = () => {
     items.reduce((sum, item) => sum + (item.amount || 0), 0)
 
   if (editMode) {
-    return <BudgetForm initialValues={budgetData} />
+    return <BudgetForm initialValues={budgetData} onClose={() => setEditMode(false)} />
   }
 
   return (

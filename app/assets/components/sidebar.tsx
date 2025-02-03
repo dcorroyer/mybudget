@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { Link, useLocation } from 'react-router-dom'
 
-import { Divider, em, Group } from '@mantine/core'
+import { em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconChartLine, IconCreditCard, IconLogout, IconWallet } from '@tabler/icons-react'
 
@@ -53,20 +53,22 @@ export function Sidebar({ onNavigate }: SidebarProps) {
 
   return (
     <nav className={classes.navbar}>
-      <div style={{ flex: '1' }}>
-        {!isMobile && (
-          <Group className={classes.header} justify='space-between'>
-            <Logo />
-          </Group>
-        )}
-        {links}
+      <div className={classes.navbarContent}>
+        <div>
+          {!isMobile && (
+            <Group className={classes.header} justify='space-between'>
+              <Logo />
+            </Group>
+          )}
+          {links}
+        </div>
 
-        <Divider mt='md' className={classes.divider} />
-
-        <Link onClick={() => logout()} className={classes.link} to={''}>
-          <IconLogout className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
-        </Link>
+        <div className={classes.footer}>
+          <Link onClick={() => logout()} className={classes.link} to={''}>
+            <IconLogout className={classes.linkIcon} stroke={1.5} />
+            <span>Logout</span>
+          </Link>
+        </div>
       </div>
     </nav>
   )

@@ -28,7 +28,15 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBudget } from '../hooks/useBudget'
 
-const BudgetGrid = ({ selectedYear }: { selectedYear: number }) => {
+const BudgetGrid = ({
+  selectedYear,
+  onDelete,
+  onDuplicate,
+}: {
+  selectedYear: number
+  onDelete: (id: string) => void
+  onDuplicate: (id: string) => void
+}) => {
   const { useBudgetList } = useBudget()
   const { data: budgetList, isFetching } = useBudgetList(selectedYear)
 
@@ -72,9 +80,7 @@ const BudgetGrid = ({ selectedYear }: { selectedYear: number }) => {
                     variant='light'
                     color='gray'
                     size='sm'
-                    onClick={() => {
-                      // Implement duplicate logic here
-                    }}
+                    onClick={() => onDuplicate(budget.id.toString())}
                   >
                     <IconCopy style={{ width: rem(16) }} />
                   </ActionIcon>
@@ -82,9 +88,7 @@ const BudgetGrid = ({ selectedYear }: { selectedYear: number }) => {
                     variant='light'
                     color='red'
                     size='sm'
-                    onClick={() => {
-                      // Implement delete logic here
-                    }}
+                    onClick={() => onDelete(budget.id.toString())}
                   >
                     <IconTrash style={{ width: rem(16) }} />
                   </ActionIcon>
@@ -138,14 +142,24 @@ const BudgetList = () => {
     return year.toString()
   })
 
-  const handleDelete = () => {
+  const handleDelete = (id: string) => {
+    setBudgetIdToDelete(id)
+    openDelete()
+  }
+
+  const handleDuplicate = (id: string) => {
+    setBudgetIdToDuplicate(id)
+    openDuplicate()
+  }
+
+  const confirmDelete = () => {
     if (budgetIdToDelete) {
       deleteBudget(budgetIdToDelete)
       closeDelete()
     }
   }
 
-  const handleDuplicate = () => {
+  const confirmDuplicate = () => {
     if (budgetIdToDuplicate) {
       duplicateBudget(budgetIdToDuplicate)
       closeDuplicate()
@@ -155,42 +169,6 @@ const BudgetList = () => {
   return (
     <Container size='xl' py='xl'>
       <Stack gap='xl'>
-        <Modal
-          opened={openedDelete}
-          onClose={closeDelete}
-          radius='lg'
-          title='Supprimer le budget'
-          centered
-        >
-          <Text size='sm'>Êtes-vous sûr de vouloir supprimer ce budget ?</Text>
-          <Group justify='flex-end' mt='lg'>
-            <Button variant='subtle' radius='md' onClick={closeDelete}>
-              Annuler
-            </Button>
-            <Button color='red' radius='md' onClick={handleDelete}>
-              Supprimer
-            </Button>
-          </Group>
-        </Modal>
-
-        <Modal
-          opened={openedDuplicate}
-          onClose={closeDuplicate}
-          radius='lg'
-          title='Dupliquer le budget'
-          centered
-        >
-          <Text size='sm'>Êtes-vous sûr de vouloir dupliquer ce budget ?</Text>
-          <Group justify='flex-end' mt='lg'>
-            <Button variant='subtle' radius='md' onClick={closeDuplicate}>
-              Annuler
-            </Button>
-            <Button color='blue' radius='md' onClick={handleDuplicate}>
-              Dupliquer
-            </Button>
-          </Group>
-        </Modal>
-
         <Group justify='space-between' align='flex-end'>
           <Stack gap={0}>
             <Title order={1} size='h2' fw={600} c='blue.7'>
@@ -254,9 +232,49 @@ const BudgetList = () => {
             </Group>
           </Card.Section>
           <Card.Section inheritPadding px='xl' mt='sm' pb='lg'>
-            <BudgetGrid selectedYear={selectedYear} />
+            <BudgetGrid
+              selectedYear={selectedYear}
+              onDelete={handleDelete}
+              onDuplicate={handleDuplicate}
+            />
           </Card.Section>
         </Card>
+
+        <Modal
+          opened={openedDelete}
+          onClose={closeDelete}
+          radius='lg'
+          title='Supprimer le budget'
+          centered
+        >
+          <Text size='sm'>Êtes-vous sûr de vouloir supprimer ce budget ?</Text>
+          <Group justify='flex-end' mt='lg'>
+            <Button variant='subtle' radius='md' onClick={closeDelete}>
+              Annuler
+            </Button>
+            <Button color='red' radius='md' onClick={confirmDelete}>
+              Supprimer
+            </Button>
+          </Group>
+        </Modal>
+
+        <Modal
+          opened={openedDuplicate}
+          onClose={closeDuplicate}
+          radius='lg'
+          title='Dupliquer le budget'
+          centered
+        >
+          <Text size='sm'>Êtes-vous sûr de vouloir dupliquer ce budget ?</Text>
+          <Group justify='flex-end' mt='lg'>
+            <Button variant='subtle' radius='md' onClick={closeDuplicate}>
+              Annuler
+            </Button>
+            <Button color='blue' radius='md' onClick={confirmDuplicate}>
+              Dupliquer
+            </Button>
+          </Group>
+        </Modal>
       </Stack>
     </Container>
   )

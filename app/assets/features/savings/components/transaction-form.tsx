@@ -8,7 +8,7 @@ import { useTransactions } from '../hooks/useTransactions'
 import { createTransactionFormType, transactionFormSchema } from '../schemas/transactions'
 
 import { DatePickerInput } from '@mantine/dates'
-import { useAccount } from '../../accounts/hooks/useAccount'
+import { useAccount } from '../hooks/useAccount'
 import { Transaction } from '../types/transactions'
 
 import classes from './transaction-form.module.css'

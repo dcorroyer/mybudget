@@ -14,9 +14,10 @@ interface AccountFormComponentProps {
     id?: number
     name: string
   }
+  onSuccess?: () => void
 }
 
-export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues }) => {
+export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues, onSuccess }) => {
   const form = useForm<createAccountFormType>({
     initialValues: initialValues || {
       name: '',
@@ -29,9 +30,20 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
 
   const onSubmit = (values: createAccountFormType) => {
     if (!isEditMode) {
-      createAccount(values)
+      createAccount(values, {
+        onSuccess: () => {
+          onSuccess?.()
+        },
+      })
     } else if (initialValues?.id) {
-      updateAccount({ id: initialValues.id, values })
+      updateAccount(
+        { id: initialValues.id, values },
+        {
+          onSuccess: () => {
+            onSuccess?.()
+          },
+        },
+      )
     }
   }
 

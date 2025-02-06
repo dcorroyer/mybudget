@@ -10,18 +10,7 @@ const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
 const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
-const AccountListPage = React.lazy(() => import('./features/accounts/pages/list'))
-const AccountCreatePage = React.lazy(() => import('./features/accounts/pages/create'))
-const AccountDetailPage = React.lazy(() => import('./features/accounts/pages/detail'))
-
 const DashboardPage = React.lazy(() => import('./features/savings/pages/list'))
-
-const TransactionCreatePage = React.lazy(
-  () => import('./features/savings/pages/transactions/create'),
-)
-const TransactionDetailPage = React.lazy(
-  () => import('./features/savings/pages/transactions/detail'),
-)
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
@@ -70,56 +59,6 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <React.Suspense fallback={null}>
           <BudgetDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountListPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/create',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountCreatePage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/:id',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/:accountId/transactions/:id',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <TransactionDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/transactions/create',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <TransactionCreatePage />
         </React.Suspense>
       </ProtectedRoute>
     ),

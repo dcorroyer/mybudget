@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 import { em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconChartLine, IconCreditCard, IconLogout, IconWallet } from '@tabler/icons-react'
+import { IconChartLine, IconLogout, IconWallet } from '@tabler/icons-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
@@ -12,9 +12,8 @@ import Logo from './logo'
 import classes from './sidebar.module.css'
 
 const data = [
-  { icon: IconChartLine, label: 'Savings', path: '/' },
-  { icon: IconWallet, label: 'Budget Planner', path: '/budgets' },
-  { icon: IconCreditCard, label: 'Accounts', path: '/accounts' },
+  { icon: IconChartLine, label: 'Épargne', path: '/' },
+  { icon: IconWallet, label: 'Budget', path: '/budgets' },
 ]
 
 interface SidebarProps {
@@ -66,7 +65,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         <div className={classes.footer}>
           <Link onClick={() => logout()} className={classes.link} to={''}>
             <IconLogout className={classes.linkIcon} stroke={1.5} />
-            <span>Logout</span>
+            <span>Déconnexion</span>
           </Link>
         </div>
       </div>

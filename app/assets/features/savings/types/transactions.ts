@@ -19,4 +19,6 @@ export interface TransactionParams {
 
 export interface TransactionFilterParams {
   accountIds?: number[]
+  page?: number
+  perPage?: number
 }

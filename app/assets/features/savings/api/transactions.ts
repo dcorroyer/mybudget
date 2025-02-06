@@ -5,8 +5,17 @@ import { Transaction, TransactionFilterParams, TransactionParams } from '../type
 export async function getTransactionList(
   filters?: TransactionFilterParams,
 ): Promise<ApiResponseList<Transaction[]>> {
-  const accountIdsParam = filters?.accountIds?.map((id) => `accountIds[]=${id}`).join('&')
-  const url = `/api/accounts/transactions${accountIdsParam ? `?${accountIdsParam}` : ''}`
+  const searchParams = new URLSearchParams()
+
+  if (filters?.accountIds) {
+    filters.accountIds.forEach((id) => searchParams.append('accountIds[]', id.toString()))
+  }
+
+  if (filters?.page) {
+    searchParams.append('page', filters.page.toString())
+  }
+
+  const url = `/api/accounts/transactions${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
   const response = await client(url, {
     method: 'GET',

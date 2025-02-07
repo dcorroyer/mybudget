@@ -6,19 +6,11 @@ import AuthenticatedLayout from './layouts/authenticated-layout'
 const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
 const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
 
-const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
+const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages'))
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
 const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
-const AccountListPage = React.lazy(() => import('./features/accounts/pages/list'))
-const AccountCreatePage = React.lazy(() => import('./features/accounts/pages/create'))
-const AccountDetailPage = React.lazy(() => import('./features/accounts/pages/detail'))
-
-const DashboardPage = React.lazy(() => import('./features/savings/pages/list'))
-
-const TransactionListPage = React.lazy(() => import('./features/transactions/pages/list'))
-const TransactionCreatePage = React.lazy(() => import('./features/transactions/pages/create'))
-const TransactionDetailPage = React.lazy(() => import('./features/transactions/pages/detail'))
+const MainPage = React.lazy(() => import('./features/savings/pages'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
@@ -36,7 +28,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <DashboardPage />
+          <MainPage />
         </React.Suspense>
       </ProtectedRoute>
     ),
@@ -46,7 +38,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <BudgetListPage />
+          <BudgetIndexPage />
         </React.Suspense>
       </ProtectedRoute>
     ),
@@ -67,66 +59,6 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <React.Suspense fallback={null}>
           <BudgetDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountListPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/create',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountCreatePage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/:id',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <AccountDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/accounts/:accountId/transactions/:id',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <TransactionDetailPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/transactions',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <TransactionListPage />
-        </React.Suspense>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/transactions/create',
-    element: (
-      <ProtectedRoute>
-        <React.Suspense fallback={null}>
-          <TransactionCreatePage />
         </React.Suspense>
       </ProtectedRoute>
     ),

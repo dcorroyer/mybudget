@@ -30,7 +30,9 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable pnpm && corepack use pnpm@9.9
+RUN npm install -g corepack@0.31.0 && \
+    corepack enable pnpm && \
+    corepack use pnpm@9.9
 
 SHELL ["/bin/sh", "-c"]
 
@@ -60,7 +62,7 @@ RUN set -eux; \
 		intl \
 		opcache \
 		zip \
-    	pdo_pgsql \
+    pdo_pgsql \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser

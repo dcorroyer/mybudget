@@ -1,7 +1,0 @@
-.title {
-  transform: translateY(0.33rem);
-}
-
-.editModeButton:hover {
-  background-color: var(--mantine-color-gray-3);
-}

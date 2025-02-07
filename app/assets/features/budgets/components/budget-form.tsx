@@ -1,340 +1,729 @@
-import React, { useEffect, useState } from 'react'
-
+import { DragDropContext, Draggable, DropResult, Droppable } from '@hello-pangea/dnd'
 import {
+  ActionIcon,
+  Box,
   Button,
   Card,
   Container,
-  Divider,
+  Grid,
   Group,
   NumberInput,
-  rem,
-  SimpleGrid,
-  Tabs,
+  Stack,
+  Stepper,
+  Text,
   TextInput,
+  Title,
+  rem,
 } from '@mantine/core'
 import { MonthPickerInput } from '@mantine/dates'
-import { useForm, UseFormReturnType } from '@mantine/form'
-import { IconCalendar, IconCheck, IconCurrencyEuro, IconPlus, IconX } from '@tabler/icons-react'
+import { useForm } from '@mantine/form'
+import { useViewportSize } from '@mantine/hooks'
+import {
+  IconCalendar,
+  IconChevronLeft,
+  IconGripVertical,
+  IconPlus,
+  IconReceipt2,
+  IconTrash,
+  IconWallet,
+  IconX,
+} from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
-
+import React, { useEffect, useState } from 'react'
 import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
 import { BudgetFormDetails } from '../types/budgets'
 
-import cx from 'clsx'
-
-import classes from './budget-form.module.css'
-
-interface Card {
-  category: string
-  items: {
-    name: string
-    amount: number
-  }[]
+interface IncomeItem {
+  id: string
+  name: string
+  amount: number
 }
 
-const defaultIncome = { name: '', amount: 0 }
-
-const defaultExpense = {
-  category: '',
-  items: [
-    {
-      name: '',
-      amount: 0,
-    },
-  ],
+interface ExpenseItem {
+  id: string
+  name: string
+  amount: number
 }
 
-interface BudgetFormComponentProps {
+interface ExpenseCategory {
+  id: string
+  name: string
+  items: ExpenseItem[]
+}
+
+interface BudgetFormProps {
   initialValues?: BudgetFormDetails
+  onClose: () => void
 }
 
-export const BudgetForm: React.FC<BudgetFormComponentProps> = ({ initialValues }) => {
+export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }) => {
+  const { width } = useViewportSize()
+  const isMobile = width < 768
+  const [active, setActive] = useState(0)
+  const [date, setDate] = useState<Date | null>(
+    initialValues?.date ? new Date(initialValues.date) : new Date(),
+  )
+  const [incomes, setIncomes] = useState<IncomeItem[]>(
+    initialValues?.incomes?.map((income, index) => ({
+      id: String(index + 1),
+      name: income.name,
+      amount: income.amount,
+    })) || [{ id: '1', name: '', amount: 0 }],
+  )
+  const [categories, setCategories] = useState<ExpenseCategory[]>(
+    initialValues?.expenses?.map((expense, categoryIndex) => ({
+      id: String(categoryIndex + 1),
+      name: expense.category,
+      items: expense.items.map((item, itemIndex) => ({
+        id: `${categoryIndex + 1}-${itemIndex + 1}`,
+        name: item.name,
+        amount: item.amount,
+      })),
+    })) || [
+      {
+        id: '1',
+        name: '',
+        items: [{ id: '1-1', name: '', amount: 0 }],
+      },
+    ],
+  )
+
   const form = useForm<createBudgetFormType>({
-    mode: 'uncontrolled',
-    initialValues: initialValues || {
-      date: new Date(),
-      incomes: [defaultIncome],
-      expenses: [defaultExpense],
+    initialValues: {
+      date: date || new Date(),
+      incomes: incomes.map(({ name, amount }) => ({ name, amount })),
+      expenses: categories.map((category) => ({
+        category: category.name,
+        items: category.items.map(({ name, amount }) => ({ name, amount })),
+      })),
     },
     validate: zodResolver(budgetFormSchema),
   })
 
-  const [monthValue, setMonthValue] = useState<Date>(new Date())
-  const icon = <IconCalendar style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-  const [isEditMode, setIsEditMode] = useState<boolean>(false)
-
-  useEffect(() => {
-    if (initialValues) {
-      const initialDate = initialValues.date ? new Date(initialValues.date) : null
-
-      if (initialDate) {
-        setMonthValue(initialDate)
-        form.setValues({ date: initialDate })
-      }
-
-      setIsEditMode(true)
-    } else {
-      setIsEditMode(false)
-    }
-  }, [initialValues, form.setValues])
-
   const { createBudget, updateBudget, isLoading } = useBudget()
 
-  const onSubmit = (values: createBudgetFormType) => {
-    const data = budgetDataTransformer({ ...values, date: values.date })
+  useEffect(() => {
+    form.setValues({
+      date: date || undefined,
+      incomes: incomes.map(({ name, amount }) => ({ name, amount })),
+      expenses: categories.map((category) => ({
+        category: category.name,
+        items: category.items.map(({ name, amount }) => ({ name, amount })),
+      })),
+    })
+  }, [date, incomes, categories])
 
-    if (!isEditMode) {
+  const handleSubmit = () => {
+    const values = form.values
+    const data = budgetDataTransformer({ ...values, date: date! })
+
+    if (!initialValues) {
       createBudget(data)
-    } else if (initialValues && initialValues.id) {
+    } else {
       updateBudget({ id: initialValues.id, ...data })
     }
+    onClose()
   }
 
-  return (
-    <Container size={560} my={40}>
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <div className={classes.relative}>
-          <MonthPickerInput
-            {...form.getInputProps('date')}
-            leftSection={icon}
-            leftSectionPointerEvents='none'
-            label='Budget date'
-            placeholder='Date'
-            value={monthValue}
-            onChange={(month) => {
-              form.setFieldValue('date', month!)
-              setMonthValue(month!)
-            }}
-          />
-        </div>
-        <Tabs defaultValue='incomes' mt='xl'>
-          <Tabs.List>
-            <Tabs.Tab value='incomes' color='green'>
-              Incomes
-            </Tabs.Tab>
-            <Tabs.Tab value='expenses' color='red'>
-              Expenses
-            </Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value='incomes'>
-            <ManageIncomes form={form} />
-          </Tabs.Panel>
-          <Tabs.Panel value='expenses'>
-            <ManageExpenses form={form} isEditMode={isEditMode} isLoading={isLoading} />
-          </Tabs.Panel>
-        </Tabs>
-      </form>
-    </Container>
-  )
-}
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source, type } = result
+    if (!destination) return
 
-const ManageIncomes = ({ form }: { form: UseFormReturnType<createBudgetFormType> }) => {
-  const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      return
+    }
 
-  const fields = form.values.incomes
+    if (type === 'expense') {
+      const newCategories = [...categories]
+      const sourceCategory = newCategories.find((c) => c.id === source.droppableId)
+      const destCategory = newCategories.find((c) => c.id === destination.droppableId)
 
-  return (
-    <Card radius='lg' py='xl' mt='sm' shadow='sm'>
-      <Card.Section inheritPadding px='xl' pb='xs'>
-        {fields.map((income, incomeIndex) => (
-          <SimpleGrid
-            cols={{ base: 1, sm: 3 }}
-            mb='sm'
-            className={classes.budgetLine}
-            key={incomeIndex}
-            style={{ gridTemplateColumns: '2fr 2fr auto' }}
-          >
-            <div className={classes.relative}>
-              <TextInput
-                label='Name'
-                placeholder='Name'
-                {...form.getInputProps(`incomes.${incomeIndex}.name`)}
-                classNames={{ error: classes.error }}
-              />
-            </div>
-            <div className={classes.relative}>
-              <NumberInput
-                label='Amount'
-                {...form.getInputProps(`incomes.${incomeIndex}.amount`, { valueAsNumber: true })}
-                classNames={{ error: classes.error }}
-                rightSection={currency}
-              />
-            </div>
-            <div className={classes.relative}>
-              <IconX
-                onClick={() => form.removeListItem('incomes', incomeIndex)}
-                className={classes.removeBudgetLineIcon}
-                style={{
-                  width: rem(20),
-                  height: rem(20),
-                  cursor: incomeIndex === 0 ? 'none' : 'pointer',
-                  pointerEvents: incomeIndex === 0 ? 'none' : 'auto',
-                  color: incomeIndex === 0 ? 'gray' : 'black',
-                }}
-                stroke={1.5}
-              />
-            </div>
-          </SimpleGrid>
-        ))}
-      </Card.Section>
-      <Card.Section inheritPadding mt='sm' px='xl'>
-        <Button
-          type='button'
-          variant='white'
-          color='black'
-          className={classes.formButton}
-          radius='md'
-          onClick={() => form.insertListItem('incomes', { ...defaultIncome })}
-        >
-          Add an income <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-        </Button>
-      </Card.Section>
-    </Card>
-  )
-}
+      if (!sourceCategory || !destCategory) return
 
-const ManageExpenses = ({
-  form,
-  isEditMode,
-  isLoading,
-}: {
-  form: UseFormReturnType<createBudgetFormType>
-  isEditMode: boolean
-  isLoading: boolean
-}) => {
-  const currency = <IconCurrencyEuro style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+      const [movedItem] = sourceCategory.items.splice(source.index, 1)
 
-  const append = form.insertListItem
-  const remove = form.removeListItem
-  const cards = form.getValues().expenses
+      if (source.droppableId === destination.droppableId) {
+        sourceCategory.items.splice(destination.index, 0, movedItem)
+      } else {
+        destCategory.items.splice(destination.index, 0, { ...movedItem })
+      }
 
-  const addCard = () => {
-    append('expenses', { ...defaultExpense })
-  }
-
-  const removeCard = (cardIndex: number) => {
-    remove('expenses', cardIndex)
-  }
-
-  const addExpenseItem = (cardIndex: number) => {
-    append(`expenses.${cardIndex}.items`, { name: '', amount: 0 })
-  }
-
-  const removeExpenseItem = (cardIndex: number, expenseIndex: number) => {
-    remove(`expenses.${cardIndex}.items`, expenseIndex)
-    const updatedCards = form.getValues().expenses
-    if (updatedCards[cardIndex].items.length === 0) {
-      removeCard(cardIndex)
+      setCategories(newCategories)
+    } else if (type === 'income') {
+      const newIncomes = [...incomes]
+      const [movedItem] = newIncomes.splice(source.index, 1)
+      newIncomes.splice(destination.index, 0, movedItem)
+      setIncomes(newIncomes)
     }
   }
 
+  const addCategory = () => {
+    const newCategoryId = String(categories.length + 1)
+    const newItemId = `${newCategoryId}-1`
+    setCategories([
+      ...categories,
+      {
+        id: newCategoryId,
+        name: '',
+        items: [{ id: newItemId, name: '', amount: 0 }],
+      },
+    ])
+  }
+
+  const addExpense = (categoryId: string) => {
+    setCategories(
+      categories.map((category) => {
+        if (category.id === categoryId) {
+          const newItemId = `${categoryId}-${category.items.length + 1}`
+          return {
+            ...category,
+            items: [...category.items, { id: newItemId, name: '', amount: 0 }],
+          }
+        }
+        return category
+      }),
+    )
+  }
+
+  const updateExpense = (
+    categoryId: string,
+    itemId: string,
+    field: 'name' | 'amount',
+    value: string | number,
+  ) => {
+    setCategories(
+      categories.map((category) => {
+        if (category.id === categoryId) {
+          return {
+            ...category,
+            items: category.items.map((item) => {
+              if (item.id === itemId) {
+                return { ...item, [field]: value }
+              }
+              return item
+            }),
+          }
+        }
+        return category
+      }),
+    )
+  }
+
+  const removeExpense = (categoryId: string, itemId: string) => {
+    const updatedCategories = categories.map((category) => {
+      if (category.id === categoryId) {
+        const updatedItems = category.items.filter((item) => item.id !== itemId)
+        return {
+          ...category,
+          items: updatedItems,
+        }
+      }
+      return category
+    })
+
+    // Supprimer la catégorie si elle n'a plus d'items
+    setCategories(updatedCategories.filter((category) => category.items.length > 0))
+  }
+
+  const removeCategory = (categoryId: string) => {
+    setCategories(categories.filter((category) => category.id !== categoryId))
+  }
+
+  const addIncome = () => {
+    const newId = String(incomes.length + 1)
+    setIncomes([...incomes, { id: newId, name: '', amount: 0 }])
+  }
+
+  const updateIncome = (itemId: string, field: 'name' | 'amount', value: string | number) => {
+    setIncomes(
+      incomes.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, [field]: value }
+        }
+        return item
+      }),
+    )
+  }
+
+  const removeIncome = (itemId: string) => {
+    setIncomes(incomes.filter((item) => item.id !== itemId))
+  }
+
+  const nextStep = () => setActive((current) => (current < 2 ? current + 1 : current))
+  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current))
+
   return (
-    <>
-      <div>
-        {cards.map((card: Card, cardIndex: number) => (
-          <Card radius='lg' py='xl' mt='sm' key={cardIndex} shadow='sm'>
-            <Card.Section inheritPadding>
-              <Group justify='space-between'>
-                <div className={classes.relative}>
-                  <TextInput
-                    variant='unstyled'
-                    placeholder='Expense category name'
-                    {...form.getInputProps(`expenses.${cardIndex}.category`)}
-                    classNames={{
-                      input: classes.categoryName,
-                      error: classes.errorCategory,
-                    }}
-                  />
-                </div>
-              </Group>
-            </Card.Section>
-            <Divider mt='xl' className={classes.divider} />
-            <Card.Section inheritPadding mt='lg' px='xl' pb='xs'>
-              {card.items.map((expenseItem, expenseIndex) => (
-                <SimpleGrid
-                  cols={{ base: 1, sm: 2 }}
-                  mb='sm'
-                  className={classes.budgetLine}
-                  key={expenseIndex}
-                  style={{ gridTemplateColumns: '2fr 2fr auto' }}
-                >
-                  <div className={classes.relative}>
-                    <TextInput
-                      label='Name'
-                      placeholder='Name'
-                      {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.name`)}
-                      classNames={{ error: classes.error }}
-                    />
-                  </div>
-                  <div className={classes.relative}>
-                    <NumberInput
-                      label='Amount'
-                      {...form.getInputProps(`expenses.${cardIndex}.items.${expenseIndex}.amount`, {
-                        valueAsNumber: true,
-                      })}
-                      classNames={{ error: classes.error }}
-                      rightSection={currency}
-                    />
-                  </div>
-                  <div className={classes.relative}>
-                    <IconX
-                      onClick={() => removeExpenseItem(cardIndex, expenseIndex)}
-                      className={classes.removeBudgetLineIcon}
+    <Container size='xl' py='xl'>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (form.validate().hasErrors) return
+          handleSubmit()
+        }}
+      >
+        <Stack gap='md'>
+          {/* Header */}
+          <Group justify='space-between' align='flex-end' mb='lg'>
+            <Group align='center' gap='xs'>
+              <ActionIcon variant='light' color='blue' onClick={onClose} size='lg'>
+                <IconChevronLeft style={{ width: rem(20), height: rem(20) }} />
+              </ActionIcon>
+              <Stack gap={0}>
+                <Title order={1} size='h2' fw={600} c='blue.7'>
+                  {initialValues ? 'Édition du budget' : 'Création du budget'}
+                </Title>
+                <Text c='dimmed' size='sm'>
+                  {initialValues ? 'Modification du budget mensuel' : 'Création du budget mensuel'}
+                </Text>
+              </Stack>
+            </Group>
+            <ActionIcon variant='light' color='blue' onClick={onClose} size='lg'>
+              <IconX style={{ width: rem(20), height: rem(20) }} />
+            </ActionIcon>
+          </Group>
+
+          {/* Stepper */}
+          <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
+            <Stepper.Step label='Date' description='Date du budget'>
+              <Card radius='lg' shadow='sm' mt='md'>
+                <Card.Section inheritPadding py='md'>
+                  <Group gap='xs'>
+                    <IconCalendar
                       style={{
                         width: rem(20),
                         height: rem(20),
-                        cursor: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'pointer',
-                        pointerEvents: cardIndex === 0 && expenseIndex === 0 ? 'none' : 'auto',
-                        color: cardIndex === 0 && expenseIndex === 0 ? 'gray' : 'black',
+                        color: 'var(--mantine-color-blue-6)',
                       }}
-                      stroke={1.5}
                     />
-                  </div>
-                </SimpleGrid>
-              ))}
-            </Card.Section>
-            <Card.Section inheritPadding mt='sm' px='xl'>
-              <Button
-                type='button'
-                variant='white'
-                color='black'
-                radius='md'
-                className={classes.formButton}
-                onClick={() => addExpenseItem(cardIndex)}
-              >
-                Add an expense <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+                    <Text fw={500} size='lg'>
+                      Date du budget
+                    </Text>
+                  </Group>
+                </Card.Section>
+                <Card.Section withBorder inheritPadding py='md'>
+                  <Box bg='var(--mantine-color-gray-0)' p='md'>
+                    <div
+                      style={{
+                        background: 'white',
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid var(--mantine-color-gray-2)',
+                      }}
+                    >
+                      <Grid align='center'>
+                        <Grid.Col span={1}>
+                          <IconCalendar
+                            style={{
+                              width: rem(20),
+                              height: rem(20),
+                              color: 'var(--mantine-color-gray-5)',
+                            }}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={11}>
+                          <MonthPickerInput
+                            placeholder='Sélectionnez un mois'
+                            value={date}
+                            onChange={setDate}
+                            required
+                            locale='fr'
+                            valueFormat='MMMM YYYY'
+                            styles={{
+                              input: {
+                                border: 'none',
+                                backgroundColor: 'transparent',
+                                '&:focus': {
+                                  border: 'none',
+                                },
+                              },
+                            }}
+                            mx='auto'
+                            w='100%'
+                          />
+                        </Grid.Col>
+                      </Grid>
+                    </div>
+                  </Box>
+                </Card.Section>
+              </Card>
+            </Stepper.Step>
+
+            <Stepper.Step label='Revenus' description='Sources de revenus'>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Card radius='lg' shadow='sm' mt='md'>
+                  <Card.Section inheritPadding py='md'>
+                    <Group gap='xs'>
+                      <IconWallet
+                        style={{
+                          width: rem(20),
+                          height: rem(20),
+                          color: 'var(--mantine-color-teal-6)',
+                        }}
+                      />
+                      <Text fw={500} size='lg'>
+                        Revenus
+                      </Text>
+                    </Group>
+                  </Card.Section>
+                  <Card.Section withBorder inheritPadding py='md'>
+                    <Droppable droppableId='incomes' type='income'>
+                      {(provided) => (
+                        <Box bg='var(--mantine-color-gray-0)' p='md'>
+                          <Stack gap='xs' ref={provided.innerRef} {...provided.droppableProps}>
+                            {incomes.map((income, index) => (
+                              <Draggable key={income.id} draggableId={income.id} index={index}>
+                                {(provided, snapshot) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    style={{
+                                      ...provided.draggableProps.style,
+                                      opacity: snapshot.isDragging ? 0.8 : 1,
+                                      background: 'white',
+                                      padding: '8px',
+                                      borderRadius: '4px',
+                                      border: '1px solid var(--mantine-color-gray-2)',
+                                    }}
+                                  >
+                                    <Grid align='center'>
+                                      <Grid.Col span={{ base: 12, sm: 1 }}>
+                                        <Group
+                                          gap='xs'
+                                          wrap='nowrap'
+                                          justify='flex-end'
+                                          style={{ width: '100%' }}
+                                        >
+                                          {!isMobile && (
+                                            <div {...provided.dragHandleProps}>
+                                              <IconGripVertical
+                                                style={{
+                                                  width: rem(20),
+                                                  height: rem(20),
+                                                  color: 'var(--mantine-color-gray-5)',
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+                                        </Group>
+                                      </Grid.Col>
+                                      <Grid.Col span={{ base: 12, sm: 5 }}>
+                                        <TextInput
+                                          placeholder='Source de revenu'
+                                          value={income.name}
+                                          onChange={(e) =>
+                                            updateIncome(income.id, 'name', e.target.value)
+                                          }
+                                          rightSection={
+                                            isMobile && (
+                                              <ActionIcon
+                                                color='red'
+                                                variant='light'
+                                                onClick={() => removeIncome(income.id)}
+                                                size='sm'
+                                              >
+                                                <IconX
+                                                  style={{ width: rem(16), height: rem(16) }}
+                                                />
+                                              </ActionIcon>
+                                            )
+                                          }
+                                        />
+                                      </Grid.Col>
+                                      <Grid.Col span={{ base: 12, sm: 5 }}>
+                                        <NumberInput
+                                          placeholder='Montant'
+                                          value={income.amount}
+                                          onChange={(value) =>
+                                            updateIncome(income.id, 'amount', value || 0)
+                                          }
+                                          suffix=' €'
+                                          hideControls
+                                        />
+                                      </Grid.Col>
+                                      {!isMobile && (
+                                        <Grid.Col span={1}>
+                                          <ActionIcon
+                                            color='red'
+                                            variant='light'
+                                            onClick={() => removeIncome(income.id)}
+                                          >
+                                            <IconX style={{ width: rem(16), height: rem(16) }} />
+                                          </ActionIcon>
+                                        </Grid.Col>
+                                      )}
+                                    </Grid>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                            <Button
+                              variant='light'
+                              leftSection={<IconPlus size={16} />}
+                              onClick={addIncome}
+                              fullWidth
+                            >
+                              Ajouter un revenu
+                            </Button>
+                          </Stack>
+                        </Box>
+                      )}
+                    </Droppable>
+                  </Card.Section>
+                </Card>
+              </DragDropContext>
+            </Stepper.Step>
+
+            <Stepper.Step label='Dépenses' description='Catégories et montants'>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Card radius='lg' shadow='sm' mt='md'>
+                  <Card.Section inheritPadding py='md'>
+                    <Group gap='xs'>
+                      <IconReceipt2
+                        style={{
+                          width: rem(20),
+                          height: rem(20),
+                          color: 'var(--mantine-color-red-6)',
+                        }}
+                      />
+                      <Text fw={500} size='lg'>
+                        Dépenses
+                      </Text>
+                    </Group>
+                  </Card.Section>
+                  <Card.Section withBorder inheritPadding py='md'>
+                    <Stack gap='xl'>
+                      {categories.map((category) => (
+                        <div key={category.id}>
+                          <Group justify='space-between' mb='xs'>
+                            <TextInput
+                              placeholder='Nom de la catégorie'
+                              value={category.name}
+                              onChange={(e) => {
+                                setCategories(
+                                  categories.map((c) =>
+                                    c.id === category.id ? { ...c, name: e.target.value } : c,
+                                  ),
+                                )
+                              }}
+                              styles={{
+                                input: {
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  fontSize: '1.1rem',
+                                  fontWeight: 600,
+                                  color: 'var(--mantine-color-blue-7)',
+                                  cursor: 'text',
+                                  paddingRight: isMobile ? '3rem' : '2rem',
+                                  transition: 'all 0.2s',
+                                  '&:hover, &:focus': {
+                                    backgroundColor: 'var(--mantine-color-blue-0)',
+                                  },
+                                  '&::placeholder': {
+                                    color: 'var(--mantine-color-gray-5)',
+                                  },
+                                },
+                                root: {
+                                  width: '100%',
+                                },
+                              }}
+                              rightSection={
+                                isMobile ? (
+                                  <ActionIcon
+                                    color='red'
+                                    variant='light'
+                                    onClick={() => removeCategory(category.id)}
+                                    size='sm'
+                                  >
+                                    <IconTrash style={{ width: rem(16), height: rem(16) }} />
+                                  </ActionIcon>
+                                ) : (
+                                  <ActionIcon
+                                    color='red'
+                                    variant='light'
+                                    onClick={() => removeCategory(category.id)}
+                                  >
+                                    <IconTrash style={{ width: rem(16), height: rem(16) }} />
+                                  </ActionIcon>
+                                )
+                              }
+                            />
+                          </Group>
+
+                          <Droppable droppableId={category.id} type='expense'>
+                            {(provided) => (
+                              <Box bg='var(--mantine-color-gray-0)' p='md'>
+                                <Stack
+                                  gap='xs'
+                                  ref={provided.innerRef}
+                                  {...provided.droppableProps}
+                                >
+                                  {category.items.map((item, index) => (
+                                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                                      {(provided, snapshot) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          style={{
+                                            ...provided.draggableProps.style,
+                                            opacity: snapshot.isDragging ? 0.8 : 1,
+                                            background: 'white',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid var(--mantine-color-gray-2)',
+                                          }}
+                                        >
+                                          <Grid align='center'>
+                                            <Grid.Col span={{ base: 12, sm: 1 }}>
+                                              <Group
+                                                gap='xs'
+                                                wrap='nowrap'
+                                                justify='flex-end'
+                                                style={{ width: '100%' }}
+                                              >
+                                                {!isMobile && (
+                                                  <div {...provided.dragHandleProps}>
+                                                    <IconGripVertical
+                                                      style={{
+                                                        width: rem(20),
+                                                        height: rem(20),
+                                                        color: 'var(--mantine-color-gray-5)',
+                                                      }}
+                                                    />
+                                                  </div>
+                                                )}
+                                              </Group>
+                                            </Grid.Col>
+                                            <Grid.Col span={{ base: 12, sm: 5 }}>
+                                              <TextInput
+                                                placeholder='Nom de la dépense'
+                                                value={item.name}
+                                                onChange={(e) =>
+                                                  updateExpense(
+                                                    category.id,
+                                                    item.id,
+                                                    'name',
+                                                    e.target.value,
+                                                  )
+                                                }
+                                                rightSection={
+                                                  isMobile && (
+                                                    <ActionIcon
+                                                      color='red'
+                                                      variant='light'
+                                                      onClick={() =>
+                                                        removeExpense(category.id, item.id)
+                                                      }
+                                                      size='sm'
+                                                    >
+                                                      <IconX
+                                                        style={{ width: rem(16), height: rem(16) }}
+                                                      />
+                                                    </ActionIcon>
+                                                  )
+                                                }
+                                              />
+                                            </Grid.Col>
+                                            <Grid.Col span={{ base: 12, sm: 5 }}>
+                                              <NumberInput
+                                                placeholder='Montant'
+                                                value={item.amount}
+                                                onChange={(value) =>
+                                                  updateExpense(
+                                                    category.id,
+                                                    item.id,
+                                                    'amount',
+                                                    value || 0,
+                                                  )
+                                                }
+                                                suffix=' €'
+                                                hideControls
+                                              />
+                                            </Grid.Col>
+                                            {!isMobile && (
+                                              <Grid.Col span={1}>
+                                                <ActionIcon
+                                                  color='red'
+                                                  variant='light'
+                                                  onClick={() =>
+                                                    removeExpense(category.id, item.id)
+                                                  }
+                                                >
+                                                  <IconX
+                                                    style={{ width: rem(16), height: rem(16) }}
+                                                  />
+                                                </ActionIcon>
+                                              </Grid.Col>
+                                            )}
+                                          </Grid>
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {provided.placeholder}
+                                  <Button
+                                    variant='light'
+                                    leftSection={<IconPlus size={16} />}
+                                    onClick={() => addExpense(category.id)}
+                                    fullWidth
+                                  >
+                                    Ajouter une dépense
+                                  </Button>
+                                </Stack>
+                              </Box>
+                            )}
+                          </Droppable>
+                        </div>
+                      ))}
+                      <Group justify='center'>
+                        <Button
+                          variant='light'
+                          leftSection={<IconPlus size={16} />}
+                          onClick={addCategory}
+                        >
+                          Ajouter une catégorie
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Card.Section>
+                </Card>
+              </DragDropContext>
+            </Stepper.Step>
+          </Stepper>
+
+          {/* Actions */}
+          <Group
+            justify='flex-end'
+            mt='xl'
+            style={{
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '0.5rem' : undefined,
+            }}
+          >
+            {active > 0 && (
+              <Button variant='light' onClick={prevStep} fullWidth={isMobile}>
+                Retour
               </Button>
-            </Card.Section>
-          </Card>
-        ))}
-        <Button
-          type='button'
-          variant='white'
-          color='black'
-          className={cx(classes.formButton, classes.shadowButton)}
-          radius='md'
-          onClick={addCard}
-          mt='sm'
-          fullWidth
-        >
-          Add category <IconPlus style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-        </Button>
-        <Button
-          type='submit'
-          variant='white'
-          color='black'
-          className={cx(classes.formButton, classes.shadowButton)}
-          radius='md'
-          mt='sm'
-          style={{ float: 'right' }}
-          loading={isLoading}
-        >
-          {isEditMode ? 'Update' : 'Create'}{' '}
-          <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-        </Button>
-      </div>
-    </>
+            )}
+            {active < 2 ? (
+              <Button onClick={nextStep} fullWidth={isMobile}>
+                Suivant
+              </Button>
+            ) : (
+              <>
+                <Button variant='light' color='red' onClick={onClose} fullWidth={isMobile}>
+                  Annuler
+                </Button>
+                <Button color='blue' type='submit' loading={isLoading} fullWidth={isMobile}>
+                  {initialValues ? 'Mettre à jour' : 'Créer'}
+                </Button>
+              </>
+            )}
+          </Group>
+        </Stack>
+      </form>
+    </Container>
   )
 }

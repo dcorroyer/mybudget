@@ -41,7 +41,7 @@ export function useTransactions() {
         queryKey: ['transactions'],
         refetchType: 'all',
       })
-      navigate('/transactions')
+      navigate('/')
     },
     onError: () => {
       notifications.show({
@@ -62,7 +62,6 @@ export function useTransactions() {
         color: 'green',
       })
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
-      navigate('/transactions')
     },
     onError: () => {
       notifications.show({

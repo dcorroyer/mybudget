@@ -25,7 +25,7 @@ export function useAccount() {
         color: 'green',
       })
       queryClient.invalidateQueries({ queryKey: ['accounts'], refetchType: 'all' })
-      navigate('/accounts')
+      navigate('/')
     },
     onError: () => {
       notifications.show({
@@ -46,7 +46,7 @@ export function useAccount() {
         color: 'green',
       })
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
-      navigate('/accounts')
+      navigate('/')
     },
     onError: () => {
       notifications.show({

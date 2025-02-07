@@ -32,7 +32,7 @@ import { Link, useParams } from 'react-router-dom'
 import { generateSankeyData, groupExpensesByCategory } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
 
-const DottedLine: React.FC = () => (
+const DottedLine = () => (
   <div
     style={{
       flex: 1,
@@ -43,7 +43,7 @@ const DottedLine: React.FC = () => (
   />
 )
 
-const BudgetDetail: React.FC = () => {
+const BudgetDetail = () => {
   const [editMode, setEditMode] = useState(false)
   const [chartModalOpened, setChartModalOpened] = useState(false)
   const { id } = useParams()
@@ -118,7 +118,7 @@ const BudgetDetail: React.FC = () => {
                 <IconPigMoney
                   style={{ width: rem(20), height: rem(20), color: 'var(--mantine-color-blue-6)' }}
                 />
-                <Text fw={500}>Capacité d'épargne</Text>
+                <Text fw={500}>Capacité d&apos;épargne</Text>
               </Group>
               <Text size='xl' fw={700} c='blue'>
                 {formatAmount(budgetData.savingCapacity)} €

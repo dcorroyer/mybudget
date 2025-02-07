@@ -17,6 +17,7 @@ import {
 } from '@mantine/core'
 import { MonthPickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
+import { useViewportSize } from '@mantine/hooks'
 import {
   IconCalendar,
   IconChevronLeft,
@@ -58,6 +59,8 @@ interface BudgetFormProps {
 }
 
 export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }) => {
+  const { width } = useViewportSize()
+  const isMobile = width < 768
   const [active, setActive] = useState(0)
   const [date, setDate] = useState<Date | null>(
     initialValues?.date ? new Date(initialValues.date) : new Date(),
@@ -385,27 +388,50 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                     }}
                                   >
                                     <Grid align='center'>
-                                      <Grid.Col span={1}>
-                                        <div {...provided.dragHandleProps}>
-                                          <IconGripVertical
-                                            style={{
-                                              width: rem(20),
-                                              height: rem(20),
-                                              color: 'var(--mantine-color-gray-5)',
-                                            }}
-                                          />
-                                        </div>
+                                      <Grid.Col span={{ base: 12, sm: 1 }}>
+                                        <Group
+                                          gap='xs'
+                                          wrap='nowrap'
+                                          justify='flex-end'
+                                          style={{ width: '100%' }}
+                                        >
+                                          {!isMobile && (
+                                            <div {...provided.dragHandleProps}>
+                                              <IconGripVertical
+                                                style={{
+                                                  width: rem(20),
+                                                  height: rem(20),
+                                                  color: 'var(--mantine-color-gray-5)',
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+                                        </Group>
                                       </Grid.Col>
-                                      <Grid.Col span={5}>
+                                      <Grid.Col span={{ base: 12, sm: 5 }}>
                                         <TextInput
                                           placeholder='Source de revenu'
                                           value={income.name}
                                           onChange={(e) =>
                                             updateIncome(income.id, 'name', e.target.value)
                                           }
+                                          rightSection={
+                                            isMobile && (
+                                              <ActionIcon
+                                                color='red'
+                                                variant='light'
+                                                onClick={() => removeIncome(income.id)}
+                                                size='sm'
+                                              >
+                                                <IconX
+                                                  style={{ width: rem(16), height: rem(16) }}
+                                                />
+                                              </ActionIcon>
+                                            )
+                                          }
                                         />
                                       </Grid.Col>
-                                      <Grid.Col span={5}>
+                                      <Grid.Col span={{ base: 12, sm: 5 }}>
                                         <NumberInput
                                           placeholder='Montant'
                                           value={income.amount}
@@ -413,10 +439,11 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                             updateIncome(income.id, 'amount', value || 0)
                                           }
                                           suffix=' €'
+                                          hideControls
                                         />
                                       </Grid.Col>
-                                      <Grid.Col span={1}>
-                                        <Group justify='end'>
+                                      {!isMobile && (
+                                        <Grid.Col span={1}>
                                           <ActionIcon
                                             color='red'
                                             variant='light'
@@ -424,8 +451,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                           >
                                             <IconX style={{ width: rem(16), height: rem(16) }} />
                                           </ActionIcon>
-                                        </Group>
-                                      </Grid.Col>
+                                        </Grid.Col>
+                                      )}
                                     </Grid>
                                   </div>
                                 )}
@@ -489,7 +516,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                   fontWeight: 600,
                                   color: 'var(--mantine-color-blue-7)',
                                   cursor: 'text',
-                                  paddingRight: '2rem',
+                                  paddingRight: isMobile ? '3rem' : '2rem',
                                   transition: 'all 0.2s',
                                   '&:hover, &:focus': {
                                     backgroundColor: 'var(--mantine-color-blue-0)',
@@ -498,36 +525,31 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                     color: 'var(--mantine-color-gray-5)',
                                   },
                                 },
-                                wrapper: {
-                                  width: '300px',
-                                  position: 'relative',
-                                  '&::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    right: '0.5rem',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    width: '1rem',
-                                    height: '1rem',
-                                    backgroundImage:
-                                      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'%3E%3C/path%3E%3C/svg%3E\")",
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: 'contain',
-                                    opacity: 0.5,
-                                  },
-                                  '&:hover::after': {
-                                    opacity: 1,
-                                  },
+                                root: {
+                                  width: '100%',
                                 },
                               }}
+                              rightSection={
+                                isMobile ? (
+                                  <ActionIcon
+                                    color='red'
+                                    variant='light'
+                                    onClick={() => removeCategory(category.id)}
+                                    size='sm'
+                                  >
+                                    <IconTrash style={{ width: rem(16), height: rem(16) }} />
+                                  </ActionIcon>
+                                ) : (
+                                  <ActionIcon
+                                    color='red'
+                                    variant='light'
+                                    onClick={() => removeCategory(category.id)}
+                                  >
+                                    <IconTrash style={{ width: rem(16), height: rem(16) }} />
+                                  </ActionIcon>
+                                )
+                              }
                             />
-                            <ActionIcon
-                              color='red'
-                              variant='light'
-                              onClick={() => removeCategory(category.id)}
-                            >
-                              <IconTrash style={{ width: rem(16), height: rem(16) }} />
-                            </ActionIcon>
                           </Group>
 
                           <Droppable droppableId={category.id} type='expense'>
@@ -554,18 +576,27 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                           }}
                                         >
                                           <Grid align='center'>
-                                            <Grid.Col span={1}>
-                                              <div {...provided.dragHandleProps}>
-                                                <IconGripVertical
-                                                  style={{
-                                                    width: rem(20),
-                                                    height: rem(20),
-                                                    color: 'var(--mantine-color-gray-5)',
-                                                  }}
-                                                />
-                                              </div>
+                                            <Grid.Col span={{ base: 12, sm: 1 }}>
+                                              <Group
+                                                gap='xs'
+                                                wrap='nowrap'
+                                                justify='flex-end'
+                                                style={{ width: '100%' }}
+                                              >
+                                                {!isMobile && (
+                                                  <div {...provided.dragHandleProps}>
+                                                    <IconGripVertical
+                                                      style={{
+                                                        width: rem(20),
+                                                        height: rem(20),
+                                                        color: 'var(--mantine-color-gray-5)',
+                                                      }}
+                                                    />
+                                                  </div>
+                                                )}
+                                              </Group>
                                             </Grid.Col>
-                                            <Grid.Col span={5}>
+                                            <Grid.Col span={{ base: 12, sm: 5 }}>
                                               <TextInput
                                                 placeholder='Nom de la dépense'
                                                 value={item.name}
@@ -577,9 +608,25 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                                     e.target.value,
                                                   )
                                                 }
+                                                rightSection={
+                                                  isMobile && (
+                                                    <ActionIcon
+                                                      color='red'
+                                                      variant='light'
+                                                      onClick={() =>
+                                                        removeExpense(category.id, item.id)
+                                                      }
+                                                      size='sm'
+                                                    >
+                                                      <IconX
+                                                        style={{ width: rem(16), height: rem(16) }}
+                                                      />
+                                                    </ActionIcon>
+                                                  )
+                                                }
                                               />
                                             </Grid.Col>
-                                            <Grid.Col span={5}>
+                                            <Grid.Col span={{ base: 12, sm: 5 }}>
                                               <NumberInput
                                                 placeholder='Montant'
                                                 value={item.amount}
@@ -592,10 +639,11 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                                   )
                                                 }
                                                 suffix=' €'
+                                                hideControls
                                               />
                                             </Grid.Col>
-                                            <Grid.Col span={1}>
-                                              <Group justify='end'>
+                                            {!isMobile && (
+                                              <Grid.Col span={1}>
                                                 <ActionIcon
                                                   color='red'
                                                   variant='light'
@@ -607,8 +655,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                                     style={{ width: rem(16), height: rem(16) }}
                                                   />
                                                 </ActionIcon>
-                                              </Group>
-                                            </Grid.Col>
+                                              </Grid.Col>
+                                            )}
                                           </Grid>
                                         </div>
                                       )}
@@ -646,20 +694,29 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
           </Stepper>
 
           {/* Actions */}
-          <Group justify='flex-end' mt='xl'>
+          <Group
+            justify='flex-end'
+            mt='xl'
+            style={{
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '0.5rem' : undefined,
+            }}
+          >
             {active > 0 && (
-              <Button variant='light' onClick={prevStep}>
+              <Button variant='light' onClick={prevStep} fullWidth={isMobile}>
                 Retour
               </Button>
             )}
             {active < 2 ? (
-              <Button onClick={nextStep}>Suivant</Button>
+              <Button onClick={nextStep} fullWidth={isMobile}>
+                Suivant
+              </Button>
             ) : (
               <>
-                <Button variant='light' color='red' onClick={onClose}>
+                <Button variant='light' color='red' onClick={onClose} fullWidth={isMobile}>
                   Annuler
                 </Button>
-                <Button color='blue' type='submit' loading={isLoading}>
+                <Button color='blue' type='submit' loading={isLoading} fullWidth={isMobile}>
                   {initialValues ? 'Mettre à jour' : 'Créer'}
                 </Button>
               </>

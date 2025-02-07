@@ -27,7 +27,7 @@ import { Transaction } from '../types/transactions'
 
 interface TransactionListProps {
   transactions: { data: Transaction[] }
-  onEdit: (transaction: any) => void
+  onEdit: (transaction: Transaction) => void
   onDelete: (accountId: number, transactionId: number) => void
 }
 
@@ -88,7 +88,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }: TransactionListProp
 
 interface TransactionsSectionProps {
   selectedAccounts: string[]
-  onEdit: (transaction: any) => void
+  onEdit: (transaction: Transaction) => void
   onDelete: (accountId: number, transactionId: number) => void
   onCreateClick: () => void
 }
@@ -150,6 +150,19 @@ export const TransactionsSection = ({
                 total={Math.ceil((transactions?.meta?.total || 0) / 20)}
                 color='blue'
                 withEdges
+                styles={{
+                  control: {
+                    padding: isMobile ? '0 0.25rem' : undefined,
+                    minWidth: isMobile ? '1.5rem' : undefined,
+                    height: isMobile ? '1.5rem' : undefined,
+                    fontSize: isMobile ? '0.75rem' : undefined,
+                  },
+                  dots: {
+                    display: isMobile ? 'none' : undefined,
+                  },
+                }}
+                siblings={isMobile ? 0 : 1}
+                boundaries={isMobile ? 1 : 2}
               />
             </Group>
           </>

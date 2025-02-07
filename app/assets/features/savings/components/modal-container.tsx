@@ -1,5 +1,7 @@
 import { Button, Group, Modal, Text } from '@mantine/core'
 import React from 'react'
+import { Account } from '../types/accounts'
+import { Transaction } from '../types/transactions'
 import { AccountForm } from './account-form'
 import { TransactionForm } from './transaction-form'
 
@@ -14,7 +16,7 @@ interface ModalContainerProps {
       edit: {
         opened: boolean
         onClose: () => void
-        selectedTransaction: any
+        selectedTransaction: Transaction | null
         onSuccess: () => void
       }
       create: {
@@ -32,7 +34,7 @@ interface ModalContainerProps {
       edit: {
         opened: boolean
         onClose: () => void
-        selectedAccount: any
+        selectedAccount: Account | null
         onSuccess: () => void
       }
       create: {
@@ -73,7 +75,7 @@ export const ModalContainer = ({ modals }: ModalContainerProps) => (
       centered
     >
       <TransactionForm
-        initialValues={modals.transaction.edit.selectedTransaction}
+        initialValues={modals.transaction.edit.selectedTransaction ?? undefined}
         onSuccess={modals.transaction.edit.onSuccess}
         onClose={modals.transaction.edit.onClose}
       />
@@ -114,8 +116,8 @@ export const ModalContainer = ({ modals }: ModalContainerProps) => (
     >
       <AccountForm
         initialValues={{
-          id: modals.account.edit.selectedAccount?.id,
-          name: modals.account.edit.selectedAccount?.name,
+          id: modals.account.edit.selectedAccount?.id ?? undefined,
+          name: modals.account.edit.selectedAccount?.name ?? '',
         }}
         onSuccess={modals.account.edit.onSuccess}
       />

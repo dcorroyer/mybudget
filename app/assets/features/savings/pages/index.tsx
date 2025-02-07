@@ -16,6 +16,8 @@ import { ModalContainer } from '../components/modal-container'
 import { SavingsChartSection } from '../components/savings-chart-section'
 import { TransactionsSection } from '../components/transactions-section'
 import { useTransactions } from '../hooks/useTransactions'
+import { Account } from '../types/accounts'
+import { Transaction } from '../types/transactions'
 
 const SavingsIndex = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('6')
@@ -25,7 +27,7 @@ const SavingsIndex = () => {
     useDisclosure(false)
   const [openedEdit, { open: openEdit, close: closeEdit }] = useDisclosure(false)
   const [openedCreate, { open: openCreate, close: closeCreate }] = useDisclosure(false)
-  const [selectedTransaction, setSelectedTransaction] = useState<any>(null)
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [accountIdOfTransactionToDelete, setAccountIdOfTransactionToDelete] = useState<
     number | null
   >(null)
@@ -36,7 +38,7 @@ const SavingsIndex = () => {
     useDisclosure(false)
   const [openedAccountEdit, { open: openAccountEdit, close: closeAccountEdit }] =
     useDisclosure(false)
-  const [selectedAccount, setSelectedAccount] = useState<any>(null)
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
   const [accountIdToDelete, setAccountIdToDelete] = useState<string | null>(null)
 
   const { useAccountList, deleteAccount } = useAccount()
@@ -59,7 +61,7 @@ const SavingsIndex = () => {
     }
   }
 
-  const handleEdit = (transaction: any) => {
+  const handleEdit = (transaction: Transaction) => {
     setSelectedTransaction(transaction)
     openEdit()
   }
@@ -125,10 +127,10 @@ const SavingsIndex = () => {
         <Group justify='space-between' align='flex-end'>
           <Stack gap={0}>
             <Title order={1} size='h2' fw={600} c='blue.7'>
-              Suivi de l'épargne
+              Suivi de l&apos;épargne
             </Title>
             <Text c='dimmed' size='sm'>
-              Visualisez l'évolution de vos économies
+              Visualisez l&apos;évolution de vos économies
             </Text>
           </Stack>
         </Group>

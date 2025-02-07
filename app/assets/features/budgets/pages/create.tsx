@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { BudgetForm } from '../components/budget-form'
 
-const BudgetCreate: React.FC = () => {
+const BudgetCreate = () => {
   const navigate = useNavigate()
 
   return <BudgetForm onClose={() => navigate('/budgets')} />

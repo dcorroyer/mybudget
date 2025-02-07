@@ -97,7 +97,7 @@ const BudgetGrid = ({
               <Stack gap={8}>
                 <Group justify='apart'>
                   <Text size='sm' c='dimmed'>
-                    Capacité d'épargne
+                    Capacité d&apos;épargne
                   </Text>
                   <Text size='sm' c='blue' fw={500}>
                     {budget.savingCapacity.toLocaleString('fr-FR')} €
@@ -128,7 +128,7 @@ const BudgetGrid = ({
   )
 }
 
-const BudgetList = () => {
+const BudgetIndex = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false)
   const [openedDuplicate, { open: openDuplicate, close: closeDuplicate }] = useDisclosure(false)
@@ -280,4 +280,4 @@ const BudgetList = () => {
   )
 }
 
-export default BudgetList
+export default BudgetIndex

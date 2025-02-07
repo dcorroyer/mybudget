@@ -6,7 +6,7 @@ import AuthenticatedLayout from './layouts/authenticated-layout'
 const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
 const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
 
-const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
+const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages'))
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
 const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <BudgetListPage />
+          <BudgetIndexPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

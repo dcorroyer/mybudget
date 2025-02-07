@@ -2,8 +2,8 @@ export interface Transaction {
   id: number
   description: string
   amount: number
+  date: string
   type: 'CREDIT' | 'DEBIT'
-  date: Date
   account: {
     id: number
     name: string
@@ -21,4 +21,12 @@ export interface TransactionFilterParams {
   accountIds?: number[]
   page?: number
   perPage?: number
+}
+
+export interface TransactionFormData {
+  description: string
+  amount: number
+  date: Date
+  type: 'CREDIT' | 'DEBIT'
+  accountId: number
 }

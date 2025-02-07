@@ -24,7 +24,7 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
           <Group gap='xs'>
             <IconChartLine size={20} style={{ color: 'var(--mantine-color-blue-6)' }} />
             <Text fw={500} size='md'>
-              Évolution de l'épargne
+              Évolution de l&apos;épargne
             </Text>
           </Group>
           <Badge size='lg' variant='light'>

@@ -440,6 +440,7 @@ const SavingsIndex = () => {
               closeEdit()
               setSelectedTransaction(null)
             }}
+            onClose={closeEdit}
           />
         </Modal>
         <Modal
@@ -454,6 +455,7 @@ const SavingsIndex = () => {
             onSuccess={() => {
               closeCreate()
             }}
+            onClose={closeCreate}
           />
         </Modal>
         <Modal

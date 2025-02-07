@@ -1,13 +1,11 @@
-import { Button, Card, Container, rem, TextInput } from '@mantine/core'
+import { Button, Card, Group, Stack, Text, TextInput, rem } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconCheck } from '@tabler/icons-react'
+import { IconBuildingBank, IconCheck } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React from 'react'
 
 import { useAccount } from '../hooks/useAccount'
 import { accountFormSchema, createAccountFormType } from '../schemas/accounts'
-
-import classes from './account-form.module.css'
 
 interface AccountFormComponentProps {
   initialValues?: {
@@ -48,32 +46,52 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   }
 
   return (
-    <Container size={560} my={40}>
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <Card radius='lg' py='xl' shadow='sm'>
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <Stack gap='md'>
+        <Card radius='lg' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
-            <TextInput
-              label='Name'
-              placeholder='Account name'
-              {...form.getInputProps('name')}
-              classNames={{ error: classes.error }}
-            />
+            <Group gap='xs' my='md'>
+              <IconBuildingBank
+                style={{ width: rem(20), height: rem(20), color: 'var(--mantine-color-blue-6)' }}
+              />
+              <Text fw={500} size='md'>
+                Détails du compte
+              </Text>
+            </Group>
           </Card.Section>
-          <Card.Section inheritPadding mt='sm' px='xl'>
-            <Button
-              type='submit'
-              variant='white'
-              color='black'
-              className={classes.formButton}
-              radius='md'
-              loading={isLoading}
-            >
-              {isEditMode ? 'Update' : 'Create'}{' '}
-              <IconCheck style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-            </Button>
+
+          <Card.Section withBorder inheritPadding px='xl' py='md'>
+            <Stack gap='md'>
+              <TextInput
+                label='Nom du compte'
+                placeholder='ex: Livret A, PEL...'
+                {...form.getInputProps('name')}
+                leftSection={<IconBuildingBank style={{ width: rem(16), height: rem(16) }} />}
+                styles={{
+                  input: {
+                    backgroundColor: 'var(--mantine-color-gray-0)',
+                  },
+                }}
+              />
+            </Stack>
+          </Card.Section>
+
+          <Card.Section inheritPadding px='xl' py='md'>
+            <Group justify='flex-end' gap='sm'>
+              <Button variant='light' color='gray' onClick={onSuccess}>
+                Annuler
+              </Button>
+              <Button
+                type='submit'
+                loading={isLoading}
+                leftSection={<IconCheck style={{ width: rem(16), height: rem(16) }} />}
+              >
+                {isEditMode ? 'Mettre à jour' : 'Créer'}
+              </Button>
+            </Group>
           </Card.Section>
         </Card>
-      </form>
-    </Container>
+      </Stack>
+    </form>
   )
 }

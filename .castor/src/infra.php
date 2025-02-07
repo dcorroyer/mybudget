@@ -44,7 +44,7 @@ function build(): void
 {
     with(static function () {
         $command = sprintf(
-            'docker build --build-arg BUILD_TIME="%s" -t %s .',
+            'docker build --platform=linux/amd64 --build-arg BUILD_TIME="%s" -t %s .',
             (new DateTime(timezone: new DateTimeZone('Europe/Paris')))->format('Y-m-d\TH:i:s'),
             variable('image'),
         );

@@ -35,8 +35,9 @@ import { SavingsChart } from '../components/savings-chart'
 import { TransactionForm } from '../components/transaction-form'
 import { useSavings } from '../hooks/useSavings'
 import { useTransactions } from '../hooks/useTransactions'
+import { Transaction } from '../types/transactions'
 
-const SavingsList = () => {
+const SavingsIndex = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('6')
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([])
   const [openedTransactionDelete, { open: openTransactionDelete, close: closeTransactionDelete }] =
@@ -58,13 +59,8 @@ const SavingsList = () => {
   const [selectedAccount, setSelectedAccount] = useState<any>(null)
 
   const { useAccountList, deleteAccount } = useAccount()
-  const { useBalanceHistory } = useSavings()
-  const { data: accountList } = useAccountList()
 
-  const { data: savingsData, isFetching } = useBalanceHistory({
-    ...(selectedPeriod && { period: selectedPeriod as '3' | '6' | '12' }),
-    ...(selectedAccounts.length > 0 && { accountIds: selectedAccounts.map((id) => parseInt(id)) }),
-  })
+  const { data: accountList } = useAccountList()
 
   const accountOptions =
     accountList?.data.map((account) => ({
@@ -98,9 +94,9 @@ const SavingsList = () => {
     }
   }
 
-  const TransactionList = ({ transactions }: { transactions: any }) => (
+  const TransactionList = ({ transactions }: { transactions: { data: Transaction[] } }) => (
     <Stack gap='md'>
-      {transactions?.data.map((transaction) => (
+      {transactions?.data.map((transaction: Transaction) => (
         <Card key={transaction.id} radius='md'>
           <Stack gap='xs'>
             <Group justify='space-between' wrap='nowrap'>
@@ -568,4 +564,4 @@ const SavingsList = () => {
   )
 }
 
-export default SavingsList
+export default SavingsIndex

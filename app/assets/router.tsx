@@ -10,7 +10,7 @@ const BudgetListPage = React.lazy(() => import('./features/budgets/pages/list'))
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
 const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
 
-const DashboardPage = React.lazy(() => import('./features/savings/pages/list'))
+const MainPage = React.lazy(() => import('./features/savings/pages'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { user, isFetching } = useUser()
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <DashboardPage />
+          <MainPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

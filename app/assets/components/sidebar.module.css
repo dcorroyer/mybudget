@@ -1,5 +1,7 @@
 .navbar {
-  height: 100vh;
+  height: auto;
+  min-height: 100%;
+  max-height: 100vh;
   width: rem(250);
   padding: var(--mantine-spacing-md);
   display: flex;
@@ -7,6 +9,7 @@
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
   background-color: var(--mantine-color-white);
+  overflow-y: auto;
 }
 
 .header {
@@ -58,12 +61,16 @@
 }
 
 .navbarContent {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - 2 * var(--mantine-spacing-md));
   justify-content: space-between;
 }
 
 .footer {
-  margin-bottom: 1rem;
+  margin-top: auto;
+  padding-bottom: var(--mantine-spacing-md);
+  position: sticky;
+  bottom: 0;
+  background-color: var(--mantine-color-white);
 }

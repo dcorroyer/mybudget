@@ -203,6 +203,7 @@ const SavingsIndex = () => {
             openTransactionDelete()
           }}
           onCreateClick={openCreate}
+          accounts={accountList}
         />
       </Stack>
     </Container>

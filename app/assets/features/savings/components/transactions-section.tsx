@@ -23,6 +23,7 @@ import {
 } from '@tabler/icons-react'
 import React, { useState } from 'react'
 import { useTransactions } from '../hooks/useTransactions'
+import { Account } from '../types/accounts'
 import { Transaction } from '../types/transactions'
 
 interface TransactionListProps {
@@ -91,6 +92,7 @@ interface TransactionsSectionProps {
   onEdit: (transaction: Transaction) => void
   onDelete: (accountId: number, transactionId: number) => void
   onCreateClick: () => void
+  accounts?: { data: Account[] }
 }
 
 export const TransactionsSection = ({
@@ -98,6 +100,7 @@ export const TransactionsSection = ({
   onEdit,
   onDelete,
   onCreateClick,
+  accounts,
 }: TransactionsSectionProps) => {
   const [page, setPage] = useState(1)
   const { useTransactionList } = useTransactions()
@@ -111,16 +114,43 @@ export const TransactionsSection = ({
 
   if (isFetching) return <Loader />
 
+  const hasNoAccounts = !accounts?.data.length
+
   if (!transactions?.data.length) {
     return (
-      <Container h={100} display='flex'>
-        <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
-          <IconDatabaseOff style={{ width: rem(24), height: rem(24) }} stroke={1.5} color='gray' />
-          <Text size='lg' fw={500} c='gray'>
-            Aucune transaction trouvée
-          </Text>
-        </Stack>
-      </Container>
+      <Card radius='lg' py='xl' mt='sm' shadow='sm'>
+        <Card.Section inheritPadding px='xl' pb='xs'>
+          <Group justify='space-between' mt='md'>
+            <Group gap='xs'>
+              <IconReceipt size={20} style={{ color: 'var(--mantine-color-blue-6)' }} />
+              <Text fw={500} size='md'>
+                Transactions récentes
+              </Text>
+            </Group>
+            {!hasNoAccounts && (
+              <Button onClick={onCreateClick} leftSection={<IconPlus size={16} />} variant='light'>
+                Nouvelle transaction
+              </Button>
+            )}
+          </Group>
+        </Card.Section>
+        <Card.Section inheritPadding px='xl'>
+          <Container h={100} display='flex'>
+            <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
+              <IconDatabaseOff
+                style={{ width: rem(24), height: rem(24) }}
+                stroke={1.5}
+                color='gray'
+              />
+              <Text size={isMobile ? 'sm' : 'lg'} fw={500} c='gray' ta='center'>
+                {hasNoAccounts
+                  ? "Veuillez créer un compte avant d'ajouter des transactions" // eslint-disable-line quotes
+                  : 'Aucune transaction trouvée'}
+              </Text>
+            </Stack>
+          </Container>
+        </Card.Section>
+      </Card>
     )
   }
 

@@ -28,7 +28,7 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {
             </Text>
           </Group>
           <Badge size='lg' variant='light'>
-            Total: {chartData[chartData.length - 1]?.balance.toLocaleString()} €
+            Total: {(chartData[chartData.length - 1]?.balance ?? 0).toLocaleString()} €
           </Badge>
         </Group>
       </Card.Section>

@@ -1,0 +1,25 @@
+{
+  "require-dev": {
+    "phpstan/phpstan": "^2.0",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan-symfony": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "phpstan/phpstan-webmozart-assert": "^2.0",
+    "ticketswap/phpstan-error-formatter": "^1.1",
+    "rector/type-perfect": "^2.0",
+    "phpstan/phpstan-doctrine": "^2.0",
+    "staabm/phpstan-todo-by": "^0.2.0",
+    "tomasvotruba/type-coverage": "^2.0",
+    "struggle-for-php/sfp-phpstan-psr-log": "^0.23.0",
+    "slam/phpstan-extensions": "^6.6",
+    "ekino/phpstan-banned-code": "^3.0",
+    "shipmonk/phpstan-rules": "^4.1",
+    "shipmonk/dead-code-detector": "^0.6.0",
+    "spaze/phpstan-disallowed-calls": "^4.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
+  }
+}

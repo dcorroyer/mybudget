@@ -1,0 +1,176 @@
+name: CI
+on: [ pull_request, push ]
+
+jobs:
+  lint:
+    name: PHP Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP Lint
+        uses: overtrue/phplint@9.1.2
+
+  ecs:
+    name: ECS Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-ecs-${{ hashFiles('tools/ecs/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-ecs-
+
+      - name: Install vendors
+        working-directory: tools/ecs
+        run: composer install --no-interaction
+
+      - name: ECS
+        working-directory: app
+        run: $GITHUB_WORKSPACE/tools/ecs/vendor/bin/ecs check --config $GITHUB_WORKSPACE/tools/ecs/ecs.php --output-format=checkstyle
+
+#  rector:
+#    name: Rector
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: '8.3'
+#
+#      - name: Cache Composer dependencies
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.composer/cache
+#          key: ${{ runner.os }}-composer-rector-${{ hashFiles('tools/rector/composer.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-composer-rector-
+#
+#      - name: Install vendors
+#        working-directory: tools/rector
+#        run: composer install --no-interaction
+#
+#      - name: Rector
+#        working-directory: tools/rector
+#        run: $GITHUB_WORKSPACE/tools/rector/vendor/bin/rector process --dry-run --clear-cache --config=$GITHUB_WORKSPACE/tools/rector/rector.php
+
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-phpstan-${{ hashFiles('tools/phpstan/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-phpstan-
+
+      - name: Install dependencies
+        working-directory: app
+        run: composer install --no-interaction --no-scripts
+
+      - name: Install vendors
+        working-directory: tools/phpstan
+        run: composer install --no-interaction
+
+      - name: PHPStan
+        working-directory: app
+        run: $GITHUB_WORKSPACE/tools/phpstan/vendor/bin/phpstan analyse --configuration $GITHUB_WORKSPACE/tools/phpstan/phpstan.neon --memory-limit=1G --error-format=github
+
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: symfony
+          POSTGRES_PASSWORD: symfony
+          POSTGRES_DB: symfony_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-app-test-${{ hashFiles('app/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-app-test-
+
+      - name: Install vendors
+        working-directory: app
+        run: composer install --no-interaction
+
+      - name: Run Tests Setup
+        env:
+          APP_ENV: test
+          DATABASE_URL: "postgresql://symfony:symfony@127.0.0.1:5432/symfony_test?serverVersion=13"
+        working-directory: app
+        run: php bin/console doctrine:database:create --env=test
+
+      - name: Run Tests
+        working-directory: app
+        env:
+          APP_ENV: test
+          DATABASE_URL: "postgresql://symfony:symfony@127.0.0.1:5432/symfony_test?serverVersion=13"
+        run: $GITHUB_WORKSPACE/app/vendor/bin/phpunit --coverage-cobertura=coverage.xml
+
+      - name: Code Coverage Report
+        if: github.event_name == 'pull_request'
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ./app/coverage.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: Upload Coverage Report
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: app/coverage.xml
+
+      - name: Add Coverage PR Comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          path: code-coverage-results.md

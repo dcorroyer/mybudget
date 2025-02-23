@@ -1,0 +1,310 @@
+includes:
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+#    - vendor/roave/no-floaters/rules.neon
+    - vendor/slam/phpstan-extensions/conf/not-now-rules.neon
+    - vendor/slam/phpstan-extensions/conf/symfony-rules.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
+
+# to re-install when compatible with phpstan 2.0
+#         "roave/no-floaters": "^1.11",
+#        "thecodingmachine/phpstan-strict-rules": "^1.0",
+#        "ergebnis/phpstan-rules": "^2.2",
+#        "voku/phpstan-rules": "^3.5"
+
+parameters:
+    level: max
+    errorFormat: ticketswap
+    paths:
+        #- /.castor/src
+        - ../../src
+        #- ../../tests
+    scanFiles:
+        - /.castor/.castor.stub.php
+    symfony:
+        #containerPhpPath: %currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.php
+        # Not working with 7.2 :(
+#        consoleApplicationLoader: ../../tests/console-appliation.php
+    doctrine: # see: https://github.com/phpstan/phpstan-doctrine?tab=readme-ov-file#configuration
+        ormRepositoryClass: App\Shared\Doctrine\Repository\AbstractEntityRepository
+        reportDynamicQueryBuilders: true
+        reportUnknownTypes: true
+        literalString: true
+        # Not working with 7.2 :(
+#        objectManagerLoader: ../../tests/loader/object-manager.php
+#        odmRepositoryClass: Doctrine\ODM\MongoDB\DocumentRepository
+    #checkAlwaysTrueCheckTypeFunctionCall: true
+    #checkAlwaysTrueInstanceof: true
+    #checkAlwaysTrueStrictComparison: true
+    checkBenevolentUnionTypes: true
+    checkDynamicProperties: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    #checkGenericClassInNonGenericObjectType: true
+    checkImplicitMixed: true
+    checkInternalClassCaseSensitivity: true
+    checkMaybeUndefinedVariables: true
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    inferPrivatePropertyTypeFromConstructor: true
+    polluteScopeWithAlwaysIterableForeach: false
+    polluteScopeWithLoopInitialAssignments: false
+    rememberPossiblyImpureFunctionValues: true
+    reportAnyTypeWideningInVarTag: true
+    reportMaybesInMethodSignatures: true
+    reportMaybesInPropertyPhpDocTypes: true
+    reportStaticMethodSignatures: true
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    #disallowFloatsEverywhere: false # make phpstan fail
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true # enforce checked exceptions to be stated in @throws
+            tooWideThrowType: true # report invalid @throws (exceptions that are not actually thrown in annotated method)
+        implicitThrows: false # no @throws means nothing is thrown (otherwise Throwable is thrown)
+        uncheckedExceptionClasses:
+            - 'Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException'
+            - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
+            - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+            - 'Doctrine\ORM\Exception\ORMException'
+            - 'Doctrine\DBAL\Exception'
+            - 'InvalidArgumentException'
+            - 'LogicException'
+            - 'RuntimeException'
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 32
+        minimumNumberOfJobsPerProcess: 2
+        processTimeout: 300.0
+    type_coverage:
+        return: 100
+        param: 100
+        property: 100
+        constant: 100
+    ignoreErrors:
+        # We allow uninitialized in Payload and FilterQuery classes
+        -
+            message: "#^Class .*Payload has an uninitialized property .*$#"
+            identifier: property.uninitialized
+        -
+            message: "#^Class .*FilterQuery has an uninitialized property .*$#"
+            identifier: property.uninitialized
+
+        # We allow magic constants in controllers because it's work in reality
+        -
+            path: ../../src/**/*Controller.php
+            identifier: magicConstant.outOfFunction
+
+        # Allowing mixed for response for example, overkill to document in tests code if not used ? (to discuss)
+        -
+            path: ../../tests/**/*ControllerTest.php
+            message: "#^Parameter \\#2 \\$haystack of static method PHPUnit\\\\Framework\\\\Assert::assertCount\\(\\) expects Countable\\|iterable, mixed given\\.$#"
+        -
+            path: ../../tests/*.php
+            identifier: offsetAccess.notFound
+
+        # We allow to not specify the return type in tests for factories, has is not add much value
+        -
+            path: ../../tests/Factory/*Factory.php
+            message: "#^Method .*Factory\\:\\:defaults\\(\\) return type has no value type specified in iterable type array\\.$#"
+        -
+            path: ../../tests/Factory/*Factory.php
+            identifier: method.childReturnType
+
+        # Ignore for now
+        -
+            path: ../../src/Shared/Api/Symfony/Resolver/PartialUpdateResolver.php
+            message: "#.*#"
+
+        # Not working with 7.2 :(
+        -
+            path: ../../src/**/*Command.php
+            message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
+            identifier: argument.type
+
+        # Allow getter/setter to be a "dead" code
+        -
+            message: "#^Unused .*::get.*$#"
+            identifier: shipmonk.deadMethod
+        -
+            message: "#^Unused .*::set.*$#"
+            identifier: shipmonk.deadMethod
+        -
+            message: "#^Unused .*::is.*$#"
+            identifier: shipmonk.deadMethod
+        # Allow dead code for this one
+        -
+            path: ../../src/Shared/Api/AbstractApiController.php
+            identifier: shipmonk.deadMethod
+        -
+            message: "#^Unused .*?::__construct$#"
+    type_perfect:
+        no_mixed_property: true
+        no_mixed_caller: true
+        null_over_false: true
+        narrow_param: false
+        narrow_return: true
+    sfpPsrLog:
+        enableMessageStaticStringRule: true
+        enableContextRequireExceptionKeyRule: true
+        reportContextExceptionLogLevel: 'info'
+        contextKeyOriginalPattern: '#\A[A-Za-z0-9-_]+\z#'
+#    ergebnis:
+#        final:
+#            enabled: false
+#        noExtends:
+#            enabled: false
+#        noParameterWithNullDefaultValue:
+#            enabled: false
+#        noIsset:
+#            enabled: false
+#        noConstructorParameterWithDefaultValue:
+#            enabled: false
+#        noParameterWithNullableTypeDeclaration:
+#            enabled: false
+#        finalInAbstractClass:
+#            enabled: false
+#        noNullableReturnTypeDeclaration:
+#            enabled: false
+    todo_by:
+        nonIgnorable: false
+        referenceTime: "now"
+    shipmonkRules:
+        allowComparingOnlyComparableTypes:
+            enabled: true
+        backedEnumGenerics:
+            enabled: false
+#classSuffixNaming:
+#    superclassToSuffixMapping!:
+#        \Exception: Exception
+#        \PHPUnit\Framework\TestCase: Test
+#        \Symfony\Component\Console\Command\Command: Command
+#        \Symfony\Bundle\FrameworkBundle\Controller\AbstractController: Controller
+        enforceClosureParamNativeTypehint:
+            enabled: true
+            allowMissingTypeWhenInferred: false
+        enforceEnumMatch:
+            enabled: true
+        enforceIteratorToArrayPreserveKeys:
+            enabled: true
+        enforceListReturn:
+            enabled: true
+        enforceNativeReturnTypehint:
+            enabled: true
+        enforceReadonlyPublicProperty:
+            enabled: false
+        forbidArithmeticOperationOnNonNumber:
+            enabled: true
+            allowNumericString: false
+        forbidCast:
+            enabled: true
+            blacklist: ['(array)', '(object)', '(unset)']
+        forbidCheckedExceptionInCallable:
+            enabled: true
+        forbidCheckedExceptionInYieldingMethod:
+            enabled: true
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbidcustomfunctions-
+        forbidCustomFunctions:
+            enabled: true
+            list:
+                'dd': 'Should not be used in production code'
+                'dump': 'Should not be used in production code'
+                'var_dump': 'Should not be used in production code'
+                'debug_backtrace': 'Should not be used in production code'
+                'exec': 'Should not be used in production code'
+                'passthru': 'Should not be used in production code'
+                'phpinfo': 'Should not be used in production code'
+                'print_r': 'Should not be used in production code'
+                'proc_open': 'Should not be used in production code'
+                'shell_exec': 'Should not be used in production code'
+                'system': 'Should not be used in production code'
+        forbidEnumInFunctionArguments:
+            enabled: true
+        forbidFetchOnMixed:
+            enabled: true
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbididenticalclasscomparison
+        forbidIdenticalClassComparison:
+            enabled: true
+            blacklist: ['DateTimeInterface']
+        forbidIncrementDecrementOnNonInteger:
+            enabled: true
+        forbidMatchDefaultArmForEnums:
+            enabled: true
+        forbidMethodCallOnMixed:
+            enabled: true
+        forbidNotNormalizedType:
+            enabled: true
+            checkDisjunctiveNormalForm: true
+        forbidNullInAssignOperations:
+            enabled: false
+            blacklist: ['??=']
+        # https://github.com/shipmonk-rnd/phpstan-rules?tab=readme-ov-file#forbidnullinbinaryoperations
+        forbidNullInBinaryOperations:
+            enabled: false
+            blacklist!: [
+                '**', '!=', '==', '+', 'and', 'or', '&&', '||', '%', '-', '/', '*', # checked by phpstan-strict-rules
+                '>', '>=', '<', '<=', '<=>', # checked by AllowComparingOnlyComparableTypesRule
+                '===', '!==', '??' # valid with null involved
+            ]
+        forbidNullInInterpolatedString:
+            enabled: true
+        forbidPhpDocNullabilityMismatchWithNativeTypehint:
+            enabled: true
+        forbidProtectedEnumMethod:
+            enabled: true
+        forbidReturnValueInYieldingMethod:
+            enabled: true
+            reportRegardlessOfReturnType: true
+        forbidUnsafeArrayKey:
+            enabled: true
+        forbidVariableTypeOverwriting:
+            enabled: true
+        forbidUnsetClassField:
+            enabled: true
+        forbidUselessNullableReturn:
+            enabled: true
+        forbidUnusedException:
+            enabled: true
+        forbidUnusedMatchResult:
+            enabled: true
+        requirePreviousExceptionPass:
+            enabled: true
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
+        uselessPrivatePropertyDefaultValue:
+            enabled: true
+    shipmonkDeadCode:
+        trackCallsOnMixed: false
+#    voku:
+#        checkForAssignments: true
+#        checkYodaConditions: false
+    banned_code:
+        nodes:
+            # enable detection of echo
+            -
+                type: Stmt_Echo
+                functions: null
+
+            # enable detection of eval
+            -
+                type: Expr_Eval
+                functions: null
+
+            # enable detection of die/exit
+            -
+                type: Expr_Exit
+                functions: null
+
+            # enable detection of print statements
+            -
+                type: Expr_Print
+                functions: null
+
+            # enable detection of shell execution by backticks
+            -
+                type: Expr_ShellExec
+                functions: null

@@ -1,0 +1,40 @@
+services:
+  php:
+    restart: unless-stopped
+    cpu_count: 2
+    mem_limit: 512m
+    working_dir: /app
+    expose:
+      - 80
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - database
+
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: mariadb:10.6.21
+    restart: unless-stopped
+    cpu_count: 2
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - database
+###< doctrine/doctrine-bundle ###
+
+networks:
+  database: ~
+
+volumes:
+  mariadb_data: ~

@@ -1,0 +1,41 @@
+services:
+  php:
+    container_name: myfitness-php
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+      args:
+        UID: ${UID-1000}
+        GID: ${GID-1000}
+    user: ${UID-1000}:${GID-1000}
+    environment:
+      SYMFONY_VERSION: "7.2.*"
+    volumes:
+      - ./:/app
+      - ../.castor:/.castor
+      - user_data:/home/appuser
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+    tty: true
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.network=traefik"
+      - "traefik.http.routers.myfitness-secure.rule=Host(`myfitness.api.localhost`)"
+      - "traefik.http.routers.myfitness-secure.tls=true"
+      - "traefik.http.services.myfitness-secure.loadbalancer.server.port=80"
+
+  ###> doctrine/doctrine-bundle ###
+  database:
+    container_name: myfitness-database
+###< doctrine/doctrine-bundle ###
+
+volumes:
+  user_data: ~
+
+networks:
+  traefik:
+    external: true

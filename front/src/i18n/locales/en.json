@@ -1,0 +1,5 @@
+{
+  "welcome": "Hello, world!",
+  "clickMe": "Click me",
+  "count": "Count: {{count}}"
+}

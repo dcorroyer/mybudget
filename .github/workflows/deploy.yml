@@ -1,0 +1,61 @@
+name: Deploy to Dokploy
+# on manual trigger
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy'
+        required: true
+        type: string
+        default: '0.0.0-dev.1'
+  push:
+    branches: [ "main" ]
+
+jobs:
+  amd64:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Determine Tag
+        id: determine-tag
+        run: |
+          if [ -z "${{ github.event.inputs.tag }}" ]; then
+            if [ -f VERSION ]; then
+              TAG=$(cat VERSION)
+            else
+              TAG="0.0.0-dev.1" # Default tag if VERSION file does not exist
+            fi
+            echo "Tag=${TAG}" >> $GITHUB_ENV
+          else
+            echo "Tag=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          fi
+
+      - uses: actions/checkout@v3
+      - name: Deploy to Dokploy
+        run: |
+          echo "Changing version to ${{ github.event.inputs.tag }}"
+          curl --request POST \
+            --url "${{ vars.DOKPLOY_BASE_URL }}/api/application.update" \
+            --header "Authorization: Bearer ${{ secrets.DOKPLOY_API_KEY }}" \
+            --header "content-type: application/json" \
+            --data '{
+                "applicationId": "${{ vars.DOKPLOY_APPLICATION_ID }}",
+                "dockerImage": "${{ vars.DOKPLOY_DOCKER_IMAGE }}:${{ github.event.inputs.tag }}",
+                "sourceType": "docker",
+                "username": "${{ secrets.DOCKER_USERNAME }}",
+                "password": "${{ secrets.DOCKER_PASSWORD }}"
+            }'
+
+      - name: Trigger deploy
+        run: |
+          curl --request POST \
+            --url "${{ vars.DOKPLOY_BASE_URL }}/api/application.deploy" \
+            --header "Authorization: Bearer ${{ secrets.DOKPLOY_API_KEY }}" \
+            --header "content-type: application/json" \
+            --data '{
+                "applicationId": "${{ vars.DOKPLOY_APPLICATION_ID }}"
+            }'
+        

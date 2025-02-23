@@ -1,0 +1,77 @@
+monolog:
+    channels:
+        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+
+when@dev:
+    monolog:
+        handlers:
+            main:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: debug
+                channels: ["!event"]
+            sentry:
+                type: sentry
+                level: !php/const Monolog\Logger::ERROR # Configures the level of messages to capture as events
+                hub_id: Sentry\State\HubInterface
+                fill_extra_context: true # Enables sending monolog context to Sentry
+                process_psr_3_messages: false # Disables the resolution of PSR-3 placeholders in reported messages
+            # uncomment to get logging in your browser
+            # you may have to allow bigger header sizes in your Web server configuration
+            #firephp:
+            #    type: firephp
+            #    level: info
+            #chromephp:
+            #    type: chromephp
+            #    level: info
+            console:
+                type: console
+                process_psr_3_messages: false
+                channels: ["!event", "!doctrine", "!console"]
+
+when@test:
+    monolog:
+        handlers:
+            main:
+                type: fingers_crossed
+                action_level: error
+                handler: nested
+                excluded_http_codes: [404, 405]
+                channels: ["!event"]
+            nested:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: debug
+
+when@prod:
+    monolog:
+        handlers:
+            main:
+                type: fingers_crossed
+                action_level: error
+                handler: buffered
+                excluded_http_codes: [ 404, 405 ] # Add any HTTP codes that we don't want to report
+                buffer_size: 50 # How many messages should be saved? Prevent memory leaks
+                stop_buffering: true # Disable buffering once the handler has been activated
+            buffered:
+                type: buffer
+                handler: file_log
+                buffer_size: 50
+                formatter: monolog.formatter.json
+            buffered_deprecations:
+                type: buffer
+                handler: deprecations_file_log
+                level: debug
+                buffer_size: 50
+                formatter: monolog.formatter.json
+                channels: [ "php" ]
+            file_log:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%_main.log"
+                formatter: monolog.formatter.json
+                channels: [ "!php" ]
+            deprecations_file_log:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%_deprecations.log"
+                formatter: monolog.formatter.json
+                channels: [ "php" ]

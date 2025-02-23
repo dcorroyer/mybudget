@@ -1,0 +1,5 @@
+{
+  "require": {
+    "phparkitect/phparkitect": "^0.3.33"
+  }
+}

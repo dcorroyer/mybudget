@@ -1,0 +1,7 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules  # Prevent overwriting node_modules

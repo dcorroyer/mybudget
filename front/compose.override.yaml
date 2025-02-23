@@ -1,0 +1,23 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: myfitness-react
+    volumes:
+      - .:/app # Mount local directory for hot reload
+    environment:
+      - NODE_ENV=development
+    networks:
+      - traefik
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.network=traefik'
+      - 'traefik.http.routers.front-myfitness-secure.rule=Host(`myfitness.web.localhost`)'
+      - 'traefik.http.routers.front-myfitness-secure.tls=true'
+      - 'traefik.http.services.front-myfitness-secure.loadbalancer.server.port=5173'
+
+networks:
+  traefik:
+    external: true

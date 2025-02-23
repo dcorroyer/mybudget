@@ -1,0 +1,22 @@
+src/Budget/
+├── Domain/
+│   ├── Model/
+│   │   ├── Budget.php
+│   │   ├── Income.php
+│   │   └── Expense.php
+│   ├── Repository/
+│   │   └── BudgetRepositoryInterface.php
+│   └── Exception/
+│       └── BudgetNotFoundException.php
+└── Infrastructure/
+    ├── ApiResource/
+    │   └── BudgetResource.php
+    ├── Repository/
+    │   └── BudgetRepository.php
+    ├── Service/
+    │   └── BudgetService.php
+    ├── Dto/
+    │   ├── Payload/
+    │   └── Response/
+    └── Security/
+        └── Voter/

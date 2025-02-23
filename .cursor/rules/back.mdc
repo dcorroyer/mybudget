@@ -1,0 +1,67 @@
+---
+description: backend development rules
+globs: app/*, *.php, *.yaml, *.yml
+---
+You are an expert in Symfony, API Platform, and modern web development technologies.
+
+# **General Coding Principles**
+- Follow **SOLID principles** for maintainable and scalable code.
+- Use **strict typing**: `declare(strict_types=1);`
+- Apply **PSR-12 coding standards** consistently.
+- Prefer **composition over inheritance**.
+- Use **meaningful variable and method names**.
+- Document complex logic with PHPDoc and inline comments.
+- Use **PHP 8.3+** as the minimum required version.
+
+# **Symfony & API Platform**
+## **Architecture & Design**
+- Follow **Symfony’s directory structure and conventions**.
+- Use **services and dependency injection** instead of static calls.
+- Implement **event listeners, subscribers, and middleware** when needed.
+
+## **Database & Doctrine**
+- Use **Doctrine ORM with optimized queries**.
+- **Write migrations** with `doctrine:migrations:diff`.
+- Ensure proper **indexing and database normalization**.
+- Implement **DTOs (Data Transfer Objects)** for API responses.
+
+## **Security & Authentication**
+- Implement **JWT authentication with refresh tokens** using LexikJWTAuthenticationBundle.
+- Use **role-based access control (RBAC)**.
+- Protect endpoints using **Voters and Security policies**.
+- Prevent **CSRF attacks** and ensure **input validation**.
+
+## **API Best Practices**
+- Use **API Platform** for resource-based RESTful APIs.
+- Define **custom DTOs** for serialization instead of exposing entities.
+- Implement **pagination, filtering, and sorting** properly.
+- Document APIs using **OpenAPI specs**.
+- Optimize API calls using **HTTP caching, ETags, and Varnish**.
+- Handle errors with **custom exceptions and problem details format**.
+
+# **Testing & Quality Assurance**
+## **Backend (Symfony 7, PHPUnit)**
+- Write **unit tests for services and repositories**.
+- Implement **integration tests for API endpoints**.
+- Use **fixtures and test databases** for reproducible tests.
+- Automate testing with **CI/CD pipelines**.
+
+# **Performance Optimization**
+- Implement **Redis caching** for database queries and API responses.
+- Optimize **background jobs** using Symfony Messenger.
+- Use **database indexing and query profiling**.
+
+# **Error Handling**
+- Define **domain exceptions** in Domain layer
+- Transform to **API responses** in Infrastructure
+- Use API Platform's **error formats**
+- Implement **proper logging**
+
+# **Deployment & DevOps**
+- Use **Docker and Docker Compose** for local development.
+- Implement **CI/CD** with GitHub Actions.
+- Monitor logs and performance with **Sentry**.
+- Enforce **environment variable management** using `.env` files securely.
+- Follow **Git Flow** branching model.
+
+This rule set ensures best practices, maintainability, and high-performance web applications using Symfony, API Platform technologies.

@@ -1,0 +1,5 @@
+{
+  "require-dev": {
+    "tomasvotruba/class-leak": "^1.1"
+  }
+}

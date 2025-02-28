@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Contract;
+namespace App\Shared\Contract;
 
 use Doctrine\Common\Collections\Criteria;
 

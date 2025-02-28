@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Controller\User;
 
-use App\Core\Api\AbstractApiController;
+use App\Shared\Api\AbstractApiController;
 use App\Shared\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

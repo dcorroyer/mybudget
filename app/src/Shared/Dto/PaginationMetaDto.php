@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dto;
+namespace App\Shared\Dto;
 
 class PaginationMetaDto
 {

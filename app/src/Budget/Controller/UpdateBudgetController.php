@@ -7,7 +7,7 @@ namespace App\Budget\Controller;
 use App\Budget\Dto\Payload\BudgetPayload;
 use App\Budget\Entity\Budget;
 use App\Budget\Service\BudgetService;
-use App\Core\Api\AbstractApiController;
+use App\Shared\Api\AbstractApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;

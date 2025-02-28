@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Budget\Controller;
 
 use App\Budget\Service\BudgetService;
-use App\Core\Api\AbstractApiController;
+use App\Shared\Api\AbstractApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;

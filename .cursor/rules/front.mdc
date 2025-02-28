@@ -1,0 +1,27 @@
+---
+description: frontend development rules
+globs: assets/*
+---
+You are an expert in React frontend development, and modern web development technologies.
+
+# **Frontend Development**
+## **React Stack (Mantine UI, TanStack Query, Orval, Zustand)**
+- Use **TypeScript** with strict mode enabled.
+- Fetch data using **TanStack Query** for automatic caching.
+- Generate API clients with **Orval from OpenAPI specs**.
+- Manage global state with **Zustand** as a lightweight alternative to Redux.
+- Ensure **responsive UI** with Mantine and Tailwind CSS.
+- Follow **component-driven development** and modularize UI.
+- Explore **React Server Components and Suspense** for performance optimization.
+- Implement PWA support when relevant.
+
+# **Testing & Quality Assurance**
+## **Frontend (Jest/Vitest, Cypress)**
+- Unit test components with **Jest/Vitest**.
+- Implement **end-to-end (E2E) tests** with Cypress.
+- Mock API calls to prevent flaky tests.
+
+# **Performance Optimization**
+- Implement **lazy loading and code splitting** in frontend.
+
+This rule set ensures best practices, maintainability, and high-performance web applications using modern frontend technologies.

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Savings\Controller\Transaction;
 
-use App\Core\Api\AbstractApiController;
 use App\Savings\Service\TransactionService;
+use App\Shared\Api\AbstractApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;

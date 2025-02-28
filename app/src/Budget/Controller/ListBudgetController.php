@@ -6,8 +6,8 @@ namespace App\Budget\Controller;
 
 use App\Budget\Dto\Http\BudgetFilterQuery;
 use App\Budget\Service\BudgetService;
-use App\Core\Api\AbstractApiController;
-use App\Core\Dto\PaginationQueryParams;
+use App\Shared\Api\AbstractApiController;
+use App\Shared\Dto\PaginationQueryParams;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;

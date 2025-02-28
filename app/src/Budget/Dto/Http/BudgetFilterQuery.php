@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Http;
 
-use App\Core\Contract\ORMFilterInterface;
+use App\Shared\Contract\ORMFilterInterface;
 use Doctrine\Common\Collections\Criteria;
 
 class BudgetFilterQuery implements ORMFilterInterface

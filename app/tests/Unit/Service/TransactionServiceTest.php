@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Core\Dto\PaginationQueryParams;
 use App\Savings\Dto\Payload\TransactionPayload;
 use App\Savings\Dto\Response\TransactionResponse;
 use App\Savings\Entity\Transaction;
 use App\Savings\Repository\TransactionRepository;
 use App\Savings\Service\AccountService;
 use App\Savings\Service\TransactionService;
+use App\Shared\Dto\PaginationQueryParams;
 use App\Shared\Enum\ErrorMessagesEnum;
 use App\Shared\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;

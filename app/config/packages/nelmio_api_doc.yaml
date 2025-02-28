@@ -1,0 +1,83 @@
+nelmio_api_doc:
+  documentation:
+    info:
+      title: MyBudget API
+      description: API for budget and savings management
+      version: 1.0.0
+    components:
+      securitySchemes:
+        Bearer:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+    security:
+      - Bearer: []
+    tags:
+      # User Management Section
+      - { name: 'Authentication', description: 'Authentication and token management' }
+      - { name: 'User', description: 'User management' }
+
+      # Budget Management Section
+      - { name: 'Budgets', description: 'Monthly budgets and categories management' }
+
+      # Savings Management Section
+      - { name: 'Accounts', description: 'Savings and checking accounts management' }
+      - { name: 'Transactions', description: 'Financial transactions management' }
+      - { name: 'Balance History', description: 'Account balance history' }
+    paths:
+      /api/login:
+        post:
+          tags:
+            - Authentication
+          summary: User authentication
+          description: Allows a user to authenticate and obtain a JWT token
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                      example: user@example.com
+                      description: User email
+                    password:
+                      type: string
+                      example: password123
+                      description: User password
+                  required:
+                    - username
+                    - password
+          responses:
+            '200':
+              description: Authentication successful
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
+                        description: JWT Token
+                      refresh_token:
+                        type: string
+                        example: f34f...
+                        description: Refresh token (if configured)
+            '401':
+              description: Invalid credentials
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 401
+                      message:
+                        type: string
+                        example: Invalid credentials
+  areas:
+    path_patterns:
+      - ^/api(?!/doc$)

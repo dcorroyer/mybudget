@@ -15,6 +15,7 @@
         "knplabs/knp-paginator-bundle": "^6.6",
         "lexik/jwt-authentication-bundle": "^3.0",
         "loophp/collection": "^7.6",
+        "nelmio/api-doc-bundle": "^4.37",
         "nelmio/cors-bundle": "^2.4",
         "nesbot/carbon": "^3.7",
         "pentatrion/vite-bundle": "^6.4",

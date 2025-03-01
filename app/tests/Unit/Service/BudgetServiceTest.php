@@ -10,7 +10,7 @@ use App\Budget\Repository\BudgetRepository;
 use App\Budget\Service\BudgetService;
 use App\Budget\Service\ExpenseService;
 use App\Budget\Service\IncomeService;
-use App\Core\Dto\PaginationQueryParams;
+use App\Shared\Dto\PaginationQueryParams;
 use App\Shared\Enum\ErrorMessagesEnum;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Helper\PaginationTestHelper;

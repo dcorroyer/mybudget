@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Savings\Repository;
 
-use App\Core\Repository\AbstractEntityRepository;
 use App\Savings\Entity\Account;
+use App\Shared\Repository\Abstract\AbstractEntityRepository;
 
 /**
  * @extends AbstractEntityRepository<Account>

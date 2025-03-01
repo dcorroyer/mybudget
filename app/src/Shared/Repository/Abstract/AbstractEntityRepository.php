@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Repository;
+namespace App\Shared\Repository\Abstract;
 
-use App\Core\Contract\ORMFilterInterface;
-use App\Core\Dto\PaginationQueryParams;
+use App\Shared\Contract\ORMFilterInterface;
+use App\Shared\Dto\PaginationQueryParams;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository as BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;

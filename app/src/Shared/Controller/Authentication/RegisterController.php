@@ -6,7 +6,9 @@ namespace App\Shared\Controller\Authentication;
 
 use App\Shared\Api\AbstractApiController;
 use App\Shared\Dto\Payload\RegisterPayload;
+use App\Shared\Dto\Response\UserResponse;
 use App\Shared\Service\UserService;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,32 +28,13 @@ class RegisterController extends AbstractApiController
     #[OA\RequestBody(
         description: 'User registration data',
         required: true,
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
-                new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123'),
-                new OA\Property(property: 'firstName', type: 'string', example: 'John'),
-                new OA\Property(property: 'lastName', type: 'string', example: 'Smith')
-            ],
-            required: ['email', 'password']
-        )
+        content: new OA\JsonContent(ref: new Model(type: RegisterPayload::class))
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'User successfully created',
         content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'email', type: 'string', example: 'user@example.com'),
-                        new OA\Property(property: 'firstName', type: 'string', example: 'John'),
-                        new OA\Property(property: 'lastName', type: 'string', example: 'Smith')
-                    ],
-                    type: 'object'
-                )
-            ],
+            properties: [new OA\Property(property: 'data', ref: new Model(type: UserResponse::class))],
             type: 'object'
         )
     )]
@@ -61,7 +44,7 @@ class RegisterController extends AbstractApiController
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'message', type: 'string', example: 'Email already exists'),
-                new OA\Property(property: 'code', type: 'integer', example: 400)
+                new OA\Property(property: 'code', type: 'integer', example: 400),
             ],
             type: 'object'
         )

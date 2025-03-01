@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Savings\Controller\BalanceHistory;
 
 use App\Savings\Dto\Http\BalanceHistoryFilterQuery;
+use App\Savings\Dto\Response\BalanceHistoryResponse;
 use App\Savings\Service\BalanceHistoryService;
 use App\Shared\Api\AbstractApiController;
-use App\Shared\Enum\PeriodsEnum;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,37 +30,7 @@ class ListBalanceHistoryController extends AbstractApiController
         response: Response::HTTP_OK,
         description: 'Balance history successfully retrieved',
         content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
-                    properties: [
-                        new OA\Property(
-                            property: 'accounts',
-                            type: 'array',
-                            items: new OA\Items(
-                                properties: [
-                                    new OA\Property(property: 'id', type: 'integer', example: 1),
-                                    new OA\Property(property: 'name', type: 'string', example: 'Savings Account')
-                                ],
-                                type: 'object'
-                            )
-                        ),
-                        new OA\Property(
-                            property: 'balances',
-                            type: 'array',
-                            items: new OA\Items(
-                                properties: [
-                                    new OA\Property(property: 'date', type: 'string', example: '2023-01'),
-                                    new OA\Property(property: 'formattedDate', type: 'string', example: 'January 2023'),
-                                    new OA\Property(property: 'balance', type: 'number', format: 'float', example: 2500.50)
-                                ],
-                                type: 'object'
-                            )
-                        )
-                    ],
-                    type: 'object'
-                )
-            ],
+            properties: [new OA\Property(property: 'data', ref: new Model(type: BalanceHistoryResponse::class))],
             type: 'object'
         )
     )]

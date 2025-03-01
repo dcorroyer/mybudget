@@ -7,6 +7,7 @@ namespace App\Savings\Controller\Account;
 use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Service\AccountService;
 use App\Shared\Api\AbstractApiController;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,29 +22,23 @@ class ListAccountController extends AbstractApiController
     #[OA\Get(
         path: '/api/accounts',
         description: 'Get a list of all accounts',
-        summary: 'List accounts'
-    )]
-    #[OA\Response(
-        response: Response::HTTP_OK,
-        description: 'Account list successfully retrieved',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
-                    type: 'array',
-                    items: new OA\Items(
-                        properties: [
-                            new OA\Property(property: 'id', type: 'integer', example: 1),
-                            new OA\Property(property: 'name', type: 'string', example: 'Account'),
-                            new OA\Property(property: 'type', type: 'string', example: 'savings'),
-                            new OA\Property(property: 'balance', type: 'number', format: 'float', example: 1250.75)
-                        ],
-                        type: 'object'
-                    )
+        summary: 'List accounts',
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: 'Account list successfully retrieved',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(ref: new Model(type: AccountResponse::class))
+                        ),
+                    ],
+                    type: 'object'
                 )
-            ],
-            type: 'object'
-        )
+            ),
+        ]
     )]
     public function __invoke(AccountService $accountService): JsonResponse
     {

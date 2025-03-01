@@ -37,17 +37,14 @@ class DeleteTransactionController extends AbstractApiController
         required: true,
         schema: new OA\Schema(type: 'integer')
     )]
-    #[OA\Response(
-        response: Response::HTTP_NO_CONTENT,
-        description: 'Transaction successfully deleted'
-    )]
+    #[OA\Response(response: Response::HTTP_NO_CONTENT, description: 'Transaction successfully deleted')]
     #[OA\Response(
         response: Response::HTTP_NOT_FOUND,
         description: 'Transaction not found',
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'message', type: 'string', example: 'Transaction not found'),
-                new OA\Property(property: 'code', type: 'integer', example: 404)
+                new OA\Property(property: 'code', type: 'integer', example: 404),
             ],
             type: 'object'
         )

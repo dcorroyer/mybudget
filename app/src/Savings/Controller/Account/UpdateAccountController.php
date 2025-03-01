@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Savings\Controller\Account;
 
 use App\Savings\Dto\Payload\AccountPayload;
+use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
 use App\Savings\Service\AccountService;
 use App\Shared\Api\AbstractApiController;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,64 +25,53 @@ class UpdateAccountController extends AbstractApiController
     #[OA\Patch(
         path: '/api/accounts/{id}',
         description: 'Update an existing account',
-        summary: 'Update an account'
-    )]
-    #[OA\Parameter(
-        name: 'id',
-        description: 'Account ID',
-        in: 'path',
-        required: true,
-        schema: new OA\Schema(type: 'integer')
-    )]
-    #[OA\RequestBody(
-        description: 'Account data to update',
-        required: true,
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'name', type: 'string', example: 'Modified Savings Account')
-            ]
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_OK,
-        description: 'Account successfully updated',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
+        summary: 'Update an account',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'Account ID',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Account data to update',
+            required: true,
+            content: new OA\JsonContent(ref: new Model(type: AccountPayload::class))
+        ),
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: 'Account successfully updated',
+                content: new OA\JsonContent(
+                    properties: [new OA\Property(property: 'data', ref: new Model(type: AccountResponse::class))],
+                    type: 'object'
+                )
+            ),
+            new OA\Response(
+                response: Response::HTTP_NOT_FOUND,
+                description: 'Account not found',
+                content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'Modified Savings Account'),
-                        new OA\Property(property: 'type', type: 'string', example: 'savings'),
-                        new OA\Property(property: 'balance', type: 'number', format: 'float', example: 2500.50)
+                        new OA\Property(property: 'message', type: 'string', example: 'Account not found'),
+                        new OA\Property(property: 'code', type: 'integer', example: 404),
                     ],
                     type: 'object'
                 )
-            ],
-            type: 'object'
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_NOT_FOUND,
-        description: 'Account not found',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Account not found'),
-                new OA\Property(property: 'code', type: 'integer', example: 404)
-            ],
-            type: 'object'
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_BAD_REQUEST,
-        description: 'Invalid data',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Validation failed'),
-                new OA\Property(property: 'code', type: 'integer', example: 400)
-            ],
-            type: 'object'
-        )
+            ),
+            new OA\Response(
+                response: Response::HTTP_BAD_REQUEST,
+                description: 'Invalid data',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed'),
+                        new OA\Property(property: 'code', type: 'integer', example: 400),
+                    ],
+                    type: 'object'
+                )
+            ),
+        ]
     )]
     public function __invoke(
         Account $account,

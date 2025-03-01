@@ -7,7 +7,7 @@ namespace App\Budget\Dto\Http;
 class BudgetFilterQuery
 {
     private ?int $year = null;
-    
+
     public function getYear(): ?int
     {
         return $this->year;

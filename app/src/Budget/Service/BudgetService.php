@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Budget\Service;
 
-use App\Budget\Dto\Http\BudgetFilterQuery;
 use App\Budget\Dto\Payload\BudgetPayload;
 use App\Budget\Dto\Response\BudgetResponse;
 use App\Budget\Dto\Response\ExpenseResponse;
@@ -161,18 +160,20 @@ class BudgetService
         if ($year !== null) {
             $startDate = (new \DateTimeImmutable("{$year}-01-01"))->format('Y-m-d');
             $endDate = (new \DateTimeImmutable("{$year}-12-31"))->format('Y-m-d');
-            
+
             $criteria->andWhere(Criteria::expr()->gte('date', $startDate));
             $criteria->andWhere(Criteria::expr()->lte('date', $endDate));
         }
 
         $criteria->andWhere(Criteria::expr()->eq('user', $this->security->getUser()));
-        $criteria->orderBy(['date' => 'DESC']);
-        
+        $criteria->orderBy([
+            'date' => 'DESC',
+        ]);
+
         $paginated = $this->budgetRepository->paginate($paginationQueryParams, null, $criteria);
-        
+
         $budgets = [];
-        
+
         /** @var Budget $budget */
         foreach ($paginated->getItems() as $budget) {
             $budgets[] = $this->createBudgetResponse($budget);

@@ -21,40 +21,45 @@ class DeleteAccountController extends AbstractApiController
     #[OA\Delete(
         path: '/api/accounts/{id}',
         description: 'Delete an existing account',
-        summary: 'Delete an account'
-    )]
-    #[OA\Parameter(
-        name: 'id',
-        description: 'Account ID',
-        in: 'path',
-        required: true,
-        schema: new OA\Schema(type: 'integer')
-    )]
-    #[OA\Response(
-        response: Response::HTTP_NO_CONTENT,
-        description: 'Account successfully deleted'
-    )]
-    #[OA\Response(
-        response: Response::HTTP_NOT_FOUND,
-        description: 'Account not found',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Account not found'),
-                new OA\Property(property: 'code', type: 'integer', example: 404)
-            ],
-            type: 'object'
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_BAD_REQUEST,
-        description: 'Unable to delete account',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Cannot delete account with existing transactions'),
-                new OA\Property(property: 'code', type: 'integer', example: 400)
-            ],
-            type: 'object'
-        )
+        summary: 'Delete an account',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'Account ID',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
+        responses: [
+            new OA\Response(response: Response::HTTP_NO_CONTENT, description: 'Account successfully deleted'),
+            new OA\Response(
+                response: Response::HTTP_NOT_FOUND,
+                description: 'Account not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Account not found'),
+                        new OA\Property(property: 'code', type: 'integer', example: 404),
+                    ],
+                    type: 'object'
+                )
+            ),
+            new OA\Response(
+                response: Response::HTTP_BAD_REQUEST,
+                description: 'Unable to delete account',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Cannot delete account with existing transactions'
+                        ),
+                        new OA\Property(property: 'code', type: 'integer', example: 400),
+                    ],
+                    type: 'object'
+                )
+            ),
+        ]
     )]
     public function __invoke(AccountService $accountService, Account $account): JsonResponse
     {

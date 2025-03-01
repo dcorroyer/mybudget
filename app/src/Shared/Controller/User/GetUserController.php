@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Shared\Controller\User;
 
 use App\Shared\Api\AbstractApiController;
+use App\Shared\Dto\Response\UserResponse;
 use App\Shared\Service\UserService;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,25 +25,15 @@ class GetUserController extends AbstractApiController
         path: '/api/users/me',
         description: 'Get the connected user information',
         summary: 'User authenticated',
-        security: [['Bearer' => []]]
+        security: [[
+            'Bearer' => [],
+        ]]
     )]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'User information successfully retrieved',
         content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
-                        new OA\Property(property: 'firstName', type: 'string', example: 'John'),
-                        new OA\Property(property: 'lastName', type: 'string', example: 'Smith'),
-                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'), example: ['ROLE_USER'])
-                    ],
-                    type: 'object'
-                )
-            ],
+            properties: [new OA\Property(property: 'data', ref: new Model(type: UserResponse::class))],
             type: 'object'
         )
     )]
@@ -51,7 +43,7 @@ class GetUserController extends AbstractApiController
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'message', type: 'string', example: 'JWT Token not found'),
-                new OA\Property(property: 'code', type: 'integer', example: 401)
+                new OA\Property(property: 'code', type: 'integer', example: 401),
             ],
             type: 'object'
         )

@@ -61,10 +61,10 @@ nelmio_api_doc:
                         type: string
                         example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
                         description: JWT Token
-                      refresh_token:
-                        type: string
-                        example: f34f...
-                        description: Refresh token (if configured)
+                      # refresh_token:
+                      #   type: string
+                      #   example: f34f...
+                      #   description: Refresh token (if configured)
             '401':
               description: Invalid credentials
               content:

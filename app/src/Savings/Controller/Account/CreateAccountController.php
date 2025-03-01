@@ -8,6 +8,7 @@ use App\Savings\Dto\Payload\AccountPayload;
 use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Service\AccountService;
 use App\Shared\Api\AbstractApiController;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,45 +24,33 @@ class CreateAccountController extends AbstractApiController
     #[OA\Post(
         path: '/api/accounts',
         description: 'Create a new account',
-        summary: 'Create an account'
-    )]
-    #[OA\RequestBody(
-        description: 'Account data to create',
-        required: true,
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'name', type: 'string', example: 'Current Account', description: 'Account name')
-            ]
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_CREATED,
-        description: 'Account successfully created',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'data',
+        summary: 'Create an account',
+        requestBody: new OA\RequestBody(
+            description: 'Account data to create',
+            required: true,
+            content: new OA\JsonContent(ref: new Model(type: AccountPayload::class))
+        ),
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_CREATED,
+                description: 'Account successfully created',
+                content: new OA\JsonContent(
+                    properties: [new OA\Property(property: 'data', ref: new Model(type: AccountResponse::class))],
+                    type: 'object'
+                )
+            ),
+            new OA\Response(
+                response: Response::HTTP_BAD_REQUEST,
+                description: 'Invalid data',
+                content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'Account'),
-                        new OA\Property(property: 'type', type: 'string', example: 'savings'),
-                        new OA\Property(property: 'balance', type: 'number', format: 'float', example: 0.0)
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed'),
+                        new OA\Property(property: 'code', type: 'integer', example: 400),
                     ],
                     type: 'object'
                 )
-            ],
-            type: 'object'
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_BAD_REQUEST,
-        description: 'Invalid data',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Validation failed')
-            ],
-            type: 'object'
-        )
+            ),
+        ]
     )]
     public function __invoke(
         AccountService $accountService,

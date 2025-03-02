@@ -2,12 +2,12 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import AuthenticatedLayout from './layouts/authenticated-layout'
 
-const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
-const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
+const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'))
+const RegisterPage = React.lazy(() => import('./features/auth/pages/RegisterPage'))
 
-const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages'))
-const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
-const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
+const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages/BudgetIndexPage'))
+const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/BudgetCreatePage'))
+const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/BudgetDetailPage'))
 
 const MainPage = React.lazy(() => import('./features/savings/pages'))
 

@@ -32,7 +32,7 @@ import { zodResolver } from 'mantine-form-zod-resolver'
 import React, { useEffect, useState } from 'react'
 import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
 import { useBudget } from '../hooks/useBudget'
-import { budgetFormSchema, createBudgetFormType } from '../schemas/budgets'
+import { budgetFormSchema, createBudgetFormType } from '../schemas/budgetSchema'
 import { BudgetFormDetails } from '../types/budgets'
 
 interface IncomeItem {

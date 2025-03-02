@@ -1,6 +1,6 @@
-import { CenteredLoader } from '@/components/centered-loader'
-import NotFound from '@/components/not-found'
-import { BudgetForm } from '@/features/budgets/components/budget-form'
+import { CenteredLoader } from '@/components/CenteredLoader'
+import NotFound from '@/components/NotFound'
+import { BudgetForm } from '@/features/budgets/components/BudgetForm'
 import {
   ActionIcon,
   Badge,

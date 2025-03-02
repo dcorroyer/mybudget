@@ -1,4 +1,4 @@
-import { CenteredLoader as Loader } from '@/components/centered-loader'
+import { CenteredLoader as Loader } from '@/components/CenteredLoader'
 import {
   ActionIcon,
   Badge,
@@ -14,6 +14,7 @@ import {
   rem,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -26,7 +27,12 @@ import {
 } from '@tabler/icons-react'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useBudget } from '../hooks/useBudget'
+
+import {
+  useDeleteApiBudgetsDelete,
+  useGetApiBudgetsList,
+  usePostApiBudgetsDuplicate,
+} from '@/api/generated/budgets/budgets'
 
 const BudgetGrid = ({
   selectedYear,
@@ -37,12 +43,18 @@ const BudgetGrid = ({
   onDelete: (id: string) => void
   onDuplicate: (id: string) => void
 }) => {
-  const { useBudgetList } = useBudget()
-  const { data: budgetList, isFetching } = useBudgetList(selectedYear)
+  const { data: budgetList, isLoading } = useGetApiBudgetsList(
+    { year: selectedYear },
+    {
+      query: {
+        staleTime: 10000,
+      },
+    },
+  )
 
-  if (isFetching) return <Loader />
+  if (isLoading) return <Loader />
 
-  if (!budgetList?.data.length) {
+  if (!budgetList?.data || budgetList.data.length === 0) {
     return (
       <Container h={100} display='flex'>
         <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
@@ -57,7 +69,7 @@ const BudgetGrid = ({
 
   return (
     <Grid gutter='lg'>
-      {budgetList?.data.map((budget) => (
+      {budgetList.data.map((budget) => (
         <Grid.Col key={budget.id} span={{ base: 12, sm: 6, md: 4 }}>
           <Card radius='md' withBorder>
             <Stack gap='xs'>
@@ -135,7 +147,45 @@ const BudgetIndex = () => {
   const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
   const [budgetIdToDuplicate, setBudgetIdToDuplicate] = useState<string | null>(null)
 
-  const { deleteBudget, duplicateBudget } = useBudget()
+  const { mutate: deleteBudget } = useDeleteApiBudgetsDelete({
+    mutation: {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Budget supprimé',
+          message: 'Le budget a été supprimé avec succès',
+          color: 'green',
+        })
+        closeDelete()
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Erreur',
+          message: 'Une erreur est survenue lors de la suppression du budget',
+          color: 'red',
+        })
+      },
+    },
+  })
+
+  const { mutate: duplicateBudget } = usePostApiBudgetsDuplicate({
+    mutation: {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Budget dupliqué',
+          message: 'Le budget a été dupliqué avec succès',
+          color: 'green',
+        })
+        closeDuplicate()
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Erreur',
+          message: 'Une erreur est survenue lors de la duplication du budget',
+          color: 'red',
+        })
+      },
+    },
+  })
 
   const years = Array.from({ length: 5 }, (_, i) => {
     const year = new Date().getFullYear() - 2 + i
@@ -154,15 +204,13 @@ const BudgetIndex = () => {
 
   const confirmDelete = () => {
     if (budgetIdToDelete) {
-      deleteBudget(budgetIdToDelete)
-      closeDelete()
+      deleteBudget({ id: parseInt(budgetIdToDelete) })
     }
   }
 
   const confirmDuplicate = () => {
     if (budgetIdToDuplicate) {
-      duplicateBudget(budgetIdToDuplicate)
-      closeDuplicate()
+      duplicateBudget({ id: parseInt(budgetIdToDuplicate) })
     }
   }
 

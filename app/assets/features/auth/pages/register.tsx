@@ -1,6 +1,6 @@
 import { useForm } from '@mantine/form'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { zodResolver } from 'mantine-form-zod-resolver'
 
@@ -14,12 +14,14 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { usePostApiLogin, usePostApiRegister } from '@/api/generated/authentication/authentication'
+import { PostApiRegister400 } from '@/api/models'
 import { registerFormSchema, registerFormType } from '@/features/auth/schemas/register'
 
 const Register: React.FC = () => {
-  const { register, isLoading } = useAuth()
+  const navigate = useNavigate()
 
   const form = useForm<registerFormType>({
     initialValues: {
@@ -32,8 +34,60 @@ const Register: React.FC = () => {
     validate: zodResolver(registerFormSchema),
   })
 
+  const { mutate: login } = usePostApiLogin({
+    mutation: {
+      onSuccess: (data) => {
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+          navigate('/')
+        }
+      },
+      onError: (error: any) => {
+        notifications.show({
+          title: 'Connexion automatique échouée',
+          message: error.message || 'Une erreur est survenue lors de la connexion automatique',
+          color: 'yellow',
+        })
+        navigate('/auth/login')
+      },
+    },
+  })
+
+  const { mutate: register, isPending: isRegistering } = usePostApiRegister({
+    mutation: {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Inscription réussie',
+          message: 'Votre compte a été créé avec succès, vous allez être connecté automatiquement',
+          color: 'green',
+        })
+
+        login({
+          data: {
+            username: form.values.email,
+            password: form.values.password,
+          },
+        })
+      },
+      onError: (error: PostApiRegister400) => {
+        notifications.show({
+          title: "Erreur d'inscription",
+          message: error.message || "Une erreur est survenue lors de l'inscription",
+          color: 'red',
+        })
+      },
+    },
+  })
+
   const onSubmit = (values: registerFormType) => {
-    register(values.firstName, values.lastName, values.email, values.password)
+    register({
+      data: {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+      },
+    })
   }
 
   return (
@@ -84,7 +138,7 @@ const Register: React.FC = () => {
             mt='md'
             {...form.getInputProps('repeatPassword')}
           />
-          <Button type='submit' fullWidth mt='xl' loading={isLoading}>
+          <Button type='submit' fullWidth mt='xl' loading={isRegistering}>
             Register
           </Button>
         </Paper>

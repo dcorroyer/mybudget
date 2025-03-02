@@ -1,6 +1,5 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import { useUser } from './features/auth/hooks/useUser'
 import AuthenticatedLayout from './layouts/authenticated-layout'
 
 const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
@@ -13,11 +12,20 @@ const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detai
 const MainPage = React.lazy(() => import('./features/savings/pages'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
-  const { user, isFetching } = useUser()
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
-  if (isFetching) return
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    setIsAuthenticated(!!token)
+  }, [])
 
-  if (!user) return <Navigate to='/auth/login' replace />
+  if (isAuthenticated === null) {
+    return null
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to='/auth/login' replace />
+  }
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>
 }

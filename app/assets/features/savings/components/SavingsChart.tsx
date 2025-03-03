@@ -1,12 +1,12 @@
+import { BalanceHistoryResponse } from '@/api/models'
 import { LineChart } from '@mantine/charts'
 import { Badge, Card, em, Group, Text } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconChartLine } from '@tabler/icons-react'
 import React from 'react'
-import { SavingsResponse } from '../types/savings'
 
 interface SavingsChartProps {
-  data: SavingsResponse
+  data: BalanceHistoryResponse
 }
 
 export const SavingsChart: React.FC<SavingsChartProps> = ({ data }) => {

@@ -1,9 +1,10 @@
+import { TransactionPayloadType } from '@/api/models'
 import { z } from 'zod'
 
 export const transactionFormSchema = z.object({
   description: z.string().min(2, 'Description is required'),
   amount: z.number().gt(0.01, { message: 'Amount must be greater than 0' }),
-  type: z.enum(['CREDIT', 'DEBIT']),
+  type: z.enum([TransactionPayloadType.CREDIT, TransactionPayloadType.DEBIT]),
   date: z.date(),
   account: z.object({
     id: z.number(),

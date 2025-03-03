@@ -14,7 +14,6 @@ import {
   rem,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -33,6 +32,7 @@ import {
   useGetApiBudgetsList,
   usePostApiBudgetsDuplicate,
 } from '@/api/generated/budgets/budgets'
+import { useMutationWithInvalidation } from '@/hooks/useMutation'
 
 const BudgetGrid = ({
   selectedYear,
@@ -147,45 +147,25 @@ const BudgetIndex = () => {
   const [budgetIdToDelete, setBudgetIdToDelete] = useState<string | null>(null)
   const [budgetIdToDuplicate, setBudgetIdToDuplicate] = useState<string | null>(null)
 
-  const { mutate: deleteBudget } = useDeleteApiBudgetsDelete({
-    mutation: {
-      onSuccess: () => {
-        notifications.show({
-          title: 'Budget supprimé',
-          message: 'Le budget a été supprimé avec succès',
-          color: 'green',
-        })
-        closeDelete()
-      },
-      onError: () => {
-        notifications.show({
-          title: 'Erreur',
-          message: 'Une erreur est survenue lors de la suppression du budget',
-          color: 'red',
-        })
-      },
+  const { mutate: deleteBudget } = useMutationWithInvalidation(
+    useDeleteApiBudgetsDelete().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/budgets'],
+      successMessage: 'Budget supprimé avec succès',
+      errorMessage: 'Une erreur est survenue lors de la suppression du budget',
+      onSuccess: closeDelete,
     },
-  })
+  )
 
-  const { mutate: duplicateBudget } = usePostApiBudgetsDuplicate({
-    mutation: {
-      onSuccess: () => {
-        notifications.show({
-          title: 'Budget dupliqué',
-          message: 'Le budget a été dupliqué avec succès',
-          color: 'green',
-        })
-        closeDuplicate()
-      },
-      onError: () => {
-        notifications.show({
-          title: 'Erreur',
-          message: 'Une erreur est survenue lors de la duplication du budget',
-          color: 'red',
-        })
-      },
+  const { mutate: duplicateBudget } = useMutationWithInvalidation(
+    usePostApiBudgetsDuplicate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/budgets'],
+      successMessage: 'Budget dupliqué avec succès',
+      errorMessage: 'Une erreur est survenue lors de la duplication du budget',
+      onSuccess: closeDuplicate,
     },
-  })
+  )
 
   const years = Array.from({ length: 5 }, (_, i) => {
     const year = new Date().getFullYear() - 2 + i

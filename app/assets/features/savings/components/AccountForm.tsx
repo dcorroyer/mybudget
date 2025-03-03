@@ -1,11 +1,14 @@
+import {
+  usePatchApiAccountsUpdate,
+  usePostApiAccountsCreate,
+} from '@/api/generated/accounts/accounts'
+import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import { Button, Card, Group, Stack, Text, TextInput, rem } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { IconBuildingBank, IconCheck } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React from 'react'
-
-import { useAccount } from '../hooks/useAccount'
-import { accountFormSchema, createAccountFormType } from '../schemas/accounts'
+import { accountFormSchema, createAccountFormType } from '../schemas/accountSchema'
 
 interface AccountFormComponentProps {
   initialValues?: {
@@ -23,25 +26,37 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
     validate: zodResolver(accountFormSchema),
   })
 
-  const { createAccount, updateAccount, isLoading } = useAccount()
+  const { mutate: createAccount, isPending: isCreating } = useMutationWithInvalidation(
+    usePostApiAccountsCreate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts'],
+      successMessage: 'Compte créé avec succès',
+      errorMessage: 'Une erreur est survenue lors de la création du compte',
+      onSuccess,
+    },
+  )
+
+  const { mutate: updateAccount, isPending: isUpdating } = useMutationWithInvalidation(
+    usePatchApiAccountsUpdate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts'],
+      successMessage: 'Compte mis à jour avec succès',
+      errorMessage: 'Une erreur est survenue lors de la mise à jour du compte',
+      onSuccess,
+    },
+  )
+
+  const isLoading = isCreating || isUpdating
   const isEditMode = !!initialValues?.id
 
   const onSubmit = (values: createAccountFormType) => {
     if (!isEditMode) {
-      createAccount(values, {
-        onSuccess: () => {
-          onSuccess?.()
-        },
-      })
+      createAccount({ data: values })
     } else if (initialValues?.id) {
-      updateAccount(
-        { id: initialValues.id, values },
-        {
-          onSuccess: () => {
-            onSuccess?.()
-          },
-        },
-      )
+      updateAccount({
+        id: initialValues.id,
+        data: values,
+      })
     }
   }
 

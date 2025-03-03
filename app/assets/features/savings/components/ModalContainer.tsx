@@ -1,9 +1,8 @@
+import { AccountResponse, TransactionResponse } from '@/api/models'
 import { Button, Group, Modal, Text } from '@mantine/core'
 import React from 'react'
-import { Account } from '../types/accounts'
-import { Transaction } from '../types/transactions'
-import { AccountForm } from './account-form'
-import { TransactionForm } from './transaction-form'
+import { AccountForm } from './AccountForm'
+import { TransactionForm } from './TransactionForm'
 
 interface ModalContainerProps {
   modals: {
@@ -16,7 +15,7 @@ interface ModalContainerProps {
       edit: {
         opened: boolean
         onClose: () => void
-        selectedTransaction: Transaction | null
+        selectedTransaction: TransactionResponse | null
         onSuccess: () => void
       }
       create: {
@@ -34,7 +33,7 @@ interface ModalContainerProps {
       edit: {
         opened: boolean
         onClose: () => void
-        selectedAccount: Account | null
+        selectedAccount: AccountResponse | null
         onSuccess: () => void
       }
       create: {

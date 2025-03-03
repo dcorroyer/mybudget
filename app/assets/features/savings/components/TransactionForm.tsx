@@ -1,3 +1,15 @@
+import { useGetApiAccountsList } from '@/api/generated/accounts/accounts'
+import {
+  usePostApiTransactionsCreate,
+  usePutApiTransactionUpdate,
+} from '@/api/generated/transactions/transactions'
+import {
+  AccountResponse,
+  TransactionPayloadType,
+  TransactionResponse,
+  TransactionResponseType,
+} from '@/api/models'
+import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import {
   Button,
   Card,
@@ -22,13 +34,10 @@ import {
 } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React, { useEffect, useState } from 'react'
-import { useAccount } from '../hooks/useAccount'
-import { useTransactions } from '../hooks/useTransactions'
-import { createTransactionFormType, transactionFormSchema } from '../schemas/transactions'
-import { Transaction } from '../types/transactions'
+import { createTransactionFormType, transactionFormSchema } from '../schemas/transactionSchema'
 
 interface TransactionFormComponentProps {
-  initialValues?: Transaction
+  initialValues?: TransactionResponse
   isLoading?: boolean
   onSuccess?: () => void
   onClose?: () => void
@@ -38,21 +47,49 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
   initialValues,
   onSuccess,
 }) => {
-  const { useAccountList } = useAccount()
-  const { data: accountList, isFetching } = useAccountList()
-  const { createTransaction, updateTransaction, isLoading } = useTransactions()
+  const { data: accountList, isFetching } = useGetApiAccountsList()
+  const { mutate: createTransaction, isPending: isCreating } = useMutationWithInvalidation(
+    usePostApiTransactionsCreate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      successMessage: 'Transaction créée avec succès',
+      errorMessage: 'Une erreur est survenue lors de la création de la transaction',
+      onSuccess,
+    },
+  )
+  const { mutate: updateTransaction, isPending: isUpdating } = useMutationWithInvalidation(
+    usePutApiTransactionUpdate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      successMessage: 'Transaction mise à jour avec succès',
+      errorMessage: 'Une erreur est survenue lors de la mise à jour de la transaction',
+      onSuccess,
+    },
+  )
+  const isLoading = isCreating || isUpdating
 
   const form = useForm<createTransactionFormType>({
-    initialValues: initialValues || {
-      description: '',
-      amount: 0,
-      type: 'CREDIT',
-      date: new Date(),
-      account: {
-        id: 0,
-        name: '',
-      },
-    },
+    initialValues: initialValues
+      ? {
+          description: initialValues.description,
+          amount: initialValues.amount,
+          type: initialValues.type === TransactionResponseType.CREDIT ? 'CREDIT' : 'DEBIT',
+          date: new Date(initialValues.date),
+          account: {
+            id: initialValues.account.id,
+            name: initialValues.account.name,
+          },
+        }
+      : {
+          description: '',
+          amount: 0,
+          type: 'CREDIT',
+          date: new Date(),
+          account: {
+            id: 0,
+            name: '',
+          },
+        },
     validate: zodResolver(transactionFormSchema),
   })
 
@@ -75,23 +112,24 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
 
   const onSubmit = (values: createTransactionFormType) => {
     if (!isEditMode) {
-      createTransaction({ accountId: values.account.id, values })
+      createTransaction({ accountId: values.account.id, data: values })
     } else if (initialValues && initialValues.id) {
       updateTransaction({
         accountId: values.account.id,
-        transactionId: initialValues.id,
-        values: values,
+        id: initialValues.id,
+        data: values,
       })
     }
-    handleSuccess()
-  }
-
-  const handleSuccess = () => {
-    onSuccess?.()
   }
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        const values = form.values
+        onSubmit(values)
+      }}
+    >
       <Stack gap='md'>
         <Card radius='lg' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>
@@ -130,8 +168,8 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
                   <Select
                     label='Type'
                     data={[
-                      { value: 'CREDIT', label: 'Crédit (+)' },
-                      { value: 'DEBIT', label: 'Débit (-)' },
+                      { value: TransactionPayloadType.CREDIT, label: 'Crédit (+)' },
+                      { value: TransactionPayloadType.DEBIT, label: 'Débit (-)' },
                     ]}
                     {...form.getInputProps('type')}
                     leftSection={<IconArrowsExchange style={{ width: rem(16), height: rem(16) }} />}
@@ -180,7 +218,7 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
                         : 'Sélectionnez un compte'
                     }
                     data={
-                      accountList?.data.map((account) => ({
+                      accountList?.data?.map((account: AccountResponse) => ({
                         value: account.id.toString(),
                         label: account.name,
                       })) || []

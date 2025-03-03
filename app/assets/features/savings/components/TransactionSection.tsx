@@ -1,3 +1,5 @@
+import { useGetApiTransactionsList } from '@/api/generated/transactions/transactions'
+import { GetApiAccountsList200, TransactionResponse, TransactionResponseType } from '@/api/models'
 import {
   ActionIcon,
   Badge,
@@ -22,25 +24,22 @@ import {
   IconTrash,
 } from '@tabler/icons-react'
 import React, { useState } from 'react'
-import { useTransactions } from '../hooks/useTransactions'
-import { Account } from '../types/accounts'
-import { Transaction } from '../types/transactions'
 
 interface TransactionListProps {
-  transactions: { data: Transaction[] }
-  onEdit: (transaction: Transaction) => void
+  transactions: TransactionResponse[]
+  onEdit: (transaction: TransactionResponse) => void
   onDelete: (accountId: number, transactionId: number) => void
 }
 
 const TransactionList = ({ transactions, onEdit, onDelete }: TransactionListProps) => (
   <Stack gap='md'>
-    {transactions?.data.map((transaction: Transaction) => (
+    {transactions.map((transaction: TransactionResponse) => (
       <Card key={transaction.id} radius='md'>
         <Stack gap='xs'>
           <Group justify='space-between' wrap='nowrap'>
             <Text fw={400} size='sm' style={{ flex: 1 }}>
               <Group gap='xs'>
-                {transaction.type === 'CREDIT' ? (
+                {transaction.type === TransactionResponseType.CREDIT ? (
                   <IconPlus size={16} style={{ color: 'var(--mantine-color-teal-6)' }} />
                 ) : (
                   <IconMinus size={16} style={{ color: 'var(--mantine-color-red-6)' }} />
@@ -48,8 +47,8 @@ const TransactionList = ({ transactions, onEdit, onDelete }: TransactionListProp
                 {transaction.description}
               </Group>
             </Text>
-            <Text c={transaction.type === 'CREDIT' ? 'teal' : 'red'} fw={500}>
-              {transaction.type === 'CREDIT' ? '+' : '-'}
+            <Text c={transaction.type === TransactionResponseType.CREDIT ? 'teal' : 'red'} fw={500}>
+              {transaction.type === TransactionResponseType.CREDIT ? '+' : '-'}
               {Math.abs(transaction.amount).toLocaleString('fr-FR')} €
             </Text>
           </Group>
@@ -87,36 +86,35 @@ const TransactionList = ({ transactions, onEdit, onDelete }: TransactionListProp
   </Stack>
 )
 
-interface TransactionsSectionProps {
+interface TransactionSectionProps {
   selectedAccounts: string[]
-  onEdit: (transaction: Transaction) => void
+  onEdit: (transaction: TransactionResponse) => void
   onDelete: (accountId: number, transactionId: number) => void
   onCreateClick: () => void
-  accounts?: { data: Account[] }
+  accounts?: GetApiAccountsList200
 }
 
-export const TransactionsSection = ({
+export const TransactionSection = ({
   selectedAccounts,
   onEdit,
   onDelete,
   onCreateClick,
   accounts,
-}: TransactionsSectionProps) => {
+}: TransactionSectionProps) => {
   const [page, setPage] = useState(1)
-  const { useTransactionList } = useTransactions()
-  const { data: transactions, isFetching } = useTransactionList({
-    accountIds: selectedAccounts.map((id) => parseInt(id)),
+  const { data: transactions, isFetching } = useGetApiTransactionsList({
+    'accountIds[]': selectedAccounts.map((id) => parseInt(id)),
     page,
-    perPage: 20,
+    limit: 20,
   })
 
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   if (isFetching) return <Loader />
 
-  const hasNoAccounts = !accounts?.data.length
+  const hasNoAccounts = !accounts?.data?.length
 
-  if (!transactions?.data.length) {
+  if (!transactions?.data?.length) {
     return (
       <Card radius='lg' py='xl' mt='sm' shadow='sm'>
         <Card.Section inheritPadding px='xl' pb='xs'>
@@ -172,7 +170,7 @@ export const TransactionsSection = ({
       <Card.Section inheritPadding px='xl' mt='sm'>
         {isMobile ? (
           <>
-            <TransactionList transactions={transactions} onEdit={onEdit} onDelete={onDelete} />
+            <TransactionList transactions={transactions.data} onEdit={onEdit} onDelete={onDelete} />
             <Group justify='center' mt='md'>
               <Pagination
                 value={page}
@@ -215,7 +213,7 @@ export const TransactionsSection = ({
                       <Table.Td>
                         <Text fw={400} size='sm'>
                           <Group gap='xs'>
-                            {transaction.type === 'CREDIT' ? (
+                            {transaction.type === TransactionResponseType.CREDIT ? (
                               <IconPlus
                                 size={16}
                                 style={{ color: 'var(--mantine-color-teal-6)' }}
@@ -237,8 +235,11 @@ export const TransactionsSection = ({
                       </Table.Td>
                       <Table.Td>{new Date(transaction.date).toLocaleDateString('fr-FR')}</Table.Td>
                       <Table.Td>
-                        <Text c={transaction.type === 'CREDIT' ? 'teal' : 'red'} fw={500}>
-                          {transaction.type === 'CREDIT' ? '+' : '-'}
+                        <Text
+                          c={transaction.type === TransactionResponseType.CREDIT ? 'teal' : 'red'}
+                          fw={500}
+                        >
+                          {transaction.type === TransactionResponseType.CREDIT ? '+' : '-'}
                           {Math.abs(transaction.amount).toLocaleString('fr-FR')} €
                         </Text>
                       </Table.Td>
@@ -267,20 +268,27 @@ export const TransactionsSection = ({
                 </Table.Tbody>
               </Table>
             </Table.ScrollContainer>
-            <Group justify='space-between' mt='md' px='md'>
-              <Text size='xs' c='dimmed'>
-                {transactions?.meta?.from}-{transactions?.meta?.to} sur {transactions?.meta?.total}
-              </Text>
-              <Group justify='center' style={{ flex: 1 }}>
-                <Pagination
-                  value={page}
-                  onChange={setPage}
-                  total={Math.ceil((transactions?.meta?.total || 0) / 20)}
-                  color='blue'
-                  withEdges
-                />
-              </Group>
-              <div style={{ width: 100 }} />
+            <Group justify='center' mt='md'>
+              <Pagination
+                value={page}
+                onChange={setPage}
+                total={Math.ceil((transactions?.meta?.total || 0) / 20)}
+                color='blue'
+                withEdges
+                styles={{
+                  control: {
+                    padding: isMobile ? '0 0.25rem' : undefined,
+                    minWidth: isMobile ? '1.5rem' : undefined,
+                    height: isMobile ? '1.5rem' : undefined,
+                    fontSize: isMobile ? '0.75rem' : undefined,
+                  },
+                  dots: {
+                    display: isMobile ? 'none' : undefined,
+                  },
+                }}
+                siblings={isMobile ? 0 : 1}
+                boundaries={isMobile ? 1 : 2}
+              />
             </Group>
           </>
         )}

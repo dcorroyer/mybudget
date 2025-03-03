@@ -9,7 +9,7 @@ const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages/Budget
 const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/BudgetCreatePage'))
 const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/BudgetDetailPage'))
 
-const MainPage = React.lazy(() => import('./features/savings/pages'))
+const SavingsIndexPage = React.lazy(() => import('./features/savings/pages/SavingsIndexPage'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <MainPage />
+          <SavingsIndexPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

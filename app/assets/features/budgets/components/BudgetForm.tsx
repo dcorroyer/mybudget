@@ -1,5 +1,6 @@
 import { usePostApiBudgetsCreate, usePutApiBudgetsUpdate } from '@/api/generated/budgets/budgets'
 import { BudgetPayload, BudgetResponse, ExpensePayload, IncomePayload } from '@/api/models'
+import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import { DragDropContext, Draggable, DropResult, Droppable } from '@hello-pangea/dnd'
 import {
   ActionIcon,
@@ -129,45 +130,25 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
         ]
   })
 
-  const { mutate: createBudget, isPending: isCreatePending } = usePostApiBudgetsCreate({
-    mutation: {
-      onSuccess: () => {
-        notifications.show({
-          title: 'Budget créé',
-          message: 'Le budget a été créé avec succès',
-          color: 'green',
-        })
-        onClose()
-      },
-      onError: () => {
-        notifications.show({
-          title: 'Erreur',
-          message: 'Une erreur est survenue lors de la création du budget',
-          color: 'red',
-        })
-      },
+  const { mutate: createBudget, isPending: isCreatePending } = useMutationWithInvalidation(
+    usePostApiBudgetsCreate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/budgets'],
+      successMessage: 'Budget créé avec succès',
+      errorMessage: 'Une erreur est survenue lors de la création du budget',
+      onSuccess: onClose,
     },
-  })
+  )
 
-  const { mutate: updateBudget, isPending: isUpdatePending } = usePutApiBudgetsUpdate({
-    mutation: {
-      onSuccess: () => {
-        notifications.show({
-          title: 'Budget mis à jour',
-          message: 'Le budget a été mis à jour avec succès',
-          color: 'green',
-        })
-        onClose()
-      },
-      onError: () => {
-        notifications.show({
-          title: 'Erreur',
-          message: 'Une erreur est survenue lors de la mise à jour du budget',
-          color: 'red',
-        })
-      },
+  const { mutate: updateBudget, isPending: isUpdatePending } = useMutationWithInvalidation(
+    usePutApiBudgetsUpdate().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/budgets'],
+      successMessage: 'Budget mis à jour avec succès',
+      errorMessage: 'Une erreur est survenue lors de la mise à jour du budget',
+      onSuccess: onClose,
     },
-  })
+  )
 
   const isLoading = isCreatePending || isUpdatePending
 

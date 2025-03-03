@@ -1,16 +1,16 @@
+import { AccountResponse, GetApiAccountsList200 } from '@/api/models'
 import { ActionIcon, Button, Card, Grid, Group, rem, Stack, Text } from '@mantine/core'
 import { IconEdit, IconPlus, IconTrash, IconWallet } from '@tabler/icons-react'
 import React from 'react'
-import { Account } from '../types/accounts'
 
 interface AccountsSectionProps {
-  accounts: { data: Account[] } | undefined
-  onEdit: (account: Account) => void
+  accounts: GetApiAccountsList200 | undefined
+  onEdit: (account: AccountResponse) => void
   onDelete: (accountId: string) => void
   onCreateClick: () => void
 }
 
-export const AccountsSection = ({
+export const AccountSection = ({
   accounts,
   onEdit,
   onDelete,
@@ -32,7 +32,7 @@ export const AccountsSection = ({
     </Card.Section>
     <Card.Section inheritPadding px='xl' mt='sm'>
       <Grid>
-        {accounts?.data?.map((account) => (
+        {(accounts?.data || []).map((account) => (
           <Grid.Col key={account.id} span={{ base: 12, sm: 6, md: 4 }}>
             <Card radius='md' shadow='sm' withBorder>
               <Stack gap='md'>

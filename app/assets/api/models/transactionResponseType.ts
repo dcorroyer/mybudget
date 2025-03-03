@@ -14,6 +14,6 @@ export type TransactionResponseType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransactionResponseType = {
-  INCOME: 'INCOME',
-  EXPENSE: 'EXPENSE',
+  DEBIT: 'DEBIT',
+  CREDIT: 'CREDIT',
 } as const

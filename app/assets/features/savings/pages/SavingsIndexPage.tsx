@@ -1,4 +1,10 @@
-import { useAccount } from '@/features/savings/hooks/useAccount'
+import {
+  useDeleteApiAccountsDelete,
+  useGetApiAccountsList,
+} from '@/api/generated/accounts/accounts'
+import { useDeleteApiTransactionsDelete } from '@/api/generated/transactions/transactions'
+import { AccountResponse, TransactionResponse } from '@/api/models'
+import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import {
   Container,
   Grid,
@@ -11,13 +17,10 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import React, { useState } from 'react'
-import { AccountsSection } from '../components/accounts-section'
-import { ModalContainer } from '../components/modal-container'
-import { SavingsChartSection } from '../components/savings-chart-section'
-import { TransactionsSection } from '../components/transactions-section'
-import { useTransactions } from '../hooks/useTransactions'
-import { Account } from '../types/accounts'
-import { Transaction } from '../types/transactions'
+import { AccountSection } from '../components/AccountSection'
+import { ModalContainer } from '../components/ModalContainer'
+import { SavingsChartSection } from '../components/SacingsChartSection'
+import { TransactionSection } from '../components/TransactionSection'
 
 const SavingsIndex = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('6')
@@ -27,7 +30,7 @@ const SavingsIndex = () => {
     useDisclosure(false)
   const [openedEdit, { open: openEdit, close: closeEdit }] = useDisclosure(false)
   const [openedCreate, { open: openCreate, close: closeCreate }] = useDisclosure(false)
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionResponse | null>(null)
   const [accountIdOfTransactionToDelete, setAccountIdOfTransactionToDelete] = useState<
     number | null
   >(null)
@@ -38,15 +41,31 @@ const SavingsIndex = () => {
     useDisclosure(false)
   const [openedAccountEdit, { open: openAccountEdit, close: closeAccountEdit }] =
     useDisclosure(false)
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
+  const [selectedAccount, setSelectedAccount] = useState<AccountResponse | null>(null)
   const [accountIdToDelete, setAccountIdToDelete] = useState<string | null>(null)
 
-  const { useAccountList, deleteAccount } = useAccount()
-  const { data: accountList } = useAccountList()
-  const { deleteTransaction } = useTransactions()
+  const { data: accountList } = useGetApiAccountsList()
+  const { mutate: deleteAccount } = useMutationWithInvalidation(
+    useDeleteApiAccountsDelete().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts'],
+      successMessage: 'Compte supprimé avec succès',
+      errorMessage: 'Une erreur est survenue lors de la suppression du compte',
+      onSuccess: closeAccountDelete,
+    },
+  )
+  const { mutate: deleteTransaction } = useMutationWithInvalidation(
+    useDeleteApiTransactionsDelete().mutateAsync,
+    {
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      successMessage: 'Transaction supprimée avec succès',
+      errorMessage: 'Une erreur est survenue lors de la suppression de la transaction',
+      onSuccess: closeTransactionDelete,
+    },
+  )
 
   const accountOptions =
-    accountList?.data.map((account) => ({
+    accountList?.data?.map((account) => ({
       value: account.id.toString(),
       label: account.name,
     })) || []
@@ -55,21 +74,20 @@ const SavingsIndex = () => {
     if (accountIdOfTransactionToDelete && transactionIdToDelete) {
       deleteTransaction({
         accountId: accountIdOfTransactionToDelete,
-        transactionId: transactionIdToDelete,
+        id: transactionIdToDelete,
       })
       closeTransactionDelete()
     }
   }
 
-  const handleEdit = (transaction: Transaction) => {
+  const handleEdit = (transaction: TransactionResponse) => {
     setSelectedTransaction(transaction)
     openEdit()
   }
 
   const handleAccountDelete = () => {
     if (accountIdToDelete) {
-      deleteAccount(accountIdToDelete)
-      closeAccountDelete()
+      deleteAccount({ id: parseInt(accountIdToDelete) })
     }
   }
 
@@ -136,7 +154,7 @@ const SavingsIndex = () => {
         </Group>
 
         {/* Accounts Section */}
-        <AccountsSection
+        <AccountSection
           accounts={accountList}
           onEdit={(account) => {
             setSelectedAccount(account)
@@ -194,7 +212,7 @@ const SavingsIndex = () => {
         <SavingsChartSection selectedPeriod={selectedPeriod} selectedAccounts={selectedAccounts} />
 
         {/* Transactions List Section */}
-        <TransactionsSection
+        <TransactionSection
           selectedAccounts={selectedAccounts}
           onEdit={handleEdit}
           onDelete={(accountId, transactionId) => {

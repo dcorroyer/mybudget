@@ -1,7 +1,7 @@
+import { useGetApiBalanceHistory } from '@/api/generated/balance-history/balance-history'
 import { Card, Skeleton } from '@mantine/core'
 import React from 'react'
-import { useSavings } from '../hooks/useSavings'
-import { SavingsChart } from './savings-chart'
+import { SavingsChart } from './SavingsChart'
 
 interface SavingsChartSectionProps {
   selectedPeriod: string
@@ -12,8 +12,7 @@ export const SavingsChartSection = ({
   selectedPeriod,
   selectedAccounts,
 }: SavingsChartSectionProps) => {
-  const { useBalanceHistory } = useSavings()
-  const { data: savingsData, isFetching } = useBalanceHistory({
+  const { data: savingsData, isFetching } = useGetApiBalanceHistory({
     ...(selectedPeriod && { period: selectedPeriod as '3' | '6' | '12' }),
     ...(selectedAccounts.length > 0 && {
       accountIds: selectedAccounts.map((id) => parseInt(id)),
@@ -30,5 +29,5 @@ export const SavingsChartSection = ({
     )
   }
 
-  return savingsData ? <SavingsChart data={savingsData.data} /> : null
+  return savingsData?.data ? <SavingsChart data={savingsData.data} /> : null
 }

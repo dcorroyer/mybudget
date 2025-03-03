@@ -21,9 +21,9 @@ class TransactionResponse
         #[OA\Property(description: 'Transaction amount', example: 500, type: 'number', format: 'float')]
         public readonly float $amount,
 
-        #[OA\Property(description: 'Transaction type', example: 'INCOME', type: 'string', enum: [
-            'INCOME',
-            'EXPENSE',
+        #[OA\Property(description: 'Transaction type', example: TransactionTypesEnum::DEBIT->value, type: 'string', enum: [
+            'DEBIT',
+            'CREDIT',
         ])]
         public readonly TransactionTypesEnum $type,
 

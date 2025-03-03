@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Repository;
 
-use App\Core\Repository\AbstractEntityRepository;
 use App\Shared\Entity\User;
+use App\Shared\Repository\Abstract\AbstractEntityRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -23,7 +23,6 @@ class UserRepository extends AbstractEntityRepository implements PasswordUpgrade
         return User::class;
     }
 
-    // TODO: to test during improvement user creation task
     #[\Override]
     public function upgradePassword(
         PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,

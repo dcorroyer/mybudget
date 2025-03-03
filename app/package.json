@@ -6,7 +6,9 @@
     "build": "vite build",
     "lint": "eslint assets/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix 'assets/**/*.{js,jsx,ts,tsx,json}'",
-    "format": "prettier --write 'assets/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+    "format": "prettier --write 'assets/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "generate-api": "orval --config orval.config.ts",
+    "generate-api:download": "sh ./download-api-and-generate.sh"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -14,6 +16,7 @@
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/typescript-estree": "^8.16.0",
+    "axios": "^1.8.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
@@ -22,6 +25,8 @@
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.14",
+    "openapi-types": "^12.1.3",
+    "orval": "^7.6.0",
     "prettier": "3.3.2",
     "typescript": "5.5.4"
   },

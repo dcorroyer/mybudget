@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Savings\Service;
 
-use App\Core\Dto\PaginatedResponseDto;
-use App\Core\Dto\PaginationMetaDto;
-use App\Core\Dto\PaginationQueryParams;
 use App\Savings\Dto\Payload\TransactionPayload;
 use App\Savings\Dto\Response\AccountPartialResponse;
 use App\Savings\Dto\Response\TransactionResponse;
@@ -14,6 +11,9 @@ use App\Savings\Entity\Account;
 use App\Savings\Entity\Transaction;
 use App\Savings\Repository\TransactionRepository;
 use App\Savings\Security\Voter\TransactionVoter;
+use App\Shared\Dto\PaginatedResponseDto;
+use App\Shared\Dto\PaginationMetaDto;
+use App\Shared\Dto\PaginationQueryParams;
 use App\Shared\Enum\ErrorMessagesEnum;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

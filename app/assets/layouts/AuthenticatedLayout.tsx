@@ -3,8 +3,8 @@ import React, { PropsWithChildren } from 'react'
 import { AppShell, Burger, em, Group } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 
-import Logo from '@/components/logo'
-import { Sidebar } from '@/components/sidebar'
+import Logo from '@/components/Logo'
+import { Sidebar } from '@/components/Sidebar'
 
 export default function AuthenticatedLayout({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure()

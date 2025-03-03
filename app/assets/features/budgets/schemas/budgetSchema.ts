@@ -5,22 +5,18 @@ export const budgetFormSchema = z.object({
   incomes: z.array(
     z.object({
       id: z.number().optional(),
-      name: z.string().min(2, 'Name is required'),
-      amount: z.coerce.number().gt(0.01, { message: 'Amount must be greater than 0' }),
+      name: z.string().min(1, 'Le nom est requis'),
+      amount: z.number().min(0, 'Le montant doit être positif'),
     }),
   ),
   expenses: z.array(
     z.object({
-      category: z.string().min(2, 'Category is required'),
-      items: z.array(
-        z.object({
-          id: z.number().optional(),
-          name: z.string().min(2, 'Name is required'),
-          amount: z.coerce.number().gt(0.01, { message: 'Amount must be greater than 0' }),
-        }),
-      ),
+      id: z.number().optional(),
+      name: z.string().min(1, 'Le nom est requis'),
+      amount: z.number().min(0, 'Le montant doit être positif'),
+      category: z.string().min(1, 'La catégorie est requise'),
     }),
   ),
 })
 
-export type createBudgetFormType = z.infer<typeof budgetFormSchema>
+export type BudgetFormData = z.infer<typeof budgetFormSchema>

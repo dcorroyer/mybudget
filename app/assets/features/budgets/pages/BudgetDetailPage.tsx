@@ -1,6 +1,7 @@
+import { useGetApiBudgetsGet } from '@/api/generated/budgets/budgets'
+import { IncomeResponse } from '@/api/models'
 import { CenteredLoader } from '@/components/CenteredLoader'
 import NotFound from '@/components/NotFound'
-import { BudgetForm } from '@/features/budgets/components/BudgetForm'
 import {
   ActionIcon,
   Badge,
@@ -29,8 +30,15 @@ import {
 import React, { useState } from 'react'
 import { Chart } from 'react-google-charts'
 import { Link, useParams } from 'react-router-dom'
-import { generateSankeyData, groupExpensesByCategory } from '../helpers/budgetDataTransformer'
-import { useBudget } from '../hooks/useBudget'
+import { BudgetForm } from '../components/BudgetForm'
+import { useGroupedExpenses } from '../hooks/useBudgets'
+import {
+  calculateCategoryTotal,
+  calculatePercentage,
+  formatAmount,
+  generateSankeyData,
+  parseDateFromYYYYMM,
+} from '../utils/budgetUtils'
 
 const DottedLine = () => (
   <div
@@ -49,38 +57,37 @@ const BudgetDetail = () => {
   const { id } = useParams()
   const isMobile = useMediaQuery('(max-width: 750px)')
 
-  const { useBudgetDetail } = useBudget()
-  const { data: budget, isFetching } = useBudgetDetail(Number(id))
+  const { data: budget, isFetching } = useGetApiBudgetsGet(Number(id))
+  const formattedExpenses = useGroupedExpenses(budget?.data?.expenses || [])
 
   if (isFetching) return <CenteredLoader />
   if (!budget?.data) return <NotFound />
 
-  const formattedExpenses = groupExpensesByCategory(budget.data.expenses || [])
   const budgetData = {
-    ...budget.data,
-    expenses: formattedExpenses,
+    id: budget.data.id,
+    name: budget.data.name,
+    date: budget.data.date,
+    incomes: budget.data.incomes || [],
+    expenses: budget.data.expenses || [],
     savingCapacity: budget.data.savingCapacity || 0,
     incomesAmount: budget.data.incomesAmount || 0,
     expensesAmount: budget.data.expensesAmount || 0,
-    incomes: budget.data.incomes || [],
   }
 
   const toggleEditMode = () => setEditMode(!editMode)
   const openChartModal = () => setChartModalOpened(true)
   const closeChartModal = () => setChartModalOpened(false)
 
-  const graphData = generateSankeyData(budgetData.expenses)
+  const graphData = generateSankeyData(formattedExpenses)
   const graphOptions = {}
-
-  const formatAmount = (amount: number = 0) => amount.toLocaleString('fr-FR')
-  const calculatePercentage = (amount: number, total: number) =>
-    total > 0 ? Math.round((amount / total) * 100) : 0
-
-  const calculateCategoryTotal = (items: Array<{ amount: number }>) =>
-    items.reduce((sum, item) => sum + (item.amount || 0), 0)
 
   if (editMode) {
     return <BudgetForm initialValues={budgetData} onClose={() => setEditMode(false)} />
+  }
+
+  const formatDate = (dateStr: string) => {
+    const date = parseDateFromYYYYMM(dateStr)
+    return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(date)
   }
 
   return (
@@ -94,7 +101,7 @@ const BudgetDetail = () => {
             </ActionIcon>
             <Stack gap={0}>
               <Title order={1} size='h2' fw={600} c='blue.7'>
-                {budgetData.name}
+                Budget de {formatDate(budget.data.date)}
               </Title>
               <Text c='dimmed' size='sm'>
                 Détail du budget mensuel
@@ -172,7 +179,7 @@ const BudgetDetail = () => {
           </Card.Section>
           <Card.Section withBorder inheritPadding py='md'>
             <Stack gap='sm'>
-              {budgetData.incomes.map((income, index) => (
+              {budgetData.incomes.map((income: IncomeResponse, index: number) => (
                 <Group key={index} justify='space-between' wrap='nowrap'>
                   <Text size='sm'>{income.name}</Text>
                   <DottedLine />
@@ -203,7 +210,7 @@ const BudgetDetail = () => {
           </Card.Section>
           <Card.Section withBorder inheritPadding py='md'>
             <Stack gap='xl'>
-              {budgetData.expenses.map((category, index) => {
+              {formattedExpenses.map((category, index) => {
                 const categoryTotal = calculateCategoryTotal(category.items)
                 return (
                   <Stack key={index} gap='xs'>

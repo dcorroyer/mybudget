@@ -1,3 +1,5 @@
+import { usePostApiBudgetsCreate, usePutApiBudgetsUpdate } from '@/api/generated/budgets/budgets'
+import { BudgetPayload, BudgetResponse, ExpensePayload, IncomePayload } from '@/api/models'
 import { DragDropContext, Draggable, DropResult, Droppable } from '@hello-pangea/dnd'
 import {
   ActionIcon,
@@ -18,6 +20,7 @@ import {
 import { MonthPickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { useViewportSize } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import {
   IconCalendar,
   IconChevronLeft,
@@ -28,12 +31,9 @@ import {
   IconWallet,
   IconX,
 } from '@tabler/icons-react'
-import { zodResolver } from 'mantine-form-zod-resolver'
 import React, { useEffect, useState } from 'react'
-import { budgetDataTransformer } from '../helpers/budgetDataTransformer'
-import { useBudget } from '../hooks/useBudget'
-import { budgetFormSchema, createBudgetFormType } from '../schemas/budgetSchema'
-import { BudgetFormDetails } from '../types/budgets'
+import { budgetFormSchema } from '../schemas/budgetSchema'
+import { formatDateToYYYYMM, parseDateFromYYYYMM } from '../utils/budgetUtils'
 
 interface IncomeItem {
   id: string
@@ -53,8 +53,14 @@ interface ExpenseCategory {
   items: ExpenseItem[]
 }
 
+interface FormValues {
+  date: Date
+  incomes: IncomePayload[]
+  expenses: ExpensePayload[]
+}
+
 interface BudgetFormProps {
-  initialValues?: BudgetFormDetails
+  initialValues?: BudgetResponse
   onClose: () => void
 }
 
@@ -62,9 +68,11 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
   const { width } = useViewportSize()
   const isMobile = width < 768
   const [active, setActive] = useState(0)
+
   const [date, setDate] = useState<Date | null>(
-    initialValues?.date ? new Date(initialValues.date) : new Date(),
+    initialValues?.date ? parseDateFromYYYYMM(initialValues.date) : new Date(),
   )
+
   const [incomes, setIncomes] = useState<IncomeItem[]>(
     initialValues?.incomes?.map((income, index) => ({
       id: String(index + 1),
@@ -72,59 +80,157 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
       amount: income.amount,
     })) || [{ id: '1', name: '', amount: 0 }],
   )
-  const [categories, setCategories] = useState<ExpenseCategory[]>(
-    initialValues?.expenses?.map((expense, categoryIndex) => ({
-      id: String(categoryIndex + 1),
-      name: expense.category,
-      items: expense.items.map((item, itemIndex) => ({
-        id: `${categoryIndex + 1}-${itemIndex + 1}`,
-        name: item.name,
-        amount: item.amount,
-      })),
-    })) || [
-      {
-        id: '1',
-        name: '',
-        items: [{ id: '1-1', name: '', amount: 0 }],
-      },
-    ],
-  )
 
-  const form = useForm<createBudgetFormType>({
+  const [categories, setCategories] = useState<ExpenseCategory[]>(() => {
+    if (!initialValues?.expenses) {
+      return [
+        {
+          id: '1',
+          name: '',
+          items: [{ id: '1-1', name: '', amount: 0 }],
+        },
+      ]
+    }
+
+    const groupedExpenses = initialValues.expenses.reduce((acc, expense) => {
+      const existingCategory = acc.find((cat) => cat.name === expense.category)
+
+      if (existingCategory) {
+        existingCategory.items.push({
+          id: String(Math.random()),
+          name: expense.name,
+          amount: expense.amount,
+        })
+      } else {
+        acc.push({
+          id: String(Math.random()),
+          name: expense.category,
+          items: [
+            {
+              id: String(Math.random()),
+              name: expense.name,
+              amount: expense.amount,
+            },
+          ],
+        })
+      }
+
+      return acc
+    }, [] as ExpenseCategory[])
+
+    return groupedExpenses.length > 0
+      ? groupedExpenses
+      : [
+          {
+            id: '1',
+            name: '',
+            items: [{ id: '1-1', name: '', amount: 0 }],
+          },
+        ]
+  })
+
+  const { mutate: createBudget, isPending: isCreatePending } = usePostApiBudgetsCreate({
+    mutation: {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Budget créé',
+          message: 'Le budget a été créé avec succès',
+          color: 'green',
+        })
+        onClose()
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Erreur',
+          message: 'Une erreur est survenue lors de la création du budget',
+          color: 'red',
+        })
+      },
+    },
+  })
+
+  const { mutate: updateBudget, isPending: isUpdatePending } = usePutApiBudgetsUpdate({
+    mutation: {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Budget mis à jour',
+          message: 'Le budget a été mis à jour avec succès',
+          color: 'green',
+        })
+        onClose()
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Erreur',
+          message: 'Une erreur est survenue lors de la mise à jour du budget',
+          color: 'red',
+        })
+      },
+    },
+  })
+
+  const isLoading = isCreatePending || isUpdatePending
+
+  const form = useForm<FormValues>({
     initialValues: {
       date: date || new Date(),
       incomes: incomes.map(({ name, amount }) => ({ name, amount })),
-      expenses: categories.map((category) => ({
-        category: category.name,
-        items: category.items.map(({ name, amount }) => ({ name, amount })),
-      })),
+      expenses: categories.flatMap((category) =>
+        category.items.map((item) => ({
+          name: item.name,
+          amount: item.amount,
+          category: category.name,
+        })),
+      ),
     },
-    validate: zodResolver(budgetFormSchema),
   })
-
-  const { createBudget, updateBudget, isLoading } = useBudget()
 
   useEffect(() => {
     form.setValues({
-      date: date || undefined,
+      date: date || new Date(),
       incomes: incomes.map(({ name, amount }) => ({ name, amount })),
-      expenses: categories.map((category) => ({
-        category: category.name,
-        items: category.items.map(({ name, amount }) => ({ name, amount })),
-      })),
+      expenses: categories.flatMap((category) =>
+        category.items.map((item) => ({
+          name: item.name,
+          amount: item.amount,
+          category: category.name,
+        })),
+      ),
     })
   }, [date, incomes, categories])
 
   const handleSubmit = () => {
     const values = form.values
-    const data = budgetDataTransformer({ ...values, date: date! })
+    const validationResult = budgetFormSchema.safeParse(values)
 
-    if (!initialValues) {
-      createBudget(data)
-    } else {
-      updateBudget({ id: initialValues.id, ...data })
+    if (!validationResult.success) {
+      notifications.show({
+        title: 'Erreur de validation',
+        message: 'Veuillez vérifier les champs du formulaire',
+        color: 'red',
+      })
+      return
     }
-    onClose()
+
+    const flattenedExpenses: ExpensePayload[] = categories.flatMap((category) =>
+      category.items.map((item) => ({
+        name: item.name,
+        amount: item.amount,
+        category: category.name,
+      })),
+    )
+
+    const budgetData: BudgetPayload = {
+      date: new Date(formatDateToYYYYMM(values.date)),
+      incomes: incomes.map(({ name, amount }) => ({ name, amount })),
+      expenses: flattenedExpenses,
+    }
+
+    if (initialValues?.id) {
+      updateBudget({ id: initialValues.id, data: budgetData })
+    } else {
+      createBudget({ data: budgetData })
+    }
   }
 
   const onDragEnd = (result: DropResult) => {
@@ -223,7 +329,6 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
       return category
     })
 
-    // Supprimer la catégorie si elle n'a plus d'items
     setCategories(updatedCategories.filter((category) => category.items.length > 0))
   }
 

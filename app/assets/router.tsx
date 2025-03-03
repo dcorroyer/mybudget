@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import AuthenticatedLayout from './layouts/authenticated-layout'
+import AuthenticatedLayout from './layouts/AuthenticatedLayout'
 
 const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'))
 const RegisterPage = React.lazy(() => import('./features/auth/pages/RegisterPage'))

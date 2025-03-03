@@ -17,7 +17,7 @@ import {
 import { notifications } from '@mantine/notifications'
 
 import { usePostApiLogin } from '@/api/generated/authentication/authentication'
-import { loginFormSchema, loginFormType } from '@/features/auth/schemas/loginSchema'
+import { loginFormSchema, loginFormType } from '@/features/auth/schemas/LoginSchema'
 
 const Login: React.FC = () => {
   const navigate = useNavigate()

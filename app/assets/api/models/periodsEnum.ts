@@ -10,8 +10,7 @@ export type PeriodsEnum = (typeof PeriodsEnum)[keyof typeof PeriodsEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PeriodsEnum = {
-  NUMBER_3: '3',
   NUMBER_6: '6',
   NUMBER_12: '12',
-  all: 'all',
+  NUMBER_24: '24',
 } as const

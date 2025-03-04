@@ -1719,10 +1719,9 @@
             "PeriodsEnum": {
                 "type": "string",
                 "enum": [
-                    "3",
                     "6",
                     "12",
-                    "all"
+                    "24"
                 ]
             },
             "IncomePayload": {

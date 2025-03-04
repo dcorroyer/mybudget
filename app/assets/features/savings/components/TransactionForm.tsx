@@ -51,7 +51,11 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
   const { mutate: createTransaction, isPending: isCreating } = useMutationWithInvalidation(
     usePostApiTransactionsCreate().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      queryKeyToInvalidate: [
+        '/api/accounts',
+        '/api/accounts/transactions',
+        '/api/accounts/balance-history',
+      ],
       successMessage: 'Transaction créée avec succès',
       errorMessage: 'Une erreur est survenue lors de la création de la transaction',
       onSuccess,
@@ -60,7 +64,11 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
   const { mutate: updateTransaction, isPending: isUpdating } = useMutationWithInvalidation(
     usePutApiTransactionUpdate().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      queryKeyToInvalidate: [
+        '/api/accounts',
+        '/api/accounts/transactions',
+        '/api/accounts/balance-history',
+      ],
       successMessage: 'Transaction mise à jour avec succès',
       errorMessage: 'Une erreur est survenue lors de la mise à jour de la transaction',
       onSuccess,

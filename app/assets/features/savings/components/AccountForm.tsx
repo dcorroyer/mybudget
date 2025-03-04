@@ -29,7 +29,7 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   const { mutate: createAccount, isPending: isCreating } = useMutationWithInvalidation(
     usePostApiAccountsCreate().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts'],
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/balance-history'],
       successMessage: 'Compte créé avec succès',
       errorMessage: 'Une erreur est survenue lors de la création du compte',
       onSuccess,
@@ -39,7 +39,7 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   const { mutate: updateAccount, isPending: isUpdating } = useMutationWithInvalidation(
     usePatchApiAccountsUpdate().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts'],
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/balance-history'],
       successMessage: 'Compte mis à jour avec succès',
       errorMessage: 'Une erreur est survenue lors de la mise à jour du compte',
       onSuccess,

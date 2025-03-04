@@ -19,11 +19,11 @@ import { useDisclosure } from '@mantine/hooks'
 import React, { useState } from 'react'
 import { AccountSection } from '../components/AccountSection'
 import { ModalContainer } from '../components/ModalContainer'
-import { SavingsChartSection } from '../components/SacingsChartSection'
+import { SavingsChartSection } from '../components/SavingsChartSection'
 import { TransactionSection } from '../components/TransactionSection'
 
 const SavingsIndex = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('6')
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('12')
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([])
 
   const [openedTransactionDelete, { open: openTransactionDelete, close: closeTransactionDelete }] =
@@ -48,7 +48,7 @@ const SavingsIndex = () => {
   const { mutate: deleteAccount } = useMutationWithInvalidation(
     useDeleteApiAccountsDelete().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts'],
+      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/balance-history'],
       successMessage: 'Compte supprimé avec succès',
       errorMessage: 'Une erreur est survenue lors de la suppression du compte',
       onSuccess: closeAccountDelete,
@@ -57,7 +57,11 @@ const SavingsIndex = () => {
   const { mutate: deleteTransaction } = useMutationWithInvalidation(
     useDeleteApiTransactionsDelete().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/accounts', '/api/accounts/transactions'],
+      queryKeyToInvalidate: [
+        '/api/accounts',
+        '/api/accounts/transactions',
+        '/api/accounts/balance-history',
+      ],
       successMessage: 'Transaction supprimée avec succès',
       errorMessage: 'Une erreur est survenue lors de la suppression de la transaction',
       onSuccess: closeTransactionDelete,
@@ -193,9 +197,9 @@ const SavingsIndex = () => {
               value={selectedPeriod}
               onChange={setSelectedPeriod}
               data={[
+                { label: '24 Mois', value: '24' },
                 { label: '12 Mois', value: '12' },
                 { label: '6 Mois', value: '6' },
-                { label: '3 Mois', value: '3' },
                 { label: 'Tout', value: '' },
               ]}
               color='blue'

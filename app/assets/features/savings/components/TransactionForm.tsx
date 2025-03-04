@@ -24,6 +24,7 @@ import {
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import {
   IconArrowsExchange,
   IconBuildingBank,
@@ -35,6 +36,7 @@ import {
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React, { useEffect, useState } from 'react'
 import { createTransactionFormType, transactionFormSchema } from '../schemas/transactionSchema'
+import { formatTransactionZodErrors } from '../utils/validationUtils'
 
 interface TransactionFormComponentProps {
   initialValues?: TransactionResponse
@@ -119,6 +121,31 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
   }, [initialValues, form.setValues])
 
   const onSubmit = (values: createTransactionFormType) => {
+    const validationResult = transactionFormSchema.safeParse(values)
+
+    if (!validationResult.success) {
+      const formattedErrors = formatTransactionZodErrors(validationResult.error)
+
+      const ErrorMessage = () => (
+        <div style={{ whiteSpace: 'pre-wrap', maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ marginBottom: '8px' }}>Veuillez corriger les erreurs suivantes :</div>
+          {formattedErrors.map((error, index) => (
+            <div key={index} style={{ marginBottom: '8px' }}>
+              {error}
+            </div>
+          ))}
+        </div>
+      )
+
+      notifications.show({
+        title: 'Erreur de validation',
+        message: <ErrorMessage />,
+        color: 'red',
+        autoClose: false,
+      })
+      return
+    }
+
     if (!isEditMode) {
       createTransaction({ accountId: values.account.id, data: values })
     } else if (initialValues && initialValues.id) {

@@ -5,10 +5,12 @@ import {
 import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import { Button, Card, Group, Stack, Text, TextInput, rem } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import { IconBuildingBank, IconCheck } from '@tabler/icons-react'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import React from 'react'
 import { accountFormSchema, createAccountFormType } from '../schemas/accountSchema'
+import { formatAccountZodErrors } from '../utils/validationUtils'
 
 interface AccountFormComponentProps {
   initialValues?: {
@@ -50,6 +52,31 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   const isEditMode = !!initialValues?.id
 
   const onSubmit = (values: createAccountFormType) => {
+    const validationResult = accountFormSchema.safeParse(values)
+
+    if (!validationResult.success) {
+      const formattedErrors = formatAccountZodErrors(validationResult.error)
+
+      const ErrorMessage = () => (
+        <div style={{ whiteSpace: 'pre-wrap', maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ marginBottom: '8px' }}>Veuillez corriger les erreurs suivantes :</div>
+          {formattedErrors.map((error, index) => (
+            <div key={index} style={{ marginBottom: '8px' }}>
+              {error}
+            </div>
+          ))}
+        </div>
+      )
+
+      notifications.show({
+        title: 'Erreur de validation',
+        message: <ErrorMessage />,
+        color: 'red',
+        autoClose: false,
+      })
+      return
+    }
+
     if (!isEditMode) {
       createAccount({ data: values })
     } else if (initialValues?.id) {
@@ -61,7 +88,12 @@ export const AccountForm: React.FC<AccountFormComponentProps> = ({ initialValues
   }
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit(form.values)
+      }}
+    >
       <Stack gap='md'>
         <Card radius='lg' shadow='sm'>
           <Card.Section inheritPadding px='xl' pb='xs'>

@@ -1,4 +1,8 @@
-import { usePostApiBudgetsCreate, usePutApiBudgetsUpdate } from '@/api/generated/budgets/budgets'
+import {
+  useGetApiBudgetsList,
+  usePostApiBudgetsCreate,
+  usePutApiBudgetsUpdate,
+} from '@/api/generated/budgets/budgets'
 import { BudgetPayload, BudgetResponse, ExpensePayload, IncomePayload } from '@/api/models'
 import { useMutationWithInvalidation } from '@/hooks/useMutation'
 import { DragDropContext, Draggable, DropResult, Droppable } from '@hello-pangea/dnd'
@@ -34,7 +38,7 @@ import {
 } from '@tabler/icons-react'
 import React, { useEffect, useState } from 'react'
 import { budgetFormSchema } from '../schemas/budgetSchema'
-import { formatDateToYYYYMM, parseDateFromYYYYMM } from '../utils/budgetUtils'
+import { formatDateToYYYYMM, formatZodErrors, parseDateFromYYYYMM } from '../utils/budgetUtils'
 
 interface IncomeItem {
   id: string
@@ -73,6 +77,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
   const [date, setDate] = useState<Date | null>(
     initialValues?.date ? parseDateFromYYYYMM(initialValues.date) : new Date(),
   )
+
+  const { data: budgetsData } = useGetApiBudgetsList({ page: 1, limit: 100 })
 
   const [incomes, setIncomes] = useState<IncomeItem[]>(
     initialValues?.incomes?.map((income, index) => ({
@@ -143,7 +149,9 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
   const { mutate: updateBudget, isPending: isUpdatePending } = useMutationWithInvalidation(
     usePutApiBudgetsUpdate().mutateAsync,
     {
-      queryKeyToInvalidate: ['/api/budgets'],
+      queryKeyToInvalidate: initialValues?.id
+        ? ['/api/budgets', `/api/budgets/${initialValues.id}`]
+        : ['/api/budgets'],
       successMessage: 'Budget mis à jour avec succès',
       errorMessage: 'Une erreur est survenue lors de la mise à jour du budget',
       onSuccess: onClose,
@@ -185,9 +193,37 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
     const validationResult = budgetFormSchema.safeParse(values)
 
     if (!validationResult.success) {
+      const formattedErrors = formatZodErrors(validationResult.error, categories)
+
+      const ErrorMessage = () => (
+        <div style={{ whiteSpace: 'pre-wrap', maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ marginBottom: '8px' }}>Veuillez corriger les erreurs suivantes :</div>
+          {formattedErrors.map((error, index) => (
+            <div key={index} style={{ marginBottom: '8px' }}>
+              {error}
+            </div>
+          ))}
+        </div>
+      )
+
       notifications.show({
         title: 'Erreur de validation',
-        message: 'Veuillez vérifier les champs du formulaire',
+        message: <ErrorMessage />,
+        color: 'red',
+        autoClose: false,
+      })
+      return
+    }
+
+    const dateYYYYMM = formatDateToYYYYMM(values.date)
+    const existingBudget = budgetsData?.data?.find(
+      (budget) => budget.date === dateYYYYMM && budget.id !== initialValues?.id,
+    )
+
+    if (existingBudget) {
+      notifications.show({
+        title: 'Date déjà utilisée',
+        message: `Un budget existe déjà pour ${new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(parseDateFromYYYYMM(dateYYYYMM))}. Veuillez choisir une autre date.`,
         color: 'red',
       })
       return

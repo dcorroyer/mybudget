@@ -19,7 +19,7 @@ import {
   IconArrowRight,
   IconCopy,
   IconDatabaseOff,
-  IconEdit,
+  IconEye,
   IconPlus,
   IconTrash,
   IconWallet,
@@ -86,7 +86,7 @@ const BudgetGrid = ({
                     color='blue'
                     size='sm'
                   >
-                    <IconEdit style={{ width: rem(16) }} />
+                    <IconEye style={{ width: rem(16) }} />
                   </ActionIcon>
                   <ActionIcon
                     variant='light'

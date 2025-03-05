@@ -41,6 +41,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      axios:
+        specifier: ^1.8.1
+        version: 1.8.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -99,9 +102,6 @@ importers:
       '@typescript-eslint/typescript-estree':
         specifier: ^8.16.0
         version: 8.16.0(typescript@5.5.4)
-      axios:
-        specifier: ^1.8.1
-        version: 1.8.1
       eslint:
         specifier: ^8.57.1
         version: 8.57.1
@@ -5456,7 +5456,7 @@ snapshots:
       string-argv: 0.3.2
       tsconfck: 2.1.2(typescript@5.8.2)
       typedoc: 0.27.9(typescript@5.8.2)
-      typedoc-plugin-markdown: 4.4.2(typedoc@0.27.9(typescript@5.5.4))
+      typedoc-plugin-markdown: 4.4.2(typedoc@0.27.9(typescript@5.8.2))
       typescript: 5.8.2
     transitivePeerDependencies:
       - encoding
@@ -6011,7 +6011,7 @@ snapshots:
       possible-typed-array-names: 1.0.0
       reflect.getprototypeof: 1.0.7
 
-  typedoc-plugin-markdown@4.4.2(typedoc@0.27.9(typescript@5.5.4)):
+  typedoc-plugin-markdown@4.4.2(typedoc@0.27.9(typescript@5.8.2)):
     dependencies:
       typedoc: 0.27.9(typescript@5.8.2)
 

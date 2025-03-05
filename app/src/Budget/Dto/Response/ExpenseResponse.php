@@ -10,16 +10,16 @@ use OpenApi\Attributes as OA;
 class ExpenseResponse
 {
     public function __construct(
-        #[OA\Property(description: 'Unique expense identifier', example: 33, type: 'integer')]
+        #[OA\Property(description: 'Unique expense identifier', type: 'integer', example: 33)]
         public readonly int $id,
 
-        #[OA\Property(description: 'Expense name', example: 'Loyer', type: 'string')]
+        #[OA\Property(description: 'Expense name', type: 'string', example: 'Loyer')]
         public readonly string $name,
 
-        #[OA\Property(description: 'Expense amount', example: 800, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Expense amount', type: 'number', format: 'float', example: 800)]
         public readonly float $amount,
 
-        #[OA\Property(description: 'Expense category', example: 'Habitation', type: 'string')]
+        #[OA\Property(description: 'Expense category', type: 'string', example: 'Habitation')]
         public readonly string $category,
     ) {
     }

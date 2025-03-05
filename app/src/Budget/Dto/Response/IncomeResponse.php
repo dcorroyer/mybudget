@@ -10,13 +10,13 @@ use OpenApi\Attributes as OA;
 class IncomeResponse
 {
     public function __construct(
-        #[OA\Property(description: 'Unique income identifier', example: 17, type: 'integer')]
+        #[OA\Property(description: 'Unique income identifier', type: 'integer', example: 17)]
         public readonly int $id,
 
-        #[OA\Property(description: 'Income name', example: 'Salary', type: 'string')]
+        #[OA\Property(description: 'Income name', type: 'string', example: 'Salary')]
         public readonly string $name,
 
-        #[OA\Property(description: 'Income amount', example: 2500, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Income amount', type: 'number', format: 'float', example: 2500)]
         public readonly float $amount,
     ) {
     }

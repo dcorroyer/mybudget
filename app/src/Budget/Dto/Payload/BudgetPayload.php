@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class BudgetPayload
 {
     #[Assert\NotBlank]
-    #[OA\Property(description: 'Budget date (YYYY-MM-DD)', example: '2023-05-01', type: 'string', format: 'date')]
+    #[OA\Property(description: 'Budget date (YYYY-MM-DD)', type: 'string', format: 'date', example: '2023-05-01')]
     public \DateTimeInterface $date;
 
     /**

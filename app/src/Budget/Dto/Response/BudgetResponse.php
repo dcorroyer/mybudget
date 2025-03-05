@@ -11,22 +11,22 @@ use OpenApi\Attributes as OA;
 class BudgetResponse
 {
     public function __construct(
-        #[OA\Property(description: 'Unique budget identifier', example: 1, type: 'integer')]
+        #[OA\Property(description: 'Unique budget identifier', type: 'integer', example: 1)]
         public readonly int $id,
 
-        #[OA\Property(description: 'Budget name', example: 'Budget 2023-05', type: 'string')]
+        #[OA\Property(description: 'Budget name', type: 'string', example: 'Budget 2023-05')]
         public readonly string $name,
 
-        #[OA\Property(description: 'Total income amount', example: 3000, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Total income amount', type: 'number', format: 'float', example: 3000)]
         public readonly float $incomesAmount,
 
-        #[OA\Property(description: 'Total expenses amount', example: 1200, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Total expenses amount', type: 'number', format: 'float', example: 1200)]
         public readonly float $expensesAmount,
 
-        #[OA\Property(description: 'Saving capacity', example: 1800, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Saving capacity', type: 'number', format: 'float', example: 1800)]
         public readonly float $savingCapacity,
 
-        #[OA\Property(description: 'Budget date (YYYY-MM)', example: '2023-05', type: 'string')]
+        #[OA\Property(description: 'Budget date (YYYY-MM)', type: 'string', example: '2023-05')]
         public readonly string $date,
 
         /** @var IncomeResponse[] */

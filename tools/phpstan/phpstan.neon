@@ -11,7 +11,7 @@ parameters:
     level: max
     errorFormat: ticketswap
     excludePaths:
-        - %currentWorkingDirectory%/src/Core/*
+        - %currentWorkingDirectory%/src/Shared/Repository/Abstract*
     paths:
         - %currentWorkingDirectory%/src
 #        - %currentWorkingDirectory%/tests

@@ -12,25 +12,26 @@ use OpenApi\Attributes as OA;
 class TransactionResponse
 {
     public function __construct(
-        #[OA\Property(description: 'Transaction identifier', example: 1, type: 'integer')]
+        #[OA\Property(description: 'Transaction identifier', type: 'integer', example: 1)]
         public readonly int $id,
 
-        #[OA\Property(description: 'Transaction description', example: 'Monthly salary', type: 'string')]
+        #[OA\Property(description: 'Transaction description', type: 'string', example: 'Monthly salary')]
         public readonly string $description,
 
-        #[OA\Property(description: 'Transaction amount', example: 500, type: 'number', format: 'float')]
+        #[OA\Property(description: 'Transaction amount', type: 'number', format: 'float', example: 500)]
         public readonly float $amount,
 
-        #[OA\Property(description: 'Transaction type', example: TransactionTypesEnum::DEBIT->value, type: 'string', enum: [
-            'DEBIT',
-            'CREDIT',
-        ])]
+        #[OA\Property(
+            description: 'Transaction type',
+            type: 'string',
+            enum: ['DEBIT', 'CREDIT'],
+            example: TransactionTypesEnum::DEBIT->value)]
         public readonly TransactionTypesEnum $type,
 
-        #[OA\Property(description: 'Transaction date', example: '2023-05-15', type: 'string', format: 'date')]
+        #[OA\Property(description: 'Transaction date', type: 'string', format: 'date', example: '2023-05-15')]
         public readonly \DateTimeInterface $date,
 
-        #[OA\Property(description: 'Associated account', ref: new Model(type: AccountPartialResponse::class))]
+        #[OA\Property(ref: new Model(type: AccountPartialResponse::class), description: 'Associated account')]
         public readonly AccountPartialResponse $account,
     ) {
     }

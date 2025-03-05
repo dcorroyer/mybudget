@@ -7,8 +7,8 @@ import { useMediaQuery } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { IconChartLine, IconLogout, IconWallet } from '@tabler/icons-react'
 
-import Logo from './logo'
-import classes from './sidebar.module.css'
+import Logo from './Logo'
+import classes from './Sidebar.module.css'
 
 const data = [
   { icon: IconChartLine, label: 'Épargne', path: '/' },

@@ -58,18 +58,18 @@ export const SavingsChartSection = ({
       </Card.Section>
 
       <Card.Section withBorder inheritPadding px='xl' py='md'>
-        <div style={{ position: 'relative', height: '300px' }}>
-          {showSkeleton && <Skeleton height={300} radius='md' animate={true} />}
+        <div style={{ position: 'relative', height: '350px', width: '100%', overflow: 'visible' }}>
+          {showSkeleton && <Skeleton height={350} radius='md' animate={true} />}
 
           {showPrevData && prevData && prevData.data && (
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
-              <SavingsChart data={prevData.data} height={300} />
+              <SavingsChart data={prevData.data} height={350} />
             </div>
           )}
 
           {showCurrentData && savingsData && savingsData.data && (
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
-              <SavingsChart data={savingsData.data} height={300} />
+              <SavingsChart data={savingsData.data} height={350} />
             </div>
           )}
         </div>

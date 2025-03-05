@@ -16,12 +16,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class IncomePayload
 {
     #[Assert\NotBlank]
-    #[Assert\Type(type: Types::STRING)]
-    #[OA\Property(description: 'Income name', example: 'Salaire', type: 'string')]
+    #[OA\Property(description: 'Income name', type: 'string', example: 'Salaire')]
     public string $name;
 
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
-    #[OA\Property(description: 'Income amount', example: 2500, type: 'number', format: 'float')]
+    #[OA\Property(description: 'Income amount', type: 'number', format: 'float', example: 2500)]
     public float $amount;
 }

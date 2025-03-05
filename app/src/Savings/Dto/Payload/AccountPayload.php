@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Savings\Dto\Payload;
 
-use Doctrine\DBAL\Types\Types;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,7 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AccountPayload
 {
     #[Assert\NotBlank]
-    #[Assert\Type(Types::STRING)]
-    #[OA\Property(description: 'Account name', example: 'Current Account', type: 'string')]
+    #[OA\Property(description: 'Account name', type: 'string', example: 'Current Account')]
     public string $name;
 }

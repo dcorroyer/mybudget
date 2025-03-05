@@ -1,7 +1,17 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
+const getBaseUrl = () => {
+  const hostname = window.location.hostname
+
+  if (hostname === 'mybudget.dcorroyer.fr') {
+    return 'https://mybudget.dcorroyer.fr'
+  }
+
+  return 'https://mybudget.web.localhost'
+}
+
 const axiosInstance = axios.create({
-  baseURL: 'https://mybudget.web.localhost',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

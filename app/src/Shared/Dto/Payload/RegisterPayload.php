@@ -16,18 +16,18 @@ class RegisterPayload
 {
     #[Assert\NotBlank]
     #[Assert\Email]
-    #[OA\Property(description: 'User email', example: 'user@example.com', type: 'string')]
+    #[OA\Property(description: 'User email', type: 'string', example: 'user@example.com')]
     public string $email;
 
     #[Assert\NotBlank]
-    #[OA\Property(description: 'User first name', example: 'John', type: 'string')]
+    #[OA\Property(description: 'User first name', type: 'string', example: 'John')]
     public string $firstName;
 
     #[Assert\NotBlank]
-    #[OA\Property(description: 'User last name', example: 'Doe', type: 'string')]
+    #[OA\Property(description: 'User last name', type: 'string', example: 'Doe')]
     public string $lastName;
 
     #[Assert\NotBlank]
-    #[OA\Property(description: 'User password', example: 'securePassword123', type: 'string', format: 'password')]
+    #[OA\Property(description: 'User password', type: 'string', format: 'password', example: 'securePassword123')]
     public string $password;
 }

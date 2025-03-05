@@ -16,17 +16,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ExpensePayload
 {
     #[Assert\NotBlank]
-    #[Assert\Type(type: Types::STRING)]
-    #[OA\Property(description: 'Expense name', example: 'Loyer', type: 'string')]
+    #[OA\Property(description: 'Expense name', type: 'string', example: 'Loyer')]
     public string $name;
 
     #[Assert\NotBlank]
     #[Assert\Type(type: Types::FLOAT)]
-    #[OA\Property(description: 'Expense amount', example: 800, type: 'number', format: 'float')]
+    #[OA\Property(description: 'Expense amount', type: 'number', format: 'float', example: 800)]
     public float $amount;
 
     #[Assert\NotBlank]
-    #[Assert\Type(type: Types::STRING)]
-    #[OA\Property(description: 'Expense category', example: 'Habitation', type: 'string')]
+    #[OA\Property(description: 'Expense category', type: 'string', example: 'Habitation')]
     public string $category;
 }

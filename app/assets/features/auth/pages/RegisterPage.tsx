@@ -18,7 +18,7 @@ import { notifications } from '@mantine/notifications'
 
 import { usePostApiLogin, usePostApiRegister } from '@/api/generated/authentication/authentication'
 import { PostApiRegister400 } from '@/api/models'
-import { registerFormSchema, registerFormType } from '@/features/auth/schemas/RegisterSchema'
+import { registerFormSchema, registerFormType } from '@/features/auth/schemas/registerSchema'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()

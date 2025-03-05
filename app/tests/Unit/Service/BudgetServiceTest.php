@@ -329,7 +329,7 @@ final class BudgetServiceTest extends TestCase
         ;
 
         // ACT
-        $budgetsResponse = $this->budgetService->paginate(new PaginationQueryParams());
+        $budgetsResponse = $this->budgetService->paginate(null, new PaginationQueryParams());
 
         // ASSERT
         self::assertCount(20, $budgetsResponse->data);

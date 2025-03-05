@@ -1,0 +1,26 @@
+sentry:
+  dsn: '%env(SENTRY_DSN)%'
+  options:
+    environment: '%kernel.environment%'
+    release: '1.0.0'
+    traces_sample_rate: 1.0
+    send_default_pii: true
+    enable_tracing: true
+
+when@prod:
+  sentry:
+    options:
+      traces_sample_rate: 0.1
+      profiles_sample_rate: 0.1
+      attach_stacktrace: true
+      send_default_pii: true
+      max_breadcrumbs: 50
+
+when@dev:
+  sentry:
+    options:
+      traces_sample_rate: 1.0
+      profiles_sample_rate: 1.0
+      attach_stacktrace: true
+      send_default_pii: true
+      max_breadcrumbs: 100

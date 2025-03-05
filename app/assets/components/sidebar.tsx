@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { em, Group } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import { IconChartLine, IconLogout, IconWallet } from '@tabler/icons-react'
 
-import { useAuth } from '@/features/auth/hooks/useAuth'
-
-import Logo from './logo'
-import classes from './sidebar.module.css'
+import Logo from './Logo'
+import classes from './Sidebar.module.css'
 
 const data = [
   { icon: IconChartLine, label: 'Épargne', path: '/' },
@@ -21,12 +20,23 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onNavigate }: SidebarProps) {
-  const { logout } = useAuth()
-
+  const navigate = useNavigate()
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`)
 
   const { pathname } = useLocation()
   const [active, setActive] = useState(pathname)
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+
+    notifications.show({
+      title: 'Déconnexion réussie',
+      message: 'Vous avez été déconnecté avec succès',
+      color: 'blue',
+    })
+
+    navigate('/auth/login')
+  }
 
   const links = data.map((item) => {
     const isActive = item.path === pathname
@@ -63,7 +73,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         </div>
 
         <div className={classes.footer}>
-          <Link onClick={() => logout()} className={classes.link} to={''}>
+          <Link onClick={handleLogout} className={classes.link} to={''}>
             <IconLogout className={classes.linkIcon} stroke={1.5} />
             <span>Déconnexion</span>
           </Link>

@@ -1,23 +1,31 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import { useUser } from './features/auth/hooks/useUser'
-import AuthenticatedLayout from './layouts/authenticated-layout'
+import AuthenticatedLayout from './layouts/AuthenticatedLayout'
 
-const LoginPage = React.lazy(() => import('./features/auth/pages/login'))
-const RegisterPage = React.lazy(() => import('./features/auth/pages/register'))
+const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'))
+const RegisterPage = React.lazy(() => import('./features/auth/pages/RegisterPage'))
 
-const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages'))
-const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/create'))
-const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/detail'))
+const BudgetIndexPage = React.lazy(() => import('./features/budgets/pages/BudgetIndexPage'))
+const BudgetCreatePage = React.lazy(() => import('./features/budgets/pages/BudgetCreatePage'))
+const BudgetDetailPage = React.lazy(() => import('./features/budgets/pages/BudgetDetailPage'))
 
-const MainPage = React.lazy(() => import('./features/savings/pages'))
+const SavingsIndexPage = React.lazy(() => import('./features/savings/pages/SavingsIndexPage'))
 
 function ProtectedRoute({ children }: PropsWithChildren) {
-  const { user, isFetching } = useUser()
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
-  if (isFetching) return
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    setIsAuthenticated(!!token)
+  }, [])
 
-  if (!user) return <Navigate to='/auth/login' replace />
+  if (isAuthenticated === null) {
+    return null
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to='/auth/login' replace />
+  }
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>
 }
@@ -28,7 +36,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <React.Suspense fallback={null}>
-          <MainPage />
+          <SavingsIndexPage />
         </React.Suspense>
       </ProtectedRoute>
     ),

@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ORM\Table(name: '`budget`')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['date'], message: 'This budget already exists.')]
+#[UniqueEntity(fields: ['date', 'user'], message: 'Ce budget existe déjà pour cet utilisateur.')]
 class Budget
 {
     #[ORM\Id]
@@ -57,7 +57,7 @@ class Budget
     )]
     #[Assert\NotBlank]
     #[Assert\Date]
-    #[ORM\Column(type: Types::DATE_MUTABLE, unique: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private \DateTimeInterface $date;
 
     /**

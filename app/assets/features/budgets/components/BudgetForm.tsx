@@ -24,7 +24,7 @@ import {
 } from '@mantine/core'
 import { MonthPickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
-import { useViewportSize } from '@mantine/hooks'
+import { useMediaQuery } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import {
   IconCalendar,
@@ -70,8 +70,7 @@ interface BudgetFormProps {
 }
 
 export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }) => {
-  const { width } = useViewportSize()
-  const isMobile = width < 768
+  const isMobile = useMediaQuery('(max-width: 750px)')
   const [active, setActive] = useState(0)
 
   const [date, setDate] = useState<Date | null>(

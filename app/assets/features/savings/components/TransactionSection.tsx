@@ -108,7 +108,7 @@ export const TransactionSection = ({
     limit: 20,
   })
 
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 750px)')
 
   if (isFetching) return <Loader />
 
@@ -197,7 +197,7 @@ export const TransactionSection = ({
         ) : (
           <>
             <Table.ScrollContainer minWidth={800}>
-              <Table verticalSpacing='sm' horizontalSpacing='lg'>
+              <Table verticalSpacing='sm' horizontalSpacing='lg' highlightOnHover>
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th>Description</Table.Th>

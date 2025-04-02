@@ -120,6 +120,14 @@ export const TransactionForm: React.FC<TransactionFormComponentProps> = ({
     }
   }, [initialValues, form.setValues])
 
+  useEffect(() => {
+    if (!isEditMode && accountList?.data?.length === 1 && !accountIdValue) {
+      const singleAccount = accountList.data[0]
+      form.setFieldValue('account.id', singleAccount.id)
+      setAccountIdValue(singleAccount.id)
+    }
+  }, [accountList, isEditMode, accountIdValue, form])
+
   const onSubmit = (values: createTransactionFormType) => {
     const validationResult = transactionFormSchema.safeParse(values)
 

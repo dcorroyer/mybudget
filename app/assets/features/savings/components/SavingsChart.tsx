@@ -49,7 +49,10 @@ export const SavingsChart: React.FC<SavingsChartProps> = ({ data, height }) => {
             tickFormatter: () => '',
           }}
           xAxisProps={{
-            padding: { left: isMobile ? 5 : 30, right: isMobile ? 5 : 30 },
+            padding: { left: isMobile ? 10 : 30, right: isMobile ? 10 : 30 },
+            tickMargin: isMobile ? 5 : 10,
+            tick: { fontSize: isMobile ? 10 : 12 },
+            tickCount: isMobile ? 5 : undefined,
           }}
           gridAxis='none'
           withPointLabels

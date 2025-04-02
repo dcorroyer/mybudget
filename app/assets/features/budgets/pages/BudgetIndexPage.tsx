@@ -5,18 +5,19 @@ import {
   Button,
   Card,
   Container,
-  Grid,
   Group,
   Modal,
   Stack,
+  Table,
   Text,
   Title,
   rem,
 } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconCalendar,
   IconCopy,
   IconDatabaseOff,
   IconEye,
@@ -33,6 +34,85 @@ import {
   usePostApiBudgetsDuplicate,
 } from '@/api/generated/budgets/budgets'
 import { useMutationWithInvalidation } from '@/hooks/useMutation'
+
+interface BudgetCardListProps {
+  budgets: any[]
+  onDelete: (id: string) => void
+  onDuplicate: (id: string) => void
+}
+
+const BudgetCardList = ({ budgets, onDelete, onDuplicate }: BudgetCardListProps) => (
+  <Stack gap='md'>
+    {budgets.map((budget) => (
+      <Card key={budget.id} radius='md'>
+        <Stack gap='xs'>
+          <Group justify='space-between' wrap='nowrap'>
+            <Group gap='xs'>
+              <IconCalendar size={16} style={{ color: 'var(--mantine-color-blue-6)' }} />
+              <Text fw={500} size='sm'>
+                {new Date(budget.date).toLocaleDateString('fr-FR', { month: 'long' })}{' '}
+                {budget.date.toString().split('-')[0]}
+              </Text>
+            </Group>
+            <Group gap='xs'>
+              <ActionIcon
+                component={Link}
+                to={`/budgets/${budget.id}`}
+                variant='light'
+                color='blue'
+                size='sm'
+              >
+                <IconEye style={{ width: rem(16) }} />
+              </ActionIcon>
+              <ActionIcon
+                variant='light'
+                color='gray'
+                size='sm'
+                onClick={() => onDuplicate(budget.id.toString())}
+              >
+                <IconCopy style={{ width: rem(16) }} />
+              </ActionIcon>
+              <ActionIcon
+                variant='light'
+                color='red'
+                size='sm'
+                onClick={() => onDelete(budget.id.toString())}
+              >
+                <IconTrash style={{ width: rem(16) }} />
+              </ActionIcon>
+            </Group>
+          </Group>
+          <Stack gap={8}>
+            <Group justify='space-between' wrap='nowrap'>
+              <Text size='xs' c='dimmed'>
+                Capacité d&apos;épargne
+              </Text>
+              <Text fw={700} c='blue'>
+                {budget.savingCapacity.toLocaleString('fr-FR')} €
+              </Text>
+            </Group>
+            <Group justify='space-between' wrap='nowrap'>
+              <Text size='xs' c='dimmed'>
+                Revenus
+              </Text>
+              <Badge variant='light' color='teal'>
+                {budget.incomesAmount.toLocaleString('fr-FR')} €
+              </Badge>
+            </Group>
+            <Group justify='space-between' wrap='nowrap'>
+              <Text size='xs' c='dimmed'>
+                Dépenses
+              </Text>
+              <Badge variant='light' color='red'>
+                {budget.expensesAmount.toLocaleString('fr-FR')} €
+              </Badge>
+            </Group>
+          </Stack>
+        </Stack>
+      </Card>
+    ))}
+  </Stack>
+)
 
 const BudgetGrid = ({
   selectedYear,
@@ -52,6 +132,8 @@ const BudgetGrid = ({
     },
   )
 
+  const isMobile = useMediaQuery('(max-width: 750px)')
+
   if (isLoading) return <Loader />
 
   if (!budgetList?.data || budgetList.data.length === 0) {
@@ -59,7 +141,7 @@ const BudgetGrid = ({
       <Container h={100} display='flex'>
         <Stack justify='center' align='center' style={{ flex: 1 }} gap='xs'>
           <IconDatabaseOff style={{ width: rem(24), height: rem(24) }} stroke={1.5} color='gray' />
-          <Text size='lg' fw={500} c='gray'>
+          <Text size={isMobile ? 'sm' : 'lg'} fw={500} c='gray'>
             Aucun budget trouvé
           </Text>
         </Stack>
@@ -67,18 +149,49 @@ const BudgetGrid = ({
     )
   }
 
-  return (
-    <Grid gutter='lg'>
-      {budgetList.data.map((budget) => (
-        <Grid.Col key={budget.id} span={{ base: 12, sm: 6, md: 4 }}>
-          <Card radius='md' withBorder>
-            <Stack gap='xs'>
-              <Group justify='apart'>
-                <Text fw={500}>
-                  Budget {new Date(budget.date).toLocaleDateString('fr-FR', { month: 'long' })}{' '}
-                  {budget.date.toString().split('-')[1]}-{budget.date.toString().split('-')[0]}
+  return isMobile ? (
+    <BudgetCardList budgets={budgetList.data} onDelete={onDelete} onDuplicate={onDuplicate} />
+  ) : (
+    <Table.ScrollContainer minWidth={800}>
+      <Table verticalSpacing='sm' horizontalSpacing='lg' highlightOnHover>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Mois</Table.Th>
+            <Table.Th>Revenus</Table.Th>
+            <Table.Th>Dépenses</Table.Th>
+            <Table.Th>Capacité d'épargne</Table.Th>
+            <Table.Th>Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {budgetList.data.map((budget) => (
+            <Table.Tr key={budget.id}>
+              <Table.Td>
+                <Text fw={500} size='sm'>
+                  <Group gap='xs'>
+                    <IconCalendar size={16} style={{ color: 'var(--mantine-color-blue-6)' }} />
+                    {new Date(budget.date).toLocaleDateString('fr-FR', { month: 'long' })}{' '}
+                    {budget.date.toString().split('-')[0]}
+                  </Group>
                 </Text>
-                <Group gap='xs' ml='auto'>
+              </Table.Td>
+              <Table.Td>
+                <Badge variant='light' color='teal'>
+                  {budget.incomesAmount.toLocaleString('fr-FR')} €
+                </Badge>
+              </Table.Td>
+              <Table.Td>
+                <Badge variant='light' color='red'>
+                  {budget.expensesAmount.toLocaleString('fr-FR')} €
+                </Badge>
+              </Table.Td>
+              <Table.Td>
+                <Text fw={700} c='blue'>
+                  {budget.savingCapacity.toLocaleString('fr-FR')} €
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Group gap='xs'>
                   <ActionIcon
                     component={Link}
                     to={`/budgets/${budget.id}`}
@@ -105,38 +218,12 @@ const BudgetGrid = ({
                     <IconTrash style={{ width: rem(16) }} />
                   </ActionIcon>
                 </Group>
-              </Group>
-              <Stack gap={8}>
-                <Group justify='apart'>
-                  <Text size='sm' c='dimmed'>
-                    Capacité d&apos;épargne
-                  </Text>
-                  <Text size='sm' c='blue' fw={500}>
-                    {budget.savingCapacity.toLocaleString('fr-FR')} €
-                  </Text>
-                </Group>
-                <Group justify='apart'>
-                  <Text size='sm' c='dimmed'>
-                    Revenus
-                  </Text>
-                  <Badge variant='light' color='teal'>
-                    {budget.incomesAmount.toLocaleString('fr-FR')} €
-                  </Badge>
-                </Group>
-                <Group justify='apart'>
-                  <Text size='sm' c='dimmed'>
-                    Dépenses
-                  </Text>
-                  <Badge variant='light' color='red'>
-                    {budget.expensesAmount.toLocaleString('fr-FR')} €
-                  </Badge>
-                </Group>
-              </Stack>
-            </Stack>
-          </Card>
-        </Grid.Col>
-      ))}
-    </Grid>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Table.ScrollContainer>
   )
 }
 

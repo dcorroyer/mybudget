@@ -1,11 +1,7 @@
 import React from 'react'
-
 import { Button, Container, Group, Text, Title } from '@mantine/core'
-
 import { Link } from 'react-router-dom'
-
 import classes from './NotFound.module.css'
-
 import { Illustration } from './Illustration'
 
 const NotFound: React.FC = () => {

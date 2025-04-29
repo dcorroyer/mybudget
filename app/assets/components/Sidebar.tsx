@@ -7,7 +7,7 @@ import { useMediaQuery } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { IconChartLine, IconLogout, IconWallet } from '@tabler/icons-react'
 
-import Logo from './Logo'
+import { Logo } from './Logo'
 import classes from './Sidebar.module.css'
 
 const data = [

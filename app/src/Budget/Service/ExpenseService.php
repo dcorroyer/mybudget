@@ -23,6 +23,7 @@ class ExpenseService
         $expense->setName($expensePayload->name)
             ->setAmount($expensePayload->amount)
             ->setCategory($expensePayload->category)
+            ->setPaymentMethod($expensePayload->paymentMethod)
             ->setBudget($budget)
         ;
 

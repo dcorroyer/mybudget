@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Entity;
 
+use App\Budget\Enum\PayementMethodEnum;
 use App\Budget\Repository\ExpenseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -32,6 +33,9 @@ class Expense
     #[Assert\Type(Types::STRING)]
     #[ORM\Column(length: 255)]
     private string $category = '';
+
+    #[ORM\Column(type: Types::STRING, enumType: PayementMethodEnum::class)]
+    private PayementMethodEnum $paymentMethod = PayementMethodEnum::OTHER;
 
     #[ORM\ManyToOne(targetEntity: Budget::class, cascade: ['persist'], fetch: 'LAZY', inversedBy: 'expenses')]
     #[ORM\JoinColumn(name: 'budget_id', referencedColumnName: 'id', nullable: false)]
@@ -81,6 +85,18 @@ class Expense
     public function setCategory(string $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getPaymentMethod(): PayementMethodEnum
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(PayementMethodEnum $paymentMethod): static
+    {
+        $this->paymentMethod = $paymentMethod;
 
         return $this;
     }

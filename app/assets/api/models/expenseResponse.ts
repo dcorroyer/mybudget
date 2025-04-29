@@ -5,6 +5,7 @@
  * API for budget and savings management
  * OpenAPI spec version: 1.0.0
  */
+import type { ExpenseResponsePaymentMethod } from './expenseResponsePaymentMethod'
 
 /**
  * Expense data
@@ -18,4 +19,6 @@ export interface ExpenseResponse {
   amount: number
   /** Expense category */
   category: string
+  /** Payment method */
+  paymentMethod: ExpenseResponsePaymentMethod
 }

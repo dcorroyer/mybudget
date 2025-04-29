@@ -56,6 +56,7 @@ final class ExpenseServiceTest extends TestCase
         $expensePayload->name = $expense->getName();
         $expensePayload->amount = $expense->getAmount();
         $expensePayload->category = $expense->getCategory();
+        $expensePayload->paymentMethod = $expense->getPaymentMethod();
 
         $this->expenseRepository->expects($this->once())
             ->method('save')
@@ -72,5 +73,7 @@ final class ExpenseServiceTest extends TestCase
         self::assertSame($expense->getId(), $expenseResponse->getId());
         self::assertSame($expense->getName(), $expenseResponse->getName());
         self::assertSame($expense->getAmount(), $expenseResponse->getAmount());
+        self::assertSame($expense->getCategory(), $expenseResponse->getCategory());
+        self::assertSame($expense->getPaymentMethod(), $expenseResponse->getPaymentMethod());
     }
 }

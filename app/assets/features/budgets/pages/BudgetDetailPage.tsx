@@ -30,6 +30,8 @@ import {
 import React, { useState } from 'react'
 import { Chart } from 'react-google-charts'
 import { Link, useParams } from 'react-router-dom'
+import { ExpenseResponse } from '../../../api/models/expenseResponse'
+import { ExpenseResponsePaymentMethod } from '../../../api/models/expenseResponsePaymentMethod'
 import { BudgetForm } from '../components/BudgetForm'
 import { useGroupedExpenses } from '../hooks/useBudgets'
 import {
@@ -50,6 +52,29 @@ const DottedLine = () => (
     }}
   />
 )
+
+const calculatePaymentMethodTotals = (expenses: ExpenseResponse[]) => {
+  return expenses.reduce(
+    (acc, expense) => {
+      const method = expense.paymentMethod || ExpenseResponsePaymentMethod.OTHER
+      acc[method] = (acc[method] || 0) + expense.amount
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+}
+
+const getPaymentMethodLabel = (method: string) => {
+  switch (method) {
+    case ExpenseResponsePaymentMethod.BILLS_ACCOUNT:
+      return 'Compte charges'
+    case ExpenseResponsePaymentMethod.BANK_TRANSFER:
+      return 'Virement bancaire'
+    case ExpenseResponsePaymentMethod.OTHER:
+    default:
+      return 'Autre'
+  }
+}
 
 const BudgetDetail = () => {
   const [editMode, setEditMode] = useState(false)
@@ -249,22 +274,44 @@ const BudgetDetail = () => {
             </Group>
           </Card.Section>
           <Card.Section withBorder inheritPadding py='md'>
-            <Text size='sm'>
-              Vous avez un revenu total de{' '}
-              <Text span fw={500} c='teal'>
-                {formatAmount(budgetData.incomesAmount)} €
+            <Stack gap='md'>
+              <Text size='sm'>
+                Vous avez un revenu total de{' '}
+                <Text span fw={500} c='teal'>
+                  {formatAmount(budgetData.incomesAmount)} €
+                </Text>
+                . Vous dépensez{' '}
+                <Text span fw={500} c='red'>
+                  {formatAmount(budgetData.expensesAmount)} €
+                </Text>{' '}
+                ({calculatePercentage(budgetData.expensesAmount, budgetData.incomesAmount)}%), il
+                vous reste{' '}
+                <Text span fw={500} c='blue'>
+                  {formatAmount(budgetData.savingCapacity)} €
+                </Text>{' '}
+                ({calculatePercentage(budgetData.savingCapacity, budgetData.incomesAmount)}%).
               </Text>
-              . Vous dépensez{' '}
-              <Text span fw={500} c='red'>
-                {formatAmount(budgetData.expensesAmount)} €
-              </Text>{' '}
-              ({calculatePercentage(budgetData.expensesAmount, budgetData.incomesAmount)}%), il vous
-              reste{' '}
-              <Text span fw={500} c='blue'>
-                {formatAmount(budgetData.savingCapacity)} €
-              </Text>{' '}
-              ({calculatePercentage(budgetData.savingCapacity, budgetData.incomesAmount)}%).
-            </Text>
+
+              {/* Payment methods recap */}
+              <div>
+                <Text fw={500} mb='xs'>
+                  Répartition par méthode de paiement:
+                </Text>
+                <Stack gap='xs'>
+                  {Object.entries(calculatePaymentMethodTotals(budgetData.expenses)).map(
+                    ([method, amount]) => (
+                      <Group key={method} justify='space-between' wrap='nowrap'>
+                        <Text size='sm'>{getPaymentMethodLabel(method)}</Text>
+                        <DottedLine />
+                        <Text size='sm' fw={500}>
+                          {formatAmount(Number(amount))} €
+                        </Text>
+                      </Group>
+                    ),
+                  )}
+                </Stack>
+              </div>
+            </Stack>
           </Card.Section>
         </Card>
 

@@ -206,7 +206,8 @@ class BudgetService
                 id: $expense->getId(),
                 name: $expense->getName(),
                 amount: $expense->getAmount(),
-                category: $expense->getCategory()
+                category: $expense->getCategory(),
+                paymentMethod: $expense->getPaymentMethod(),
             );
         }
 

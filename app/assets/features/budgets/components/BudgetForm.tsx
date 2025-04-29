@@ -5,7 +5,7 @@ import {
 } from '@/api/generated/budgets/budgets'
 import { BudgetPayload, BudgetResponse, ExpensePayload, IncomePayload } from '@/api/models'
 import { useMutationWithInvalidation } from '@/hooks/useMutation'
-import { DragDropContext, Draggable, DropResult, Droppable } from '@hello-pangea/dnd'
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
 import {
   ActionIcon,
   Box,
@@ -15,12 +15,13 @@ import {
   Grid,
   Group,
   NumberInput,
+  rem,
+  Select,
   Stack,
   Stepper,
   Text,
   TextInput,
   Title,
-  rem,
 } from '@mantine/core'
 import { MonthPickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
@@ -37,6 +38,7 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import React, { useEffect, useState } from 'react'
+import { ExpensePayloadPaymentMethod } from '../../../api/models/expensePayloadPaymentMethod'
 import { budgetFormSchema } from '../schemas/budgetSchema'
 import { formatDateToYYYYMM, formatZodErrors, parseDateFromYYYYMM } from '../utils/budgetUtils'
 
@@ -50,6 +52,7 @@ interface ExpenseItem {
   id: string
   name: string
   amount: number
+  paymentMethod: ExpensePayloadPaymentMethod
 }
 
 interface ExpenseCategory {
@@ -93,7 +96,9 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
         {
           id: '1',
           name: '',
-          items: [{ id: '1-1', name: '', amount: 0 }],
+          items: [
+            { id: '1-1', name: '', amount: 0, paymentMethod: ExpensePayloadPaymentMethod.OTHER },
+          ],
         },
       ]
     }
@@ -106,6 +111,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
           id: String(Math.random()),
           name: expense.name,
           amount: expense.amount,
+          paymentMethod: expense.paymentMethod || ExpensePayloadPaymentMethod.OTHER,
         })
       } else {
         acc.push({
@@ -116,6 +122,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
               id: String(Math.random()),
               name: expense.name,
               amount: expense.amount,
+              paymentMethod: expense.paymentMethod || ExpensePayloadPaymentMethod.OTHER,
             },
           ],
         })
@@ -130,7 +137,9 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
           {
             id: '1',
             name: '',
-            items: [{ id: '1-1', name: '', amount: 0 }],
+            items: [
+              { id: '1-1', name: '', amount: 0, paymentMethod: ExpensePayloadPaymentMethod.OTHER },
+            ],
           },
         ]
   })
@@ -168,6 +177,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
           name: item.name,
           amount: item.amount,
           category: category.name,
+          paymentMethod: item.paymentMethod as ExpensePayloadPaymentMethod,
         })),
       ),
     },
@@ -182,6 +192,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
           name: item.name,
           amount: item.amount,
           category: category.name,
+          paymentMethod: item.paymentMethod as ExpensePayloadPaymentMethod,
         })),
       ),
     })
@@ -233,6 +244,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
         name: item.name,
         amount: item.amount,
         category: category.name,
+        paymentMethod: item.paymentMethod as ExpensePayloadPaymentMethod,
       })),
     )
 
@@ -289,7 +301,9 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
       {
         id: newCategoryId,
         name: '',
-        items: [{ id: newItemId, name: '', amount: 0 }],
+        items: [
+          { id: newItemId, name: '', amount: 0, paymentMethod: ExpensePayloadPaymentMethod.OTHER },
+        ],
       },
     ])
   }
@@ -298,10 +312,17 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
     setCategories(
       categories.map((category) => {
         if (category.id === categoryId) {
-          const newItemId = `${categoryId}-${category.items.length + 1}`
           return {
             ...category,
-            items: [...category.items, { id: newItemId, name: '', amount: 0 }],
+            items: [
+              ...category.items,
+              {
+                id: String(Math.random()),
+                name: '',
+                amount: 0,
+                paymentMethod: ExpensePayloadPaymentMethod.OTHER,
+              },
+            ],
           }
         }
         return category
@@ -312,7 +333,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
   const updateExpense = (
     categoryId: string,
     itemId: string,
-    field: 'name' | 'amount',
+    field: 'name' | 'amount' | 'paymentMethod',
     value: string | number,
   ) => {
     setCategories(
@@ -697,26 +718,6 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                           }}
                                         >
                                           <Grid align='center'>
-                                            <Grid.Col span={{ base: 12, sm: 1 }}>
-                                              <Group
-                                                gap='xs'
-                                                wrap='nowrap'
-                                                justify='flex-end'
-                                                style={{ width: '100%' }}
-                                              >
-                                                {!isMobile && (
-                                                  <div {...provided.dragHandleProps}>
-                                                    <IconGripVertical
-                                                      style={{
-                                                        width: rem(20),
-                                                        height: rem(20),
-                                                        color: 'var(--mantine-color-gray-5)',
-                                                      }}
-                                                    />
-                                                  </div>
-                                                )}
-                                              </Group>
-                                            </Grid.Col>
                                             <Grid.Col span={{ base: 12, sm: 5 }}>
                                               <TextInput
                                                 placeholder='Nom de la dépense'
@@ -747,7 +748,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                                 }
                                               />
                                             </Grid.Col>
-                                            <Grid.Col span={{ base: 12, sm: 5 }}>
+                                            <Grid.Col span={{ base: 12, sm: 3 }}>
                                               <NumberInput
                                                 placeholder='Montant'
                                                 value={item.amount}
@@ -761,6 +762,36 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ initialValues, onClose }
                                                 }
                                                 suffix=' €'
                                                 hideControls
+                                              />
+                                            </Grid.Col>
+                                            <Grid.Col span={{ base: 12, sm: 3 }}>
+                                              <Select
+                                                placeholder='Méthode de paiement'
+                                                value={item.paymentMethod}
+                                                onChange={(value: string | null) =>
+                                                  updateExpense(
+                                                    category.id,
+                                                    item.id,
+                                                    'paymentMethod',
+                                                    value || ExpensePayloadPaymentMethod.OTHER,
+                                                  )
+                                                }
+                                                data={[
+                                                  {
+                                                    value: ExpensePayloadPaymentMethod.OTHER,
+                                                    label: 'Autre',
+                                                  },
+                                                  {
+                                                    value:
+                                                      ExpensePayloadPaymentMethod.BILLS_ACCOUNT,
+                                                    label: 'Compte charges',
+                                                  },
+                                                  {
+                                                    value:
+                                                      ExpensePayloadPaymentMethod.BANK_TRANSFER,
+                                                    label: 'Virement bancaire',
+                                                  },
+                                                ]}
                                               />
                                             </Grid.Col>
                                             {!isMobile && (

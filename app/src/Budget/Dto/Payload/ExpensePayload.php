@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Payload;
 
+use App\Budget\Enum\PayementMethodEnum;
 use Doctrine\DBAL\Types\Types;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,4 +28,13 @@ class ExpensePayload
     #[Assert\NotBlank]
     #[OA\Property(description: 'Expense category', type: 'string', example: 'Habitation')]
     public string $category;
+
+    #[Assert\NotBlank]
+    #[Assert\Type(PayementMethodEnum::class)]
+    #[OA\Property(description: 'Payment method', type: 'string', enum: [
+        'OTHER',
+        'BILLS_ACCOUNT',
+        'BANK_TRANSFER',
+    ], example: PayementMethodEnum::OTHER->value)]
+    public PayementMethodEnum $paymentMethod = PayementMethodEnum::OTHER;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Budget\Dto\Response;
 
+use App\Budget\Enum\PayementMethodEnum;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(schema: 'ExpenseResponse', description: 'Expense data',)]
@@ -21,6 +22,13 @@ class ExpenseResponse
 
         #[OA\Property(description: 'Expense category', type: 'string', example: 'Habitation')]
         public readonly string $category,
+
+        #[OA\Property(description: 'Payment method', type: 'string', enum: [
+            'OTHER',
+            'BILLS_ACCOUNT',
+            'BANK_TRANSFER',
+        ], example: PayementMethodEnum::OTHER->value)]
+        public readonly PayementMethodEnum $paymentMethod,
     ) {
     }
 }

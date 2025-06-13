@@ -1,1823 +1,1944 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "MyBudget API",
-    "description": "API for budget and savings management",
-    "version": "1.0.0"
-  },
-  "paths": {
-    "/api/login": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "User authentication",
-        "description": "Allows a user to authenticate and obtain a JWT token",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["username", "password"],
+    "openapi": "3.0.0",
+    "info": {
+        "title": "MyBudget API",
+        "description": "API for budget and savings management",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User authentication",
+                "description": "Allows a user to authenticate and obtain a JWT token",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "john.doe@admin.local"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentication successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "JWT Token",
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts/balance-history": {
+            "get": {
+                "tags": [
+                    "Balance History"
+                ],
+                "summary": "Balance history",
+                "description": "Get the monthly balance history",
+                "operationId": "get_api_balance_history",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "nullable": true,
+                            "oneOf": [
+                                {
+                                    "$ref": "#/components/schemas/PeriodsEnum"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "accountIds[]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "nullable": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balance history successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/BalanceHistoryResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts/transactions": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "List transactions",
+                "description": "Get the paginated list of transactions",
+                "operationId": "get_api_transactions_list",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "accountIds[]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            },
+                            "nullable": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction list successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TransactionResponse"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "currentPage": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "perPage": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "hasMore": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets": {
+            "get": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "List budgets",
+                "description": "Get a paginated list of budgets",
+                "operationId": "get_api_budgets_list",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "nullable": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Budget list successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BudgetResponse"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "currentPage": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "perPage": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "hasMore": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Create a budget",
+                "description": "Create a new budget",
+                "operationId": "post_api_budgets_create",
+                "requestBody": {
+                    "description": "Budget data to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BudgetPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Budget successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/BudgetResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets/{id}": {
+            "get": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Get a budget",
+                "description": "Retrieve a budget by its ID",
+                "operationId": "get_api_budgets_get",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Budget ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Budget successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/BudgetResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Budget not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Budget not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Update a budget",
+                "description": "Update an existing budget",
+                "operationId": "put_api_budgets_update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Budget ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Budget data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BudgetPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Budget successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/BudgetResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Budget not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Budget not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Delete a budget",
+                "description": "Delete an existing budget",
+                "operationId": "delete_api_budgets_delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Budget ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Budget successfully deleted"
+                    },
+                    "404": {
+                        "description": "Budget not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Budget not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets/duplicate/{id}": {
+            "post": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Duplicate a budget",
+                "description": "Duplicate an existing budget",
+                "operationId": "post_api_budgets_duplicate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Budget ID to duplicate",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Budget successfully duplicated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/BudgetResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Budget not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Budget not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts": {
+            "get": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "List accounts",
+                "description": "Get a list of all accounts",
+                "operationId": "get_api_accounts_list",
+                "responses": {
+                    "200": {
+                        "description": "Account list successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AccountResponse"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Create an account",
+                "description": "Create a new account",
+                "operationId": "post_api_accounts_create",
+                "requestBody": {
+                    "description": "Account data to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Account successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AccountResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts/{id}": {
+            "get": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get an account",
+                "description": "Retrieve an account by its ID",
+                "operationId": "get_api_accounts_get",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AccountResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Delete an account",
+                "description": "Delete an existing account",
+                "operationId": "delete_api_accounts_delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Account successfully deleted"
+                    },
+                    "404": {
+                        "description": "Account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Unable to delete account",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cannot delete account with existing transactions"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Update an account",
+                "description": "Update an existing account",
+                "operationId": "patch_api_accounts_update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Account data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AccountResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts/{accountId}/transactions": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create a transaction",
+                "description": "Create a new transaction for a specific account",
+                "operationId": "post_api_transactions_create",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Transaction data to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TransactionPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TransactionResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/accounts/{accountId}/transactions/{id}": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get a transaction",
+                "description": "Retrieve a transaction by its ID",
+                "operationId": "get_api_transactions_get",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TransactionResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Update a transaction",
+                "description": "Update an existing transaction",
+                "operationId": "put_api_transaction_update",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Transaction data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TransactionPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TransactionResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Delete a transaction",
+                "description": "Delete an existing transaction",
+                "operationId": "delete_api_transactions_delete",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Transaction successfully deleted"
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User registration",
+                "description": "Allows a user to create an account",
+                "operationId": "post_api_register",
+                "requestBody": {
+                    "description": "User registration data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email already exists"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/me": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User authenticated",
+                "description": "Get the connected user information",
+                "operationId": "get_api_users_get",
+                "responses": {
+                    "200": {
+                        "description": "User information successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "JWT Token not found"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BalanceHistoryFilterQuery": {
                 "properties": {
-                  "username": {
-                    "description": "User email",
-                    "type": "string",
-                    "example": "john.doe@admin.local"
-                  },
-                  "password": {
-                    "description": "User password",
-                    "type": "string",
-                    "example": "password"
-                  }
+                    "period": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PeriodsEnum"
+                            }
+                        ]
+                    },
+                    "accountIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "nullable": true
+                    }
                 },
                 "type": "object"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Authentication successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "token": {
-                      "description": "JWT Token",
-                      "type": "string",
-                      "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 401
+            },
+            "PaginationQueryParams": {
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "default": 1,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
                     },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid credentials"
+                    "limit": {
+                        "type": "integer",
+                        "default": 20,
+                        "maximum": 100,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
                     }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/balance-history": {
-      "get": {
-        "tags": ["Balance History"],
-        "summary": "Balance history",
-        "description": "Get the monthly balance history",
-        "operationId": "get_api_balance_history",
-        "parameters": [
-          {
-            "name": "period",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "nullable": true,
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/PeriodsEnum"
-                }
-              ]
-            }
-          },
-          {
-            "name": "accountIds[]",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              },
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Balance history successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BalanceHistoryResponse"
+                },
+                "type": "object"
+            },
+            "TransactionFilterQuery": {
+                "properties": {
+                    "accountIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "nullable": true
                     }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/transactions": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "List transactions",
-        "description": "Get the paginated list of transactions",
-        "operationId": "get_api_transactions_list",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 0,
-              "exclusiveMinimum": true
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "maximum": 100,
-              "minimum": 0,
-              "exclusiveMinimum": true
-            }
-          },
-          {
-            "name": "accountIds[]",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              },
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transaction list successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/TransactionResponse"
-                      }
+                },
+                "type": "object"
+            },
+            "BudgetPayload": {
+                "description": "Data for creating or updating a budget",
+                "required": [
+                    "date",
+                    "incomes",
+                    "expenses"
+                ],
+                "properties": {
+                    "date": {
+                        "description": "Budget date (YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-01"
                     },
-                    "meta": {
-                      "properties": {
-                        "total": {
-                          "type": "integer",
-                          "example": 50
-                        },
-                        "currentPage": {
-                          "type": "integer",
-                          "example": 1
-                        },
-                        "perPage": {
-                          "type": "integer",
-                          "example": 20
-                        },
-                        "from": {
-                          "type": "integer",
-                          "example": 1
-                        },
-                        "to": {
-                          "type": "integer",
-                          "example": 20
-                        },
-                        "hasMore": {
-                          "type": "boolean",
-                          "example": true
+                    "incomes": {
+                        "description": "List of incomes",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IncomePayload"
                         }
-                      },
-                      "type": "object"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/budgets": {
-      "get": {
-        "tags": ["Budgets"],
-        "summary": "List budgets",
-        "description": "Get a paginated list of budgets",
-        "operationId": "get_api_budgets_list",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 0,
-              "exclusiveMinimum": true
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "maximum": 100,
-              "minimum": 0,
-              "exclusiveMinimum": true
-            }
-          },
-          {
-            "name": "year",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Budget list successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/BudgetResponse"
-                      }
                     },
-                    "meta": {
-                      "properties": {
-                        "total": {
-                          "type": "integer",
-                          "example": 5
-                        },
-                        "currentPage": {
-                          "type": "integer",
-                          "example": 1
-                        },
-                        "perPage": {
-                          "type": "integer",
-                          "example": 20
-                        },
-                        "from": {
-                          "type": "integer",
-                          "example": 1
-                        },
-                        "to": {
-                          "type": "integer",
-                          "example": 5
-                        },
-                        "hasMore": {
-                          "type": "boolean",
-                          "example": false
+                    "expenses": {
+                        "description": "List of expenses",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpensePayload"
                         }
-                      },
-                      "type": "object"
                     }
-                  },
-                  "type": "object"
-                }
-              }
+                },
+                "type": "object"
+            },
+            "BudgetFilterQuery": {
+                "properties": {
+                    "year": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AccountPayload": {
+                "description": "Data for creating or updating an account",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Account name",
+                        "type": "string",
+                        "example": "Current Account"
+                    }
+                },
+                "type": "object"
+            },
+            "TransactionPayload": {
+                "description": "Data for creating or updating a transaction",
+                "required": [
+                    "description",
+                    "amount",
+                    "type",
+                    "date"
+                ],
+                "properties": {
+                    "description": {
+                        "description": "Transaction description",
+                        "type": "string",
+                        "example": "Monthly salary"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 500
+                    },
+                    "type": {
+                        "description": "Transaction type",
+                        "type": "string",
+                        "enum": [
+                            "DEBIT",
+                            "CREDIT"
+                        ],
+                        "example": "DEBIT"
+                    },
+                    "date": {
+                        "description": "Transaction date",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-15"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterPayload": {
+                "description": "User registration data",
+                "required": [
+                    "email",
+                    "firstName",
+                    "lastName",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "user@example.com"
+                    },
+                    "firstName": {
+                        "description": "User first name",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "description": "User last name",
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "password": {
+                        "description": "User password",
+                        "type": "string",
+                        "format": "password",
+                        "example": "securePassword123"
+                    }
+                },
+                "type": "object"
+            },
+            "BalanceHistoryResponse": {
+                "description": "Balance history data",
+                "required": [
+                    "accounts",
+                    "balances"
+                ],
+                "properties": {
+                    "accounts": {
+                        "description": "List of accounts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountPartialResponse"
+                        }
+                    },
+                    "balances": {
+                        "description": "List of balances by date",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BalanceResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TransactionResponse": {
+                "description": "Transaction data",
+                "required": [
+                    "id",
+                    "description",
+                    "amount",
+                    "type",
+                    "date",
+                    "account"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Transaction identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "description": "Transaction description",
+                        "type": "string",
+                        "example": "Monthly salary"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 500
+                    },
+                    "type": {
+                        "description": "Transaction type",
+                        "type": "string",
+                        "enum": [
+                            "DEBIT",
+                            "CREDIT"
+                        ],
+                        "example": "DEBIT"
+                    },
+                    "date": {
+                        "description": "Transaction date",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-15"
+                    },
+                    "account": {
+                        "$ref": "#/components/schemas/AccountPartialResponse"
+                    }
+                },
+                "type": "object"
+            },
+            "BudgetResponse": {
+                "description": "Budget data",
+                "required": [
+                    "id",
+                    "name",
+                    "incomesAmount",
+                    "expensesAmount",
+                    "savingCapacity",
+                    "date",
+                    "incomes",
+                    "expenses"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique budget identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Budget name",
+                        "type": "string",
+                        "example": "Budget 2023-05"
+                    },
+                    "incomesAmount": {
+                        "description": "Total income amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 3000
+                    },
+                    "expensesAmount": {
+                        "description": "Total expenses amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1200
+                    },
+                    "savingCapacity": {
+                        "description": "Saving capacity",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1800
+                    },
+                    "date": {
+                        "description": "Budget date (YYYY-MM)",
+                        "type": "string",
+                        "example": "2023-05"
+                    },
+                    "incomes": {
+                        "description": "List of incomes",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IncomeResponse"
+                        }
+                    },
+                    "expenses": {
+                        "description": "List of expenses",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpenseResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "AccountResponse": {
+                "description": "Account data",
+                "required": [
+                    "id",
+                    "name",
+                    "type",
+                    "balance"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique account identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Account name",
+                        "type": "string",
+                        "example": "Current Account"
+                    },
+                    "type": {
+                        "description": "Account type",
+                        "type": "string",
+                        "example": "savings"
+                    },
+                    "balance": {
+                        "description": "Account balance",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2500.5
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponse": {
+                "description": "User data",
+                "required": [
+                    "id",
+                    "email",
+                    "firstName",
+                    "lastName"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "User identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "user@example.com"
+                    },
+                    "firstName": {
+                        "description": "User first name",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "description": "User last name",
+                        "type": "string",
+                        "example": "Doe"
+                    }
+                },
+                "type": "object"
+            },
+            "PeriodsEnum": {
+                "type": "string",
+                "enum": [
+                    "6",
+                    "12",
+                    "24"
+                ]
+            },
+            "IncomePayload": {
+                "description": "Data for creating or updating an income",
+                "required": [
+                    "name",
+                    "amount"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Income name",
+                        "type": "string",
+                        "example": "Salaire"
+                    },
+                    "amount": {
+                        "description": "Income amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2500
+                    }
+                },
+                "type": "object"
+            },
+            "ExpensePayload": {
+                "description": "Data for creating or updating an expense",
+                "required": [
+                    "name",
+                    "amount",
+                    "category"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Expense name",
+                        "type": "string",
+                        "example": "Loyer"
+                    },
+                    "amount": {
+                        "description": "Expense amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 800
+                    },
+                    "category": {
+                        "description": "Expense category",
+                        "type": "string",
+                        "example": "Habitation"
+                    },
+                    "paymentMethod": {
+                        "description": "Payment method",
+                        "type": "string",
+                        "default": "OTHER",
+                        "enum": [
+                            "OTHER",
+                            "BILLS_ACCOUNT",
+                            "BANK_TRANSFER"
+                        ],
+                        "example": "OTHER"
+                    }
+                },
+                "type": "object"
+            },
+            "AccountPartialResponse": {
+                "description": "Account partial data",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Account identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Account name",
+                        "type": "string",
+                        "example": "Current Account"
+                    }
+                },
+                "type": "object"
+            },
+            "BalanceResponse": {
+                "description": "Balance data",
+                "required": [
+                    "date",
+                    "formattedDate",
+                    "balance"
+                ],
+                "properties": {
+                    "date": {
+                        "description": "Balance date (YYYY-MM-DD)",
+                        "type": "string",
+                        "example": "2023-05-15"
+                    },
+                    "formattedDate": {
+                        "description": "Formatted date",
+                        "type": "string",
+                        "example": "May 15, 2023"
+                    },
+                    "balance": {
+                        "description": "Balance amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1250.75
+                    }
+                },
+                "type": "object"
+            },
+            "IncomeResponse": {
+                "description": "Income data",
+                "required": [
+                    "id",
+                    "name",
+                    "amount"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique income identifier",
+                        "type": "integer",
+                        "example": 17
+                    },
+                    "name": {
+                        "description": "Income name",
+                        "type": "string",
+                        "example": "Salary"
+                    },
+                    "amount": {
+                        "description": "Income amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2500
+                    }
+                },
+                "type": "object"
+            },
+            "ExpenseResponse": {
+                "description": "Expense data",
+                "required": [
+                    "id",
+                    "name",
+                    "amount",
+                    "category",
+                    "paymentMethod"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique expense identifier",
+                        "type": "integer",
+                        "example": 33
+                    },
+                    "name": {
+                        "description": "Expense name",
+                        "type": "string",
+                        "example": "Loyer"
+                    },
+                    "amount": {
+                        "description": "Expense amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 800
+                    },
+                    "category": {
+                        "description": "Expense category",
+                        "type": "string",
+                        "example": "Habitation"
+                    },
+                    "paymentMethod": {
+                        "description": "Payment method",
+                        "type": "string",
+                        "enum": [
+                            "OTHER",
+                            "BILLS_ACCOUNT",
+                            "BANK_TRANSFER"
+                        ],
+                        "example": "OTHER"
+                    }
+                },
+                "type": "object"
             }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Budgets"],
-        "summary": "Create a budget",
-        "description": "Create a new budget",
-        "operationId": "post_api_budgets_create",
-        "requestBody": {
-          "description": "Budget data to create",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BudgetPayload"
-              }
-            }
-          }
         },
-        "responses": {
-          "201": {
-            "description": "Budget successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BudgetResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
         }
-      }
     },
-    "/api/budgets/{id}": {
-      "get": {
-        "tags": ["Budgets"],
-        "summary": "Get a budget",
-        "description": "Retrieve a budget by its ID",
-        "operationId": "get_api_budgets_get",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Budget ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Budget successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BudgetResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Budget not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Budget not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Budgets"],
-        "summary": "Update a budget",
-        "description": "Update an existing budget",
-        "operationId": "put_api_budgets_update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Budget ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Budget data to update",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BudgetPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Budget successfully updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BudgetResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Budget not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Budget not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Budgets"],
-        "summary": "Delete a budget",
-        "description": "Delete an existing budget",
-        "operationId": "delete_api_budgets_delete",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Budget ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Budget successfully deleted"
-          },
-          "404": {
-            "description": "Budget not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Budget not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/budgets/duplicate/{id}": {
-      "post": {
-        "tags": ["Budgets"],
-        "summary": "Duplicate a budget",
-        "description": "Duplicate an existing budget",
-        "operationId": "post_api_budgets_duplicate",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Budget ID to duplicate",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Budget successfully duplicated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BudgetResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Budget not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Budget not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts": {
-      "get": {
-        "tags": ["Accounts"],
-        "summary": "List accounts",
-        "description": "Get a list of all accounts",
-        "operationId": "get_api_accounts_list",
-        "responses": {
-          "200": {
-            "description": "Account list successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/AccountResponse"
-                      }
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Accounts"],
-        "summary": "Create an account",
-        "description": "Create a new account",
-        "operationId": "post_api_accounts_create",
-        "requestBody": {
-          "description": "Account data to create",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Account successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/AccountResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/{id}": {
-      "get": {
-        "tags": ["Accounts"],
-        "summary": "Get an account",
-        "description": "Retrieve an account by its ID",
-        "operationId": "get_api_accounts_get",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Account successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/AccountResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Account not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Account not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Accounts"],
-        "summary": "Delete an account",
-        "description": "Delete an existing account",
-        "operationId": "delete_api_accounts_delete",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Account successfully deleted"
-          },
-          "404": {
-            "description": "Account not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Account not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unable to delete account",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Cannot delete account with existing transactions"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Accounts"],
-        "summary": "Update an account",
-        "description": "Update an existing account",
-        "operationId": "patch_api_accounts_update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Account data to update",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Account successfully updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/AccountResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Account not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Account not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/{accountId}/transactions": {
-      "post": {
-        "tags": ["Transactions"],
-        "summary": "Create a transaction",
-        "description": "Create a new transaction for a specific account",
-        "operationId": "post_api_transactions_create",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Transaction data to create",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransactionPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Transaction successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/TransactionResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Account not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Account not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/{accountId}/transactions/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Get a transaction",
-        "description": "Retrieve a transaction by its ID",
-        "operationId": "get_api_transactions_get",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Transaction ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transaction successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/TransactionResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Transaction not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Transaction not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Transactions"],
-        "summary": "Update a transaction",
-        "description": "Update an existing transaction",
-        "operationId": "put_api_transaction_update",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Transaction ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Transaction data to update",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransactionPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Transaction successfully updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/TransactionResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Transaction not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Transaction not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Transactions"],
-        "summary": "Delete a transaction",
-        "description": "Delete an existing transaction",
-        "operationId": "delete_api_transactions_delete",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "path",
-            "description": "Account ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Transaction ID",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Transaction successfully deleted"
-          },
-          "404": {
-            "description": "Transaction not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Transaction not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 404
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/register": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "User registration",
-        "description": "Allows a user to create an account",
-        "operationId": "post_api_register",
-        "requestBody": {
-          "description": "User registration data",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Email already exists"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/me": {
-      "get": {
-        "tags": ["User"],
-        "summary": "User authenticated",
-        "description": "Get the connected user information",
-        "operationId": "get_api_users_get",
-        "responses": {
-          "200": {
-            "description": "User information successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponse"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User not authenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "JWT Token not found"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "example": 401
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
+    "security": [
+        {
             "Bearer": []
-          }
-        ]
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "BalanceHistoryFilterQuery": {
-        "properties": {
-          "period": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/PeriodsEnum"
-              }
-            ]
-          },
-          "accountIds": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            },
-            "nullable": true
-          }
+        }
+    ],
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication and token management"
         },
-        "type": "object"
-      },
-      "PaginationQueryParams": {
-        "properties": {
-          "page": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "exclusiveMinimum": true
-          },
-          "limit": {
-            "type": "integer",
-            "default": 20,
-            "maximum": 100,
-            "minimum": 0,
-            "exclusiveMinimum": true
-          }
+        {
+            "name": "User",
+            "description": "User management"
         },
-        "type": "object"
-      },
-      "TransactionFilterQuery": {
-        "properties": {
-          "accountIds": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            },
-            "nullable": true
-          }
+        {
+            "name": "Budgets",
+            "description": "Monthly budgets and categories management"
         },
-        "type": "object"
-      },
-      "BudgetPayload": {
-        "description": "Data for creating or updating a budget",
-        "required": ["date", "incomes", "expenses"],
-        "properties": {
-          "date": {
-            "description": "Budget date (YYYY-MM-DD)",
-            "type": "string",
-            "format": "date",
-            "example": "2023-05-01"
-          },
-          "incomes": {
-            "description": "List of incomes",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IncomePayload"
-            }
-          },
-          "expenses": {
-            "description": "List of expenses",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExpensePayload"
-            }
-          }
+        {
+            "name": "Accounts",
+            "description": "Savings and checking accounts management"
         },
-        "type": "object"
-      },
-      "BudgetFilterQuery": {
-        "properties": {
-          "year": {
-            "type": "integer",
-            "nullable": true
-          }
+        {
+            "name": "Transactions",
+            "description": "Financial transactions management"
         },
-        "type": "object"
-      },
-      "AccountPayload": {
-        "description": "Data for creating or updating an account",
-        "required": ["name"],
-        "properties": {
-          "name": {
-            "description": "Account name",
-            "type": "string",
-            "example": "Current Account"
-          }
-        },
-        "type": "object"
-      },
-      "TransactionPayload": {
-        "description": "Data for creating or updating a transaction",
-        "required": ["description", "amount", "type", "date"],
-        "properties": {
-          "description": {
-            "description": "Transaction description",
-            "type": "string",
-            "example": "Monthly salary"
-          },
-          "amount": {
-            "description": "Transaction amount",
-            "type": "number",
-            "format": "float",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 500
-          },
-          "type": {
-            "description": "Transaction type",
-            "type": "string",
-            "enum": ["DEBIT", "CREDIT"],
-            "example": "DEBIT"
-          },
-          "date": {
-            "description": "Transaction date",
-            "type": "string",
-            "format": "date",
-            "example": "2023-05-15"
-          }
-        },
-        "type": "object"
-      },
-      "RegisterPayload": {
-        "description": "User registration data",
-        "required": ["email", "firstName", "lastName", "password"],
-        "properties": {
-          "email": {
-            "description": "User email",
-            "type": "string",
-            "example": "user@example.com"
-          },
-          "firstName": {
-            "description": "User first name",
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "description": "User last name",
-            "type": "string",
-            "example": "Doe"
-          },
-          "password": {
-            "description": "User password",
-            "type": "string",
-            "format": "password",
-            "example": "securePassword123"
-          }
-        },
-        "type": "object"
-      },
-      "BalanceHistoryResponse": {
-        "description": "Balance history data",
-        "required": ["accounts", "balances"],
-        "properties": {
-          "accounts": {
-            "description": "List of accounts",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountPartialResponse"
-            }
-          },
-          "balances": {
-            "description": "List of balances by date",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BalanceResponse"
-            }
-          }
-        },
-        "type": "object"
-      },
-      "TransactionResponse": {
-        "description": "Transaction data",
-        "required": ["id", "description", "amount", "type", "date", "account"],
-        "properties": {
-          "id": {
-            "description": "Transaction identifier",
-            "type": "integer",
-            "example": 1
-          },
-          "description": {
-            "description": "Transaction description",
-            "type": "string",
-            "example": "Monthly salary"
-          },
-          "amount": {
-            "description": "Transaction amount",
-            "type": "number",
-            "format": "float",
-            "example": 500
-          },
-          "type": {
-            "description": "Transaction type",
-            "type": "string",
-            "enum": ["DEBIT", "CREDIT"],
-            "example": "DEBIT"
-          },
-          "date": {
-            "description": "Transaction date",
-            "type": "string",
-            "format": "date",
-            "example": "2023-05-15"
-          },
-          "account": {
-            "$ref": "#/components/schemas/AccountPartialResponse"
-          }
-        },
-        "type": "object"
-      },
-      "BudgetResponse": {
-        "description": "Budget data",
-        "required": [
-          "id",
-          "name",
-          "incomesAmount",
-          "expensesAmount",
-          "savingCapacity",
-          "date",
-          "incomes",
-          "expenses"
-        ],
-        "properties": {
-          "id": {
-            "description": "Unique budget identifier",
-            "type": "integer",
-            "example": 1
-          },
-          "name": {
-            "description": "Budget name",
-            "type": "string",
-            "example": "Budget 2023-05"
-          },
-          "incomesAmount": {
-            "description": "Total income amount",
-            "type": "number",
-            "format": "float",
-            "example": 3000
-          },
-          "expensesAmount": {
-            "description": "Total expenses amount",
-            "type": "number",
-            "format": "float",
-            "example": 1200
-          },
-          "savingCapacity": {
-            "description": "Saving capacity",
-            "type": "number",
-            "format": "float",
-            "example": 1800
-          },
-          "date": {
-            "description": "Budget date (YYYY-MM)",
-            "type": "string",
-            "example": "2023-05"
-          },
-          "incomes": {
-            "description": "List of incomes",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IncomeResponse"
-            }
-          },
-          "expenses": {
-            "description": "List of expenses",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExpenseResponse"
-            }
-          }
-        },
-        "type": "object"
-      },
-      "AccountResponse": {
-        "description": "Account data",
-        "required": ["id", "name", "type", "balance"],
-        "properties": {
-          "id": {
-            "description": "Unique account identifier",
-            "type": "integer",
-            "example": 1
-          },
-          "name": {
-            "description": "Account name",
-            "type": "string",
-            "example": "Current Account"
-          },
-          "type": {
-            "description": "Account type",
-            "type": "string",
-            "example": "savings"
-          },
-          "balance": {
-            "description": "Account balance",
-            "type": "number",
-            "format": "float",
-            "example": 2500.5
-          }
-        },
-        "type": "object"
-      },
-      "UserResponse": {
-        "description": "User data",
-        "required": ["id", "email", "firstName", "lastName"],
-        "properties": {
-          "id": {
-            "description": "User identifier",
-            "type": "integer",
-            "example": 1
-          },
-          "email": {
-            "description": "User email",
-            "type": "string",
-            "example": "user@example.com"
-          },
-          "firstName": {
-            "description": "User first name",
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "description": "User last name",
-            "type": "string",
-            "example": "Doe"
-          }
-        },
-        "type": "object"
-      },
-      "PeriodsEnum": {
-        "type": "string",
-        "enum": ["6", "12", "24"]
-      },
-      "IncomePayload": {
-        "description": "Data for creating or updating an income",
-        "required": ["name", "amount"],
-        "properties": {
-          "name": {
-            "description": "Income name",
-            "type": "string",
-            "example": "Salaire"
-          },
-          "amount": {
-            "description": "Income amount",
-            "type": "number",
-            "format": "float",
-            "example": 2500
-          }
-        },
-        "type": "object"
-      },
-      "ExpensePayload": {
-        "description": "Data for creating or updating an expense",
-        "required": ["name", "amount", "category"],
-        "properties": {
-          "name": {
-            "description": "Expense name",
-            "type": "string",
-            "example": "Loyer"
-          },
-          "amount": {
-            "description": "Expense amount",
-            "type": "number",
-            "format": "float",
-            "example": 800
-          },
-          "category": {
-            "description": "Expense category",
-            "type": "string",
-            "example": "Habitation"
-          },
-          "paymentMethod": {
-            "description": "Payment method",
-            "type": "string",
-            "default": "OTHER",
-            "enum": ["OTHER", "BILLS_ACCOUNT", "BANK_TRANSFER"],
-            "example": "OTHER"
-          }
-        },
-        "type": "object"
-      },
-      "AccountPartialResponse": {
-        "description": "Account partial data",
-        "required": ["id", "name"],
-        "properties": {
-          "id": {
-            "description": "Account identifier",
-            "type": "integer",
-            "example": 1
-          },
-          "name": {
-            "description": "Account name",
-            "type": "string",
-            "example": "Current Account"
-          }
-        },
-        "type": "object"
-      },
-      "BalanceResponse": {
-        "description": "Balance data",
-        "required": ["date", "formattedDate", "balance"],
-        "properties": {
-          "date": {
-            "description": "Balance date (YYYY-MM-DD)",
-            "type": "string",
-            "example": "2023-05-15"
-          },
-          "formattedDate": {
-            "description": "Formatted date",
-            "type": "string",
-            "example": "May 15, 2023"
-          },
-          "balance": {
-            "description": "Balance amount",
-            "type": "number",
-            "format": "float",
-            "example": 1250.75
-          }
-        },
-        "type": "object"
-      },
-      "IncomeResponse": {
-        "description": "Income data",
-        "required": ["id", "name", "amount"],
-        "properties": {
-          "id": {
-            "description": "Unique income identifier",
-            "type": "integer",
-            "example": 17
-          },
-          "name": {
-            "description": "Income name",
-            "type": "string",
-            "example": "Salary"
-          },
-          "amount": {
-            "description": "Income amount",
-            "type": "number",
-            "format": "float",
-            "example": 2500
-          }
-        },
-        "type": "object"
-      },
-      "ExpenseResponse": {
-        "description": "Expense data",
-        "required": ["id", "name", "amount", "category", "paymentMethod"],
-        "properties": {
-          "id": {
-            "description": "Unique expense identifier",
-            "type": "integer",
-            "example": 33
-          },
-          "name": {
-            "description": "Expense name",
-            "type": "string",
-            "example": "Loyer"
-          },
-          "amount": {
-            "description": "Expense amount",
-            "type": "number",
-            "format": "float",
-            "example": 800
-          },
-          "category": {
-            "description": "Expense category",
-            "type": "string",
-            "example": "Habitation"
-          },
-          "paymentMethod": {
-            "description": "Payment method",
-            "type": "string",
-            "enum": ["OTHER", "BILLS_ACCOUNT", "BANK_TRANSFER"],
-            "example": "OTHER"
-          }
-        },
-        "type": "object"
-      }
-    },
-    "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "bearerFormat": "JWT",
-        "scheme": "bearer"
-      }
-    }
-  },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "Authentication",
-      "description": "Authentication and token management"
-    },
-    {
-      "name": "User",
-      "description": "User management"
-    },
-    {
-      "name": "Budgets",
-      "description": "Monthly budgets and categories management"
-    },
-    {
-      "name": "Accounts",
-      "description": "Savings and checking accounts management"
-    },
-    {
-      "name": "Transactions",
-      "description": "Financial transactions management"
-    },
-    {
-      "name": "Balance History",
-      "description": "Account balance history"
-    }
-  ]
+        {
+            "name": "Balance History",
+            "description": "Account balance history"
+        }
+    ]
 }

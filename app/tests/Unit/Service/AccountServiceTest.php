@@ -7,9 +7,10 @@ namespace App\Tests\Unit\Service;
 use App\Savings\Dto\Payload\AccountPayload;
 use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
+use App\Savings\Exception\AccountNotFoundException;
 use App\Savings\Repository\AccountRepository;
 use App\Savings\Service\AccountService;
-use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\Group;
@@ -17,8 +18,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -137,8 +136,7 @@ final class AccountServiceTest extends TestCase
     public function updateAccountService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
         // ARRANGE
         $account = AccountFactory::createOne([
             'id' => 1,
@@ -192,8 +190,7 @@ final class AccountServiceTest extends TestCase
     public function getAccountService_WithBadId_ReturnsNotFoundException(): void
     {
         // ASSERT
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
+        $this->expectException(AccountNotFoundException::class);
 
         // ACT
         $this->accountService->get(999);
@@ -204,8 +201,7 @@ final class AccountServiceTest extends TestCase
     public function getAccountService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $account = AccountFactory::new()->withoutPersisting()->create();
@@ -258,8 +254,7 @@ final class AccountServiceTest extends TestCase
     public function deleteAccountService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
         // ARRANGE
         $account = AccountFactory::createOne();
 

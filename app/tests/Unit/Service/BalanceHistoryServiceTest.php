@@ -6,12 +6,12 @@ namespace App\Tests\Unit\Service;
 
 use App\Savings\Dto\Response\BalanceHistoryResponse;
 use App\Savings\Entity\BalanceHistory;
+use App\Savings\Enum\PeriodsEnum;
+use App\Savings\Enum\TransactionTypesEnum;
 use App\Savings\Repository\BalanceHistoryRepository;
 use App\Savings\Service\AccountService;
 use App\Savings\Service\BalanceHistoryService;
 use App\Savings\Service\TransactionService;
-use App\Shared\Enum\PeriodsEnum;
-use App\Shared\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;

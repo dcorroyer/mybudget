@@ -6,6 +6,7 @@ namespace App\Shared\Repository\Abstract;
 
 use App\Shared\Contract\ORMFilterInterface;
 use App\Shared\Dto\PaginationQueryParams;
+use App\Shared\Exception\AbstractInvalidPaginationTypeException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository as BaseRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
@@ -90,9 +91,7 @@ abstract class AbstractEntityRepository extends BaseRepository implements Servic
         );
 
         if (! $pagination instanceof SlidingPagination) {
-            throw new \Exception(
-                'Paginator must be an instance of Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination'
-            );
+            throw new AbstractInvalidPaginationTypeException($pagination::class);
         }
 
         return $pagination;

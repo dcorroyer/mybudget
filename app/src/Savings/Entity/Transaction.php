@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Savings\Entity;
 
+use App\Savings\Enum\TransactionTypesEnum;
 use App\Savings\Repository\TransactionRepository;
-use App\Shared\Enum\TransactionTypesEnum;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

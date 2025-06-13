@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Savings\Entity;
 
+use App\Savings\Enum\AccountTypesEnum;
+use App\Savings\Enum\TransactionTypesEnum;
 use App\Savings\Repository\AccountRepository;
 use App\Shared\Entity\User;
-use App\Shared\Enum\AccountTypesEnum;
-use App\Shared\Enum\TransactionTypesEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;

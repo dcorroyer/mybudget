@@ -9,15 +9,15 @@ use App\Savings\Dto\Response\AccountPartialResponse;
 use App\Savings\Dto\Response\TransactionResponse;
 use App\Savings\Entity\Account;
 use App\Savings\Entity\Transaction;
+use App\Savings\Exception\TransactionNotFoundException;
 use App\Savings\Repository\TransactionRepository;
 use App\Savings\Security\Voter\TransactionVoter;
 use App\Shared\Dto\PaginatedResponseDto;
 use App\Shared\Dto\PaginationMetaDto;
 use App\Shared\Dto\PaginationQueryParams;
-use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Enum\ResourceTypesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use Doctrine\Common\Collections\Criteria;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class TransactionService
@@ -35,14 +35,14 @@ class TransactionService
         $transaction = $this->transactionRepository->find($id);
 
         if ($transaction === null) {
-            throw new NotFoundHttpException(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
+            throw new TransactionNotFoundException((string) $id);
         }
 
         if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [
             'transaction' => $transaction,
             'account' => $account,
         ])) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::TRANSACTION->value);
         }
 
         return $this->createTransactionResponse($transaction);
@@ -76,7 +76,7 @@ class TransactionService
             'transaction' => $transaction,
             'account' => $account,
         ])) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::TRANSACTION->value);
         }
 
         $transaction->setDescription($transactionPayload->description)
@@ -98,7 +98,7 @@ class TransactionService
             'transaction' => $transaction,
             'account' => $account,
         ])) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::TRANSACTION->value);
         }
 
         $this->transactionRepository->delete($transaction, true);

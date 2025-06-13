@@ -7,13 +7,13 @@ namespace App\Savings\Service;
 use App\Savings\Dto\Payload\AccountPayload;
 use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
+use App\Savings\Exception\AccountNotFoundException;
 use App\Savings\Repository\AccountRepository;
 use App\Savings\Security\Voter\AccountVoter;
 use App\Shared\Entity\User;
-use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Enum\ResourceTypesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AccountService
@@ -30,11 +30,11 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new NotFoundHttpException(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
+            throw new AccountNotFoundException((string) $id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::ACCOUNT->value);
         }
 
         return new AccountResponse(
@@ -50,11 +50,11 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new NotFoundHttpException(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
+            throw new AccountNotFoundException((string) $id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::ACCOUNT->value);
         }
 
         return $account;
@@ -84,7 +84,7 @@ class AccountService
     public function update(AccountPayload $accountPayload, Account $account): AccountResponse
     {
         if (! $this->authorizationChecker->isGranted(AccountVoter::EDIT, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::ACCOUNT->value);
         }
 
         $account->setName($accountPayload->name);
@@ -102,7 +102,7 @@ class AccountService
     public function delete(Account $account): void
     {
         if (! $this->authorizationChecker->isGranted(AccountVoter::DELETE, $account)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::ACCOUNT->value);
         }
 
         $this->accountRepository->delete($account, true);

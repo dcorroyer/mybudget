@@ -9,18 +9,18 @@ use App\Budget\Dto\Response\BudgetResponse;
 use App\Budget\Dto\Response\ExpenseResponse;
 use App\Budget\Dto\Response\IncomeResponse;
 use App\Budget\Entity\Budget;
+use App\Budget\Exception\BudgetNotFoundException;
 use App\Budget\Repository\BudgetRepository;
 use App\Budget\Security\Voter\BudgetVoter;
 use App\Shared\Dto\PaginatedResponseDto;
 use App\Shared\Dto\PaginationMetaDto;
 use App\Shared\Dto\PaginationQueryParams;
 use App\Shared\Entity\User;
-use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Enum\ResourceTypesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BudgetService
@@ -39,11 +39,11 @@ class BudgetService
         $budget = $this->budgetRepository->find($id);
 
         if ($budget === null) {
-            throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
+            throw new BudgetNotFoundException((string) $id);
         }
 
         if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::BUDGET->value);
         }
 
         return $this->createBudgetResponse($budget);
@@ -59,7 +59,7 @@ class BudgetService
     public function update(BudgetPayload $budgetPayload, Budget $budget): BudgetResponse
     {
         if (! $this->authorizationChecker->isGranted(BudgetVoter::EDIT, $budget)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::BUDGET->value);
         }
 
         $budget->clearIncomes();
@@ -98,7 +98,7 @@ class BudgetService
     public function delete(Budget $budget): void
     {
         if (! $this->authorizationChecker->isGranted(BudgetVoter::DELETE, $budget)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::BUDGET->value);
         }
 
         $this->budgetRepository->delete($budget, true);
@@ -113,11 +113,11 @@ class BudgetService
         }
 
         if ($budget === null) {
-            throw new NotFoundHttpException(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
+            throw new BudgetNotFoundException($id ? (string) $id : 'latest');
         }
 
         if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {
-            throw new AccessDeniedHttpException(ErrorMessagesEnum::ACCESS_DENIED->value);
+            throw new AbstractAccessDeniedException(ResourceTypesEnum::BUDGET->value);
         }
 
         $newBudget = new Budget();

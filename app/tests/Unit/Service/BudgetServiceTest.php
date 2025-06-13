@@ -6,12 +6,13 @@ namespace App\Tests\Unit\Service;
 
 use App\Budget\Dto\Payload\BudgetPayload;
 use App\Budget\Entity\Budget;
+use App\Budget\Exception\BudgetNotFoundException;
 use App\Budget\Repository\BudgetRepository;
 use App\Budget\Service\BudgetService;
 use App\Budget\Service\ExpenseService;
 use App\Budget\Service\IncomeService;
 use App\Shared\Dto\PaginationQueryParams;
-use App\Shared\Enum\ErrorMessagesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use App\Tests\Common\Factory\BudgetFactory;
 use App\Tests\Common\Helper\PaginationTestHelper;
 use Carbon\Carbon;
@@ -20,8 +21,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -147,8 +146,7 @@ final class BudgetServiceTest extends TestCase
     public function updateBudgetService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
         // ARRANGE
         $budget = BudgetFactory::createOne([
             'id' => 1,
@@ -196,8 +194,7 @@ final class BudgetServiceTest extends TestCase
     public function getBudgetService_WithBadId_ReturnsNotFoundException(): void
     {
         // ASSERT
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::BUDGET_NOT_FOUND->value);
+        $this->expectException(BudgetNotFoundException::class);
 
         // ACT
         $this->budgetService->get(999);
@@ -208,8 +205,7 @@ final class BudgetServiceTest extends TestCase
     public function getBudgetService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $budget = BudgetFactory::new()->withoutPersisting()->create();
@@ -261,8 +257,7 @@ final class BudgetServiceTest extends TestCase
     public function deleteBudgetService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $budget = BudgetFactory::createOne();

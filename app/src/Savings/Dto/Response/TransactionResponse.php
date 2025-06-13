@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Savings\Dto\Response;
 
-use App\Shared\Enum\TransactionTypesEnum;
+use App\Savings\Enum\TransactionTypesEnum;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 

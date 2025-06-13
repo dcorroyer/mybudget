@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Savings\Dto\Payload;
 
-use App\Shared\Enum\TransactionTypesEnum;
+use App\Savings\Enum\TransactionTypesEnum;
 use Doctrine\DBAL\Types\Types;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;

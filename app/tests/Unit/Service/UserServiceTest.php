@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Service;
 
 use App\Shared\Dto\Payload\RegisterPayload;
 use App\Shared\Entity\User;
+use App\Shared\Exception\UserNotFoundException;
 use App\Shared\Repository\UserRepository;
 use App\Shared\Service\UserService;
 use App\Tests\Common\Factory\UserFactory;
@@ -13,7 +14,6 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -111,7 +111,7 @@ final class UserServiceTest extends TestCase
     public function getUserService_WhenDataKO_ReturnsNotFoundHttpException(): void
     {
         // ASSERT
-        $this->expectException(NotFoundHttpException::class);
+        $this->expectException(UserNotFoundException::class);
 
         // ARRANGE
         $this->userRepository

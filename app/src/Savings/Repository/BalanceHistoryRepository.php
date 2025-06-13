@@ -6,7 +6,7 @@ namespace App\Savings\Repository;
 
 use App\Savings\Entity\Account;
 use App\Savings\Entity\BalanceHistory;
-use App\Shared\Enum\PeriodsEnum;
+use App\Savings\Enum\PeriodsEnum;
 use App\Shared\Repository\Abstract\AbstractEntityRepository;
 use Carbon\Carbon;
 

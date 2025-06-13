@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Shared\DataFixtures;
 
+use App\Savings\Enum\AccountTypesEnum;
+use App\Savings\Enum\TransactionTypesEnum;
 use App\Shared\Entity\User;
-use App\Shared\Enum\AccountTypesEnum;
-use App\Shared\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\BudgetFactory;

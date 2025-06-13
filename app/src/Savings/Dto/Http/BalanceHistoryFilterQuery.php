@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Savings\Dto\Http;
 
-use App\Shared\Enum\PeriodsEnum;
+use App\Savings\Enum\PeriodsEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class BalanceHistoryFilterQuery

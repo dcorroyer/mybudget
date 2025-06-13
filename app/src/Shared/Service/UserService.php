@@ -7,8 +7,8 @@ namespace App\Shared\Service;
 use App\Shared\Dto\Payload\RegisterPayload;
 use App\Shared\Dto\Response\UserResponse;
 use App\Shared\Entity\User;
+use App\Shared\Exception\UserNotFoundException;
 use App\Shared\Repository\UserRepository;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserService
@@ -49,7 +49,7 @@ class UserService
         ]);
 
         if ($user === null) {
-            throw new NotFoundHttpException("User {$userIdentifier} not found");
+            throw new UserNotFoundException($userIdentifier);
         }
 
         return new UserResponse(

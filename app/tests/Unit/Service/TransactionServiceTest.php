@@ -7,12 +7,14 @@ namespace App\Tests\Unit\Service;
 use App\Savings\Dto\Payload\TransactionPayload;
 use App\Savings\Dto\Response\TransactionResponse;
 use App\Savings\Entity\Transaction;
+use App\Savings\Enum\TransactionTypesEnum;
+use App\Savings\Exception\AccountNotFoundException;
+use App\Savings\Exception\TransactionNotFoundException;
 use App\Savings\Repository\TransactionRepository;
 use App\Savings\Service\AccountService;
 use App\Savings\Service\TransactionService;
 use App\Shared\Dto\PaginationQueryParams;
-use App\Shared\Enum\ErrorMessagesEnum;
-use App\Shared\Enum\TransactionTypesEnum;
+use App\Shared\Exception\AbstractAccessDeniedException;
 use App\Tests\Common\Factory\AccountFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
@@ -21,8 +23,6 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -100,8 +100,7 @@ final class TransactionServiceTest extends TestCase
     public function getTransactionService_WithBadId_ReturnsNotFoundException(): void
     {
         // ARRANGE
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::TRANSACTION_NOT_FOUND->value);
+        $this->expectException(TransactionNotFoundException::class);
 
         // ACT
         $this->transactionService->get(1, 1);
@@ -112,8 +111,7 @@ final class TransactionServiceTest extends TestCase
     public function getTransactionService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ARRANGE
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $transaction = TransactionFactory::createOne();
@@ -173,15 +171,14 @@ final class TransactionServiceTest extends TestCase
     public function createTransactionService_WithNonExistentAccount_ReturnsNotFoundException(): void
     {
         // ASSERT
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCOUNT_NOT_FOUND->value);
+        $this->expectException(AccountNotFoundException::class);
 
         // ARRANGE
         $transactionPayload = new TransactionPayload();
 
         $this->accountService->expects($this->once())
             ->method('get')
-            ->will($this->throwException(new NotFoundHttpException('Account not found')))
+            ->will($this->throwException(new AccountNotFoundException('999')))
         ;
 
         // ACT
@@ -236,8 +233,7 @@ final class TransactionServiceTest extends TestCase
     public function updateTransactionService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $transaction = TransactionFactory::createOne();
@@ -287,8 +283,7 @@ final class TransactionServiceTest extends TestCase
     public function deleteTransactionService_WithBadUser_ReturnsAccessDeniedException(): void
     {
         // ASSERT
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage(ErrorMessagesEnum::ACCESS_DENIED->value);
+        $this->expectException(AbstractAccessDeniedException::class);
 
         // ARRANGE
         $transaction = TransactionFactory::createOne();

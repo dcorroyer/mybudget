@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Common\Factory;
 
 use App\Savings\Entity\Account;
-use App\Shared\Enum\AccountTypesEnum;
+use App\Savings\Enum\AccountTypesEnum;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

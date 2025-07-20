@@ -158,7 +158,8 @@ class AccountService
             ->setAmount($amount)
             ->setType(TransactionTypesEnum::DEPOSIT)
             ->setDate(new \DateTimeImmutable())
-            ->setAccount($account);
+            ->setAccount($account)
+        ;
 
         $this->transactionRepository->save($transaction, true);
     }

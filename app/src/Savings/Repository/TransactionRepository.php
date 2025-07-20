@@ -57,4 +57,28 @@ class TransactionRepository extends AbstractEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * Find all transactions for an account within a date range.
+     *
+     * @return array<Transaction>
+     */
+    public function findByAccountAndDateRange(
+        Account $account,
+        \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate
+    ): array {
+        /** @var array<Transaction> */
+        return $this->createQueryBuilder('t')
+            ->where('t.account = :account')
+            ->andWhere('t.date >= :startDate')
+            ->andWhere('t.date <= :endDate')
+            ->setParameter('account', $account)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('t.date', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

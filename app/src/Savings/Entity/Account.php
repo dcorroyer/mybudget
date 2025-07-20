@@ -76,7 +76,7 @@ class Account
             static function (float $balance, Transaction $transaction): float {
                 $amount = $transaction->getAmount();
 
-                return $balance + ($transaction->getType() === TransactionTypesEnum::CREDIT ? $amount : -$amount);
+                return $balance + ($transaction->getType() === TransactionTypesEnum::DEPOSIT ? $amount : -$amount);
             },
             0.0
         );

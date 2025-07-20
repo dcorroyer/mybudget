@@ -9,6 +9,7 @@ use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
 use App\Savings\Exception\AccountNotFoundException;
 use App\Savings\Repository\AccountRepository;
+use App\Savings\Repository\TransactionRepository;
 use App\Savings\Service\AccountService;
 use App\Shared\Exception\AbstractAccessDeniedException;
 use App\Tests\Common\Factory\AccountFactory;
@@ -40,6 +41,8 @@ final class AccountServiceTest extends TestCase
 
     private AuthorizationCheckerInterface $authorizationChecker;
 
+    private TransactionRepository $transactionRepository;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -48,11 +51,13 @@ final class AccountServiceTest extends TestCase
         $this->accountRepository = $this->createMock(AccountRepository::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->security = $this->createMock(Security::class);
+        $this->transactionRepository = $this->createMock(TransactionRepository::class);
 
         $this->accountService = new AccountService(
             accountRepository: $this->accountRepository,
             authorizationChecker: $this->authorizationChecker,
             security: $this->security,
+            transactionRepository: $this->transactionRepository,
         );
     }
 
@@ -282,5 +287,76 @@ final class AccountServiceTest extends TestCase
 
         // ASSERT
         self::assertCount(\count($accounts), $accountsResponse);
+    }
+
+    #[TestDox('When calling create account with initial balance, it should create an initial transaction')]
+    #[Test]
+    public function createAccountService_WithInitialBalance_CreatesInitialTransaction(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $this->security->method('getUser')->willReturn($user->_real());
+
+        $accountPayload = new AccountPayload();
+        $accountPayload->name = 'Compte avec solde initial';
+        $accountPayload->initialBalance = 1000.50;
+
+        $this->accountRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Account $account): void {
+                $account->setId(1)
+                    ->setName('Compte avec solde initial')
+                ;
+            })
+        ;
+
+        $this->transactionRepository->expects($this->once())
+            ->method('save')
+            ->with(
+                $this->callback(static function ($transaction) {
+                    return $transaction->getDescription() === 'Solde initial'
+                        && $transaction->getAmount() === 1000.50
+                        && $transaction->getType() === \App\Savings\Enum\TransactionTypesEnum::DEPOSIT;
+                })
+            )
+        ;
+
+        // ACT
+        $accountResponse = $this->accountService->create($accountPayload);
+
+        // ASSERT
+        self::assertSame(1, $accountResponse->id);
+        self::assertSame('Compte avec solde initial', $accountResponse->name);
+    }
+
+    #[TestDox('When calling create account without initial balance, it should not create a transaction')]
+    #[Test]
+    public function createAccountService_WithoutInitialBalance_DoesNotCreateTransaction(): void
+    {
+        // ARRANGE
+        $user = UserFactory::createOne();
+        $this->security->method('getUser')->willReturn($user->_real());
+
+        $accountPayload = new AccountPayload();
+        $accountPayload->name = 'Compte sans solde initial';
+
+        $this->accountRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Account $account): void {
+                $account->setId(2)
+                    ->setName('Compte sans solde initial')
+                ;
+            })
+        ;
+
+        $this->transactionRepository->expects($this->never())
+            ->method('save')
+        ;
+
+        // ACT
+        $accountResponse = $this->accountService->create($accountPayload);
+
+        // ASSERT
+        self::assertSame('Compte sans solde initial', $accountResponse->name);
     }
 }

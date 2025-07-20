@@ -65,7 +65,7 @@ final class BalanceHistoryServiceTest extends TestCase
         $transaction = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 100.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
         ]);
 
         // ACT
@@ -238,7 +238,7 @@ final class BalanceHistoryServiceTest extends TestCase
         $transaction = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 100.0,
-            'type' => TransactionTypesEnum::DEBIT,
+            'type' => TransactionTypesEnum::WITHDRAWAL,
         ]);
 
         // ACT
@@ -261,13 +261,13 @@ final class BalanceHistoryServiceTest extends TestCase
             'account' => $account,
             'date' => new \DateTime('2024-01-01'),
             'amount' => 100.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
         ]);
         $transaction2 = TransactionFactory::createOne([
             'account' => $account,
             'date' => new \DateTime('2024-01-02'),
             'amount' => 50.0,
-            'type' => TransactionTypesEnum::DEBIT,
+            'type' => TransactionTypesEnum::WITHDRAWAL,
         ]);
 
         $this->balanceHistoryRepository->expects($this->once())

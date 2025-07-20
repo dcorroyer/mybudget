@@ -38,7 +38,7 @@ final class CreateTransactionControllerTest extends TestBase
         $transactionPayload = [
             'description' => 'Test transaction',
             'amount' => 100,
-            'type' => 'DEBIT',
+            'type' => 'WITHDRAWAL',
             'date' => (new \DateTime())->format('Y-m-d H:i:s'),
         ];
 

@@ -149,7 +149,7 @@ class BalanceHistoryService
             $previousBalance = $currentBalance;
             $amount = $transaction->getAmount();
 
-            $currentBalance += $transaction->getType() === TransactionTypesEnum::CREDIT ? $amount : -$amount;
+            $currentBalance += $transaction->getType() === TransactionTypesEnum::DEPOSIT ? $amount : -$amount;
 
             $balanceHistory = (new BalanceHistory())
                 ->setDate($transaction->getDate())

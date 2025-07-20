@@ -29,9 +29,9 @@ class TransactionPayload
     #[Assert\NotBlank]
     #[Assert\Type(TransactionTypesEnum::class)]
     #[OA\Property(description: 'Transaction type', type: 'string', enum: [
-        'DEBIT',
-        'CREDIT',
-    ], example: TransactionTypesEnum::DEBIT->value)]
+        'WITHDRAWAL',
+        'DEPOSIT',
+    ], example: TransactionTypesEnum::WITHDRAWAL->value)]
     public TransactionTypesEnum $type;
 
     #[Assert\NotBlank]

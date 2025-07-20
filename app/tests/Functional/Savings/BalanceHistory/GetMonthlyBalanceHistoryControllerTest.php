@@ -42,14 +42,14 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 1000.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
         $transaction2 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 500.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-02-15'),
         ])->_real();
 
@@ -120,7 +120,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account1,
             'amount' => 1001.10,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
@@ -136,7 +136,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction2 = TransactionFactory::createOne([
             'account' => $account2,
             'amount' => 500.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 

@@ -142,7 +142,7 @@ final class TransactionServiceTest extends TestCase
         $transactionPayload = new TransactionPayload();
         $transactionPayload->description = 'Test transaction';
         $transactionPayload->amount = 100;
-        $transactionPayload->type = TransactionTypesEnum::DEBIT;
+        $transactionPayload->type = TransactionTypesEnum::WITHDRAWAL;
         $transactionPayload->date = new \DateTime();
 
         $this->accountService->expects($this->once())
@@ -202,7 +202,7 @@ final class TransactionServiceTest extends TestCase
         $transactionPayload = new TransactionPayload();
         $transactionPayload->description = 'Updated transaction';
         $transactionPayload->amount = 200.00;
-        $transactionPayload->type = TransactionTypesEnum::DEBIT;
+        $transactionPayload->type = TransactionTypesEnum::WITHDRAWAL;
         $transactionPayload->date = new \DateTime();
 
         $this->authorizationChecker->expects($this->once())

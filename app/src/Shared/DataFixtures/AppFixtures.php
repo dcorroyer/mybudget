@@ -104,7 +104,6 @@ class AppFixtures extends Fixture
 
         // Pour chaque compte, création des transactions et historiques de balance
         foreach ($accounts as $account) {
-            $balance = 0.0;
             $baseDate = Carbon::now();
 
             // Création des transactions avec plusieurs transactions par mois pour tester l'agrégation
@@ -289,18 +288,13 @@ class AppFixtures extends Fixture
             ];
 
             foreach ($transactions as $transactionData) {
-                $transaction = TransactionFactory::new([
+                TransactionFactory::new([
                     'account' => $account,
                     'description' => $transactionData['description'],
                     'amount' => $transactionData['amount'],
                     'type' => $transactionData['type'],
                     'date' => $transactionData['date'],
                 ])->create();
-
-                // Mise à jour du solde (plus nécessaire pour BalanceHistory, mais gardé pour info)
-                $balance += $transactionData['type'] === TransactionTypesEnum::DEPOSIT
-                    ? $transactionData['amount']
-                    : -$transactionData['amount'];
             }
         }
     }

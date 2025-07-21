@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Savings\Entity;
 
 use App\Savings\Repository\MonthlyBalanceRepository;
+use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,7 +21,7 @@ class MonthlyBalance
 
     #[ORM\ManyToOne(targetEntity: Account::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private Account $account;
+    private ?Account $account = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeImmutable $month;
@@ -36,7 +37,8 @@ class MonthlyBalance
 
     public function __construct()
     {
-        $this->lastUpdated = new \DateTimeImmutable();
+        $this->month = Carbon::now()->toDateTimeImmutable();
+        $this->lastUpdated = Carbon::now()->toDateTimeImmutable();
     }
 
     public function getId(): int
@@ -51,12 +53,12 @@ class MonthlyBalance
         return $this;
     }
 
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
 
-    public function setAccount(Account $account): static
+    public function setAccount(?Account $account): static
     {
         $this->account = $account;
 
@@ -114,7 +116,7 @@ class MonthlyBalance
 
     public function updateLastUpdated(): static
     {
-        $this->lastUpdated = new \DateTimeImmutable();
+        $this->lastUpdated = Carbon::now()->toDateTimeImmutable();
 
         return $this;
     }

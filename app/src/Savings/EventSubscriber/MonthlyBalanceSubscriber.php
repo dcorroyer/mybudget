@@ -10,10 +10,10 @@ use App\Savings\Event\TransactionUpdatedEvent;
 use App\Savings\Service\MonthlyBalanceService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MonthlyBalanceSubscriber implements EventSubscriberInterface
+readonly class MonthlyBalanceSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly MonthlyBalanceService $monthlyBalanceService,
+        private MonthlyBalanceService $monthlyBalanceService,
     ) {
     }
 

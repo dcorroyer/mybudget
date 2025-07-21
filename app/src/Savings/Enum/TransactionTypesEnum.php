@@ -8,8 +8,4 @@ enum TransactionTypesEnum: string
 {
     case WITHDRAWAL = 'WITHDRAWAL';
     case DEPOSIT = 'DEPOSIT';
-
-    // Temporary aliases for backward compatibility during migration
-    public const DEBIT = 'WITHDRAWAL';
-    public const CREDIT = 'DEPOSIT';
 }

@@ -8,6 +8,7 @@ use App\Savings\Entity\Account;
 use App\Savings\Entity\MonthlyBalance;
 use App\Savings\Enum\PeriodsEnum;
 use App\Shared\Repository\Abstract\AbstractEntityRepository;
+use Carbon\Carbon;
 
 /**
  * @extends AbstractEntityRepository<MonthlyBalance>
@@ -28,6 +29,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
         // Ensure we search by the first day of the month
         $firstDayOfMonth = (new \DateTimeImmutable($month->format('Y-m-01')))->setTime(0, 0, 0);
 
+        /** @var MonthlyBalance|null */
         return $this->createQueryBuilder('mb')
             ->andWhere('mb.account = :account')
             ->andWhere('mb.month = :month')
@@ -61,6 +63,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
             ;
         }
 
+        /** @var array<MonthlyBalance> */
         return $qb->getQuery()->getResult();
     }
 
@@ -71,6 +74,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
     {
         $firstDayOfMonth = (new \DateTimeImmutable($month->format('Y-m-01')))->setTime(0, 0, 0);
 
+        /** @var MonthlyBalance|null */
         return $this->createQueryBuilder('mb')
             ->andWhere('mb.account = :account')
             ->andWhere('mb.month < :month')
@@ -92,6 +96,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
     {
         $firstDayOfMonth = (new \DateTimeImmutable($fromMonth->format('Y-m-01')))->setTime(0, 0, 0);
 
+        /** @var array<MonthlyBalance> */
         return $this->createQueryBuilder('mb')
             ->andWhere('mb.account = :account')
             ->andWhere('mb.month >= :month')
@@ -110,6 +115,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
     {
         $firstDayOfMonth = (new \DateTimeImmutable($fromMonth->format('Y-m-01')))->setTime(0, 0, 0);
 
+        /** @var int */
         return $this->createQueryBuilder('mb')
             ->delete()
             ->andWhere('mb.account = :account')
@@ -140,6 +146,7 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
      */
     public function findLatestForAccount(Account $account): ?MonthlyBalance
     {
+        /** @var MonthlyBalance|null */
         return $this->createQueryBuilder('mb')
             ->andWhere('mb.account = :account')
             ->setParameter('account', $account)
@@ -152,12 +159,15 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
 
     private function getDateFilterForPeriod(PeriodsEnum $period): \DateTimeImmutable
     {
-        $now = new \DateTimeImmutable();
+        $now = Carbon::now();
 
         return match ($period) {
-            PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
-            PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
-            default => $now->modify('-12 months')->modify('first day of this month'),
+            PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify(
+                'first day of this month'
+            )->toDateTimeImmutable(),
+            PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify(
+                'first day of this month'
+            )->toDateTimeImmutable(),
         };
     }
 }

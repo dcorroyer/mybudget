@@ -26,6 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $id;
 
     #[Assert\NotBlank]
+    #[Assert\Email]
     #[ORM\Column(type: Types::STRING, length: 180)]
     private string $email = '';
 
@@ -118,10 +119,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return non-empty-string
      */
     #[\Override]
     public function getUserIdentifier(): string
     {
+        \assert($this->email !== '');
+
         return $this->email;
     }
 

@@ -27,14 +27,24 @@ class TransactionListener
 
     public function postPersist(Transaction $transaction): void
     {
-        $this->eventDispatcher->dispatch(new TransactionCreatedEvent($transaction, $transaction->getAccount()));
+        $account = $transaction->getAccount();
+        if ($account === null) {
+            return;
+        }
+
+        $this->eventDispatcher->dispatch(new TransactionCreatedEvent($transaction, $account));
     }
 
     public function postUpdate(Transaction $transaction): void
     {
+        $account = $transaction->getAccount();
+        if ($account === null) {
+            return;
+        }
+
         $this->eventDispatcher->dispatch(new TransactionUpdatedEvent(
             $transaction,
-            $transaction->getAccount(),
+            $account,
             $this->oldTransactionDate
         ));
 
@@ -45,6 +55,9 @@ class TransactionListener
     {
         $transactionCopy = clone $transaction;
         $account = $transaction->getAccount();
+        if ($account === null) {
+            return;
+        }
 
         $this->eventDispatcher->dispatch(new TransactionDeletedEvent($transactionCopy, $account));
     }

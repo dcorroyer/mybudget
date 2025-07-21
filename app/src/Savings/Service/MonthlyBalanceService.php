@@ -85,14 +85,21 @@ class MonthlyBalanceService
     public function handleTransactionCreated(Transaction $transaction): void
     {
         $account = $transaction->getAccount();
-        $transactionMonth = $transaction->getDate();
+        if ($account === null) {
+            return;
+        }
 
+        $transactionMonth = $transaction->getDate();
         $this->updateMonthlyBalance($account, $transactionMonth);
     }
 
     public function handleTransactionUpdated(Transaction $transaction, ?\DateTimeInterface $oldDate = null): void
     {
         $account = $transaction->getAccount();
+        if ($account === null) {
+            return;
+        }
+
         $currentMonth = $transaction->getDate();
 
         // If date changed, we need to update both months
@@ -108,8 +115,11 @@ class MonthlyBalanceService
     public function handleTransactionDeleted(Transaction $transaction): void
     {
         $account = $transaction->getAccount();
-        $transactionMonth = $transaction->getDate();
+        if ($account === null) {
+            return;
+        }
 
+        $transactionMonth = $transaction->getDate();
         $this->recalculateFromMonth($account, $transactionMonth);
     }
 
@@ -250,7 +260,11 @@ class MonthlyBalanceService
         // Group existing balances by account and month for quick lookup
         $existingByAccountMonth = [];
         foreach ($existingBalances as $balance) {
-            $accountId = $balance->getAccount()->getId();
+            $account = $balance->getAccount();
+            if ($account === null) {
+                continue;
+            }
+            $accountId = $account->getId();
             $monthKey = $balance->getMonth()->format('Y-m');
             $existingByAccountMonth[$accountId][$monthKey] = $balance;
         }

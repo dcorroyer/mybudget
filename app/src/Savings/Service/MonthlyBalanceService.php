@@ -141,8 +141,11 @@ class MonthlyBalanceService
 
         $monthlyBalances = $this->monthlyBalanceRepository->findByAccountsAndPeriod($accountIds, $periodFilter);
 
+        // Fill missing months with stable balance data
+        $completeMonthlyBalances = $this->fillMissingMonths($monthlyBalances, $accountIds, $periodFilter);
+
         // Extract unique months and sort them
-        $months = Collection::fromIterable($monthlyBalances)
+        $months = Collection::fromIterable($completeMonthlyBalances)
             ->map(static fn (MonthlyBalance $balance) => $balance->getMonth()->format('Y-m'))
             ->distinct()
             ->sort()
@@ -153,7 +156,7 @@ class MonthlyBalanceService
 
         // For each month, sum balances across all accounts
         foreach ($months as $month) {
-            $monthTotal = Collection::fromIterable($monthlyBalances)
+            $monthTotal = Collection::fromIterable($completeMonthlyBalances)
                 ->filter(static fn (MonthlyBalance $balance) => $balance->getMonth()->format('Y-m') === $month)
                 ->map(static fn (MonthlyBalance $balance) => $balance->getEndOfMonthBalance())
                 ->reduce(static fn (float $carry, float $balance) => $carry + $balance, 0.0)
@@ -200,5 +203,108 @@ class MonthlyBalanceService
         }
 
         return $balance;
+    }
+
+    /**
+     * Fill missing months with stable balance data for better chart visualization.
+     *
+     * @param array<MonthlyBalance> $existingBalances
+     * @param array<int>            $accountIds
+     *
+     * @return array<MonthlyBalance>
+     */
+    private function fillMissingMonths(array $existingBalances, array $accountIds, ?PeriodsEnum $periodFilter): array
+    {
+        $now = new \DateTimeImmutable();
+        $endDate = $now->modify('first day of this month');
+
+        // Determine the date range to cover
+        if ($periodFilter === null) {
+            // No period filter: fill from the latest existing balance to today
+            if (empty($existingBalances)) {
+                return $existingBalances;
+            }
+
+            // Find the latest month from all existing balances
+            $latestMonth = null;
+            foreach ($existingBalances as $balance) {
+                $balanceMonth = $balance->getMonth();
+                if ($latestMonth === null || $balanceMonth > $latestMonth) {
+                    $latestMonth = $balanceMonth;
+                }
+            }
+
+            if ($latestMonth === null || $latestMonth >= $endDate) {
+                return $existingBalances;
+            }
+
+            $startDate = $latestMonth->modify('+1 month');
+        } else {
+            // With period filter: use the calculated period
+            $startDate = match ($periodFilter) {
+                PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
+                PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
+            };
+        }
+
+        // Group existing balances by account and month for quick lookup
+        $existingByAccountMonth = [];
+        foreach ($existingBalances as $balance) {
+            $accountId = $balance->getAccount()->getId();
+            $monthKey = $balance->getMonth()->format('Y-m');
+            $existingByAccountMonth[$accountId][$monthKey] = $balance;
+        }
+
+        $completeBalances = $existingBalances;
+
+        // For each account, fill missing months
+        foreach ($accountIds as $accountId) {
+            $account = $this->accountService->get($accountId);
+
+            // Get the latest known balance for this account
+            $latestBalance = $this->monthlyBalanceRepository->findLatestForAccount($account);
+            if ($latestBalance === null) {
+                // No balance history for this account, skip
+                continue;
+            }
+
+            // Generate missing months
+            $currentMonth = $startDate;
+            while ($currentMonth <= $endDate) {
+                $monthKey = $currentMonth->format('Y-m');
+
+                // If this month doesn't exist for this account, create a virtual balance
+                if (! isset($existingByAccountMonth[$accountId][$monthKey])) {
+                    $virtualBalance = $this->createVirtualMonthlyBalance(
+                        $account,
+                        $currentMonth,
+                        $latestBalance->getEndOfMonthBalance()
+                    );
+                    $completeBalances[] = $virtualBalance;
+                }
+
+                $currentMonth = $currentMonth->modify('+1 month');
+            }
+        }
+
+        return $completeBalances;
+    }
+
+    /**
+     * Create a virtual MonthlyBalance for visualization purposes.
+     */
+    private function createVirtualMonthlyBalance(
+        Account $account,
+        \DateTimeInterface $month,
+        float $balance
+    ): MonthlyBalance {
+        $virtualBalance = new MonthlyBalance();
+        $virtualBalance->setAccount($account)
+            ->setMonth($month)
+            ->setEndOfMonthBalance($balance)
+            ->setTransactionCount(0)
+        ;
+
+        return $virtualBalance;
     }
 }

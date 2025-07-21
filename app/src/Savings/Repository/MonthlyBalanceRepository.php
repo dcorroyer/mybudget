@@ -154,16 +154,28 @@ class MonthlyBalanceRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Find the latest MonthlyBalance for an account.
+     */
+    public function findLatestForAccount(Account $account): ?MonthlyBalance
+    {
+        return $this->createQueryBuilder('mb')
+            ->andWhere('mb.account = :account')
+            ->setParameter('account', $account)
+            ->orderBy('mb.month', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     private function getDateFilterForPeriod(PeriodsEnum $period): \DateTimeImmutable
     {
         $now = new \DateTimeImmutable();
 
         return match ($period) {
-            PeriodsEnum::LAST_3_MONTHS => $now->modify('-3 months')->modify('first day of this month'),
-            PeriodsEnum::LAST_6_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
-            PeriodsEnum::LAST_12_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
-            PeriodsEnum::CURRENT_YEAR => $now->modify('first day of January this year'),
-            PeriodsEnum::LAST_YEAR => $now->modify('first day of January last year'),
+            PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
+            PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
             default => $now->modify('-12 months')->modify('first day of this month'),
         };
     }

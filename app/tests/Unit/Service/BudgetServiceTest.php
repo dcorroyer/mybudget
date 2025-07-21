@@ -330,7 +330,9 @@ final class BudgetServiceTest extends TestCase
         self::assertCount(20, $budgetsResponse->data);
     }
 
-    #[TestDox('When calling duplicate budget with null id and no latest budget exists, it should throw not found exception')]
+    #[TestDox(
+        'When calling duplicate budget with null id and no latest budget exists, it should throw not found exception'
+    )]
     #[Test]
     public function duplicateBudgetService_WithNullIdAndNoLatestBudget_ReturnsNotFoundException(): void
     {

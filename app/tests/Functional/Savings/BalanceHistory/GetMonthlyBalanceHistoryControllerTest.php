@@ -73,7 +73,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         // Chercher les balances de janvier et février dans le tableau
         $januaryBalance = null;
         $februaryBalance = null;
-        
+
         foreach ($responseData['balances'] as $balance) {
             if ($balance['date'] === '2024-01') {
                 $januaryBalance = $balance;
@@ -81,7 +81,7 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
                 $februaryBalance = $balance;
             }
         }
-        
+
         // Vérification de la balance de janvier
         self::assertNotNull($januaryBalance, 'January balance not found');
         self::assertSame(1000, $januaryBalance['balance']);
@@ -150,17 +150,17 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
 
         // Vérification des balances - la méthode fillMissingMonths ajoute tous les mois jusqu'à aujourd'hui
         self::assertGreaterThanOrEqual(1, \count($responseData['balances']));
-        
+
         // Chercher la balance de janvier dans le tableau
         $januaryBalance = null;
-        
+
         foreach ($responseData['balances'] as $balance) {
             if ($balance['date'] === '2024-01') {
                 $januaryBalance = $balance;
                 break;
             }
         }
-        
+
         // Vérification de la balance de janvier
         self::assertNotNull($januaryBalance, 'January balance not found');
         self::assertSame(1001.1, $januaryBalance['balance']);

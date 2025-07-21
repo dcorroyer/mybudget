@@ -47,19 +47,22 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $oldBalance = new MonthlyBalance();
         $oldBalance->setAccount($account1->_real())
             ->setMonth(new \DateTimeImmutable('-8 months first day of this month'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($oldBalance, true);
 
         $recentBalance = new MonthlyBalance();
         $recentBalance->setAccount($account1->_real())
             ->setMonth(new \DateTimeImmutable('-3 months first day of this month'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($recentBalance, true);
 
         $account2Balance = new MonthlyBalance();
         $account2Balance->setAccount($account2->_real())
             ->setMonth(new \DateTimeImmutable('-2 months first day of this month'))
-            ->setEndOfMonthBalance(2000.0);
+            ->setEndOfMonthBalance(2000.0)
+        ;
         $this->monthlyBalanceRepository->save($account2Balance, true);
 
         $accountIds = [$account1->getId(), $account2->getId()];
@@ -85,13 +88,15 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $oldBalance = new MonthlyBalance();
         $oldBalance->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('-15 months first day of this month'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($oldBalance, true);
 
         $recentBalance = new MonthlyBalance();
         $recentBalance->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('-6 months first day of this month'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($recentBalance, true);
 
         $accountIds = [$account->getId()];
@@ -116,13 +121,15 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $oldBalance = new MonthlyBalance();
         $oldBalance->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('-24 months first day of this month'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($oldBalance, true);
 
         $recentBalance = new MonthlyBalance();
         $recentBalance->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('-3 months first day of this month'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($recentBalance, true);
 
         $accountIds = [$account->getId()];
@@ -148,19 +155,22 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance1 = new MonthlyBalance();
         $balance1->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-01-01'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($balance1, true);
 
         $balance2 = new MonthlyBalance();
         $balance2->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-03-01'))
-            ->setEndOfMonthBalance(1200.0);
+            ->setEndOfMonthBalance(1200.0)
+        ;
         $this->monthlyBalanceRepository->save($balance2, true);
 
         $balance3 = new MonthlyBalance();
         $balance3->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-05-01'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($balance3, true);
 
         // ACT - Delete from March onwards
@@ -173,7 +183,9 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         self::assertSame(2, $deletedCount); // Should delete March and May balances
 
         // Verify only January balance remains
-        $remainingBalances = $this->monthlyBalanceRepository->findBy(['account' => $account->_real()]);
+        $remainingBalances = $this->monthlyBalanceRepository->findBy([
+            'account' => $account->_real(),
+        ]);
         self::assertCount(1, $remainingBalances);
         self::assertSame($balance1->getMonth()->format('Y-m'), $remainingBalances[0]->getMonth()->format('Y-m'));
     }
@@ -187,11 +199,12 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $account2 = AccountFactory::createOne();
 
         // Create 3 balances for account1
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; ++$i) {
             $balance = new MonthlyBalance();
             $balance->setAccount($account1->_real())
                 ->setMonth(new \DateTimeImmutable("-{$i} months first day of this month"))
-                ->setEndOfMonthBalance(1000.0 + $i * 100);
+                ->setEndOfMonthBalance(1000.0 + $i * 100)
+            ;
             $this->monthlyBalanceRepository->save($balance, true);
         }
 
@@ -199,7 +212,8 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance = new MonthlyBalance();
         $balance->setAccount($account2->_real())
             ->setMonth(new \DateTimeImmutable('first day of this month'))
-            ->setEndOfMonthBalance(2000.0);
+            ->setEndOfMonthBalance(2000.0)
+        ;
         $this->monthlyBalanceRepository->save($balance, true);
 
         // ACT
@@ -236,7 +250,8 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance = new MonthlyBalance();
         $balance->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-03-01')) // First day of month
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($balance, true);
 
         // ACT
@@ -259,19 +274,22 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance1 = new MonthlyBalance();
         $balance1->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-01-01'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($balance1, true);
 
         $balance2 = new MonthlyBalance();
         $balance2->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-03-01'))
-            ->setEndOfMonthBalance(1200.0);
+            ->setEndOfMonthBalance(1200.0)
+        ;
         $this->monthlyBalanceRepository->save($balance2, true);
 
         $balance3 = new MonthlyBalance();
         $balance3->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-05-01'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($balance3, true);
 
         // ACT - Find latest before May
@@ -296,19 +314,22 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance1 = new MonthlyBalance();
         $balance1->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-01-01'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($balance1, true);
 
         $balance2 = new MonthlyBalance();
         $balance2->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-03-01'))
-            ->setEndOfMonthBalance(1200.0);
+            ->setEndOfMonthBalance(1200.0)
+        ;
         $this->monthlyBalanceRepository->save($balance2, true);
 
         $balance3 = new MonthlyBalance();
         $balance3->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-05-01'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($balance3, true);
 
         // ACT - Find from March onwards
@@ -333,19 +354,22 @@ final class MonthlyBalanceRepositoryTest extends TestBase
         $balance1 = new MonthlyBalance();
         $balance1->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-01-01'))
-            ->setEndOfMonthBalance(1000.0);
+            ->setEndOfMonthBalance(1000.0)
+        ;
         $this->monthlyBalanceRepository->save($balance1, true);
 
         $balance2 = new MonthlyBalance();
         $balance2->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-05-01'))
-            ->setEndOfMonthBalance(1500.0);
+            ->setEndOfMonthBalance(1500.0)
+        ;
         $this->monthlyBalanceRepository->save($balance2, true);
 
         $balance3 = new MonthlyBalance();
         $balance3->setAccount($account->_real())
             ->setMonth(new \DateTimeImmutable('2023-03-01'))
-            ->setEndOfMonthBalance(1200.0);
+            ->setEndOfMonthBalance(1200.0)
+        ;
         $this->monthlyBalanceRepository->save($balance3, true);
 
         // ACT

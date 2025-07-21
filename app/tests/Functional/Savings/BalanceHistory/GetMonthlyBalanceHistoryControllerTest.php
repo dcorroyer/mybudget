@@ -67,16 +67,28 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         self::assertSame($account->getId(), $responseData['accounts'][0]['id']);
         self::assertSame('Compte test', $responseData['accounts'][0]['name']);
 
-        // Vérification des balances
-        self::assertCount(2, $responseData['balances']);
+        // Vérification des balances - la méthode fillMissingMonths ajoute tous les mois jusqu'à aujourd'hui
+        self::assertGreaterThanOrEqual(2, \count($responseData['balances']));
 
+        // Chercher les balances de janvier et février dans le tableau
+        $januaryBalance = null;
+        $februaryBalance = null;
+        
+        foreach ($responseData['balances'] as $balance) {
+            if ($balance['date'] === '2024-01') {
+                $januaryBalance = $balance;
+            } elseif ($balance['date'] === '2024-02') {
+                $februaryBalance = $balance;
+            }
+        }
+        
         // Vérification de la balance de janvier
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1000, $responseData['balances'][0]['balance']);
+        self::assertNotNull($januaryBalance, 'January balance not found');
+        self::assertSame(1000, $januaryBalance['balance']);
 
         // Vérification de la balance de février
-        self::assertSame('2024-02', $responseData['balances'][1]['date']);
-        self::assertSame(1500, $responseData['balances'][1]['balance']);
+        self::assertNotNull($februaryBalance, 'February balance not found');
+        self::assertSame(1500, $februaryBalance['balance']);
     }
 
     #[TestDox(
@@ -136,9 +148,21 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         self::assertSame($account1->getId(), $responseData['accounts'][0]['id']);
         self::assertSame('Compte 1', $responseData['accounts'][0]['name']);
 
-        // Vérification des balances
-        self::assertCount(1, $responseData['balances']);
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1001.10, $responseData['balances'][0]['balance']);
+        // Vérification des balances - la méthode fillMissingMonths ajoute tous les mois jusqu'à aujourd'hui
+        self::assertGreaterThanOrEqual(1, \count($responseData['balances']));
+        
+        // Chercher la balance de janvier dans le tableau
+        $januaryBalance = null;
+        
+        foreach ($responseData['balances'] as $balance) {
+            if ($balance['date'] === '2024-01') {
+                $januaryBalance = $balance;
+                break;
+            }
+        }
+        
+        // Vérification de la balance de janvier
+        self::assertNotNull($januaryBalance, 'January balance not found');
+        self::assertSame(1001.1, $januaryBalance['balance']);
     }
 }

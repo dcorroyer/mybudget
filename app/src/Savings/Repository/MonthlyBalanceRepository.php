@@ -7,36 +7,17 @@ namespace App\Savings\Repository;
 use App\Savings\Entity\Account;
 use App\Savings\Entity\MonthlyBalance;
 use App\Savings\Enum\PeriodsEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Shared\Repository\Abstract\AbstractEntityRepository;
 
 /**
- * @extends ServiceEntityRepository<MonthlyBalance>
+ * @extends AbstractEntityRepository<MonthlyBalance>
  */
-class MonthlyBalanceRepository extends ServiceEntityRepository
+class MonthlyBalanceRepository extends AbstractEntityRepository
 {
-    public function __construct(
-        ManagerRegistry $registry
-    ) {
-        parent::__construct($registry, MonthlyBalance::class);
-    }
-
-    public function save(MonthlyBalance $monthlyBalance, bool $flush = false): void
+    #[\Override]
+    public function getEntityClass(): string
     {
-        $this->getEntityManager()->persist($monthlyBalance);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function delete(MonthlyBalance $monthlyBalance, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($monthlyBalance);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return MonthlyBalance::class;
     }
 
     /**

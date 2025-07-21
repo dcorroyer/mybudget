@@ -329,4 +329,86 @@ final class BudgetServiceTest extends TestCase
         // ASSERT
         self::assertCount(20, $budgetsResponse->data);
     }
+
+    #[TestDox('When calling duplicate budget with null id and no latest budget exists, it should throw not found exception')]
+    #[Test]
+    public function duplicateBudgetService_WithNullIdAndNoLatestBudget_ReturnsNotFoundException(): void
+    {
+        // ARRANGE
+        $this->budgetRepository->expects($this->once())
+            ->method('findLatestByUser')
+            ->willReturn(null)
+        ;
+
+        // ASSERT
+        $this->expectException(BudgetNotFoundException::class);
+        $this->expectExceptionMessage('Budget not found with identifier: latest');
+
+        // ACT
+        $this->budgetService->duplicate(null);
+    }
+
+    #[TestDox('When calling duplicate budget with access denied, it should throw access denied exception')]
+    #[Test]
+    public function duplicateBudgetService_WithAccessDenied_ReturnsAccessDeniedException(): void
+    {
+        // ARRANGE
+        $budget = BudgetFactory::createOne();
+
+        $this->budgetRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($budget)
+        ;
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('view', $budget)
+            ->willReturn(false)
+        ;
+
+        // ASSERT
+        $this->expectException(AbstractAccessDeniedException::class);
+
+        // ACT
+        $this->budgetService->duplicate($budget->getId());
+    }
+
+    #[TestDox('When calling duplicate budget without id, it should duplicate the latest budget')]
+    #[Test]
+    public function duplicateBudgetService_WithoutId_DuplicatesLatestBudget(): void
+    {
+        // ARRANGE
+        $latestBudget = BudgetFactory::createOne([
+            'user' => $this->security->getUser(),
+            'date' => new \DateTime('2023-01-01'),
+        ]);
+
+        $this->budgetRepository->expects($this->exactly(2))
+            ->method('findLatestByUser')
+            ->willReturn($latestBudget)
+        ;
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('view', $latestBudget)
+            ->willReturn(true)
+        ;
+
+        $this->budgetRepository->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(static function (Budget $budget): void {
+                $budget->setId(2)
+                    ->setDate(new \DateTime('2023-02-01'))
+                    ->updateName()
+                ;
+            })
+        ;
+
+        // ACT
+        $budgetResponse = $this->budgetService->duplicate(null);
+
+        // ASSERT
+        self::assertSame(2, $budgetResponse->id);
+        self::assertSame('Budget 2023-02', $budgetResponse->name);
+    }
 }

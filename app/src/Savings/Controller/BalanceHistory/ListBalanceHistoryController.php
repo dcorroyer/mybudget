@@ -6,7 +6,7 @@ namespace App\Savings\Controller\BalanceHistory;
 
 use App\Savings\Dto\Http\BalanceHistoryFilterQuery;
 use App\Savings\Dto\Response\BalanceHistoryResponse;
-use App\Savings\Service\BalanceHistoryService;
+use App\Savings\Service\MonthlyBalanceService;
 use App\Shared\Api\AbstractApiController;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
@@ -35,11 +35,11 @@ class ListBalanceHistoryController extends AbstractApiController
         )
     )]
     public function __invoke(
-        BalanceHistoryService $balanceHistoryService,
+        MonthlyBalanceService $monthlyBalanceService,
         #[MapQueryString] ?BalanceHistoryFilterQuery $filter = null,
     ): JsonResponse {
         return $this->successResponse(
-            data: $balanceHistoryService->getMonthlyBalanceHistory($filter?->getAccountIds(), $filter?->getPeriod())
+            data: $monthlyBalanceService->getMonthlyBalanceHistory($filter?->getAccountIds(), $filter?->getPeriod())
         );
     }
 }

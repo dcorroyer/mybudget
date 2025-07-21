@@ -6,6 +6,6 @@ namespace App\Savings\Enum;
 
 enum TransactionTypesEnum: string
 {
-    case DEBIT = 'DEBIT';
-    case CREDIT = 'CREDIT';
+    case WITHDRAWAL = 'WITHDRAWAL';
+    case DEPOSIT = 'DEPOSIT';
 }

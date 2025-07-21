@@ -13,4 +13,14 @@ class AccountPayload
     #[Assert\NotBlank]
     #[OA\Property(description: 'Account name', type: 'string', example: 'Current Account')]
     public string $name;
+
+    #[Assert\PositiveOrZero]
+    #[OA\Property(
+        description: 'Initial balance when creating the account',
+        type: 'number',
+        format: 'float',
+        example: 1000.50,
+        nullable: true
+    )]
+    public ?float $initialBalance = null;
 }

@@ -7,12 +7,16 @@ namespace App\Savings\Service;
 use App\Savings\Dto\Payload\AccountPayload;
 use App\Savings\Dto\Response\AccountResponse;
 use App\Savings\Entity\Account;
+use App\Savings\Entity\Transaction;
+use App\Savings\Enum\TransactionTypesEnum;
 use App\Savings\Exception\AccountNotFoundException;
 use App\Savings\Repository\AccountRepository;
+use App\Savings\Repository\TransactionRepository;
 use App\Savings\Security\Voter\AccountVoter;
 use App\Shared\Entity\User;
 use App\Shared\Enum\ResourceTypesEnum;
 use App\Shared\Exception\AbstractAccessDeniedException;
+use Carbon\Carbon;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -22,6 +26,7 @@ class AccountService
         private readonly AccountRepository $accountRepository,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly Security $security,
+        private readonly TransactionRepository $transactionRepository,
     ) {
     }
 
@@ -30,7 +35,7 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new AccountNotFoundException((string) $id);
+            throw new AccountNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
@@ -50,7 +55,7 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new AccountNotFoundException((string) $id);
+            throw new AccountNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
@@ -72,6 +77,11 @@ class AccountService
         ;
 
         $this->accountRepository->save($account, true);
+
+        // Create initial balance transaction if provided
+        if ($accountPayload->initialBalance !== null && $accountPayload->initialBalance > 0) {
+            $this->createInitialTransaction($account, $accountPayload->initialBalance);
+        }
 
         return new AccountResponse(
             id: $account->getId(),
@@ -141,8 +151,17 @@ class AccountService
         ]);
     }
 
-    public function save(Account $account, bool $flush = false): void
+    private function createInitialTransaction(Account $account, float $amount): void
     {
-        $this->accountRepository->save($account, $flush);
+        $transaction = new Transaction();
+        $transaction
+            ->setDescription('Solde initial')
+            ->setAmount($amount)
+            ->setType(TransactionTypesEnum::DEPOSIT)
+            ->setDate(Carbon::now()->toDateTimeImmutable())
+            ->setAccount($account)
+        ;
+
+        $this->transactionRepository->save($transaction, true);
     }
 }

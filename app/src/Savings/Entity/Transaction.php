@@ -33,7 +33,7 @@ class Transaction
     private float $amount = 0;
 
     #[ORM\Column(type: Types::STRING, enumType: TransactionTypesEnum::class)]
-    private TransactionTypesEnum $type = TransactionTypesEnum::CREDIT;
+    private TransactionTypesEnum $type = TransactionTypesEnum::DEPOSIT;
 
     #[Assert\NotBlank]
     #[Assert\DateTime]

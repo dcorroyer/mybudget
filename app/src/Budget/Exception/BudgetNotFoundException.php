@@ -9,7 +9,7 @@ use App\Shared\Exception\AbstractEntityNotFoundException;
 class BudgetNotFoundException extends AbstractEntityNotFoundException
 {
     public function __construct(
-        string $identifier
+        int|string $identifier
     ) {
         parent::__construct('Budget', $identifier);
     }

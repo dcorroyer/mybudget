@@ -8,7 +8,7 @@ abstract class AbstractEntityNotFoundException extends AbstractApplicationExcept
 {
     public function __construct(
         string $entityName,
-        string $identifier
+        int|string $identifier
     ) {
         parent::__construct(\sprintf('%s not found with identifier: %s', $entityName, $identifier), 404);
     }

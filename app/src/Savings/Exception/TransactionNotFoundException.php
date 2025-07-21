@@ -9,7 +9,7 @@ use App\Shared\Exception\AbstractEntityNotFoundException;
 class TransactionNotFoundException extends AbstractEntityNotFoundException
 {
     public function __construct(
-        string $identifier
+        int $identifier
     ) {
         parent::__construct('Transaction', $identifier);
     }

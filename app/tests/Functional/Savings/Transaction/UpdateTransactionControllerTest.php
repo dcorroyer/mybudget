@@ -43,7 +43,7 @@ final class UpdateTransactionControllerTest extends TestBase
         $updatePayload = [
             'description' => 'Updated transaction',
             'amount' => 200,
-            'type' => TransactionTypesEnum::DEBIT,
+            'type' => TransactionTypesEnum::WITHDRAWAL,
             'date' => (new \DateTime())->format('Y-m-d H:i:s'),
         ];
 

@@ -24,8 +24,8 @@ class TransactionResponse
         #[OA\Property(
             description: 'Transaction type',
             type: 'string',
-            enum: ['DEBIT', 'CREDIT'],
-            example: TransactionTypesEnum::DEBIT->value)]
+            enum: ['WITHDRAWAL', 'DEPOSIT'],
+            example: TransactionTypesEnum::WITHDRAWAL->value)]
         public readonly TransactionTypesEnum $type,
 
         #[OA\Property(description: 'Transaction date', type: 'string', format: 'date', example: '2023-05-15')]

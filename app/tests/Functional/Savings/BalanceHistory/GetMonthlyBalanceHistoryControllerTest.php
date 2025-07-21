@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Savings\BalanceHistory;
 
 use App\Savings\Enum\TransactionTypesEnum;
 use App\Tests\Common\Factory\AccountFactory;
-use App\Tests\Common\Factory\BalanceHistoryFactory;
 use App\Tests\Common\Factory\TransactionFactory;
 use App\Tests\Common\Factory\UserFactory;
 use App\Tests\Functional\TestBase;
@@ -42,33 +41,18 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 1000.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
         $transaction2 = TransactionFactory::createOne([
             'account' => $account,
             'amount' => 500.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-02-15'),
         ])->_real();
 
-        // Création des historiques de balance
-        BalanceHistoryFactory::createOne([
-            'account' => $account,
-            'transaction' => $transaction1,
-            'balanceBeforeTransaction' => 0.0,
-            'balanceAfterTransaction' => 1000.0,
-            'date' => new \DateTime('2024-01-15'),
-        ]);
-
-        BalanceHistoryFactory::createOne([
-            'account' => $account,
-            'transaction' => $transaction2,
-            'balanceBeforeTransaction' => 1000.0,
-            'balanceAfterTransaction' => 1500.0,
-            'date' => new \DateTime('2024-02-15'),
-        ]);
+        // Les MonthlyBalance sont automatiquement créés via les événements de transactions
 
         // ACT
         $response = $this->clientRequest(Request::METHOD_GET, self::API_ENDPOINT);
@@ -83,16 +67,28 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         self::assertSame($account->getId(), $responseData['accounts'][0]['id']);
         self::assertSame('Compte test', $responseData['accounts'][0]['name']);
 
-        // Vérification des balances
-        self::assertCount(2, $responseData['balances']);
+        // Vérification des balances - la méthode fillMissingMonths ajoute tous les mois jusqu'à aujourd'hui
+        self::assertGreaterThanOrEqual(2, \count($responseData['balances']));
+
+        // Chercher les balances de janvier et février dans le tableau
+        $januaryBalance = null;
+        $februaryBalance = null;
+
+        foreach ($responseData['balances'] as $balance) {
+            if ($balance['date'] === '2024-01') {
+                $januaryBalance = $balance;
+            } elseif ($balance['date'] === '2024-02') {
+                $februaryBalance = $balance;
+            }
+        }
 
         // Vérification de la balance de janvier
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1000, $responseData['balances'][0]['balance']);
+        self::assertNotNull($januaryBalance, 'January balance not found');
+        self::assertSame(1000, $januaryBalance['balance']);
 
         // Vérification de la balance de février
-        self::assertSame('2024-02', $responseData['balances'][1]['date']);
-        self::assertSame(1500, $responseData['balances'][1]['balance']);
+        self::assertNotNull($februaryBalance, 'February balance not found');
+        self::assertSame(1500, $februaryBalance['balance']);
     }
 
     #[TestDox(
@@ -120,33 +116,21 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         $transaction1 = TransactionFactory::createOne([
             'account' => $account1,
             'amount' => 1001.10,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
-        BalanceHistoryFactory::createOne([
-            'account' => $account1,
-            'transaction' => $transaction1,
-            'balanceBeforeTransaction' => 0.0,
-            'balanceAfterTransaction' => 1001.10,
-            'date' => new \DateTime('2024-01-15'),
-        ]);
+        // MonthlyBalance sera créé automatiquement
 
-        // Création des transactions et historiques pour le compte 2
+        // Création des transactions pour le compte 2
         $transaction2 = TransactionFactory::createOne([
             'account' => $account2,
             'amount' => 500.0,
-            'type' => TransactionTypesEnum::CREDIT,
+            'type' => TransactionTypesEnum::DEPOSIT,
             'date' => new \DateTime('2024-01-15'),
         ])->_real();
 
-        BalanceHistoryFactory::createOne([
-            'account' => $account2,
-            'transaction' => $transaction2,
-            'balanceBeforeTransaction' => 0.0,
-            'balanceAfterTransaction' => 500.0,
-            'date' => new \DateTime('2024-01-15'),
-        ]);
+        // MonthlyBalance sera créé automatiquement
 
         // ACT
         $response = $this->clientRequest(
@@ -164,9 +148,21 @@ final class GetMonthlyBalanceHistoryControllerTest extends TestBase
         self::assertSame($account1->getId(), $responseData['accounts'][0]['id']);
         self::assertSame('Compte 1', $responseData['accounts'][0]['name']);
 
-        // Vérification des balances
-        self::assertCount(1, $responseData['balances']);
-        self::assertSame('2024-01', $responseData['balances'][0]['date']);
-        self::assertSame(1001.10, $responseData['balances'][0]['balance']);
+        // Vérification des balances - la méthode fillMissingMonths ajoute tous les mois jusqu'à aujourd'hui
+        self::assertGreaterThanOrEqual(1, \count($responseData['balances']));
+
+        // Chercher la balance de janvier dans le tableau
+        $januaryBalance = null;
+
+        foreach ($responseData['balances'] as $balance) {
+            if ($balance['date'] === '2024-01') {
+                $januaryBalance = $balance;
+                break;
+            }
+        }
+
+        // Vérification de la balance de janvier
+        self::assertNotNull($januaryBalance, 'January balance not found');
+        self::assertSame(1001.1, $januaryBalance['balance']);
     }
 }

@@ -14,6 +14,7 @@ use App\Savings\Enum\PeriodsEnum;
 use App\Savings\Enum\TransactionTypesEnum;
 use App\Savings\Repository\MonthlyBalanceRepository;
 use App\Savings\Repository\TransactionRepository;
+use Carbon\Carbon;
 use loophp\collection\Collection;
 
 class MonthlyBalanceService
@@ -67,7 +68,7 @@ class MonthlyBalanceService
     public function recalculateFromMonth(Account $account, \DateTimeInterface $fromMonth): void
     {
         $currentMonth = (new \DateTimeImmutable($fromMonth->format('Y-m-01')))->setTime(0, 0, 0);
-        $thisMonth = (new \DateTimeImmutable())->modify('first day of this month')->setTime(0, 0, 0);
+        $thisMonth = Carbon::now()->toDateTimeImmutable()->modify('first day of this month')->setTime(0, 0, 0);
 
         // Delete existing MonthlyBalance from this month onwards
         $this->monthlyBalanceRepository->deleteFromMonthOnwards($account, $currentMonth);
@@ -225,7 +226,7 @@ class MonthlyBalanceService
      */
     private function fillMissingMonths(array $existingBalances, array $accountIds, ?PeriodsEnum $periodFilter): array
     {
-        $now = new \DateTimeImmutable();
+        $now = Carbon::now()->toDateTimeImmutable();
         $endDate = $now->modify('first day of this month');
 
         // Determine the date range to cover
@@ -239,12 +240,19 @@ class MonthlyBalanceService
             $latestMonth = null;
             foreach ($existingBalances as $balance) {
                 $balanceMonth = $balance->getMonth();
-                if ($latestMonth === null || $balanceMonth > $latestMonth) {
+                if ($latestMonth === null) {
+                    $latestMonth = $balanceMonth;
+                } elseif ($balanceMonth > $latestMonth) {
                     $latestMonth = $balanceMonth;
                 }
             }
 
-            if ($latestMonth === null || $latestMonth >= $endDate) {
+            // If no latest month found or it's already at or past end date
+            if ($latestMonth === null) {
+                return $existingBalances;
+            }
+
+            if ($latestMonth->format('Y-m') >= $endDate->format('Y-m')) {
                 return $existingBalances;
             }
 
@@ -314,7 +322,7 @@ class MonthlyBalanceService
     ): MonthlyBalance {
         $virtualBalance = new MonthlyBalance();
         $virtualBalance->setAccount($account)
-            ->setMonth($month)
+            ->setMonth(\DateTimeImmutable::createFromInterface($month))
             ->setEndOfMonthBalance($balance)
             ->setTransactionCount(0)
         ;

@@ -16,6 +16,7 @@ use App\Savings\Security\Voter\AccountVoter;
 use App\Shared\Entity\User;
 use App\Shared\Enum\ResourceTypesEnum;
 use App\Shared\Exception\AbstractAccessDeniedException;
+use Carbon\Carbon;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -157,7 +158,7 @@ class AccountService
             ->setDescription('Solde initial')
             ->setAmount($amount)
             ->setType(TransactionTypesEnum::DEPOSIT)
-            ->setDate(new \DateTimeImmutable())
+            ->setDate(Carbon::now()->toDateTimeImmutable())
             ->setAccount($account)
         ;
 

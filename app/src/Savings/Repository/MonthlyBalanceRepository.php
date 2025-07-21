@@ -9,12 +9,21 @@ use App\Savings\Entity\MonthlyBalance;
 use App\Savings\Enum\PeriodsEnum;
 use App\Shared\Repository\Abstract\AbstractEntityRepository;
 use Carbon\Carbon;
+use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends AbstractEntityRepository<MonthlyBalance>
  */
 class MonthlyBalanceRepository extends AbstractEntityRepository
 {
+    public function __construct(
+        ManagerRegistry $registry,
+        PaginatorInterface $paginator,
+    ) {
+        parent::__construct($registry, $paginator);
+    }
+
     #[\Override]
     public function getEntityClass(): string
     {
@@ -159,15 +168,11 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
 
     private function getDateFilterForPeriod(PeriodsEnum $period): \DateTimeImmutable
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->toDateTimeImmutable();
 
         return match ($period) {
-            PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify(
-                'first day of this month'
-            )->toDateTimeImmutable(),
-            PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify(
-                'first day of this month'
-            )->toDateTimeImmutable(),
+            PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
+            PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
         };
     }
 }

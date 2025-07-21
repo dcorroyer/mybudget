@@ -33,21 +33,15 @@ class MonthlyBalanceService
     {
         $firstDayOfMonth = (new \DateTimeImmutable($month->format('Y-m-01')))->setTime(0, 0, 0);
         $lastDayOfMonth = $firstDayOfMonth->modify('last day of this month')->setTime(23, 59, 59);
-
-        // Get the balance at the end of previous month
         $previousMonthBalance = $this->getBalanceEndOfPreviousMonth($account, $firstDayOfMonth);
 
-        // Get all transactions for this month
         $transactions = $this->transactionRepository->findByAccountAndDateRange(
             $account,
             $firstDayOfMonth,
             $lastDayOfMonth
         );
 
-        // Calculate end of month balance
         $endOfMonthBalance = $this->calculateEndOfMonthBalance($previousMonthBalance, $transactions);
-
-        // Find or create MonthlyBalance
         $monthlyBalance = $this->monthlyBalanceRepository->findByAccountAndMonth($account, $firstDayOfMonth);
 
         if ($monthlyBalance === null) {
@@ -70,10 +64,8 @@ class MonthlyBalanceService
         $currentMonth = (new \DateTimeImmutable($fromMonth->format('Y-m-01')))->setTime(0, 0, 0);
         $thisMonth = Carbon::now()->toDateTimeImmutable()->modify('first day of this month')->setTime(0, 0, 0);
 
-        // Delete existing MonthlyBalance from this month onwards
         $this->monthlyBalanceRepository->deleteFromMonthOnwards($account, $currentMonth);
 
-        // Recalculate month by month
         while ($currentMonth <= $thisMonth) {
             $this->updateMonthlyBalance($account, $currentMonth);
             $currentMonth = $currentMonth->modify('+1 month');
@@ -108,7 +100,6 @@ class MonthlyBalanceService
             $oldMonth = new \DateTimeImmutable($oldDate->format('Y-m-01'));
             $this->recalculateFromMonth($account, $oldMonth);
         } else {
-            // Same month, just recalculate from this month
             $this->recalculateFromMonth($account, $currentMonth);
         }
     }
@@ -151,11 +142,8 @@ class MonthlyBalanceService
         }
 
         $monthlyBalances = $this->monthlyBalanceRepository->findByAccountsAndPeriod($accountIds, $periodFilter);
-
-        // Fill missing months with stable balance data
         $completeMonthlyBalances = $this->fillMissingMonths($monthlyBalances, $accountIds, $periodFilter);
 
-        // Extract unique months and sort them
         $months = Collection::fromIterable($completeMonthlyBalances)
             ->map(static fn (MonthlyBalance $balance) => $balance->getMonth()->format('Y-m'))
             ->distinct()
@@ -165,7 +153,6 @@ class MonthlyBalanceService
 
         $balanceData = [];
 
-        // For each month, sum balances across all accounts
         foreach ($months as $month) {
             $monthTotal = Collection::fromIterable($completeMonthlyBalances)
                 ->filter(static fn (MonthlyBalance $balance) => $balance->getMonth()->format('Y-m') === $month)
@@ -175,7 +162,7 @@ class MonthlyBalanceService
 
             $date = new \DateTimeImmutable($month . '-01');
             $balanceData[] = new BalanceResponse(
-                date: $month,  // Format Y-m comme attendu par les tests
+                date: $month,
                 formattedDate: $date->format('M Y'),
                 balance: $monthTotal
             );
@@ -229,14 +216,11 @@ class MonthlyBalanceService
         $now = Carbon::now()->toDateTimeImmutable();
         $endDate = $now->modify('first day of this month');
 
-        // Determine the date range to cover
         if ($periodFilter === null) {
-            // No period filter: fill from the latest existing balance to today
             if (empty($existingBalances)) {
                 return $existingBalances;
             }
 
-            // Find the latest month from all existing balances
             $latestMonth = null;
             foreach ($existingBalances as $balance) {
                 $balanceMonth = $balance->getMonth();
@@ -247,7 +231,6 @@ class MonthlyBalanceService
                 }
             }
 
-            // If no latest month found or it's already at or past end date
             if ($latestMonth === null) {
                 return $existingBalances;
             }
@@ -258,14 +241,12 @@ class MonthlyBalanceService
 
             $startDate = $latestMonth->modify('+1 month');
         } else {
-            // With period filter: use the calculated period
             $startDate = match ($periodFilter) {
                 PeriodsEnum::SIX_MONTHS => $now->modify('-6 months')->modify('first day of this month'),
                 PeriodsEnum::TWELVE_MONTHS => $now->modify('-12 months')->modify('first day of this month'),
             };
         }
 
-        // Group existing balances by account and month for quick lookup
         $existingByAccountMonth = [];
         foreach ($existingBalances as $balance) {
             $account = $balance->getAccount();
@@ -279,14 +260,11 @@ class MonthlyBalanceService
 
         $completeBalances = $existingBalances;
 
-        // For each account, fill missing months
         foreach ($accountIds as $accountId) {
             $account = $this->accountService->get($accountId);
 
-            // Get the latest known balance for this account
             $latestBalance = $this->monthlyBalanceRepository->findLatestForAccount($account);
             if ($latestBalance === null) {
-                // No balance history for this account, skip
                 continue;
             }
 

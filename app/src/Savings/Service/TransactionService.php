@@ -35,7 +35,7 @@ class TransactionService
         $transaction = $this->transactionRepository->find($id);
 
         if ($transaction === null) {
-            throw new TransactionNotFoundException((string) $id);
+            throw new TransactionNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(TransactionVoter::VIEW, [

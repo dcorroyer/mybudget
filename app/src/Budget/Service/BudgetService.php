@@ -39,7 +39,7 @@ class BudgetService
         $budget = $this->budgetRepository->find($id);
 
         if ($budget === null) {
-            throw new BudgetNotFoundException((string) $id);
+            throw new BudgetNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {
@@ -113,7 +113,7 @@ class BudgetService
         }
 
         if ($budget === null) {
-            throw new BudgetNotFoundException($id ? (string) $id : 'latest');
+            throw new BudgetNotFoundException($id ?: 'latest');
         }
 
         if (! $this->authorizationChecker->isGranted(BudgetVoter::VIEW, $budget)) {

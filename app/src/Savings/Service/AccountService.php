@@ -35,7 +35,7 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new AccountNotFoundException((string) $id);
+            throw new AccountNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {
@@ -55,7 +55,7 @@ class AccountService
         $account = $this->accountRepository->find($id);
 
         if ($account === null) {
-            throw new AccountNotFoundException((string) $id);
+            throw new AccountNotFoundException($id);
         }
 
         if (! $this->authorizationChecker->isGranted(AccountVoter::VIEW, $account)) {

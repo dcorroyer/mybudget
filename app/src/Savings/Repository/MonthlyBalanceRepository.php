@@ -9,21 +9,12 @@ use App\Savings\Entity\MonthlyBalance;
 use App\Savings\Enum\PeriodsEnum;
 use App\Shared\Repository\Abstract\AbstractEntityRepository;
 use Carbon\Carbon;
-use Doctrine\Persistence\ManagerRegistry;
-use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends AbstractEntityRepository<MonthlyBalance>
  */
 class MonthlyBalanceRepository extends AbstractEntityRepository
 {
-    public function __construct(
-        ManagerRegistry $registry,
-        PaginatorInterface $paginator,
-    ) {
-        parent::__construct($registry, $paginator);
-    }
-
     #[\Override]
     public function getEntityClass(): string
     {
@@ -35,7 +26,6 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
      */
     public function findByAccountAndMonth(Account $account, \DateTimeInterface $month): ?MonthlyBalance
     {
-        // Ensure we search by the first day of the month
         $firstDayOfMonth = (new \DateTimeImmutable($month->format('Y-m-01')))->setTime(0, 0, 0);
 
         /** @var MonthlyBalance|null */
@@ -77,47 +67,6 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
     }
 
     /**
-     * Find the latest MonthlyBalance before a specific month.
-     */
-    public function findLatestBeforeMonth(Account $account, \DateTimeInterface $month): ?MonthlyBalance
-    {
-        $firstDayOfMonth = (new \DateTimeImmutable($month->format('Y-m-01')))->setTime(0, 0, 0);
-
-        /** @var MonthlyBalance|null */
-        return $this->createQueryBuilder('mb')
-            ->andWhere('mb.account = :account')
-            ->andWhere('mb.month < :month')
-            ->setParameter('account', $account)
-            ->setParameter('month', $firstDayOfMonth)
-            ->orderBy('mb.month', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
-    /**
-     * Find all MonthlyBalance for an account from a specific month onwards.
-     *
-     * @return array<MonthlyBalance>
-     */
-    public function findFromMonthOnwards(Account $account, \DateTimeInterface $fromMonth): array
-    {
-        $firstDayOfMonth = (new \DateTimeImmutable($fromMonth->format('Y-m-01')))->setTime(0, 0, 0);
-
-        /** @var array<MonthlyBalance> */
-        return $this->createQueryBuilder('mb')
-            ->andWhere('mb.account = :account')
-            ->andWhere('mb.month >= :month')
-            ->setParameter('account', $account)
-            ->setParameter('month', $firstDayOfMonth)
-            ->orderBy('mb.month', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
-    /**
      * Delete all MonthlyBalance for an account from a specific month onwards.
      */
     public function deleteFromMonthOnwards(Account $account, \DateTimeInterface $fromMonth): int
@@ -133,20 +82,6 @@ class MonthlyBalanceRepository extends AbstractEntityRepository
             ->setParameter('month', $firstDayOfMonth)
             ->getQuery()
             ->execute()
-        ;
-    }
-
-    /**
-     * Get count of MonthlyBalance entries for an account.
-     */
-    public function countByAccount(Account $account): int
-    {
-        return (int) $this->createQueryBuilder('mb')
-            ->select('COUNT(mb.id)')
-            ->andWhere('mb.account = :account')
-            ->setParameter('account', $account)
-            ->getQuery()
-            ->getSingleScalarResult()
         ;
     }
 

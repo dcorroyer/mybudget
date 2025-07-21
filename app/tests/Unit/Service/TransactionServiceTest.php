@@ -178,7 +178,7 @@ final class TransactionServiceTest extends TestCase
 
         $this->accountService->expects($this->once())
             ->method('get')
-            ->will($this->throwException(new AccountNotFoundException('999')))
+            ->will($this->throwException(new AccountNotFoundException(999)))
         ;
 
         // ACT

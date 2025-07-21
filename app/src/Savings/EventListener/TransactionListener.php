@@ -64,7 +64,6 @@ class TransactionListener
 
     public function preUpdate(Transaction $transaction): void
     {
-        // Store the old date before the update happens
         $this->oldTransactionDate = $transaction->getDate();
     }
 }
